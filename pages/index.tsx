@@ -1,12 +1,36 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import axios from "axios";
-import * as ProgressPrimitive from "@radix-ui/react-progress";
-import { Text, Table } from "@radix-ui/themes";
-import Button from "../components/shared/Button";
+import { Text } from "@radix-ui/themes";
 import DemoCard from "../components/shared/DemoCard";
 import ReactMarkdown from "react-markdown";
+import { CloudUpload } from "@mui/icons-material";
+import { styled } from "@mui/material/styles";
+import {
+  Table,
+  Button,
+  LinearProgress,
+  Snackbar,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
 
 interface Props {}
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 const Demo = (props: Props) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -16,6 +40,9 @@ const Demo = (props: Props) => {
   const [analysisResult, setAnalysisResult] = useState("");
   const [analyzingId, setAnalyzingId] = useState<number | null>(null);
   const [isGettingList, setIsGettingList] = useState(false);
+  const [streamData, setStreamData] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
@@ -38,23 +65,19 @@ const Demo = (props: Props) => {
     formData.append("file", selectedFile);
     formData.append("title", selectedFile.name);
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/pdfs/",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / progressEvent.total
-            );
-            setProgress(percentCompleted);
-          },
-        }
-      );
+      await axios.post("http://localhost:8000/api/pdfs/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setProgress(percentCompleted);
+        },
+      });
       setUploadStatus("Upload successful!");
-      console.log(response.data);
+      await getPdfList();
     } catch (error) {
       setUploadStatus("Upload failed.");
       console.error(error);
@@ -74,18 +97,36 @@ const Demo = (props: Props) => {
   };
 
   const handleAnalyze = async (id: number) => {
-    try {
-      setAnalyzingId(id);
-      const response = await axios.get(
-        `http://localhost:8000/api/pdfs/${id}/check_paper/`
-      );
-      setAnalysisResult(response.data.analysis);
-    } catch (error) {
-      console.error(error);
-      setAnalysisResult("Error analyzing PDF");
-    } finally {
-      setAnalyzingId(null);
-    }
+    setAnalyzingId(id);
+    setStreamData("");
+    setIsStreaming(true);
+
+    const evtSource = new EventSource(
+      `http://localhost:8000/api/pdfs/${id}/check_paper_stream/`,
+      {
+        withCredentials: true,
+      }
+    );
+    evtSource.onmessage = (event) => {
+      console.log("Received message:", event.data);
+      if (event.data === "[$Analysis Done.$]") {
+        evtSource.close();
+        setAnalyzingId(null);
+      } else {
+        setStreamData((prev) => prev + event.data + "\n");
+      }
+    };
+
+    // const response = await axios.get(
+    //   `http://localhost:8000/api/pdfs/${id}/check_paper/`
+    // );
+    // console.log(response.data.analysis);
+    // setStreamData(response.data.analysis);
+    // evtSource.onerror = (error) => {
+    //   console.error("EventSource error:", error);
+    //   evtSource.close();
+    //   setIsStreaming(false);
+    // };
   };
 
   return (
@@ -101,114 +142,157 @@ const Demo = (props: Props) => {
           <div className="flex w-full flex-row justify-start gap-4">
             <div className="w-1/3">
               <form onSubmit={handleUpload}>
-                <label
-                  htmlFor="file-upload"
-                  className="bg-Primary-500 rounded-md px-4 py-2 text-white"
-                >
-                  Choose File
-                </label>
-                <label>
+                <div className="mb-2 flex flex-row items-center justify-start gap-2">
+                  <Button component="label" variant="contained" sx={{ mb: 2 }}>
+                    Choose PDF
+                    <VisuallyHiddenInput
+                      type="file"
+                      accept="application/pdf"
+                      onChange={handleFileChange}
+                    />
+                  </Button>
                   {selectedFile ? selectedFile.name : "No file selected"}
-                </label>
-                <input
-                  type="file"
-                  accept="application/pdf"
-                  onChange={handleFileChange}
-                  hidden
-                  id="file-upload"
-                />
-                <Button type="submit">Upload</Button>
+                </div>
+                <div>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    startIcon={<CloudUpload />}
+                    disabled={!selectedFile}
+                  >
+                    Upload
+                  </Button>
+                </div>
               </form>
               {progress > 0 && (
-                <ProgressPrimitive.Root
-                  value={progress}
-                  className="h-3 w-full overflow-hidden rounded-full bg-white dark:bg-gray-900"
-                >
-                  <ProgressPrimitive.Indicator
-                    style={{ width: `${progress}%` }}
-                    className="h-full bg-purple-500 duration-300 ease-in-out dark:bg-white"
+                <div className="mb-4 mt-4">
+                  <LinearProgress
+                    variant="determinate"
+                    value={progress}
+                    sx={{
+                      height: 8,
+                      borderRadius: 4,
+                      "& .MuiLinearProgress-bar": {
+                        borderRadius: 4,
+                      },
+                    }}
                   />
-                </ProgressPrimitive.Root>
+                  <div className="mt-1 text-right text-sm text-gray-600">
+                    {Math.round(progress)}%
+                  </div>
+                </div>
               )}
-              {uploadStatus && <p>{uploadStatus}</p>}
+              {uploadStatus && (
+                <Snackbar
+                  open={true}
+                  autoHideDuration={5000}
+                  message={uploadStatus}
+                />
+              )}
             </div>
             <div className="flex w-2/3 flex-col gap-4">
               <div>
-                <Button onClick={getPdfList} loading={isGettingList}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  onClick={getPdfList}
+                  disabled={isGettingList}
+                >
                   Get PDF List
                 </Button>
               </div>
               <div>
-                <Table.Root variant="surface">
-                  <Table.Header>
-                    <Table.Row>
-                      <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
-                      <Table.ColumnHeaderCell>ID</Table.ColumnHeaderCell>
-                      <Table.ColumnHeaderCell>
-                        Created At
-                      </Table.ColumnHeaderCell>
-                      <Table.ColumnHeaderCell>Action</Table.ColumnHeaderCell>
-                    </Table.Row>
-                  </Table.Header>
-
-                  <Table.Body>
-                    {pdfList.map((pdf) => (
-                      <Table.Row key={pdf.id}>
-                        <Table.RowHeaderCell>{pdf.title}</Table.RowHeaderCell>
-                        <Table.Cell>{pdf.id}</Table.Cell>
-                        <Table.Cell>{pdf.uploaded_at}</Table.Cell>
-                        <Table.Cell>
-                          <Button
-                            onClick={() => handleAnalyze(pdf.id)}
-                            disabled={analyzingId === pdf.id}
-                          >
-                            {analyzingId === pdf.id ? "Analyzing..." : "Check"}
-                          </Button>
-                        </Table.Cell>
-                      </Table.Row>
-                    ))}
-                  </Table.Body>
-                </Table.Root>
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 650 }} aria-label="pdf list table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Name</TableCell>
+                        <TableCell>ID</TableCell>
+                        <TableCell>Created At</TableCell>
+                        <TableCell>Action</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {pdfList.map((pdf) => (
+                        <TableRow
+                          key={pdf.id}
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                          }}
+                        >
+                          <TableCell component="th" scope="row">
+                            {pdf.title}
+                          </TableCell>
+                          <TableCell>{pdf.id}</TableCell>
+                          <TableCell>{pdf.created_at}</TableCell>
+                          <TableCell>
+                            <Button
+                              onClick={() => handleAnalyze(pdf.id)}
+                              variant="contained"
+                              color="primary"
+                              disabled={analyzingId !== null}
+                              size="small"
+                            >
+                              {analyzingId === pdf.id
+                                ? "Analyzing..."
+                                : "Check"}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
               </div>
-              {analysisResult && (
-                <div className="mt-4">
-                  <Text as="p" size="2" mb="2" weight="bold">
-                    Analysis Results:
-                  </Text>
-                  <div className="max-h-[600px] overflow-y-auto rounded-md border border-gray-200 bg-white p-4">
-                    <ReactMarkdown
-                      components={{
-                        h3: ({ children }) => (
-                          <h3 className="mb-2 mt-6 text-xl font-bold">
-                            {children}
-                          </h3>
-                        ),
-                        h4: ({ children }) => (
-                          <h4 className="mb-2 mt-4 text-lg font-semibold">
-                            {children}
-                          </h4>
-                        ),
-                        p: ({ children }) => <p className="mb-4">{children}</p>,
-                        ul: ({ children }) => (
-                          <ul className="mb-4 ml-6 list-disc">{children}</ul>
-                        ),
-                        li: ({ children }) => (
-                          <li className="mb-2">{children}</li>
-                        ),
-                        strong: ({ children }) => (
-                          <strong className="font-bold">{children}</strong>
-                        ),
-                        em: ({ children }) => (
-                          <em className="italic">{children}</em>
-                        ),
-                        hr: () => <hr className="my-6 border-gray-200" />,
-                      }}
-                    >
-                      {analysisResult}
-                    </ReactMarkdown>
+              <div className="mt-4">
+                <Text as="p" size="2" mb="2" weight="bold">
+                  Analysis Results:
+                </Text>
+                <div className="max-h-[600px] overflow-y-auto rounded-md border border-gray-200 bg-white p-4">
+                  <div className="mb-4 rounded-md bg-gray-100 p-3">
+                    <Text as="p" size="2" color="gray">
+                      Live Analysis:
+                    </Text>
+
+                    {streamData && (
+                      <ReactMarkdown
+                        components={{
+                          h3: ({ children }) => (
+                            <h3 className="mb-2 mt-6 text-xl font-bold">
+                              {children}
+                            </h3>
+                          ),
+                          h4: ({ children }) => (
+                            <h4 className="mb-2 mt-4 text-lg font-semibold">
+                              {children}
+                            </h4>
+                          ),
+                          p: ({ children }) => (
+                            <p className="mb-4">{children}</p>
+                          ),
+                          ul: ({ children }) => (
+                            <ul className="mb-4 ml-6 list-disc">{children}</ul>
+                          ),
+                          li: ({ children }) => (
+                            <li className="mb-2">{children}</li>
+                          ),
+                          strong: ({ children }) => (
+                            <strong className="font-bold">{children}</strong>
+                          ),
+                          em: ({ children }) => (
+                            <em className="italic">{children}</em>
+                          ),
+                          hr: () => <hr className="my-6 border-gray-200" />,
+                        }}
+                      >
+                        {streamData}
+                      </ReactMarkdown>
+                    )}
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </DemoCard>

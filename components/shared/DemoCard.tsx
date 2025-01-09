@@ -27,8 +27,9 @@ const DemoCard = ({
   return (
     <section id={id} className="h-[550px] w-full scroll-mt-6 ">
       <div
+        style={{ minHeight: "70vh" }}
         className={cx(
-          "relative flex h-full w-full rounded-xl p-6 shadow",
+          "relative flex w-full rounded-xl p-6 shadow",
           // "bg-gradient-to-br from-pink-300 via-fuchsia-300 to-purple-400 dark:from-pink-800 dark:via-fuchsia-900 dark:to-purple-800"
           // "bg-gradient-to-br from-pink-400 via-fuchsia-300 to-purple-400 dark:from-pink-800 dark:via-fuchsia-900 dark:to-purple-800",
           "bg-gradient-to-br from-pink-300 via-fuchsia-200 to-purple-300 dark:from-pink-800 dark:via-fuchsia-900 dark:to-purple-800",
