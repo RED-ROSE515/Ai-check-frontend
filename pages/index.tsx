@@ -65,7 +65,7 @@ const Demo = (props: Props) => {
     formData.append("file", selectedFile);
     formData.append("title", selectedFile.name);
     try {
-      await axios.post("http://localhost:8001/api/pdfs/", formData, {
+      await axios.post("http://52.74.7.210/api/pdfs/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -87,7 +87,7 @@ const Demo = (props: Props) => {
   const getPdfList = async () => {
     try {
       setIsGettingList(true);
-      const response = await axios.get("http://localhost:8001/api/pdfs/");
+      const response = await axios.get("http://52.74.7.210/api/pdfs/");
       setPdfList(response.data);
     } catch (error) {
       console.error(error);
@@ -102,7 +102,7 @@ const Demo = (props: Props) => {
     setIsStreaming(true);
 
     const evtSource = new EventSource(
-      `http://localhost:8001/api/pdfs/${id}/check_paper_stream/`,
+      `http://52.74.7.210/api/pdfs/${id}/check_paper_stream/`,
       {
         withCredentials: true,
       }
@@ -118,7 +118,7 @@ const Demo = (props: Props) => {
     };
 
     // const response = await axios.get(
-    //   `http://localhost:8001/api/pdfs/${id}/check_paper/`
+    //   `http://52.74.7.210/api/pdfs/${id}/check_paper/`
     // );
     // console.log(response.data.analysis);
     // setStreamData(response.data.analysis);
