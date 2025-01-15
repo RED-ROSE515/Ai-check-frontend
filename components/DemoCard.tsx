@@ -25,9 +25,8 @@ const DemoCard = ({
   const id = title.replace(" ", "_").toLowerCase();
 
   return (
-    <section id={id} className="h-[550px] w-full scroll-mt-6 ">
+    <section id={id} className="mb-12 w-full">
       <div
-        style={{ minHeight: "70vh" }}
         className={cx(
           "relative flex w-full rounded-xl p-6 shadow",
           "bg-gradient-to-br from-black/30 via-fuchsia-100 to-black/30 dark:from-pink-800 dark:via-fuchsia-900 dark:to-purple-800",

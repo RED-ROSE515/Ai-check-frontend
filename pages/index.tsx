@@ -1,14 +1,13 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Text } from "@radix-ui/themes";
-import DemoCard from "../components/shared/DemoCard";
-import ReactMarkdown from "react-markdown";
+import DemoCard from "../components/DemoCard";
 import { CloudUpload } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import {
   Table,
   Button,
   LinearProgress,
+  CircularProgress,
   Snackbar,
   TableBody,
   TableCell,
@@ -17,6 +16,9 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import StatisticCard from "../components/StatisticCard";
+import AnalysisResult from "../components/AnalysisResult";
+import SummaryWrapper from "../components/SummaryWrapper";
 
 interface Props {}
 
@@ -38,10 +40,14 @@ const Demo = (props: Props) => {
   const [progress, setProgress] = useState(0);
   const [pdfList, setPdfList] = useState([]);
   const [analysisResult, setAnalysisResult] = useState("");
+  const [summary, setSummary] = useState("");
   const [analyzingId, setAnalyzingId] = useState<number | null>(null);
   const [isGettingList, setIsGettingList] = useState(false);
   const [streamData, setStreamData] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [checkLoading, setCheckLoading] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -65,7 +71,7 @@ const Demo = (props: Props) => {
     formData.append("file", selectedFile);
     formData.append("title", selectedFile.name);
     try {
-      await axios.post("http://52.74.7.210/api/pdfs/", formData, {
+      await axios.post("https://devai1.nobleblocks.com/api/pdfs/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -87,7 +93,9 @@ const Demo = (props: Props) => {
   const getPdfList = async () => {
     try {
       setIsGettingList(true);
-      const response = await axios.get("http://52.74.7.210/api/pdfs/");
+      const response = await axios.get(
+        "https://devai1.nobleblocks.com/api/pdfs/"
+      );
       setPdfList(response.data);
     } catch (error) {
       console.error(error);
@@ -96,19 +104,19 @@ const Demo = (props: Props) => {
     }
   };
 
-  const handleAnalyze = async (id: number) => {
+  const handleAnalyzeStream = async (id: number) => {
     setAnalyzingId(id);
     setStreamData("");
     setIsStreaming(true);
 
     const evtSource = new EventSource(
-      `http://52.74.7.210/api/pdfs/${id}/check_paper_stream/`,
+      `https://devai1.nobleblocks.com/api/pdfs/${id}/check_paper_fully/`,
       {
         withCredentials: true,
       }
     );
     evtSource.onmessage = (event) => {
-      console.log("Received message:", event.data);
+      console.log("Received message:", event.data, event);
       if (event.data === "[$Analysis Done.$]") {
         evtSource.close();
         setAnalyzingId(null);
@@ -116,188 +124,164 @@ const Demo = (props: Props) => {
         setStreamData((prev) => prev + event.data + "\n");
       }
     };
+  };
 
-    // const response = await axios.get(
-    //   `http://52.74.7.210/api/pdfs/${id}/check_paper/`
-    // );
-    // console.log(response.data.analysis);
-    // setStreamData(response.data.analysis);
-    // evtSource.onerror = (error) => {
-    //   console.error("EventSource error:", error);
-    //   evtSource.close();
-    //   setIsStreaming(false);
-    // };
+  const handleAnalyze = async (id: number) => {
+    setIsChecking(true);
+    setAnalyzingId(id);
+    setSummaryLoading(true);
+    const resp = await axios.get(
+      `https://devai1.nobleblocks.com/api/pdfs/${id}/get_summary/`
+    );
+    setSummaryLoading(false);
+    setSummary(resp.data.summary);
+    setCheckLoading(true);
+    const response = await axios.get(
+      `https://devai1.nobleblocks.com/api/pdfs/${id}/check_paper/`
+    );
+    setCheckLoading(false);
+    setAnalysisResult(response.data.analysis);
+    setAnalyzingId(null);
   };
 
   return (
-    <Fragment>
-      <div className="mx-auto flex grid w-full flex-row flex-wrap gap-6 p-12">
-        <DemoCard
-          isNew
-          variant={DemoCard.variant.JustifyCenter}
-          data={{
-            title: "AI Error Detector",
-          }}
-        >
-          <div className="flex w-full flex-row justify-start gap-4">
-            <div className="w-1/3">
-              <form onSubmit={handleUpload}>
-                <div className="mb-2 flex flex-row items-center justify-start gap-2">
-                  <Button component="label" variant="contained" sx={{ mb: 2 }}>
-                    Choose PDF
-                    <VisuallyHiddenInput
-                      type="file"
-                      accept="application/pdf"
-                      onChange={handleFileChange}
-                    />
-                  </Button>
-                  {selectedFile ? selectedFile.name : "No file selected"}
-                </div>
-                <div>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    startIcon={<CloudUpload />}
-                    disabled={!selectedFile}
-                  >
-                    Upload
-                  </Button>
-                </div>
-              </form>
-              {progress > 0 && (
-                <div className="mb-4 mt-4">
-                  <LinearProgress
-                    variant="determinate"
-                    value={progress}
-                    sx={{
-                      height: 8,
-                      borderRadius: 4,
-                      "& .MuiLinearProgress-bar": {
-                        borderRadius: 4,
-                      },
-                    }}
+    <div style={{ backgroundColor: "#F3F7F9" }} className="px-8">
+      <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-12 px-36">
+        <StatisticCard />
+      </div>
+      <DemoCard
+        isNew
+        variant={DemoCard.variant.JustifyCenter}
+        data={{
+          title: "AI Error Detector",
+        }}
+      >
+        <div className="flex w-full flex-row justify-start gap-4">
+          <div className="w-1/3">
+            <form onSubmit={handleUpload}>
+              <div className="mb-2 flex flex-row items-center justify-start gap-2">
+                <Button component="label" variant="contained" sx={{ mb: 2 }}>
+                  Choose PDF
+                  <VisuallyHiddenInput
+                    type="file"
+                    accept="application/pdf"
+                    onChange={handleFileChange}
                   />
-                  <div className="mt-1 text-right text-sm text-gray-600">
-                    {Math.round(progress)}%
-                  </div>
-                </div>
-              )}
-              {uploadStatus && (
-                <Snackbar
-                  open={true}
-                  autoHideDuration={5000}
-                  message={uploadStatus}
-                />
-              )}
-            </div>
-            <div className="flex w-2/3 flex-col gap-4">
+                </Button>
+                {selectedFile ? selectedFile.name : "No file selected"}
+              </div>
               <div>
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
-                  onClick={getPdfList}
-                  disabled={isGettingList}
+                  startIcon={<CloudUpload />}
+                  disabled={!selectedFile}
                 >
-                  Get PDF List
+                  Upload
                 </Button>
               </div>
-              <div>
-                <TableContainer component={Paper}>
-                  <Table sx={{ minWidth: 650 }} aria-label="pdf list table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Name</TableCell>
-                        <TableCell>ID</TableCell>
-                        <TableCell>Created At</TableCell>
-                        <TableCell>Action</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {pdfList.map((pdf) => (
-                        <TableRow
-                          key={pdf.id}
-                          sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
-                          }}
-                        >
-                          <TableCell component="th" scope="row">
-                            {pdf.title}
-                          </TableCell>
-                          <TableCell>{pdf.id}</TableCell>
-                          <TableCell>{pdf.created_at}</TableCell>
-                          <TableCell>
-                            <Button
-                              onClick={() => handleAnalyze(pdf.id)}
-                              variant="contained"
-                              color="primary"
-                              disabled={analyzingId !== null}
-                              size="small"
-                            >
-                              {analyzingId === pdf.id
-                                ? "Analyzing..."
-                                : "Check"}
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </div>
-              <div className="mt-4">
-                <Text as="p" size="2" mb="2" weight="bold">
-                  Analysis Results:
-                </Text>
-                <div className="max-h-[600px] overflow-y-auto rounded-md border border-gray-200 bg-white p-4">
-                  <div className="mb-4 rounded-md bg-gray-100 p-3">
-                    <Text as="p" size="2" color="gray">
-                      Live Analysis:
-                    </Text>
-
-                    {streamData && (
-                      <ReactMarkdown
-                        components={{
-                          h3: ({ children }) => (
-                            <h3 className="mb-2 mt-6 text-xl font-bold">
-                              {children}
-                            </h3>
-                          ),
-                          h4: ({ children }) => (
-                            <h4 className="mb-2 mt-4 text-lg font-semibold">
-                              {children}
-                            </h4>
-                          ),
-                          p: ({ children }) => (
-                            <p className="mb-4">{children}</p>
-                          ),
-                          ul: ({ children }) => (
-                            <ul className="mb-4 ml-6 list-disc">{children}</ul>
-                          ),
-                          li: ({ children }) => (
-                            <li className="mb-2">{children}</li>
-                          ),
-                          strong: ({ children }) => (
-                            <strong className="font-bold">{children}</strong>
-                          ),
-                          em: ({ children }) => (
-                            <em className="italic">{children}</em>
-                          ),
-                          hr: () => <hr className="my-6 border-gray-200" />,
-                        }}
-                      >
-                        {streamData}
-                      </ReactMarkdown>
-                    )}
-                  </div>
+            </form>
+            {progress > 0 && (
+              <div className="mb-4 mt-4">
+                <LinearProgress
+                  variant="determinate"
+                  value={progress}
+                  sx={{
+                    height: 8,
+                    borderRadius: 4,
+                    "& .MuiLinearProgress-bar": {
+                      borderRadius: 4,
+                    },
+                  }}
+                />
+                <div className="mt-1 text-right text-sm text-gray-600">
+                  {Math.round(progress)}%
                 </div>
               </div>
+            )}
+            {uploadStatus && (
+              <Snackbar
+                open={true}
+                autoHideDuration={5000}
+                message={uploadStatus}
+              />
+            )}
+          </div>
+          <div className="flex w-2/3 flex-col gap-4">
+            <div>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                onClick={getPdfList}
+                disabled={isGettingList}
+              >
+                Get PDF List
+              </Button>
+            </div>
+            <div>
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="pdf list table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Name</TableCell>
+                      <TableCell>ID</TableCell>
+                      <TableCell>Created At</TableCell>
+                      <TableCell>Action</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {pdfList.map((pdf) => (
+                      <TableRow
+                        key={pdf.id}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell component="th" scope="row">
+                          {pdf.title}
+                        </TableCell>
+                        <TableCell>{pdf.id}</TableCell>
+                        <TableCell>{pdf.created_at}</TableCell>
+                        <TableCell>
+                          <Button
+                            onClick={() => handleAnalyze(pdf.id)}
+                            variant="contained"
+                            color="primary"
+                            disabled={analyzingId !== null}
+                            size="small"
+                          >
+                            {analyzingId === pdf.id ? "Analyzing..." : "Check"}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </div>
           </div>
-        </DemoCard>
-      </div>
-    </Fragment>
+        </div>
+      </DemoCard>
+
+      {isChecking && (
+        <div className="mb-12 flex max-h-[600px] flex-row items-center justify-center overflow-y-auto rounded-md border-2 border-blue-600">
+          {summaryLoading && <CircularProgress className="my-4" />}
+          {summary && <SummaryWrapper summary={summary} />}
+        </div>
+      )}
+
+      {isChecking && summary && (
+        <div
+          className="mb-12 flex max-h-[600px] flex-row justify-center overflow-y-auto rounded-md border-2 border-blue-600"
+          style={{ backgroundColor: "#EEEEEEF0" }}
+        >
+          {checkLoading && <CircularProgress className="my-4" />}
+          {analysisResult && <AnalysisResult results={analysisResult} />}
+        </div>
+      )}
+    </div>
   );
 };
 
