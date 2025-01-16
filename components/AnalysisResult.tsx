@@ -11,8 +11,8 @@ const AnalysisResult = ({ results }) => {
   }, [results]);
 
   return (
-    <div className="flex w-full flex-row rounded-lg p-4">
-      <div className="mt-4 w-1/5">
+    <div className="flex w-full flex-col rounded-lg p-4 md:flex-row">
+      <div className="mt-4 w-full md:w-1/5">
         {results.map((result, index) => (
           <Card
             key={index}
@@ -24,9 +24,9 @@ const AnalysisResult = ({ results }) => {
           />
         ))}
       </div>
-      <div className="mx-2 w-4/5">
+      <div className="mx-2 w-full md:w-4/5">
         {results.map((result, index) => (
-          <ErrorCard key={index} error={result} className="" />
+          <ErrorCard key={index} error={result} className="mb-4" />
         ))}
       </div>
     </div>

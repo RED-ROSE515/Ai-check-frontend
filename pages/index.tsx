@@ -3,6 +3,7 @@ import axios from "axios";
 import DemoCard from "../components/DemoCard";
 import { CloudUpload } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
+import useDeviceCheck from "../hooks/useDeviceCheck";
 import {
   Table,
   Button,
@@ -48,7 +49,11 @@ const Demo = (props: Props) => {
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [checkLoading, setCheckLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
-  const API_BASE_URL = "https://devai1.nobleblocks.com/";
+  const [totalSummary, setTotalSummary] = useState("");
+  const deviceType = useDeviceCheck();
+  // const API_BASE_URL = "https://devai1.nobleblocks.com/";
+  const API_BASE_URL = "http://localhost:8000/";
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
@@ -125,6 +130,8 @@ const Demo = (props: Props) => {
   };
 
   const handleAnalyze = async (id: number) => {
+    setSummary("");
+    setAnalysisResult("");
     setIsChecking(true);
     setAnalyzingId(id);
     setSummaryLoading(true);
@@ -137,14 +144,22 @@ const Demo = (props: Props) => {
     );
     setCheckLoading(false);
     setAnalysisResult(response.data.analysis);
+    setTotalSummary(response.data.summary);
     setAnalyzingId(null);
   };
 
   return (
     <div style={{ backgroundColor: "#F3F7F9" }} className="px-8">
-      <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-12 px-36">
+      <div
+        className={
+          deviceType === "mobile"
+            ? "mx-auto grid w-full flex-row flex-wrap gap-6"
+            : "mx-auto grid w-full flex-row flex-wrap gap-6 p-12 px-36"
+        }
+      >
         <StatisticCard />
       </div>
+      <div>You are using a {deviceType} device.</div>
       <DemoCard
         isNew
         variant={DemoCard.variant.JustifyCenter}
@@ -152,8 +167,8 @@ const Demo = (props: Props) => {
           title: "AI Error Detector",
         }}
       >
-        <div className="flex w-full flex-row justify-start gap-4">
-          <div className="w-1/3">
+        <div className="flex w-full flex-col justify-start gap-4 md:flex-row">
+          <div className="w-full md:w-1/3">
             <form onSubmit={handleUpload}>
               <div className="mb-2 flex flex-row items-center justify-start gap-2">
                 <Button component="label" variant="contained" sx={{ mb: 2 }}>
@@ -204,7 +219,7 @@ const Demo = (props: Props) => {
               />
             )}
           </div>
-          <div className="flex w-2/3 flex-col gap-4">
+          <div className="flex w-full flex-col gap-4 md:w-2/3">
             <div>
               <Button
                 type="submit"
