@@ -20,7 +20,7 @@ const AnalysisResult = ({ results }) => {
             outlineColor={cardColors[index].outlineColor}
             title={capitalize(result.type + " Errors")}
             className="mx-2 mb-4"
-            count={result.error_count}
+            count={result.counts}
           />
         ))}
       </div>

@@ -3,8 +3,15 @@ import ReactMarkdown from "react-markdown";
 
 interface ErrorDetails {
   type: string;
-  error_count: number;
-  findings: string;
+  counts: number;
+  findings: ErrorFinding[];
+}
+
+interface ErrorFinding {
+  error: string;
+  explanation: string;
+  solution: string;
+  severity: string;
 }
 
 interface ErrorCardProps {
@@ -14,9 +21,7 @@ interface ErrorCardProps {
 
 const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
   // Convert findings string to array by splitting on numbered items
-  const findingsList = error.findings
-    .split(/\d+\.\s/)
-    .filter((item) => item.trim().length > 0);
+  const findingsList = error.findings;
 
   return (
     <div
@@ -31,7 +36,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
           {error.type} Errors
         </h2>
         <span className="rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-800">
-          {error.error_count} Issues
+          {error.counts} Issues
         </span>
       </div>
 
@@ -44,30 +49,20 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
             <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gray-300 text-sm text-black">
               {index + 1}
             </span>
-            <ReactMarkdown
-              components={{
-                h3: ({ children }) => (
-                  <h3 className="mb-2 mt-6 text-xl font-bold">{children}</h3>
-                ),
-                h4: ({ children }) => (
-                  <h4 className="mb-2 mt-4 text-lg font-semibold">
-                    {children}
-                  </h4>
-                ),
-                p: ({ children }) => <p className="mb-4">{children}</p>,
-                ul: ({ children }) => (
-                  <ul className="mb-4 ml-6 list-disc">{children}</ul>
-                ),
-                li: ({ children }) => <li className="mb-2">{children}</li>,
-                strong: ({ children }) => (
-                  <strong className="font-bold">{children}</strong>
-                ),
-                em: ({ children }) => <em className="italic">{children}</em>,
-                hr: () => <hr className="my-6 border-gray-200" />,
-              }}
-            >
-              {finding}
-            </ReactMarkdown>
+            <div className="flex flex-col">
+              <span>
+                <strong>Error : </strong>
+                {finding.error}
+              </span>
+              <span>
+                <strong>Explanation : </strong>
+                {finding.explanation}
+              </span>
+              <span>
+                <strong>Solution : </strong>
+                {finding.solution}
+              </span>
+            </div>
           </div>
         ))}
       </div>

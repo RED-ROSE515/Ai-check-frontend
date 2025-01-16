@@ -48,7 +48,7 @@ const Demo = (props: Props) => {
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [checkLoading, setCheckLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
-
+  const API_BASE_URL = "https://devai1.nobleblocks.com/";
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
@@ -71,7 +71,7 @@ const Demo = (props: Props) => {
     formData.append("file", selectedFile);
     formData.append("title", selectedFile.name);
     try {
-      await axios.post("https://devai1.nobleblocks.com/api/pdfs/", formData, {
+      await axios.post(API_BASE_URL + "api/pdfs/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -93,9 +93,7 @@ const Demo = (props: Props) => {
   const getPdfList = async () => {
     try {
       setIsGettingList(true);
-      const response = await axios.get(
-        "https://devai1.nobleblocks.com/api/pdfs/"
-      );
+      const response = await axios.get(API_BASE_URL + "api/pdfs/");
       setPdfList(response.data);
     } catch (error) {
       console.error(error);
@@ -110,7 +108,7 @@ const Demo = (props: Props) => {
     setIsStreaming(true);
 
     const evtSource = new EventSource(
-      `https://devai1.nobleblocks.com/api/pdfs/${id}/check_paper_fully/`,
+      API_BASE_URL + `api/pdfs/${id}/check_paper_fully/`,
       {
         withCredentials: true,
       }
@@ -130,14 +128,12 @@ const Demo = (props: Props) => {
     setIsChecking(true);
     setAnalyzingId(id);
     setSummaryLoading(true);
-    const resp = await axios.get(
-      `https://devai1.nobleblocks.com/api/pdfs/${id}/get_summary/`
-    );
+    const resp = await axios.get(API_BASE_URL + `api/pdfs/${id}/get_summary/`);
     setSummaryLoading(false);
     setSummary(resp.data.summary);
     setCheckLoading(true);
     const response = await axios.get(
-      `https://devai1.nobleblocks.com/api/pdfs/${id}/check_paper/`
+      API_BASE_URL + `api/pdfs/${id}/check_paper/`
     );
     setCheckLoading(false);
     setAnalysisResult(response.data.analysis);
