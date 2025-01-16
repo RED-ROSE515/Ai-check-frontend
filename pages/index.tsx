@@ -51,8 +51,8 @@ const Demo = (props: Props) => {
   const [isChecking, setIsChecking] = useState(false);
   const [totalSummary, setTotalSummary] = useState("");
   const deviceType = useDeviceCheck();
-  // const API_BASE_URL = "https://devai1.nobleblocks.com/";
-  const API_BASE_URL = "http://localhost:8000/";
+  const API_BASE_URL = "https://devai1.nobleblocks.com/";
+  // const API_BASE_URL = "http://localhost:8000/";
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
