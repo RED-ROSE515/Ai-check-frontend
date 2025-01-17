@@ -10,6 +10,7 @@ interface ErrorDetails {
 interface ErrorFinding {
   error: string;
   explanation: string;
+  location: string;
   solution: string;
   severity: string;
 }
@@ -22,6 +23,17 @@ interface ErrorCardProps {
 const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
   // Convert findings string to array by splitting on numbered items
   const findingsList = error.findings;
+
+  const getBorderColorClass = (severity: string) => {
+    switch (severity.toLowerCase()) {
+      case "low":
+        return "border-lime-500";
+      case "medium":
+        return "border-amber-500";
+      case "high":
+        return "border-red-500"; // Default border color
+    }
+  };
 
   return (
     <div
@@ -44,7 +56,9 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
         {findingsList.map((finding, index) => (
           <div
             key={index}
-            className="flex w-full items-start gap-2 overflow-x-auto text-slate-700"
+            className={`flex w-full items-start gap-2 overflow-x-auto rounded border-2 p-2 text-slate-700 ${getBorderColorClass(
+              finding.severity
+            )}`}
           >
             <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gray-300 text-sm text-black">
               {index + 1}
@@ -53,6 +67,10 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
               <span>
                 <strong>Error : </strong>
                 {finding.error}
+              </span>
+              <span>
+                <strong>Location : </strong>
+                {finding.location}
               </span>
               <span>
                 <strong>Explanation : </strong>

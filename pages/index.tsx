@@ -51,8 +51,8 @@ const Demo = (props: Props) => {
   const [isChecking, setIsChecking] = useState(false);
   const [totalSummary, setTotalSummary] = useState("");
   const deviceType = useDeviceCheck();
-  const API_BASE_URL = "https://devai1.nobleblocks.com/";
-  // const API_BASE_URL = "http://localhost:8000/";
+  // const API_BASE_URL = "https://devai1.nobleblocks.com/";
+  const API_BASE_URL = "http://localhost:8000/";
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -76,7 +76,7 @@ const Demo = (props: Props) => {
     formData.append("file", selectedFile);
     formData.append("title", selectedFile.name);
     try {
-      await axios.post(API_BASE_URL + "api/pdfs/", formData, {
+      await axios.post(API_BASE_URL + "api/papers/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -98,7 +98,7 @@ const Demo = (props: Props) => {
   const getPdfList = async () => {
     try {
       setIsGettingList(true);
-      const response = await axios.get(API_BASE_URL + "api/pdfs/");
+      const response = await axios.get(API_BASE_URL + "api/papers/");
       setPdfList(response.data);
     } catch (error) {
       console.error(error);
@@ -113,7 +113,7 @@ const Demo = (props: Props) => {
     setIsStreaming(true);
 
     const evtSource = new EventSource(
-      API_BASE_URL + `api/pdfs/${id}/check_paper_fully/`,
+      API_BASE_URL + `api/papers/${id}/check_paper_fully/`,
       {
         withCredentials: true,
       }
@@ -135,12 +135,14 @@ const Demo = (props: Props) => {
     setIsChecking(true);
     setAnalyzingId(id);
     setSummaryLoading(true);
-    const resp = await axios.get(API_BASE_URL + `api/pdfs/${id}/get_summary/`);
+    const resp = await axios.get(
+      API_BASE_URL + `api/papers/${id}/get_summary/`
+    );
     setSummaryLoading(false);
     setSummary(resp.data.summary);
     setCheckLoading(true);
     const response = await axios.get(
-      API_BASE_URL + `api/pdfs/${id}/check_paper/`
+      API_BASE_URL + `api/papers/${id}/check_paper/`
     );
     setCheckLoading(false);
     setAnalysisResult(response.data.analysis);
@@ -159,7 +161,6 @@ const Demo = (props: Props) => {
       >
         <StatisticCard />
       </div>
-      <div>You are using a {deviceType} device.</div>
       <DemoCard
         isNew
         variant={DemoCard.variant.JustifyCenter}
@@ -214,7 +215,7 @@ const Demo = (props: Props) => {
             {uploadStatus && (
               <Snackbar
                 open={true}
-                autoHideDuration={5000}
+                autoHideDuration={2000}
                 message={uploadStatus}
               />
             )}
@@ -277,7 +278,7 @@ const Demo = (props: Props) => {
       </DemoCard>
 
       {isChecking && (
-        <div className="mb-12 flex max-h-[600px] flex-row items-center justify-center overflow-y-auto rounded-md border-2 border-blue-600">
+        <div className="mb-12 flex flex-row items-center justify-center rounded-md border-2 border-blue-600">
           {summaryLoading && <CircularProgress className="my-4" />}
           {summary && <SummaryWrapper summary={summary} />}
         </div>
@@ -285,11 +286,16 @@ const Demo = (props: Props) => {
 
       {isChecking && summary && (
         <div
-          className="mb-12 flex max-h-[600px] flex-row justify-center overflow-y-auto rounded-md border-2 border-blue-600"
+          className="flexflex-row mb-12 justify-center rounded-md border-2 border-blue-600"
           style={{ backgroundColor: "#EEEEEEF0" }}
         >
           {checkLoading && <CircularProgress className="my-4" />}
-          {analysisResult && <AnalysisResult results={analysisResult} />}
+          {analysisResult && (
+            <AnalysisResult
+              results={analysisResult}
+              total_summary={totalSummary}
+            />
+          )}
         </div>
       )}
     </div>
