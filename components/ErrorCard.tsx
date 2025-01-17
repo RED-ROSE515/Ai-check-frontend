@@ -1,6 +1,5 @@
 import React from "react";
-import ReactMarkdown from "react-markdown";
-
+import ShineBorder from "./ui/shine-border";
 interface ErrorDetails {
   type: string;
   counts: number;
@@ -36,12 +35,10 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
   };
 
   return (
-    <div
-      className={`my-4 rounded-lg border-2 bg-white p-6 shadow-xl ${className}`}
-      style={{
-        borderColor: "#9D59EF",
-        backgroundColor: "transparent",
-      }}
+    <ShineBorder
+      className="${className} relative my-4 flex w-full flex-col items-stretch overflow-hidden rounded-lg border-2 bg-background p-6  shadow-xl md:shadow-xl"
+      color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+      borderWidth={2}
     >
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-3xl font-bold capitalize text-slate-800">
@@ -84,7 +81,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
           </div>
         ))}
       </div>
-    </div>
+    </ShineBorder>
   );
 };
 

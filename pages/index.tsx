@@ -15,11 +15,14 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Grid2,
   Paper,
 } from "@mui/material";
 import StatisticCard from "../components/StatisticCard";
 import AnalysisResult from "../components/AnalysisResult";
 import SummaryWrapper from "../components/SummaryWrapper";
+import SpecialSummary from "@/components/SpecialSummary";
+import LeftSider from "@/components/LeftSider";
 
 interface Props {}
 
@@ -147,158 +150,169 @@ const Demo = (props: Props) => {
     setCheckLoading(false);
     setAnalysisResult(response.data.analysis);
     setTotalSummary(response.data.summary);
+    console.log(totalSummary);
     setAnalyzingId(null);
   };
 
   return (
-    <div style={{ backgroundColor: "#F3F7F9" }} className="px-8">
-      <div
-        className={
-          deviceType === "mobile"
-            ? "mx-auto grid w-full flex-row flex-wrap gap-6"
-            : "mx-auto grid w-full flex-row flex-wrap gap-6 p-12 px-36"
-        }
-      >
-        <StatisticCard />
-      </div>
-      <DemoCard
-        isNew
-        variant={DemoCard.variant.JustifyCenter}
-        data={{
-          title: "AI Error Detector",
-        }}
-      >
-        <div className="flex w-full flex-col justify-start gap-4 md:flex-row">
-          <div className="w-full md:w-1/3">
-            <form onSubmit={handleUpload}>
-              <div className="mb-2 flex flex-row items-center justify-start gap-2">
-                <Button component="label" variant="contained" sx={{ mb: 2 }}>
-                  Choose PDF
-                  <VisuallyHiddenInput
-                    type="file"
-                    accept="application/pdf"
-                    onChange={handleFileChange}
+    <Grid2 container spacing={2} className="w-full">
+      <Grid2 size={2} className="grid">
+        <LeftSider />
+      </Grid2>
+      <Grid2 size={10} style={{ backgroundColor: "#F3F7F9" }} className="px-8">
+        <div
+          className={
+            deviceType === "mobile"
+              ? "mx-auto grid w-full flex-row flex-wrap gap-6"
+              : "mx-auto grid w-full flex-row flex-wrap gap-6 p-12 px-36"
+          }
+        >
+          <StatisticCard />
+        </div>
+        <DemoCard
+          isNew
+          variant={DemoCard.variant.JustifyCenter}
+          data={{
+            title: "AI Error Detector",
+          }}
+        >
+          <div className="flex w-full flex-col justify-start gap-4 md:flex-row">
+            <div className="w-full md:w-1/3">
+              <form onSubmit={handleUpload}>
+                <div className="mb-2 flex flex-row items-center justify-start gap-2">
+                  <Button component="label" variant="contained" sx={{ mb: 2 }}>
+                    Choose PDF
+                    <VisuallyHiddenInput
+                      type="file"
+                      accept="application/pdf"
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                  {selectedFile ? selectedFile.name : "No file selected"}
+                </div>
+                <div>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    startIcon={<CloudUpload />}
+                    disabled={!selectedFile}
+                  >
+                    Upload
+                  </Button>
+                </div>
+              </form>
+              {progress > 0 && (
+                <div className="mb-4 mt-4">
+                  <LinearProgress
+                    variant="determinate"
+                    value={progress}
+                    sx={{
+                      height: 8,
+                      borderRadius: 4,
+                      "& .MuiLinearProgress-bar": {
+                        borderRadius: 4,
+                      },
+                    }}
                   />
-                </Button>
-                {selectedFile ? selectedFile.name : "No file selected"}
-              </div>
+                  <div className="mt-1 text-right text-sm text-gray-600">
+                    {Math.round(progress)}%
+                  </div>
+                </div>
+              )}
+              {uploadStatus && (
+                <Snackbar
+                  open={true}
+                  autoHideDuration={2000}
+                  message={uploadStatus}
+                />
+              )}
+            </div>
+            <div className="flex w-full flex-col gap-4 md:w-2/3">
               <div>
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
-                  startIcon={<CloudUpload />}
-                  disabled={!selectedFile}
+                  onClick={getPdfList}
+                  disabled={isGettingList}
                 >
-                  Upload
+                  Get PDF List
                 </Button>
               </div>
-            </form>
-            {progress > 0 && (
-              <div className="mb-4 mt-4">
-                <LinearProgress
-                  variant="determinate"
-                  value={progress}
-                  sx={{
-                    height: 8,
-                    borderRadius: 4,
-                    "& .MuiLinearProgress-bar": {
-                      borderRadius: 4,
-                    },
-                  }}
-                />
-                <div className="mt-1 text-right text-sm text-gray-600">
-                  {Math.round(progress)}%
-                </div>
-              </div>
-            )}
-            {uploadStatus && (
-              <Snackbar
-                open={true}
-                autoHideDuration={2000}
-                message={uploadStatus}
-              />
-            )}
-          </div>
-          <div className="flex w-full flex-col gap-4 md:w-2/3">
-            <div>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                onClick={getPdfList}
-                disabled={isGettingList}
-              >
-                Get PDF List
-              </Button>
-            </div>
-            <div>
-              <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="pdf list table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>ID</TableCell>
-                      <TableCell>Created At</TableCell>
-                      <TableCell>Action</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {pdfList.map((pdf) => (
-                      <TableRow
-                        key={pdf.id}
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        <TableCell component="th" scope="row">
-                          {pdf.title}
-                        </TableCell>
-                        <TableCell>{pdf.id}</TableCell>
-                        <TableCell>{pdf.created_at}</TableCell>
-                        <TableCell>
-                          <Button
-                            onClick={() => handleAnalyze(pdf.id)}
-                            variant="contained"
-                            color="primary"
-                            disabled={analyzingId !== null}
-                            size="small"
-                          >
-                            {analyzingId === pdf.id ? "Analyzing..." : "Check"}
-                          </Button>
-                        </TableCell>
+              <div>
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 650 }} aria-label="pdf list table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Name</TableCell>
+                        <TableCell>ID</TableCell>
+                        <TableCell>Created At</TableCell>
+                        <TableCell>Action</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                      {pdfList.map((pdf) => (
+                        <TableRow
+                          key={pdf.id}
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                          }}
+                        >
+                          <TableCell component="th" scope="row">
+                            {pdf.title}
+                          </TableCell>
+                          <TableCell>{pdf.id}</TableCell>
+                          <TableCell>{pdf.created_at}</TableCell>
+                          <TableCell>
+                            <Button
+                              onClick={() => handleAnalyze(pdf.id)}
+                              variant="contained"
+                              color="primary"
+                              disabled={analyzingId !== null}
+                              size="small"
+                            >
+                              {analyzingId === pdf.id
+                                ? "Analyzing..."
+                                : "Check"}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </div>
             </div>
           </div>
-        </div>
-      </DemoCard>
+        </DemoCard>
 
-      {isChecking && (
-        <div className="mb-12 flex flex-row items-center justify-center rounded-md border-2 border-blue-600">
-          {summaryLoading && <CircularProgress className="my-4" />}
-          {summary && <SummaryWrapper summary={summary} />}
-        </div>
-      )}
+        {isChecking && (
+          <div className="mb-12 flex flex-row items-center justify-center rounded-md border-2 border-blue-600">
+            {summaryLoading && <CircularProgress className="my-4" />}
+            {summary && <SummaryWrapper summary={summary} />}
+          </div>
+        )}
 
-      {isChecking && summary && (
-        <div
-          className="flexflex-row mb-12 justify-center rounded-md border-2 border-blue-600"
-          style={{ backgroundColor: "#EEEEEEF0" }}
-        >
-          {checkLoading && <CircularProgress className="my-4" />}
-          {analysisResult && (
-            <AnalysisResult
-              results={analysisResult}
-              total_summary={totalSummary}
-            />
-          )}
-        </div>
-      )}
-    </div>
+        {isChecking && summary && (
+          <div>
+            <SpecialSummary summary={totalSummary} />
+            <div
+              className="mb-12 flex flex-row items-center justify-center rounded-md border-2 border-blue-600"
+              style={{ backgroundColor: "#EEEEEEF0" }}
+            >
+              {checkLoading && <CircularProgress className="my-4" />}
+              {analysisResult && (
+                <AnalysisResult
+                  results={analysisResult}
+                  total_summary={totalSummary}
+                />
+              )}
+            </div>
+          </div>
+        )}
+      </Grid2>
+    </Grid2>
   );
 };
 

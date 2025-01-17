@@ -9,41 +9,41 @@ const StatisticCard = ({}) => {
           backgroundColor="#DBF0C4"
           outlineColor="#B7DA8E"
           title="Total Papers"
-          count={5138}
+          count={0}
         />
         <Card
           backgroundColor="#96ECEC"
           outlineColor="#A0DDDB"
           title="Math Errors"
-          count={99}
+          count={0}
           percent={1.9}
         />
         <Card
           backgroundColor="#D9E9EE"
           outlineColor="#A1B8E0"
           title="Discrepancies"
-          count={230}
+          count={0}
           percent={4.5}
         />
         <Card
           backgroundColor="#D6EEEE"
           outlineColor="#9DE2E2"
           title="Methodology Errors"
-          count={54}
+          count={0}
           percent={1.1}
         />
         <Card
           backgroundColor="#D2EEB7"
           outlineColor="#62A610"
           title="Interpretation Errors"
-          count={26}
+          count={0}
           percent={0.5}
         />
         <Card
           backgroundColor="#D4F2E0"
           outlineColor="#9FDCBC"
           title="Writing Errors"
-          count={535}
+          count={0}
           percent={10.4}
         />
       </div>

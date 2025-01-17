@@ -3,6 +3,7 @@ import ErrorCard from "./ErrorCard";
 import Card from "./Card";
 import { capitalize, Divider, Tabs, Tab } from "@mui/material";
 import { getRandomColorPair } from "../utils/random";
+import { NeonGradientCard } from "./ui/neon-gradient-card";
 
 const AnalysisResult = ({ results, total_summary }) => {
   // Generate random colors once when results change
@@ -29,13 +30,12 @@ const AnalysisResult = ({ results, total_summary }) => {
       </Tabs>
       <div className="flex w-full flex-col rounded-lg p-4 md:flex-row">
         <div className="mt-4 w-full md:w-1/5">
-          <Card
-            backgroundColor={"#9D59EF"}
-            outlineColor={"#9D59EF"}
-            title={capitalize("Total Errors")}
-            className="mx-2 mb-4"
-            // count={total_summary.total_errors}
-          />
+          <NeonGradientCard className="mb-4  max-h-32 max-w-md items-center justify-center text-start">
+            <h2 className="mb-2 text-4xl font-bold text-slate-700">
+              {total_summary.total_errors}
+            </h2>
+            <strong>{capitalize("Total Errors")}</strong>
+          </NeonGradientCard>
           {results.map((result, index: number) => (
             <Card
               key={index}
