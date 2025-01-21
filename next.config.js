@@ -1,3 +1,4 @@
-const withTM = require("next-transpile-modules")(["react-github-btn"]);
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
 
-module.exports = withTM();
+module.exports = nextConfig;

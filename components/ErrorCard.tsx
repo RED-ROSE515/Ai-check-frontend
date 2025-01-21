@@ -1,5 +1,10 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import ShineBorder from "./ui/shine-border";
+import { useTheme } from "next-themes";
+import { MagicCard } from "./ui/magic-card";
+import type { ConfettiRef } from "./ui/confetti";
+import Confetti from "./ui/confetti";
+
 interface ErrorDetails {
   type: string;
   counts: number;
@@ -22,7 +27,7 @@ interface ErrorCardProps {
 const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
   // Convert findings string to array by splitting on numbered items
   const findingsList = error.findings;
-
+  const { theme } = useTheme();
   const getBorderColorClass = (severity: string) => {
     switch (severity.toLowerCase()) {
       case "low":
@@ -33,14 +38,34 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
         return "border-red-500"; // Default border color
     }
   };
-
+  const confettiRef = useRef<ConfettiRef>(null);
+  useEffect(() => {
+    if (confettiRef.current) {
+      confettiRef.current?.fire({});
+    }
+  }, []);
   return (
-    <ShineBorder
-      className="${className} relative my-4 flex w-full flex-col items-stretch overflow-hidden rounded-lg border-2 bg-background p-6  shadow-xl md:shadow-xl"
-      color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-      borderWidth={2}
+    <MagicCard
+      className="${className} md:shadow-x overflow-hiddenrounded-lg  relative my-4 flex w-full cursor-pointer flex-col items-stretch justify-center border-2 bg-background p-6 shadow-2xl"
+      gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
     >
       <div className="mb-4 flex items-center justify-between">
+        {Number(error.counts) === 0 && (
+          <div>
+            <Confetti
+              ref={confettiRef}
+              options={{
+                get angle() {
+                  return Math.random() * 360;
+                },
+              }}
+              className="absolute left-0 top-0 z-0 size-full"
+              onMouseEnter={() => {
+                confettiRef.current?.fire({});
+              }}
+            />
+          </div>
+        )}
         <h2 className="text-3xl font-bold capitalize text-slate-800">
           {error.type} Errors
         </h2>
@@ -81,7 +106,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
           </div>
         ))}
       </div>
-    </ShineBorder>
+    </MagicCard>
   );
 };
 

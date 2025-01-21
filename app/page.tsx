@@ -1,0 +1,252 @@
+"use client";
+import { useEffect, useState } from "react";
+import LeftSider from "../components/LeftSider";
+import StatisticCard from "../components/StatisticCard";
+import FileUpload from "../components/file-upload";
+import ShineBorder from "../components/ui/shine-border";
+import SummaryWrapper from "../components/SummaryWrapper";
+import SpecialSummary from "@/components/SpecialSummary";
+import AnalysisResult from "../components/AnalysisResult";
+import { Spinner } from "@heroui/spinner";
+import axios from "axios";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Pagination,
+  PaginationItem,
+  PaginationCursor,
+} from "@heroui/pagination";
+
+export default function Home() {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadStatus, setUploadStatus] = useState("");
+  const [progress, setProgress] = useState(0);
+  const [pdfList, setPdfList] = useState([]);
+  const [analysisResult, setAnalysisResult] = useState("");
+  const [summary, setSummary] = useState("");
+  const [analyzingId, setAnalyzingId] = useState<number | null>(null);
+  const [isGettingList, setIsGettingList] = useState(false);
+  const [streamData, setStreamData] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [checkLoading, setCheckLoading] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
+  const [totalSummary, setTotalSummary] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [totalResults, setTotalResults] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(0);
+
+  // const API_BASE_URL = "https://devai1.nobleblocks.com/";
+  const API_BASE_URL = "http://localhost:8000/";
+  const { toast } = useToast();
+
+  const handleFileChange = (e: any) => {
+    const file = e.target.files[0];
+    if (file && file.type === "application/pdf") {
+      setSelectedFile(file);
+      setUploadStatus("");
+    } else {
+      setSelectedFile(null);
+      setUploadStatus("Please select a valid PDF file.");
+    }
+  };
+
+  const getPdfList = async () => {
+    try {
+      setIsGettingList(true);
+      const response = await axios.get(API_BASE_URL + "api/papers/");
+      setPdfList(response.data);
+      toast({
+        title: "Paper Fetch",
+        description: "Load Pdfs successfully!",
+      });
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Paper Fetch",
+        description: "Uh, oh! Something went wrong!" + { error },
+      });
+    } finally {
+      setIsGettingList(false);
+    }
+  };
+
+  const getTotalResults = async () => {
+    try {
+      setLoading(true);
+      setSummary("");
+      setAnalysisResult("");
+      const response = await axios.get(
+        `${API_BASE_URL}api/papers/get_analyzed_results/?page=${page}`
+      );
+      setTotalResults(response.data?.data);
+      setPage(response.data.pagination.currentPage);
+      setTotalPage(response.data.pagination.totalPages);
+      toast({
+        title: "Analysis Data",
+        description: "Load Analyzed Papers!",
+      });
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Analysis Data",
+        description: "Uh, oh! Something went wrong!" + { error },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAnalyzeStream = async (id: number) => {
+    setAnalyzingId(id);
+    setStreamData("");
+    setIsStreaming(true);
+
+    const evtSource = new EventSource(
+      API_BASE_URL + `api/papers/${id}/check_paper_fully/`,
+      {
+        withCredentials: true,
+      }
+    );
+    evtSource.onmessage = (event) => {
+      console.log("Received message:", event.data, event);
+      if (event.data === "[$Analysis Done.$]") {
+        evtSource.close();
+        setAnalyzingId(null);
+      } else {
+        setStreamData((prev) => prev + event.data + "\n");
+      }
+    };
+  };
+
+  const handleAnalyze = async (id: number) => {
+    setSummary("");
+    setAnalysisResult("");
+    setIsChecking(true);
+    setAnalyzingId(id);
+    setSummaryLoading(true);
+    const resp = await axios.get(
+      API_BASE_URL + `api/papers/${id}/get_summary/`
+    );
+    setSummaryLoading(false);
+    setSummary(resp.data.summary);
+    setCheckLoading(true);
+    const response = await axios.get(
+      API_BASE_URL + `api/papers/${id}/check_paper/`
+    );
+    setCheckLoading(false);
+    setAnalysisResult(response.data.analysis);
+    setTotalSummary(response.data.summary);
+    setAnalyzingId(null);
+  };
+
+  useEffect(() => {
+    getPdfList();
+    getTotalResults();
+  }, [page]);
+
+  return (
+    <section className="flex flex-col md:flex-row items-start justify-start gap-4">
+      <div className="w-full md:w-1/6">
+        <LeftSider />
+      </div>
+
+      <div className="mt-8 w-full md:w-5/6 items-center flex flex-col justify-center">
+        <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-4 md:p-12 md:px-36">
+          <StatisticCard />
+        </div>
+        <div className="mb-4 w-full">
+          <FileUpload
+            getPdfList={() => getPdfList()}
+            AnalyzePaper={(id: number) => handleAnalyze(id)}
+          />
+        </div>
+        {isChecking && (
+          <div className="w-full card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full">
+            <ShineBorder
+              className="relative flex w-full flex-col items-stretch overflow-hidden rounded-lg border-2 bg-[#EEEEEEF0] p-6 shadow-xl md:shadow-xl"
+              color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+              borderWidth={3}
+            >
+              <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-4">
+                {summaryLoading && <Spinner color="primary" className="my-4" />}
+                {summary && <SummaryWrapper summary={summary} />}
+              </div>
+
+              {summary && (
+                <div className="mb-6 md:mb-12">
+                  <SpecialSummary summary={totalSummary} />
+                  <div
+                    className={
+                      "flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-6"
+                    }
+                  >
+                    {checkLoading && (
+                      <Spinner color="primary" className="my-4" />
+                    )}
+                    {analysisResult && (
+                      <AnalysisResult
+                        results={analysisResult}
+                        total_summary={totalSummary}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+            </ShineBorder>
+          </div>
+        )}
+        {totalResults.length > 0 &&
+          totalResults.map((result: any, index) => {
+            return (
+              <div
+                key={index}
+                className="card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full"
+              >
+                <ShineBorder
+                  className="relative flex w-full flex-col items-stretch overflow-hidden rounded-lg border-2 bg-[#EEEEEEF0] p-6 shadow-xl md:shadow-xl"
+                  color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                  borderWidth={3}
+                >
+                  <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-4">
+                    {result?.paperSummary && (
+                      <SummaryWrapper summary={result.paperSummary} />
+                    )}
+                  </div>
+
+                  <div className="mb-6 md:mb-12">
+                    <SpecialSummary summary={result.paperAnalysis.summary} />
+                    <div
+                      className={
+                        "flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-6"
+                      }
+                    >
+                      {result.paperAnalysis?.analysis && (
+                        <AnalysisResult
+                          results={result.paperAnalysis.analysis}
+                          total_summary={result.paperAnalysis.summary}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </ShineBorder>
+              </div>
+            );
+          })}
+        <Pagination
+          isCompact
+          showShadow
+          showControls
+          initialPage={1}
+          total={totalPage}
+          page={page}
+          onChange={(newPage) => setPage(newPage)}
+        />
+      </div>
+    </section>
+  );
+}

@@ -8,9 +8,9 @@ interface SpecialSummaryProps {
   quality_score: number;
 }
 
-const SpecialSummary = ({ summary }) => {
+const SpecialSummary = ({ summary }: any) => {
   return (
-    <div className="mb-8 w-full">
+    <div className="mt-2 w-full p-0 md:p-6">
       <ShineBorder
         className="relative flex w-full flex-col items-start justify-start overflow-hidden rounded-lg border bg-background md:shadow-xl"
         color={["#36FF78", "#A07CFE", "#FE8FB5", "#FFBE7B", "#FFEC99"]}

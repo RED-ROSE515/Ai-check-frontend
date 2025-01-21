@@ -1,16 +1,15 @@
 import React, { useState } from "react";
+import { Typography, Chip, Link, capitalize } from "@mui/material";
+import AnimatedGradientText from "./ui/animated-gradient-text";
+import { TextAnimate } from "./ui/text-animate";
 import {
-  Typography,
-  Chip,
-  Link,
   Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  capitalize,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./ui/accordion";
 
-const getColorForScore = (score) => {
+const getColorForScore = (score: number) => {
   switch (true) {
     case score >= 9:
       return "#2E7D32"; // Dark green
@@ -33,28 +32,31 @@ const getColorForScore = (score) => {
   }
 };
 
-const SummaryWrapper = ({ summary }) => {
+const SummaryWrapper = ({ summary }: any) => {
   const summaryLevels = [
     { title: "Child Summary", content: summary.summary.child },
     { title: "College Summary", content: summary.summary.college },
     { title: "PhD Summary", content: summary.summary.phd },
   ];
 
-  const [panel, setPanel] = useState(0);
   return (
     <div
-      className="flex w-full flex-col rounded-lg p-6"
+      className="flex w-full flex-col rounded-lg p-0 md:p-6"
       style={{ backgroundColor: "#EEEEEEF0" }}
     >
-      <Typography
-        variant="h5"
-        component="h2"
-        className="mb-4 text-center font-bold text-slate-700"
-      >
-        {summary.metadata.title}
+      <Typography variant="h5" component="h2" className="mb-4 text-center">
+        <AnimatedGradientText>
+          <TextAnimate
+            animation="slideLeft"
+            by="character"
+            className="animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-2xl font-bold text-transparent"
+          >
+            {summary.metadata.title}
+          </TextAnimate>
+        </AnimatedGradientText>
       </Typography>
 
-      <div className="mb-4 flex flex-wrap gap-2 text-slate-700">
+      <div className="my-4 flex flex-wrap gap-2 text-slate-700">
         <strong>Authors: </strong>
         {summary.metadata.authors.map((author: string, index: number) => (
           <Chip
@@ -78,23 +80,19 @@ const SummaryWrapper = ({ summary }) => {
           View Original Paper
         </Link>
       )}
-
       <div className="mt-4">
-        {summaryLevels.map((level, index) => (
-          <Accordion
-            key={index}
-            defaultExpanded={index === 0}
-            expanded={panel === index}
-            onChange={() => setPanel(index)}
-          >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h6">{level.title}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>{level.content}</Typography>
-            </AccordionDetails>
-          </Accordion>
-        ))}
+        <Accordion type="single" collapsible className="w-full">
+          {summaryLevels.map((level, index) => (
+            <AccordionItem value={index.toString()} key={index}>
+              <AccordionTrigger className="text-lg font-bold text-slate-800">
+                {level.title}
+              </AccordionTrigger>
+              <AccordionContent className="text-md font-semibold text-slate-600">
+                {level.content}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
 
       <div className="mt-4">
@@ -128,7 +126,7 @@ const SummaryWrapper = ({ summary }) => {
             summary.technical_assessment
               ? summary.technical_assessment
               : summary.summary.technical_assessment
-          ).map(([key, value]) => (
+          ).map(([key, value]: any) => (
             <Chip
               key={key}
               label={`${capitalize(key).replace("_", " ")}: ${value}`}
