@@ -1,9 +1,11 @@
+import type { ConfettiRef } from "./ui/confetti";
+
 import React, { useRef, useEffect } from "react";
 import { useTheme } from "next-themes";
-import { MagicCard } from "./ui/magic-card";
-import type { ConfettiRef } from "./ui/confetti";
-import Confetti from "./ui/confetti";
 import { Chip } from "@heroui/react";
+
+import { MagicCard } from "./ui/magic-card";
+import Confetti from "./ui/confetti";
 
 interface ErrorDetails {
   type: string;
@@ -39,11 +41,13 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
     }
   };
   const confettiRef = useRef<ConfettiRef>(null);
+
   useEffect(() => {
     if (confettiRef.current) {
       confettiRef.current?.fire({});
     }
   }, []);
+
   return (
     <MagicCard
       className="${className} md:shadow-x overflow-hiddenrounded-lg  relative my-4 flex w-full cursor-pointer flex-col items-stretch justify-center border-2 bg-background p-6 shadow-2xl"
@@ -54,12 +58,12 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
           <div>
             <Confetti
               ref={confettiRef}
+              className="absolute left-0 top-0 z-0 size-full"
               options={{
                 get angle() {
                   return Math.random() * 360;
                 },
               }}
-              className="absolute left-0 top-0 z-0 size-full"
               onMouseEnter={() => {
                 confettiRef.current?.fire({});
               }}
@@ -81,7 +85,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
           <div
             key={index}
             className={`flex w-full items-start justify-between gap-2 overflow-x-auto rounded border-2 p-2 ${theme === "dark" ? "text-gray-300" : "text-slate-700"} ${getBorderColorClass(
-              finding.severity
+              finding.severity,
             )}`}
           >
             <div className="flex space-x-2">
@@ -108,8 +112,8 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
               </div>
             </div>
             <Chip
-              variant="shadow"
               className={`${finding.severity.toLowerCase() === "high" ? "bg-red-500" : finding.severity.toLowerCase() === "medium" ? "bg-yellow-500" : "bg-green-500"}`}
+              variant="shadow"
             >
               {finding.severity}
             </Chip>

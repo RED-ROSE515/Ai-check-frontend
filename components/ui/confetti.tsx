@@ -1,4 +1,10 @@
 import type { ReactNode } from "react";
+import type {
+  GlobalOptions as ConfettiGlobalOptions,
+  CreateTypes as ConfettiInstance,
+  Options as ConfettiOptions,
+} from "canvas-confetti";
+
 import React, {
   createContext,
   forwardRef,
@@ -8,11 +14,6 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import type {
-  GlobalOptions as ConfettiGlobalOptions,
-  CreateTypes as ConfettiInstance,
-  Options as ConfettiOptions,
-} from "canvas-confetti";
 import confetti from "canvas-confetti";
 
 import { Button, ButtonProps } from "@/components/ui/button";
@@ -123,6 +124,7 @@ const ConfettiButtonComponent = ({
       const rect = event.currentTarget.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
       const y = rect.top + rect.height / 2;
+
       await confetti({
         ...options,
         origin: {

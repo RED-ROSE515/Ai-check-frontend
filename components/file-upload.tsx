@@ -1,7 +1,6 @@
 "use client";
 
 import axios, { AxiosProgressEvent, CancelTokenSource } from "axios";
-import { useToast } from "../hooks/use-toast";
 import {
   AudioWaveform,
   File,
@@ -11,10 +10,14 @@ import {
   Video,
   X,
 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useRef, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+
+import { useToast } from "../hooks/use-toast";
+
 import { Input } from "./ui/input";
 import { Progress } from "./ui/progress";
+import { useTheme } from "next-themes";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -60,46 +63,56 @@ const OtherColor = {
 export interface ImageUploadProps {
   getPdfList: () => void;
   AnalyzePaper: (id: number) => void;
+  onTriggerRef: React.MutableRefObject<(() => void) | null>;
 }
 
-const FileUpload = ({ getPdfList, AnalyzePaper }: ImageUploadProps) => {
+const FileUpload = ({
+  getPdfList,
+  AnalyzePaper,
+  onTriggerRef,
+}: ImageUploadProps) => {
   const [currentFile, setCurrentFile] = useState<FileUploadProgress | null>(
     null
   );
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const { toast } = useToast();
+  const { theme } = useTheme();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  onTriggerRef.current = () => {
+    fileInputRef.current?.click();
+  };
 
   const getFileIconAndColor = (file: File) => {
     if (file.type.includes(FileTypes.Image)) {
       return {
-        icon: <FileImage size={40} className={ImageColor.fillColor} />,
+        icon: <FileImage className={ImageColor.fillColor} size={40} />,
         color: ImageColor.bgColor,
       };
     }
 
     if (file.type.includes(FileTypes.Pdf)) {
       return {
-        icon: <File size={40} className={PdfColor.fillColor} />,
+        icon: <File className={PdfColor.fillColor} size={40} />,
         color: PdfColor.bgColor,
       };
     }
 
     if (file.type.includes(FileTypes.Audio)) {
       return {
-        icon: <AudioWaveform size={40} className={AudioColor.fillColor} />,
+        icon: <AudioWaveform className={AudioColor.fillColor} size={40} />,
         color: AudioColor.bgColor,
       };
     }
 
     if (file.type.includes(FileTypes.Video)) {
       return {
-        icon: <Video size={40} className={VideoColor.fillColor} />,
+        icon: <Video className={VideoColor.fillColor} size={40} />,
         color: VideoColor.bgColor,
       };
     }
 
     return {
-      icon: <FolderArchive size={40} className={OtherColor.fillColor} />,
+      icon: <FolderArchive className={OtherColor.fillColor} size={40} />,
       color: OtherColor.bgColor,
     };
   };
@@ -116,6 +129,7 @@ const FileUpload = ({ getPdfList, AnalyzePaper }: ImageUploadProps) => {
     if (progress === 100) {
       setUploadedFile(file);
       setCurrentFile(null);
+
       return;
     }
 
@@ -144,6 +158,7 @@ const FileUpload = ({ getPdfList, AnalyzePaper }: ImageUploadProps) => {
     });
 
     const formData = new FormData();
+
     formData.append("file", file);
     formData.append("title", file.name);
 
@@ -161,6 +176,7 @@ const FileUpload = ({ getPdfList, AnalyzePaper }: ImageUploadProps) => {
           },
         }
       );
+
       toast({
         title: "Paper Upload",
         description: "Upload successful!",
@@ -169,13 +185,11 @@ const FileUpload = ({ getPdfList, AnalyzePaper }: ImageUploadProps) => {
       getPdfList();
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log("Upload cancelled");
         toast({
           title: "Paper Upload",
           description: "Upload cancelled",
         });
       } else {
-        console.error("Upload failed:", error);
         toast({
           title: "Paper Upload",
           description: "Upload failed: " + error,
@@ -190,31 +204,32 @@ const FileUpload = ({ getPdfList, AnalyzePaper }: ImageUploadProps) => {
     maxFiles: 1,
     multiple: false,
   });
-
   return (
     <div>
       <div>
         <label
           {...getRootProps()}
-          className="relative flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 py-6 hover:bg-gray-100"
+          htmlFor="dropzone-file"
+          className={`relative flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#C8E600]  ${theme === "dark" ? " bg-slate-700 py-6 hover:bg-slate-800" : " bg-gray-50 py-6 hover:bg-gray-100"}`}
         >
           <div className="text-center">
             <div className="mx-auto max-w-min rounded-md border p-2">
               <UploadCloud size={20} />
             </div>
             <p className="mt-2 text-sm text-gray-600">
-              <span className="font-semibold">Drop a file</span>
+              <span className="font-semibold">Drop a file or Browse</span>
             </p>
             <p className="text-xs text-gray-500">
-              Click to upload a file &#40;file should be under 10 MB&#41;
+              Click to upload a file &#40;file should be under 25 MB&#41;
             </p>
           </div>
         </label>
         <Input
           {...getInputProps()}
+          className="hidden"
+          ref={fileInputRef}
           id="dropzone-file"
           type="file"
-          className="hidden"
         />
       </div>
 
@@ -236,18 +251,18 @@ const FileUpload = ({ getPdfList, AnalyzePaper }: ImageUploadProps) => {
                   <span className="text-xs">{currentFile.progress}%</span>
                 </div>
                 <Progress
-                  value={currentFile.progress}
                   className={getFileIconAndColor(currentFile.file).color}
+                  value={currentFile.progress}
                 />
               </div>
             </div>
             <button
+              className="hidden cursor-pointer items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
               onClick={() => {
                 if (currentFile.source)
                   currentFile.source.cancel("Upload cancelled");
                 removeFile();
               }}
-              className="hidden cursor-pointer items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
             >
               <X size={20} />
             </button>
@@ -274,8 +289,8 @@ const FileUpload = ({ getPdfList, AnalyzePaper }: ImageUploadProps) => {
               </div>
             </div>
             <button
-              onClick={removeFile}
               className="hidden items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
+              onClick={removeFile}
             >
               <X size={20} />
             </button>

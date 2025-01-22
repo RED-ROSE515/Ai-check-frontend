@@ -1,8 +1,9 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { AnimatePresence, motion, MotionProps, Variants } from "motion/react";
 import { ElementType } from "react";
+
+import { cn } from "@/lib/utils";
 
 type AnimationType = "text" | "word" | "character" | "line";
 type AnimationVariant =
@@ -340,6 +341,7 @@ export function TextAnimate({
     : { container: defaultContainerVariants, item: defaultItemVariants };
 
   let segments: string[] = [];
+
   switch (by) {
     case "word":
       segments = children.split(/(\s+)/);
@@ -359,23 +361,23 @@ export function TextAnimate({
   return (
     <AnimatePresence mode="popLayout">
       <MotionComponent
-        variants={finalVariants.container}
-        initial="hidden"
-        whileInView={startOnView ? "show" : undefined}
         animate={startOnView ? undefined : "show"}
-        exit="exit"
         className={cn("whitespace-pre-wrap", className)}
+        exit="exit"
+        initial="hidden"
+        variants={finalVariants.container}
+        whileInView={startOnView ? "show" : undefined}
         {...props}
       >
         {segments.map((segment, i) => (
           <motion.span
             key={`${by}-${segment}-${i}`}
-            variants={finalVariants.item}
-            custom={i * staggerTimings[by]}
             className={cn(
               by === "line" ? "block" : "inline-block whitespace-pre",
               segmentClassName,
             )}
+            custom={i * staggerTimings[by]}
+            variants={finalVariants.item}
           >
             {segment}
           </motion.span>

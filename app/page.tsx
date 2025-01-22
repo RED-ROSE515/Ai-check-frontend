@@ -1,21 +1,23 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { Spinner } from "@heroui/spinner";
+import axios from "axios";
+import { useTheme } from "next-themes";
+import { Pagination } from "@heroui/pagination";
+
 import LeftSider from "../components/LeftSider";
 import StatisticCard from "../components/StatisticCard";
 import FileUpload from "../components/file-upload";
 import ShineBorder from "../components/ui/shine-border";
 import SummaryWrapper from "../components/SummaryWrapper";
-import SpecialSummary from "@/components/SpecialSummary";
 import AnalysisResult from "../components/AnalysisResult";
-import { Spinner } from "@heroui/spinner";
-import axios from "axios";
-import { useTheme } from "next-themes";
+
+import SpecialSummary from "@/components/SpecialSummary";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Pagination,
-  PaginationItem,
-  PaginationCursor,
-} from "@heroui/pagination";
+
+type TriggerRefType = {
+  current: (() => void) | null;
+};
 
 export default function Home() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -40,8 +42,11 @@ export default function Home() {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const { toast } = useToast();
   const { theme } = useTheme();
+  const triggerUploadRef: TriggerRefType = useRef(null);
+
   const handleFileChange = (e: any) => {
     const file = e.target.files[0];
+
     if (file && file.type === "application/pdf") {
       setSelectedFile(file);
       setUploadStatus("");
@@ -55,6 +60,7 @@ export default function Home() {
     try {
       setIsGettingList(true);
       const response = await axios.get(API_BASE_URL + "api/papers/");
+
       setPdfList(response.data);
       toast({
         title: "Paper Fetch",
@@ -79,6 +85,7 @@ export default function Home() {
       const response = await axios.get(
         `${API_BASE_URL}api/papers/get_analyzed_results/?page=${page}`
       );
+
       setTotalResults(response.data?.data);
       setPage(response.data.pagination.currentPage);
       setTotalPage(response.data.pagination.totalPages);
@@ -112,8 +119,8 @@ export default function Home() {
         withCredentials: true,
       }
     );
+
     evtSource.onmessage = (event) => {
-      console.log("Received message:", event.data, event);
       if (event.data === "[$Analysis Done.$]") {
         evtSource.close();
         setAnalyzingId(null);
@@ -132,12 +139,14 @@ export default function Home() {
     const resp = await axios.get(
       API_BASE_URL + `api/papers/${id}/get_summary/`
     );
+
     setSummaryLoading(false);
     setSummary(resp.data.summary);
     setCheckLoading(true);
     const response = await axios.get(
       API_BASE_URL + `api/papers/${id}/check_paper/`
     );
+
     setCheckLoading(false);
     setAnalysisResult(response.data.analysis);
     setTotalSummary(response.data.summary);
@@ -152,7 +161,7 @@ export default function Home() {
   return (
     <section className="flex flex-col md:flex-row items-start justify-start gap-4">
       <div className="w-full md:w-1/6">
-        <LeftSider />
+        <LeftSider onUpload={() => triggerUploadRef.current?.()} />
       </div>
 
       <div className="mt-8 w-full md:w-5/6 items-center flex flex-col justify-center">
@@ -161,19 +170,20 @@ export default function Home() {
         </div>
         <div className="mb-4 w-full">
           <FileUpload
-            getPdfList={() => getPdfList()}
             AnalyzePaper={(id: number) => handleAnalyze(id)}
+            getPdfList={() => getPdfList()}
+            onTriggerRef={triggerUploadRef}
           />
         </div>
         {isChecking && (
           <div className="card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full">
             <ShineBorder
+              borderWidth={3}
               className="relative flex w-full flex-col items-stretch overflow-hidden rounded-lg border-2 bg-[#EEEEEEF0] p-6 shadow-xl md:shadow-xl"
               color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-              borderWidth={3}
             >
               <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-4">
-                {summaryLoading && <Spinner color="primary" className="my-4" />}
+                {summaryLoading && <Spinner className="my-4" color="primary" />}
                 {summary && <SummaryWrapper summary={summary} />}
               </div>
 
@@ -186,7 +196,7 @@ export default function Home() {
                     }
                   >
                     {checkLoading && (
-                      <Spinner color="primary" className="my-4" />
+                      <Spinner className="my-4" color="primary" />
                     )}
                     {analysisResult && (
                       <AnalysisResult
@@ -208,9 +218,9 @@ export default function Home() {
                 className="card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full"
               >
                 <ShineBorder
+                  borderWidth={3}
                   className={`relative flex w-full flex-col items-stretch overflow-hidden rounded-lg border-2 p-6 shadow-xl md:shadow-xl ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
                   color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-                  borderWidth={3}
                 >
                   <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-4">
                     {result?.paperSummary && (
@@ -239,11 +249,11 @@ export default function Home() {
           })}
         <Pagination
           isCompact
-          showShadow
           showControls
+          showShadow
           initialPage={1}
-          total={totalPage}
           page={page}
+          total={totalPage}
           onChange={(newPage) => setPage(newPage)}
         />
       </div>

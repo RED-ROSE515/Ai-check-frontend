@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import { Typography, Chip, Link, capitalize } from "@mui/material";
-import AnimatedGradientText from "./ui/animated-gradient-text";
-import { TextAnimate } from "./ui/text-animate";
-import childImage from "../public/child.jpg";
-import collegeImage from "../public/college.jpg";
-import phDImage from "../public/phd.jpg";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Accordion, AccordionItem } from "@heroui/react";
+
+import childImage from "../public/child.jpg";
+import collegeImage from "../public/college.jpg";
+import phDImage from "../public/phd.jpg";
+
+import { TextAnimate } from "./ui/text-animate";
+import AnimatedGradientText from "./ui/animated-gradient-text";
 const getColorForScore = (score: number) => {
   switch (true) {
     case score >= 9:
@@ -56,7 +58,7 @@ const SummaryWrapper = ({ summary }: any) => {
           : { backgroundColor: "#EEEEEEF0" }
       }
     >
-      <Typography variant="h5" component="h2" className="mb-4 text-center">
+      <Typography className="mb-4 text-center" component="h2" variant="h5">
         <AnimatedGradientText>
           <TextAnimate
             animation="slideLeft"
@@ -75,21 +77,21 @@ const SummaryWrapper = ({ summary }: any) => {
         {summary.metadata.authors.map((author: string, index: number) => (
           <Chip
             key={index}
+            color={`${theme === "dark" ? "secondary" : "primary"}`}
             label={
               author.length > 75 ? author.substring(0, 70) + "..." : author
             }
             variant="outlined"
-            color={`${theme === "dark" ? "secondary" : "primary"}`}
           />
         ))}
       </div>
 
       {summary.metadata.paper_link && (
         <Link
-          href={summary.metadata.paper_link}
-          target="_blank"
-          rel="noopener noreferrer"
           className={`mb-4 block hover:underline ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
+          href={summary.metadata.paper_link}
+          rel="noopener noreferrer"
+          target="_blank"
         >
           View Original Paper
         </Link>
@@ -97,7 +99,6 @@ const SummaryWrapper = ({ summary }: any) => {
       <div className="mt-4 gap-1">
         <Accordion
           className="w-full"
-          variant="splitted"
           motionProps={{
             variants: {
               enter: {
@@ -136,22 +137,23 @@ const SummaryWrapper = ({ summary }: any) => {
               },
             },
           }}
+          variant="splitted"
         >
           {summaryLevels.map((level, index) => (
             <AccordionItem
+              key={index}
               startContent={
                 <Image
+                  priority
+                  alt="NERDBUNNY LOGO"
+                  className="rounded-lg"
+                  height="45"
                   src={level.image}
                   width="45"
-                  height="45"
-                  className="rounded-lg"
-                  alt="NERDBUNNY LOGO"
-                  priority
                 />
               }
               title={level.title}
               value={index.toString()}
-              key={index}
             >
               <p
                 className={`text-md font-semibold ${theme === "dark" ? "text-gray-200" : "text-slate-600"}`}
@@ -171,22 +173,22 @@ const SummaryWrapper = ({ summary }: any) => {
         </span>
         <div className="flex flex-wrap gap-2">
           <Typography
-            variant="body1"
             className={`${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
+            variant="body1"
           >
             <strong>Date: </strong>{" "}
             {summary.metadata.publication_info.date || "Unknown"}
           </Typography>
           <Typography
-            variant="body1"
             className={`${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
+            variant="body1"
           >
             <strong>Journal: </strong>
             {summary.metadata?.publication_info?.journal || "Unknown"}
           </Typography>
           <Typography
-            variant="body1"
             className={`${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
+            variant="body1"
           >
             <strong>Keywords: </strong>
             {summary.metadata.publication_info.keywords
@@ -206,12 +208,12 @@ const SummaryWrapper = ({ summary }: any) => {
           {Object.entries(
             summary.technical_assessment
               ? summary.technical_assessment
-              : summary.summary.technical_assessment
+              : summary.summary.technical_assessment,
           ).map(([key, value]: any) => (
             <Chip
               key={key}
-              label={`${capitalize(key).replace("_", " ")}: ${value}`}
               className="text-lg font-bold text-slate-400"
+              label={`${capitalize(key).replace("_", " ")}: ${value}`}
               style={{
                 backgroundColor: getColorForScore(value),
                 color: "white",

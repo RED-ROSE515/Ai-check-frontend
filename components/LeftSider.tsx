@@ -1,26 +1,31 @@
 import React from "react";
-import { ShinyButton } from "./ui/shiny-button";
-import logoWhite from "../public/LogoPurple.png";
-import logoDark from "../public/LogoLime.png";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { Card, CardHeader, CardBody, CardFooter } from "@heroui/card";
+import { Card, CardHeader, CardBody } from "@heroui/card";
 
-const LeftSider = () => {
+import logoDark from "../public/LogoLime.png";
+import logoWhite from "../public/LogoPurple.png";
+
+import { ShinyButton } from "./ui/shiny-button";
+
+const LeftSider = ({ onUpload }: any) => {
   const { theme } = useTheme();
+
   return (
     <Card className="">
       <CardHeader className="flex items-center justify-center">
         {theme === "dark" ? (
-          <Image src={logoDark} alt="NERDBUNNY LOGO" priority />
+          <Image priority alt="NERDBUNNY LOGO" src={logoDark} />
         ) : (
-          <Image src={logoWhite} alt="NERDBUNNY LOGO" priority />
+          <Image priority alt="NERDBUNNY LOGO" src={logoWhite} />
         )}
       </CardHeader>
       <CardBody className="flex flex-col items-center justify-start h-screen">
         <div className="px-4 md:px-6 text-center">
           <h2 className="text-xl md:text-2xl font-bold">Instructions</h2>
-          <h1 className="mt-4 text-4xl md:text-5xl font-bold text-slate-800 font-fantasy">
+          <h1
+            className={`mt-4 text-4xl md:text-5xl font-bold ${theme === "dark" ? `text-gray-200` : `text-slate-800`} font-fantasy`}
+          >
             Let&apos;s Check Your Paper!
           </h1>
           <p className="mt-4 text-base md:text-md text-slate-700">
@@ -28,7 +33,9 @@ const LeftSider = () => {
             check for logical, methodological, and others for you.
           </p>
 
-          <ShinyButton className="mt-8">Upload</ShinyButton>
+          <ShinyButton className="mt-8 bg-[#C8E600]" onClick={onUpload}>
+            Upload
+          </ShinyButton>
         </div>
       </CardBody>
     </Card>

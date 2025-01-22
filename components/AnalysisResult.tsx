@@ -1,23 +1,24 @@
-import React, { useState, useMemo } from "react";
-import ErrorCard from "./ErrorCard";
-import { capitalize, Divider, Badge } from "@mui/material";
+import React, { useState } from "react";
+import { Divider } from "@mui/material";
 import { Tabs, Tab } from "@heroui/tabs";
 import { Chip } from "@heroui/chip";
+
+import ErrorCard from "./ErrorCard";
 
 export const AllIcon = () => {
   return (
     <svg
-      width="32"
+      fill="none"
       height="32"
       viewBox="0 0 64 64"
-      fill="none"
+      width="32"
       xmlns="http://www.w3.org/2000/svg"
     >
       <circle
         cx="32"
         cy="32"
-        r="30"
         fill="#4A90E2"
+        r="30"
         stroke="#333"
         strokeWidth="2"
       />
@@ -28,14 +29,14 @@ export const AllIcon = () => {
         strokeWidth="2"
       />
       <text
-        x="32"
-        y="36"
+        alignmentBaseline="middle"
+        fill="white"
         fontFamily="Arial"
         fontSize="16"
         fontWeight="bold"
-        fill="white"
         textAnchor="middle"
-        alignmentBaseline="middle"
+        x="32"
+        y="36"
       >
         ALL
       </text>
@@ -47,10 +48,10 @@ export const ErrorIcon = ({ type }: any) => {
     <div>
       {type === "Mathematical and Calculation Analysis" && (
         <svg
-          width="32"
+          fill="none"
           height="32"
           viewBox="0 0 64 64"
-          fill="none"
+          width="32"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
@@ -62,20 +63,20 @@ export const ErrorIcon = ({ type }: any) => {
           <path
             d="M20 25L44 39M20 39L44 25"
             stroke="white"
-            strokeWidth="4"
             strokeLinecap="round"
+            strokeWidth="4"
           />
           <path d="M28 16H36L34 22H30L28 16Z" fill="white" />
           <path d="M28 48H36L34 42H30L28 48Z" fill="white" />
-          <circle cx="32" cy="32" r="3" fill="white" />
+          <circle cx="32" cy="32" fill="white" r="3" />
         </svg>
       )}
       {type === "Methodological Issues" && (
         <svg
-          width="32"
+          fill="none"
           height="32"
           viewBox="0 0 64 64"
-          fill="none"
+          width="32"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
@@ -85,32 +86,32 @@ export const ErrorIcon = ({ type }: any) => {
           <path
             d="M20 20H44M20 32H44M20 44H44"
             stroke="white"
-            strokeWidth="3"
             strokeLinecap="round"
+            strokeWidth="3"
           />
-          <circle cx="26" cy="20" r="4" fill="#FF6B6B" />
-          <circle cx="38" cy="32" r="4" fill="#FF6B6B" />
-          <circle cx="32" cy="44" r="4" fill="#FF6B6B" />
+          <circle cx="26" cy="20" fill="#FF6B6B" r="4" />
+          <circle cx="38" cy="32" fill="#FF6B6B" r="4" />
+          <circle cx="32" cy="44" fill="#FF6B6B" r="4" />
           <path d="M26 20L38 32L32 44" stroke="#FF6B6B" strokeWidth="2" />
         </svg>
       )}
       {type === "Logical Framework" && (
         <svg
-          width="32"
+          fill="none"
           height="32"
           viewBox="0 0 64 64"
-          fill="none"
+          width="32"
           xmlns="http://www.w3.org/2000/svg"
         >
           <rect
-            x="8"
-            y="8"
-            width="48"
+            fill="#FFD700"
             height="48"
             rx="4"
-            fill="#FFD700"
             stroke="#B8860B"
             strokeWidth="2"
+            width="48"
+            x="8"
+            y="8"
           />
           <path
             d="M16 16H48M16 32H48M16 48H48"
@@ -120,25 +121,25 @@ export const ErrorIcon = ({ type }: any) => {
           <path
             d="M24 24L40 40M40 24L24 40"
             stroke="#FF0000"
-            strokeWidth="3"
             strokeLinecap="round"
+            strokeWidth="3"
           />
           <circle
             cx="32"
             cy="32"
+            fill="none"
             r="12"
             stroke="#FF0000"
             strokeWidth="2"
-            fill="none"
           />
         </svg>
       )}
       {type === "Data Analysis " && (
         <svg
-          width="64"
+          fill="none"
           height="64"
           viewBox="0 0 64 64"
-          fill="none"
+          width="64"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
@@ -149,69 +150,69 @@ export const ErrorIcon = ({ type }: any) => {
           />
           <path d="M8 44L20 32L32 44L56 20" stroke="#4CAF50" strokeWidth="3" />
           <path d="M8 20L20 32L32 20L56 44" stroke="#FF4444" strokeWidth="3" />
-          <circle cx="20" cy="32" r="4" fill="#333" />
-          <circle cx="32" cy="32" r="4" fill="#333" />
-          <circle cx="44" cy="32" r="4" fill="#333" />
+          <circle cx="20" cy="32" fill="#333" r="4" />
+          <circle cx="32" cy="32" fill="#333" r="4" />
+          <circle cx="44" cy="32" fill="#333" r="4" />
         </svg>
       )}
       {type === "Technical Presentation" && (
         <svg
-          width="32"
+          fill="none"
           height="32"
           viewBox="0 0 64 64"
-          fill="none"
+          width="32"
           xmlns="http://www.w3.org/2000/svg"
         >
           <rect
-            x="8"
-            y="8"
-            width="48"
+            fill="#F5F5F5"
             height="48"
             rx="4"
-            fill="#F5F5F5"
             stroke="#333"
             strokeWidth="2"
+            width="48"
+            x="8"
+            y="8"
           />
           <path d="M16 16H48M16 32H48M16 48H48" stroke="#333" strokeWidth="3" />
           <path
             d="M24 24L40 40M40 24L24 40"
             stroke="#FF0000"
-            strokeWidth="3"
             strokeLinecap="round"
+            strokeWidth="3"
           />
           <rect
-            x="20"
-            y="20"
-            width="24"
+            fill="none"
             height="24"
             rx="2"
             stroke="#FF0000"
             strokeWidth="2"
-            fill="none"
+            width="24"
+            x="20"
+            y="20"
           />
           <circle
             cx="32"
             cy="32"
+            fill="none"
             r="8"
             stroke="#FF0000"
             strokeWidth="2"
-            fill="none"
           />
         </svg>
       )}
       {type === "Research Quality" && (
         <svg
-          width="32"
+          fill="none"
           height="32"
           viewBox="0 0 64 64"
-          fill="none"
+          width="32"
           xmlns="http://www.w3.org/2000/svg"
         >
           <circle
             cx="32"
             cy="32"
-            r="24"
             fill="#E8E8E8"
+            r="24"
             stroke="#333"
             strokeWidth="2"
           />
@@ -219,16 +220,16 @@ export const ErrorIcon = ({ type }: any) => {
           <path
             d="M24 24L40 40M40 24L24 40"
             stroke="#FF0000"
-            strokeWidth="3"
             strokeLinecap="round"
+            strokeWidth="3"
           />
           <circle
             cx="32"
             cy="32"
+            fill="none"
             r="12"
             stroke="#FF0000"
             strokeWidth="2"
-            fill="none"
           />
           <path d="M32 20L36 28H28L32 20Z" fill="#FF0000" />
         </svg>
@@ -251,10 +252,10 @@ const AnalysisResult = ({ results, total_summary }: any) => {
             tab: "max-w-fit px-0 h-12",
             tabContent: "group-data-[selected=true]:text-[#06b6d4]",
           }}
-          onSelectionChange={(key) => setCurrentTab(Number(key))}
           color="primary"
-          variant="underlined"
           selectedKey={String(currentTab)}
+          variant="underlined"
+          onSelectionChange={(key) => setCurrentTab(Number(key))}
         >
           <Tab
             key={0}
@@ -292,12 +293,12 @@ const AnalysisResult = ({ results, total_summary }: any) => {
             <div key={index}>
               {currentTab === 0 ? (
                 <div>
-                  {index !== 0 && <Divider textAlign="left"></Divider>}
-                  <ErrorCard key={index} error={result} className="mb-4" />
+                  {index !== 0 && <Divider textAlign="left" />}
+                  <ErrorCard key={index} className="mb-4" error={result} />
                 </div>
               ) : (
                 currentTab - 1 === index && (
-                  <ErrorCard key={index} error={result} className="mb-4" />
+                  <ErrorCard key={index} className="mb-4" error={result} />
                 )
               )}
             </div>

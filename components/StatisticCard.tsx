@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
-import Card from "./Card";
 import axios from "axios";
+import { Card, CardBody, CardFooter } from "@heroui/react";
+import Image from "next/image";
+import PaperImage from "../public/Papers.png";
+import MathImage from "../public/Math.png";
+import ResearchImage from "../public/Research.png";
+import FigureImage from "../public/Figure.png";
+import FormatImage from "../public/Format.png";
+import LogicalImage from "../public/Logical.png";
+import MethodologyImage from "../public/Methdology.png";
+import TechnicalImage from "../public/Technical.png";
+import DataImage from "../public/Data.png";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
 interface ErrorStatistics {
   mathErrors: number;
   methdologyErrors: number;
@@ -50,6 +59,7 @@ const StatisticCard = ({}) => {
 
   const getRandomColors = () => {
     const randomIndex = Math.floor(Math.random() * colorPairs.length);
+
     return colorPairs[randomIndex];
   };
 
@@ -58,6 +68,7 @@ const StatisticCard = ({}) => {
     const colors = Array(7)
       .fill(null)
       .map(() => getRandomColors());
+
     setCardColors(colors);
   }, []);
 
@@ -67,6 +78,7 @@ const StatisticCard = ({}) => {
       const response = await axios.get(
         `${API_BASE_URL}api/papers/get_statistics/`
       );
+
       setStatistics(response.data?.data);
     } catch (error) {
       console.error(error);
@@ -83,51 +95,74 @@ const StatisticCard = ({}) => {
     return null; // Or a loading state
   }
 
+  const list = [
+    {
+      title: "Total Papers",
+      img: PaperImage,
+      counts: statistics.totalPapers,
+    },
+    {
+      title: "Mathematical And Calculation  Errors",
+      img: MathImage,
+      counts: statistics.errorStatistics.mathErrors,
+    },
+    {
+      title: "Methodological Errors",
+      img: MethodologyImage,
+      counts: statistics.errorStatistics.methdologyErrors,
+    },
+    {
+      title: "Logical Framework Errors",
+      img: LogicalImage,
+      counts: statistics.errorStatistics.dataAnalysisErrors,
+    },
+    {
+      title: "Data Analysis Errors",
+      img: DataImage,
+      counts: statistics.errorStatistics.dataAnalysisErrors,
+    },
+    {
+      title: "Technical Presentation Errors",
+      img: TechnicalImage,
+      counts: statistics.errorStatistics.technicalPresentationErrors,
+    },
+    {
+      title: "Research Quality Errors",
+      img: ResearchImage,
+      counts: statistics.errorStatistics.researchQualityErrors,
+    },
+    {
+      title: "Figure Errors",
+      img: FigureImage,
+      counts: statistics.errorStatistics.technicalPresentationErrors,
+    },
+    {
+      title: "Writing Errors",
+      img: FormatImage,
+      counts: statistics.errorStatistics.technicalPresentationErrors,
+    },
+  ];
+
   return (
     <React.Fragment>
-      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-3">
-        <Card
-          backgroundColor={cardColors[0].bg}
-          outlineColor={cardColors[0].outline}
-          title="Total Papers"
-          count={statistics.totalPapers}
-        />
-        <Card
-          backgroundColor={cardColors[1].bg}
-          outlineColor={cardColors[1].outline}
-          title="Mathematical And Calculation  Errors"
-          count={statistics.errorStatistics.mathErrors}
-        />
-        <Card
-          backgroundColor={cardColors[2].bg}
-          outlineColor={cardColors[2].outline}
-          title="Methodological Errors"
-          count={statistics.errorStatistics.methdologyErrors}
-        />
-        <Card
-          backgroundColor={cardColors[3].bg}
-          outlineColor={cardColors[3].outline}
-          title="Logical Framework Errors"
-          count={statistics.errorStatistics.logicalFrameworkErrors}
-        />
-        <Card
-          backgroundColor={cardColors[4].bg}
-          outlineColor={cardColors[4].outline}
-          title="Data Analysis Errors"
-          count={statistics.errorStatistics.dataAnalysisErrors}
-        />
-        <Card
-          backgroundColor={cardColors[5].bg}
-          outlineColor={cardColors[5].outline}
-          title="Technical Presentation Errors"
-          count={statistics.errorStatistics.technicalPresentationErrors}
-        />
-        <Card
-          backgroundColor={cardColors[6].bg}
-          outlineColor={cardColors[6].outline}
-          title="Research Quality Errors"
-          count={statistics.errorStatistics.researchQualityErrors}
-        />
+      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-4 lg:grid-cols-4">
+        {list.map((item, index) => (
+          <Card isPressable shadow="sm" key={index}>
+            <CardBody className="overflow-visible p-0">
+              <Image
+                alt={"Total Papers"}
+                className="w-full object-cover h-[140px] shadow-sm"
+                width={500}
+                height={500}
+                src={item.img}
+              />
+            </CardBody>
+            <CardFooter className="text-small justify-between">
+              <b>{item.title}</b>
+              <p className="text-default-500">{item.counts}</p>
+            </CardFooter>
+          </Card>
+        ))}
       </div>
     </React.Fragment>
   );

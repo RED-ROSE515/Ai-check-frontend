@@ -1,5 +1,6 @@
-import ShineBorder from "./ui/shine-border";
 import { useTheme } from "next-themes";
+
+import ShineBorder from "./ui/shine-border";
 
 interface SpecialSummaryProps {
   total_errors: number;
@@ -11,12 +12,13 @@ interface SpecialSummaryProps {
 
 const SpecialSummary = ({ summary }: any) => {
   const { theme } = useTheme();
+
   return (
     <div className="mt-2 w-full p-0 md:p-6">
       <ShineBorder
+        borderWidth={5}
         className="relative flex w-full flex-col items-start justify-start overflow-hidden rounded-lg border bg-background md:shadow-xl"
         color={["#36FF78", "#A07CFE", "#FE8FB5", "#FFBE7B", "#FFEC99"]}
-        borderWidth={5}
       >
         <span
           className={`text-2xl font-bold ${theme === "dark" ? `text-gray-100` : "text-slate-800"}`}
@@ -25,8 +27,8 @@ const SpecialSummary = ({ summary }: any) => {
         </span>
         {summary.major_concerns?.map((concern: string, index: number) => (
           <p
-            className={`font-semibold ${theme === "dark" ? `text-gray-400` : "text-slate-700"}`}
             key={index}
+            className={`font-semibold ${theme === "dark" ? `text-gray-400` : "text-slate-700"}`}
           >
             {concern}
           </p>
@@ -40,12 +42,12 @@ const SpecialSummary = ({ summary }: any) => {
         {summary.improvement_priority?.map(
           (priority: string, index: number) => (
             <p
-              className={`font-semibold ${theme === "dark" ? `text-gray-400` : "text-slate-700"}`}
               key={index}
+              className={`font-semibold ${theme === "dark" ? `text-gray-400` : "text-slate-700"}`}
             >
               {priority}
             </p>
-          )
+          ),
         )}
 
         <span
@@ -62,7 +64,7 @@ const SpecialSummary = ({ summary }: any) => {
         <span
           className={`mt-4 text-2xl font-bold ${theme === "dark" ? `text-gray-100` : "text-slate-800"}`}
         >
-          Total Quality Score : {summary?.quality_score}
+          Total Quality Score : {summary?.quality_score} out of 10.
         </span>
       </ShineBorder>
     </div>

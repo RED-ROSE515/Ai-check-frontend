@@ -32,6 +32,7 @@ export function MagicCard({
         const { left, top } = cardRef.current.getBoundingClientRect();
         const clientX = e.clientX;
         const clientY = e.clientY;
+
         mouseX.set(clientX - left);
         mouseY.set(clientY - top);
       }
