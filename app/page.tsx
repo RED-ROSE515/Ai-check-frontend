@@ -9,6 +9,7 @@ import SpecialSummary from "@/components/SpecialSummary";
 import AnalysisResult from "../components/AnalysisResult";
 import { Spinner } from "@heroui/spinner";
 import axios from "axios";
+import { useTheme } from "next-themes";
 import { useToast } from "@/hooks/use-toast";
 import {
   Pagination,
@@ -36,10 +37,9 @@ export default function Home() {
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
 
-  // const API_BASE_URL = "https://devai1.nobleblocks.com/";
-  const API_BASE_URL = "http://localhost:8000/";
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const { toast } = useToast();
-
+  const { theme } = useTheme();
   const handleFileChange = (e: any) => {
     const file = e.target.files[0];
     if (file && file.type === "application/pdf") {
@@ -166,7 +166,7 @@ export default function Home() {
           />
         </div>
         {isChecking && (
-          <div className="w-full card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full">
+          <div className="card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full">
             <ShineBorder
               className="relative flex w-full flex-col items-stretch overflow-hidden rounded-lg border-2 bg-[#EEEEEEF0] p-6 shadow-xl md:shadow-xl"
               color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
@@ -208,7 +208,7 @@ export default function Home() {
                 className="card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full"
               >
                 <ShineBorder
-                  className="relative flex w-full flex-col items-stretch overflow-hidden rounded-lg border-2 bg-[#EEEEEEF0] p-6 shadow-xl md:shadow-xl"
+                  className={`relative flex w-full flex-col items-stretch overflow-hidden rounded-lg border-2 p-6 shadow-xl md:shadow-xl ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
                   color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
                   borderWidth={3}
                 >

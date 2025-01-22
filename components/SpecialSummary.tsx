@@ -1,4 +1,5 @@
 import ShineBorder from "./ui/shine-border";
+import { useTheme } from "next-themes";
 
 interface SpecialSummaryProps {
   total_errors: number;
@@ -9,6 +10,7 @@ interface SpecialSummaryProps {
 }
 
 const SpecialSummary = ({ summary }: any) => {
+  const { theme } = useTheme();
   return (
     <div className="mt-2 w-full p-0 md:p-6">
       <ShineBorder
@@ -16,34 +18,50 @@ const SpecialSummary = ({ summary }: any) => {
         color={["#36FF78", "#A07CFE", "#FE8FB5", "#FFBE7B", "#FFEC99"]}
         borderWidth={5}
       >
-        <span className="text-2xl font-bold text-slate-800 ">
+        <span
+          className={`text-2xl font-bold ${theme === "dark" ? `text-gray-100` : "text-slate-800"}`}
+        >
           Major Concerns
         </span>
         {summary.major_concerns?.map((concern: string, index: number) => (
-          <p className="font-semibold text-slate-700" key={index}>
+          <p
+            className={`font-semibold ${theme === "dark" ? `text-gray-400` : "text-slate-700"}`}
+            key={index}
+          >
             {concern}
           </p>
         ))}
 
-        <span className="mt-4 text-2xl font-bold text-slate-800">
+        <span
+          className={`mt-4 text-2xl font-bold ${theme === "dark" ? `text-gray-100` : "text-slate-800"}`}
+        >
           Improvement Priority
         </span>
         {summary.improvement_priority?.map(
           (priority: string, index: number) => (
-            <p className="font-semibold text-slate-700" key={index}>
+            <p
+              className={`font-semibold ${theme === "dark" ? `text-gray-400` : "text-slate-700"}`}
+              key={index}
+            >
               {priority}
             </p>
           )
         )}
 
-        <span className="mt-4 text-2xl font-bold text-slate-800">
+        <span
+          className={`mt-4 text-2xl font-bold ${theme === "dark" ? `text-gray-100` : "text-slate-800"}`}
+        >
           Overall Assessment
         </span>
-        <p className="font-semibold text-slate-700">
+        <p
+          className={`font-semibold ${theme === "dark" ? `text-gray-400` : "text-slate-700"}`}
+        >
           {summary?.overall_assessment}
         </p>
 
-        <span className="mt-4 text-2xl font-bold text-slate-800">
+        <span
+          className={`mt-4 text-2xl font-bold ${theme === "dark" ? `text-gray-100` : "text-slate-800"}`}
+        >
           Total Quality Score : {summary?.quality_score}
         </span>
       </ShineBorder>

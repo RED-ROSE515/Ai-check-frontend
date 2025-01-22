@@ -1,9 +1,9 @@
 import React, { useRef, useEffect } from "react";
-import ShineBorder from "./ui/shine-border";
 import { useTheme } from "next-themes";
 import { MagicCard } from "./ui/magic-card";
 import type { ConfettiRef } from "./ui/confetti";
 import Confetti from "./ui/confetti";
+import { Chip } from "@heroui/react";
 
 interface ErrorDetails {
   type: string;
@@ -66,7 +66,9 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
             />
           </div>
         )}
-        <h2 className="text-3xl font-bold capitalize text-slate-800">
+        <h2
+          className={`text-3xl font-bold capitalize ${theme === "dark" ? "text-gray-200" : "text-slate-800"}`}
+        >
           {error.type} Errors
         </h2>
         <span className="rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-800">
@@ -78,31 +80,39 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
         {findingsList.map((finding, index) => (
           <div
             key={index}
-            className={`flex w-full items-start gap-2 overflow-x-auto rounded border-2 p-2 text-slate-700 ${getBorderColorClass(
+            className={`flex w-full items-start justify-between gap-2 overflow-x-auto rounded border-2 p-2 ${theme === "dark" ? "text-gray-300" : "text-slate-700"} ${getBorderColorClass(
               finding.severity
             )}`}
           >
-            <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gray-300 text-sm text-black">
-              {index + 1}
-            </span>
-            <div className="flex flex-col">
-              <span>
-                <strong>Error : </strong>
-                {finding.error}
+            <div className="flex space-x-2">
+              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gray-300 text-sm text-black">
+                {index + 1}
               </span>
-              <span>
-                <strong>Location : </strong>
-                {finding.location}
-              </span>
-              <span>
-                <strong>Explanation : </strong>
-                {finding.explanation}
-              </span>
-              <span>
-                <strong>Solution : </strong>
-                {finding.solution}
-              </span>
+              <div className="flex flex-col">
+                <span>
+                  <strong>Error : </strong>
+                  {finding.error}
+                </span>
+                <span>
+                  <strong>Location : </strong>
+                  {finding.location}
+                </span>
+                <span>
+                  <strong>Explanation : </strong>
+                  {finding.explanation}
+                </span>
+                <span>
+                  <strong>Solution : </strong>
+                  {finding.solution}
+                </span>
+              </div>
             </div>
+            <Chip
+              variant="shadow"
+              className={`${finding.severity.toLowerCase() === "high" ? "bg-red-500" : finding.severity.toLowerCase() === "medium" ? "bg-yellow-500" : "bg-green-500"}`}
+            >
+              {finding.severity}
+            </Chip>
           </div>
         ))}
       </div>

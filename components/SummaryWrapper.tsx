@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import { Typography, Chip, Link, capitalize } from "@mui/material";
 import AnimatedGradientText from "./ui/animated-gradient-text";
 import { TextAnimate } from "./ui/text-animate";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "./ui/accordion";
-
+import childImage from "../public/child.jpg";
+import collegeImage from "../public/college.jpg";
+import phDImage from "../public/phd.jpg";
+import Image from "next/image";
+import { useTheme } from "next-themes";
+import { Accordion, AccordionItem } from "@heroui/react";
 const getColorForScore = (score: number) => {
   switch (true) {
     case score >= 9:
@@ -33,16 +32,29 @@ const getColorForScore = (score: number) => {
 };
 
 const SummaryWrapper = ({ summary }: any) => {
+  const { theme } = useTheme();
   const summaryLevels = [
-    { title: "Child Summary", content: summary.summary.child },
-    { title: "College Summary", content: summary.summary.college },
-    { title: "PhD Summary", content: summary.summary.phd },
+    {
+      title: "Child Summary",
+      content: summary.summary.child,
+      image: childImage,
+    },
+    {
+      title: "College Summary",
+      content: summary.summary.college,
+      image: collegeImage,
+    },
+    { title: "PhD Summary", content: summary.summary.phd, image: phDImage },
   ];
 
   return (
     <div
       className="flex w-full flex-col rounded-lg p-0 md:p-6"
-      style={{ backgroundColor: "#EEEEEEF0" }}
+      style={
+        theme === "dark"
+          ? { backgroundColor: "#1f2a37" }
+          : { backgroundColor: "#EEEEEEF0" }
+      }
     >
       <Typography variant="h5" component="h2" className="mb-4 text-center">
         <AnimatedGradientText>
@@ -56,8 +68,10 @@ const SummaryWrapper = ({ summary }: any) => {
         </AnimatedGradientText>
       </Typography>
 
-      <div className="my-4 flex flex-wrap gap-2 text-slate-700">
-        <strong>Authors: </strong>
+      <div
+        className={`my-4 flex flex-wrap gap-2 ${theme === "dark" ? `text-gray-200` : "text-slate-700"}`}
+      >
+        <strong className="font-bold text-xl">Authors: </strong>
         {summary.metadata.authors.map((author: string, index: number) => (
           <Chip
             key={index}
@@ -65,7 +79,7 @@ const SummaryWrapper = ({ summary }: any) => {
               author.length > 75 ? author.substring(0, 70) + "..." : author
             }
             variant="outlined"
-            color="primary"
+            color={`${theme === "dark" ? "secondary" : "primary"}`}
           />
         ))}
       </div>
@@ -75,40 +89,105 @@ const SummaryWrapper = ({ summary }: any) => {
           href={summary.metadata.paper_link}
           target="_blank"
           rel="noopener noreferrer"
-          className="mb-4 block text-blue-600 hover:underline"
+          className={`mb-4 block hover:underline ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
         >
           View Original Paper
         </Link>
       )}
-      <div className="mt-4">
-        <Accordion type="single" collapsible className="w-full">
+      <div className="mt-4 gap-1">
+        <Accordion
+          className="w-full"
+          variant="splitted"
+          motionProps={{
+            variants: {
+              enter: {
+                y: 0,
+                opacity: 1,
+                height: "auto",
+                overflowY: "unset",
+                transition: {
+                  height: {
+                    type: "spring",
+                    stiffness: 500,
+                    damping: 30,
+                    duration: 1,
+                  },
+                  opacity: {
+                    easings: "ease",
+                    duration: 1,
+                  },
+                },
+              },
+              exit: {
+                y: -10,
+                opacity: 0,
+                height: 0,
+                overflowY: "hidden",
+                transition: {
+                  height: {
+                    easings: "ease",
+                    duration: 0.25,
+                  },
+                  opacity: {
+                    easings: "ease",
+                    duration: 0.3,
+                  },
+                },
+              },
+            },
+          }}
+        >
           {summaryLevels.map((level, index) => (
-            <AccordionItem value={index.toString()} key={index}>
-              <AccordionTrigger className="text-lg font-bold text-slate-800">
-                {level.title}
-              </AccordionTrigger>
-              <AccordionContent className="text-md font-semibold text-slate-600">
+            <AccordionItem
+              startContent={
+                <Image
+                  src={level.image}
+                  width="45"
+                  height="45"
+                  className="rounded-lg"
+                  alt="NERDBUNNY LOGO"
+                  priority
+                />
+              }
+              title={level.title}
+              value={index.toString()}
+              key={index}
+            >
+              <p
+                className={`text-md font-semibold ${theme === "dark" ? "text-gray-200" : "text-slate-600"}`}
+              >
                 {level.content}
-              </AccordionContent>
+              </p>
             </AccordionItem>
           ))}
         </Accordion>
       </div>
 
       <div className="mt-4">
-        <Typography variant="h6" className="font-bold text-slate-700">
+        <span
+          className={`text-xl font-bold ${theme === "dark" ? `text-gray-200` : "text-slate-700"}`}
+        >
           Publication Info
-        </Typography>
+        </span>
         <div className="flex flex-wrap gap-2">
-          <Typography variant="body1" className="text-slate-600">
+          <Typography
+            variant="body1"
+            className={`${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
+          >
             <strong>Date: </strong>{" "}
             {summary.metadata.publication_info.date || "Unknown"}
           </Typography>
-          <Typography variant="body1" className="text-slate-600">
+          <Typography
+            variant="body1"
+            className={`${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
+          >
             <strong>Journal: </strong>
             {summary.metadata?.publication_info?.journal || "Unknown"}
           </Typography>
-          <Typography variant="body1" className="text-slate-600">
+          <Typography
+            variant="body1"
+            className={`${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
+          >
             <strong>Keywords: </strong>
             {summary.metadata.publication_info.keywords
               ? summary.metadata.publication_info.keywords.join(", ")
@@ -118,9 +197,11 @@ const SummaryWrapper = ({ summary }: any) => {
       </div>
 
       <div className="mt-4">
-        <Typography variant="h6" className="font-bold text-slate-700">
+        <span
+          className={`text-xl font-bold ${theme === "dark" ? `text-gray-200` : "text-slate-700"}`}
+        >
           Technical Assessment
-        </Typography>
+        </span>
         <div className="flex flex-wrap gap-2">
           {Object.entries(
             summary.technical_assessment
