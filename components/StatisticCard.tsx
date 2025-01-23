@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Card, CardBody, CardFooter } from "@heroui/react";
-import Image from "next/image";
+import { Marquee } from "./ui/marquee";
 import PaperImage from "../public/Papers.png";
 import MathImage from "../public/Math.png";
 import ResearchImage from "../public/Research.png";
@@ -172,22 +172,20 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
 
   return (
     <React.Fragment>
-      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-4 lg:grid-cols-4">
+      <div className="mb-8 sm:grid grid-cols-1 gap-4 md:grid-cols-4 lg:grid-cols-4 hidden">
         {list.map((item, index) => (
           <Card
             isPressable
             isHoverable
             isBlurred
-            shadow="sm"
+            shadow="md"
             key={index}
             onPress={() => setSortBy(item.sort)}
           >
             <CardBody
-              className={`overflow-visible p-0 bg-gradient-to-tr w-full h-[140px] flex justify-center items-center ${item.back}`}
+              className={`overflow-visible bg-gradient-to-tr w-full h-[140px] flex justify-start items-end p-4 ${item.back}`}
             >
-              <b className="text-7xl text-slate-900 font-bold items-center vertical-align-middle justify-start">
-                {item.counts}
-              </b>
+              <b className="text-6xl text-slate-900 font-bold">{item.counts}</b>
             </CardBody>
             <CardFooter className="justify-center before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10 text-slate-800">
               <strong className="font-bold text-md">{item.title}</strong>
@@ -195,6 +193,28 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
           </Card>
         ))}
       </div>
+      <Marquee pauseOnHover className="[--duration:30s] sm:hidden">
+        {list.map((item, index) => (
+          <Card
+            isPressable
+            isHoverable
+            isBlurred
+            className="min-w-[225px]"
+            shadow="md"
+            key={index}
+            onPress={() => setSortBy(item.sort)}
+          >
+            <CardBody
+              className={`overflow-visible bg-gradient-to-tr w-full h-[140px] flex justify-start items-end p-4 ${item.back}`}
+            >
+              <b className="text-6xl text-slate-900 font-bold">{item.counts}</b>
+            </CardBody>
+            <CardFooter className="justify-center before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10 text-slate-800">
+              <strong className="font-bold text-md">{item.title}</strong>
+            </CardFooter>
+          </Card>
+        ))}
+      </Marquee>
     </React.Fragment>
   );
 };

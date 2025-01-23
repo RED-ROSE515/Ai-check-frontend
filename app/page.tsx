@@ -151,13 +151,11 @@ export default function Home() {
 
   return (
     <section className="flex flex-col md:flex-row items-start justify-start gap-4">
-      {User && (
-        <div className="w-full md:w-1/6">
-          <LeftSider onUpload={() => triggerUploadRef.current?.()} />
-        </div>
-      )}
+      <div className="w-full md:w-1/6">
+        {User && <LeftSider onUpload={() => triggerUploadRef.current?.()} />}
+      </div>
 
-      <div className="mt-8 w-full items-center flex flex-col justify-center">
+      <div className="mt-8 w-full md:w-5/6 items-center flex flex-col justify-center">
         <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-4 md:p-12 md:px-36">
           <StatisticCard setSortBy={setSortBy} setOrder={setOrder} />
         </div>
@@ -214,7 +212,12 @@ export default function Home() {
               >
                 <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-4 w-full">
                   {result?.paperSummary && (
-                    <SummaryWrapper summary={result.paperSummary} />
+                    <SummaryWrapper
+                      summary={result.paperSummary}
+                      input_tokens={result.input_tokens}
+                      output_tokens={result.output_tokens}
+                      total_cost={result.total_cost}
+                    />
                   )}
                 </div>
 

@@ -3,7 +3,7 @@ import { Divider } from "@mui/material";
 import { Tabs, Tab } from "@heroui/tabs";
 import { Chip } from "@heroui/chip";
 import { useTheme } from "next-themes";
-
+import { MagicCard } from "./ui/magic-card";
 import ErrorCard from "./ErrorCard";
 
 const AnalysisResult = ({ results, total_summary }: any) => {
@@ -53,28 +53,32 @@ const AnalysisResult = ({ results, total_summary }: any) => {
       </Tabs>
       <div className="flex w-full flex-col gap-4 rounded-lg md:flex-row ">
         <div className="w-full">
-          {results.map((result: any, index: number) => (
-            <div key={index}>
-              {currentTab === 0 ? (
-                <div>
-                  {index !== 0 && <Divider textAlign="left" />}
-                  <ErrorCard
-                    key={index}
-                    className="mb-2 sm:mb-4"
-                    error={result}
-                  />
-                </div>
-              ) : (
-                currentTab - 1 === index && (
-                  <ErrorCard
-                    key={index}
-                    className="mb-2 sm:mb-4"
-                    error={result}
-                  />
-                )
-              )}
-            </div>
-          ))}
+          <MagicCard
+            className="${className} md:shadow-x overflow-hidden relative my-1 sm:my-4 flex w-full cursor-pointer flex-col items-stretch justify-center border-2 bg-background p-6 shadow-2xl"
+            gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
+          >
+            {results.map((result: any, index: number) => (
+              <div key={index}>
+                {currentTab === 0 ? (
+                  <div>
+                    <ErrorCard
+                      key={index}
+                      className="mb-2 sm:mb-4"
+                      error={result}
+                    />
+                  </div>
+                ) : (
+                  currentTab - 1 === index && (
+                    <ErrorCard
+                      key={index}
+                      className="mb-2 sm:mb-4"
+                      error={result}
+                    />
+                  )
+                )}
+              </div>
+            ))}
+          </MagicCard>
         </div>
       </div>
     </div>

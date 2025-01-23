@@ -1,14 +1,24 @@
 import React, { useState } from "react";
-import { Typography, Link, capitalize } from "@mui/material";
+import { Typography, capitalize } from "@mui/material";
 import { Chip } from "@heroui/react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { Accordion, AccordionItem } from "@heroui/react";
+import {
+  Accordion,
+  AccordionItem,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Divider,
+  Link,
+} from "@heroui/react";
+import { MagicCard } from "./ui/magic-card";
 import { ShinyButton } from "./ui/shiny-button";
 import childImage from "../public/NerdBunnyUI/navy.png";
 import collegeImage from "../public/NerdBunnyUI/white.png";
 import phDImage from "../public/NerdBunnyUI/gold.png";
-
+import { commify } from "@/utils/number_utils";
 import { TextAnimate } from "./ui/text-animate";
 import AnimatedGradientText from "./ui/animated-gradient-text";
 const getColorForScore = (score: number) => {
@@ -34,7 +44,12 @@ const getColorForScore = (score: number) => {
   }
 };
 
-const SummaryWrapper = ({ summary }: any) => {
+const SummaryWrapper = ({
+  summary,
+  input_tokens,
+  output_tokens,
+  total_cost,
+}: any) => {
   const { theme } = useTheme();
   const [expand, setExpand] = useState(false);
   const summaryLevels = [
@@ -72,27 +87,47 @@ const SummaryWrapper = ({ summary }: any) => {
         </AnimatedGradientText>
       </Typography>
 
-      <div
-        className={`my-4 w-full flex flex-wrap gap-2 ${theme === "dark" ? `text-gray-200` : "text-slate-700"}`}
-      >
-        <strong className="font-bold text-xl">Authors: </strong>
-        {summary.metadata.authors.map(
-          (author: string, index: number) =>
-            (index < 3 || expand) && (
-              <Chip
-                key={index}
-                className={`${theme === "dark" ? "secondary" : "primary"}`}
-                variant="dot"
-              >
-                {author.length > 40 ? author.substring(0, 40) + "..." : author}
-              </Chip>
-            )
-        )}
-        {summary.metadata.authors.length > 3 && (
-          <ShinyButton onClick={() => setExpand(!expand)} className="">
-            {`${expand ? "Show Little..." : "Load More..."}`}
-          </ShinyButton>
-        )}
+      <div className="flex flex-col md:flex-row justify-between mt-4 gap-4">
+        <div
+          className={`my-4 w-full flex flex-wrap gap-2 ${
+            theme === "dark" ? `text-gray-200` : "text-slate-700"
+          }`}
+        >
+          <strong className="font-bold text-lg md:text-xl w-full md:w-auto">
+            Authors:{" "}
+          </strong>
+          {summary.metadata.authors.map(
+            (author: string, index: number) =>
+              (index < 3 || expand) && (
+                <Chip
+                  key={index}
+                  className={`${theme === "dark" ? "secondary" : "primary"}`}
+                  variant="dot"
+                >
+                  {author.length > 40
+                    ? author.substring(0, 40) + "..."
+                    : author}
+                </Chip>
+              )
+          )}
+          {summary.metadata.authors.length > 3 && (
+            <ShinyButton
+              onClick={() => setExpand(!expand)}
+              className="w-full md:w-auto"
+            >
+              {`${expand ? "Show Little..." : "Load More..."}`}
+            </ShinyButton>
+          )}
+        </div>
+        <div className="w-full md:w-auto">
+          <Card className="min-w-[125px] md:min-w-[150px] p-2 md:p-4 flex flex-col justify-center items-center">
+            <strong>{`IN: ${commify(input_tokens)}`}</strong>
+            <Divider />
+            <strong>{`OUT: ${commify(output_tokens)}`}</strong>
+            <Divider />
+            <strong>{`$ ${total_cost}`}</strong>
+          </Card>
+        </div>
       </div>
       {summary.metadata.paper_link && (
         <div>

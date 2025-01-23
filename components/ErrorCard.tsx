@@ -49,11 +49,12 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
   }, []);
 
   return (
-    <MagicCard
-      className="${className} md:shadow-x overflow-hiddenrounded-lg  relative my-1 sm:my-4 flex w-full cursor-pointer flex-col items-stretch justify-center border-2 bg-background p-6 shadow-2xl"
-      gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
-    >
-      <div className="mb-4 flex items-center justify-between">
+    // <MagicCard
+    //   className="${className} md:shadow-x overflow-hiddenrounded-lg  relative my-1 sm:my-4 flex w-full cursor-pointer flex-col items-stretch justify-center border-2 bg-background p-6 shadow-2xl"
+    //   gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
+    // >
+    <div>
+      <div className="my-4 flex items-center justify-between">
         {Number(error.counts) === 0 && (
           <div>
             <Confetti
@@ -92,7 +93,23 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
             )}`}
           >
             <div
-              className={`${finding.severity.toLowerCase() === "high" ? "ribbon-top-right-red" : finding.severity.toLowerCase() === "medium" ? "ribbon-top-right-yello" : "ribbon-top-right"} ribbon ribbon-top-right sm:hidden`}
+              className={`ribbon ribbon-top-right sm:hidden`}
+              style={
+                {
+                  "--ribbon-border-color":
+                    finding.severity.toLowerCase() === "high"
+                      ? "#F31260"
+                      : finding.severity.toLowerCase() === "medium"
+                        ? "#F5A524"
+                        : "#006FEE",
+                  "--ribbon-background":
+                    finding.severity.toLowerCase() === "high"
+                      ? "#F31260"
+                      : finding.severity.toLowerCase() === "medium"
+                        ? "#F5A524"
+                        : "#006FEE",
+                } as React.CSSProperties
+              }
             >
               <span>{finding.severity}</span>
             </div>
@@ -101,7 +118,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
                 {index + 1}
               </span>
               <div className="flex flex-col">
-                <span>
+                <span className="mr-4 sm:mr-0">
                   <strong>Error : </strong>
                   {finding.error}
                 </span>
@@ -128,7 +145,8 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
           </div>
         ))}
       </div>
-    </MagicCard>
+    </div>
+    // </MagicCard>
   );
 };
 

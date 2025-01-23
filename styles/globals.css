@@ -28,6 +28,8 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --ribbon-border-color: #2980b9;
+    --ribbon-background: #3498dbdd;
   }
   .dark {
     --background: 240 10% 3.9%;
@@ -102,14 +104,14 @@
   z-index: -1;
   content: "";
   display: block;
-  border: 5px solid #2980b9;
+  border: 5px solid var(--ribbon-border-color);
 }
 .ribbon span {
   position: absolute;
   display: block;
   width: 300px;
   padding: 2px 0;
-  background-color: #3498dbdd;
+  background-color: var(--ribbon-background);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   color: #fff;
   font:
