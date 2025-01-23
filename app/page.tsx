@@ -38,23 +38,14 @@ export default function Home() {
   const [totalResults, setTotalResults] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
+  const [sortBy, setSortBy] = useState("");
+  const [order, setOrder] = useState("desc");
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const { toast } = useToast();
   const { theme } = useTheme();
   const triggerUploadRef: TriggerRefType = useRef(null);
-
-  const handleFileChange = (e: any) => {
-    const file = e.target.files[0];
-
-    if (file && file.type === "application/pdf") {
-      setSelectedFile(file);
-      setUploadStatus("");
-    } else {
-      setSelectedFile(null);
-      setUploadStatus("Please select a valid PDF file.");
-    }
-  };
+  const User = false;
 
   const getPdfList = async () => {
     try {
@@ -83,7 +74,7 @@ export default function Home() {
       setSummary("");
       setAnalysisResult("");
       const response = await axios.get(
-        `${API_BASE_URL}api/papers/get_analyzed_results/?page=${page}`
+        `${API_BASE_URL}api/papers/get_analyzed_results/?page=${page}&sort_by=${sortBy}&order=${order}`
       );
 
       setTotalResults(response.data?.data);
@@ -156,25 +147,29 @@ export default function Home() {
   useEffect(() => {
     getPdfList();
     getTotalResults();
-  }, [page]);
+  }, [page, sortBy]);
 
   return (
     <section className="flex flex-col md:flex-row items-start justify-start gap-4">
-      <div className="w-full md:w-1/6">
-        <LeftSider onUpload={() => triggerUploadRef.current?.()} />
-      </div>
+      {User && (
+        <div className="w-full md:w-1/6">
+          <LeftSider onUpload={() => triggerUploadRef.current?.()} />
+        </div>
+      )}
 
-      <div className="mt-8 w-full md:w-5/6 items-center flex flex-col justify-center">
+      <div className="mt-8 w-full items-center flex flex-col justify-center">
         <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-4 md:p-12 md:px-36">
-          <StatisticCard />
+          <StatisticCard setSortBy={setSortBy} setOrder={setOrder} />
         </div>
-        <div className="mb-4 w-full">
-          <FileUpload
-            AnalyzePaper={(id: number) => handleAnalyze(id)}
-            getPdfList={() => getPdfList()}
-            onTriggerRef={triggerUploadRef}
-          />
-        </div>
+        {User && (
+          <div className="mb-4 w-full">
+            <FileUpload
+              AnalyzePaper={(id: number) => handleAnalyze(id)}
+              getPdfList={() => getPdfList()}
+              onTriggerRef={triggerUploadRef}
+            />
+          </div>
+        )}
         {isChecking && (
           <div className="card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full">
             <ShineBorder
@@ -215,35 +210,29 @@ export default function Home() {
             return (
               <div
                 key={index}
-                className="card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full"
+                className={`card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
               >
-                <ShineBorder
-                  borderWidth={3}
-                  className={`relative flex w-full flex-col items-stretch overflow-hidden rounded-lg border-2 p-6 shadow-xl md:shadow-xl ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
-                  color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-                >
-                  <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-4">
-                    {result?.paperSummary && (
-                      <SummaryWrapper summary={result.paperSummary} />
+                <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-4 w-full">
+                  {result?.paperSummary && (
+                    <SummaryWrapper summary={result.paperSummary} />
+                  )}
+                </div>
+
+                <div className="mb-6 md:mb-12 w-full">
+                  <SpecialSummary summary={result.paperAnalysis.summary} />
+                  <div
+                    className={
+                      "flex flex-col items-center justify-center rounded-md p-0 md:flex-row"
+                    }
+                  >
+                    {result.paperAnalysis?.analysis && (
+                      <AnalysisResult
+                        results={result.paperAnalysis.analysis}
+                        total_summary={result.paperAnalysis.summary}
+                      />
                     )}
                   </div>
-
-                  <div className="mb-6 md:mb-12">
-                    <SpecialSummary summary={result.paperAnalysis.summary} />
-                    <div
-                      className={
-                        "flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-6"
-                      }
-                    >
-                      {result.paperAnalysis?.analysis && (
-                        <AnalysisResult
-                          results={result.paperAnalysis.analysis}
-                          total_summary={result.paperAnalysis.summary}
-                        />
-                      )}
-                    </div>
-                  </div>
-                </ShineBorder>
+                </div>
               </div>
             );
           })}

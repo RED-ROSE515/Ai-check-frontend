@@ -1,12 +1,13 @@
-import React from "react";
-import { Typography, Chip, Link, capitalize } from "@mui/material";
+import React, { useState } from "react";
+import { Typography, Link, capitalize } from "@mui/material";
+import { Chip } from "@heroui/react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Accordion, AccordionItem } from "@heroui/react";
-
-import childImage from "../public/child.jpg";
-import collegeImage from "../public/college.jpg";
-import phDImage from "../public/phd.jpg";
+import { ShinyButton } from "./ui/shiny-button";
+import childImage from "../public/NerdBunnyUI/navy.png";
+import collegeImage from "../public/NerdBunnyUI/white.png";
+import phDImage from "../public/NerdBunnyUI/gold.png";
 
 import { TextAnimate } from "./ui/text-animate";
 import AnimatedGradientText from "./ui/animated-gradient-text";
@@ -35,6 +36,7 @@ const getColorForScore = (score: number) => {
 
 const SummaryWrapper = ({ summary }: any) => {
   const { theme } = useTheme();
+  const [expand, setExpand] = useState(false);
   const summaryLevels = [
     {
       title: "Child Summary",
@@ -51,7 +53,7 @@ const SummaryWrapper = ({ summary }: any) => {
 
   return (
     <div
-      className="flex w-full flex-col rounded-lg p-0 md:p-6"
+      className="flex w-full flex-col rounded-lg p-4 md:p-0"
       style={
         theme === "dark"
           ? { backgroundColor: "#1f2a37" }
@@ -63,7 +65,7 @@ const SummaryWrapper = ({ summary }: any) => {
           <TextAnimate
             animation="slideLeft"
             by="character"
-            className="animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-2xl font-bold text-transparent"
+            className={`animate-gradient bg-gradient-to-r  bg-[length:var(--bg-size)_100%] bg-clip-text text-2xl font-bold text-transparent ${theme === "dark" ? "from-[#000000] via-[#1304279f] to-[#000000]" : "from-[#ffaa40] via-[#9c40ff] to-[#ffaa40]"}`}
           >
             {summary.metadata.title}
           </TextAnimate>
@@ -71,32 +73,40 @@ const SummaryWrapper = ({ summary }: any) => {
       </Typography>
 
       <div
-        className={`my-4 flex flex-wrap gap-2 ${theme === "dark" ? `text-gray-200` : "text-slate-700"}`}
+        className={`my-4 w-full flex flex-wrap gap-2 ${theme === "dark" ? `text-gray-200` : "text-slate-700"}`}
       >
         <strong className="font-bold text-xl">Authors: </strong>
-        {summary.metadata.authors.map((author: string, index: number) => (
-          <Chip
-            key={index}
-            color={`${theme === "dark" ? "secondary" : "primary"}`}
-            label={
-              author.length > 75 ? author.substring(0, 70) + "..." : author
-            }
-            variant="outlined"
-          />
-        ))}
+        {summary.metadata.authors.map(
+          (author: string, index: number) =>
+            (index < 3 || expand) && (
+              <Chip
+                key={index}
+                className={`${theme === "dark" ? "secondary" : "primary"}`}
+                variant="dot"
+              >
+                {author.length > 40 ? author.substring(0, 40) + "..." : author}
+              </Chip>
+            )
+        )}
+        {summary.metadata.authors.length > 3 && (
+          <ShinyButton onClick={() => setExpand(!expand)} className="">
+            {`${expand ? "Show Little..." : "Load More..."}`}
+          </ShinyButton>
+        )}
       </div>
-
       {summary.metadata.paper_link && (
-        <Link
-          className={`mb-4 block hover:underline ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
-          href={summary.metadata.paper_link}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          View Original Paper
-        </Link>
+        <div>
+          <Link
+            className={`mb-4 block hover:underline truncate ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
+            href={summary.metadata.paper_link}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {summary.metadata.paper_link}
+          </Link>
+        </div>
       )}
-      <div className="mt-4 gap-1">
+      <div className="mt-4 gap-1 w-full" style={{ marginLeft: "-0.5rem" }}>
         <Accordion
           className="w-full"
           motionProps={{
@@ -152,11 +162,11 @@ const SummaryWrapper = ({ summary }: any) => {
                   width="45"
                 />
               }
-              title={level.title}
+              title={<strong className="text-lg">{level.title}</strong>}
               value={index.toString()}
             >
               <p
-                className={`text-md font-semibold ${theme === "dark" ? "text-gray-200" : "text-slate-600"}`}
+                className={`text-md ${theme === "dark" ? "text-gray-200" : "text-slate-600"}`}
               >
                 {level.content}
               </p>
@@ -208,17 +218,19 @@ const SummaryWrapper = ({ summary }: any) => {
           {Object.entries(
             summary.technical_assessment
               ? summary.technical_assessment
-              : summary.summary.technical_assessment,
+              : summary.summary.technical_assessment
           ).map(([key, value]: any) => (
             <Chip
               key={key}
-              className="text-lg font-bold text-slate-400"
-              label={`${capitalize(key).replace("_", " ")}: ${value}`}
+              className="text-sm sm:text-md font-bold text-slate-400"
               style={{
                 backgroundColor: getColorForScore(value),
                 color: "white",
               }}
-            />
+              variant="shadow"
+            >
+              {`${capitalize(key).replace("_", " ")}: ${value}`}
+            </Chip>
           ))}
         </div>
       </div>

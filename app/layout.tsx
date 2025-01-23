@@ -9,7 +9,7 @@ import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 import { Toaster } from "@/components/ui/toaster";
-
+import Footer from "./footer";
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
@@ -39,7 +39,7 @@ export default function RootLayout({
       <body
         className={clsx(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
+          fontSans.variable
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
@@ -50,15 +50,7 @@ export default function RootLayout({
             </main>
             <Toaster />
             <footer className="w-full flex items-center justify-center py-3">
-              <Link
-                isExternal
-                className="flex items-center gap-1 text-current"
-                href="https://uy7p3-zyaaa-aaaap-qpmoq-cai.icp0.io/"
-                title="Nobleblocks homepage"
-              >
-                <span className="text-default-600">Created by</span>
-                <p className="text-primary">Nobleblocks</p>
-              </Link>
+              <Footer />
             </footer>
           </div>
         </Providers>

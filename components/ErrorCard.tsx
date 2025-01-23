@@ -50,7 +50,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
 
   return (
     <MagicCard
-      className="${className} md:shadow-x overflow-hiddenrounded-lg  relative my-4 flex w-full cursor-pointer flex-col items-stretch justify-center border-2 bg-background p-6 shadow-2xl"
+      className="${className} md:shadow-x overflow-hiddenrounded-lg  relative my-1 sm:my-4 flex w-full cursor-pointer flex-col items-stretch justify-center border-2 bg-background p-6 shadow-2xl"
       gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
     >
       <div className="mb-4 flex items-center justify-between">
@@ -71,24 +71,32 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
           </div>
         )}
         <h2
-          className={`text-3xl font-bold capitalize ${theme === "dark" ? "text-gray-200" : "text-slate-800"}`}
+          className={`text-md sm:text-3xl font-bold capitalize ${theme === "dark" ? "text-gray-200" : "text-slate-800"}`}
         >
           {error.type} Errors
         </h2>
-        <span className="rounded-full bg-red-100 px-3 py-1 text-sm font-medium text-red-800">
-          {error.counts} Issues
-        </span>
+        <Chip
+          className={`rounded-full  px-3 py-1 text-xs sm:text-sm font-medium ${error.counts === 0 ? "bg-green-200 text-green-700" : error.counts <= 3 ? "bg-orange-200 text-orange-700" : "bg-red-100 text-red-700"} `}
+          variant="shadow"
+        >
+          {error.counts + " Issues"}
+        </Chip>
       </div>
 
       <div className="space-y-3">
         {findingsList.map((finding, index) => (
           <div
             key={index}
-            className={`flex w-full items-start justify-between gap-2 overflow-x-auto rounded border-2 p-2 ${theme === "dark" ? "text-gray-300" : "text-slate-700"} ${getBorderColorClass(
-              finding.severity,
+            className={`overflow-hidden relative flex w-full items-start justify-between gap-2 rounded border-2 p-2 ${theme === "dark" ? "text-gray-300" : "text-slate-700"} ${getBorderColorClass(
+              finding.severity
             )}`}
           >
-            <div className="flex space-x-2">
+            <div
+              className={`${finding.severity.toLowerCase() === "high" ? "ribbon-top-right-red" : finding.severity.toLowerCase() === "medium" ? "ribbon-top-right-yello" : "ribbon-top-right"} ribbon ribbon-top-right sm:hidden`}
+            >
+              <span>{finding.severity}</span>
+            </div>
+            <div className="flex space-x-2 ">
               <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gray-300 text-sm text-black">
                 {index + 1}
               </span>
@@ -112,7 +120,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
               </div>
             </div>
             <Chip
-              className={`${finding.severity.toLowerCase() === "high" ? "bg-red-500" : finding.severity.toLowerCase() === "medium" ? "bg-yellow-500" : "bg-green-500"}`}
+              className={`${finding.severity.toLowerCase() === "high" ? "bg-red-500" : finding.severity.toLowerCase() === "medium" ? "bg-yellow-500" : "bg-green-500"} hidden sm:flex`}
               variant="shadow"
             >
               {finding.severity}

@@ -28,7 +28,7 @@ interface Statistics {
   errorStatistics: ErrorStatistics;
 }
 
-const StatisticCard = ({}) => {
+const StatisticCard = ({ setSortBy, setOrder }: any) => {
   const [loading, setLoading] = useState(false);
   const [cardColors, setCardColors] = useState<
     Array<{ bg: string; outline: string }>
@@ -98,47 +98,74 @@ const StatisticCard = ({}) => {
   const list = [
     {
       title: "Total Papers",
+      sort: "total_errors",
       img: PaperImage,
+      // back: "from-[#fbed96] to-[#abecd6]",
+      back: "bg-[#fbed96] ",
       counts: statistics.totalPapers,
     },
     {
-      title: "Mathematical And Calculation  Errors",
+      title: "Mathematical  Errors",
       img: MathImage,
+      sort: "math_errors",
+      // back: "from-[#acb6e5] to-[#86fde8]",
+      back: "bg-[#FFD2A6]",
       counts: statistics.errorStatistics.mathErrors,
     },
     {
       title: "Methodological Errors",
       img: MethodologyImage,
+      sort: "methodology_errors",
+      // back: "from-[#5433FF] via-[#20BDFF] to-[#A5FECB]",
+      back: "bg-[#FFEAB0]",
       counts: statistics.errorStatistics.methdologyErrors,
     },
     {
       title: "Logical Framework Errors",
       img: LogicalImage,
+      sort: "logical_framework_errors",
+      // back: "from-[#EFEFBB] to-[#D4D3DD]",
+      back: "bg-[#ABCAED]",
       counts: statistics.errorStatistics.dataAnalysisErrors,
     },
     {
       title: "Data Analysis Errors",
       img: DataImage,
+      sort: "data_analysis_errors",
+      // back: "from-[#FDFC47] to-[#24FE41]",
+      back: "bg-[#B1F1D7]",
       counts: statistics.errorStatistics.dataAnalysisErrors,
     },
     {
       title: "Technical Presentation Errors",
       img: TechnicalImage,
+      sort: "technical_presentation_errors",
+      // back: "from-[#BA5370] to-[#F4E2D8]",
+      back: "bg-[#BA5370]",
       counts: statistics.errorStatistics.technicalPresentationErrors,
     },
     {
       title: "Research Quality Errors",
       img: ResearchImage,
+      sort: "research_quality_errors",
+      // back: "from-[#0099F7] to-[#F11712]",
+      back: "bg-[#F4E2D8]",
       counts: statistics.errorStatistics.researchQualityErrors,
     },
     {
       title: "Figure Errors",
       img: FigureImage,
+      sort: "technical_presentation_errors",
+      // back: "from-[#70e1f5] to-[#ffd194]",
+      back: "bg-[#20BDFF]",
       counts: statistics.errorStatistics.technicalPresentationErrors,
     },
     {
       title: "Writing Errors",
       img: FormatImage,
+      sort: "research_quality_errors",
+      // back: "from-[#FFB457] to-[#FF705B]",
+      back: "bg-[#A5FECB]",
       counts: statistics.errorStatistics.technicalPresentationErrors,
     },
   ];
@@ -147,19 +174,23 @@ const StatisticCard = ({}) => {
     <React.Fragment>
       <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-4 lg:grid-cols-4">
         {list.map((item, index) => (
-          <Card isPressable shadow="sm" key={index}>
-            <CardBody className="overflow-visible p-0">
-              <Image
-                alt={"Total Papers"}
-                className="w-full object-cover h-[140px] shadow-sm"
-                width={500}
-                height={500}
-                src={item.img}
-              />
+          <Card
+            isPressable
+            isHoverable
+            isBlurred
+            shadow="sm"
+            key={index}
+            onPress={() => setSortBy(item.sort)}
+          >
+            <CardBody
+              className={`overflow-visible p-0 bg-gradient-to-tr w-full h-[140px] flex justify-center items-center ${item.back}`}
+            >
+              <b className="text-7xl text-slate-900 font-bold items-center vertical-align-middle justify-start">
+                {item.counts}
+              </b>
             </CardBody>
-            <CardFooter className="text-small justify-between">
-              <b>{item.title}</b>
-              <p className="text-default-500">{item.counts}</p>
+            <CardFooter className="justify-center before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10 text-slate-800">
+              <strong className="font-bold text-md">{item.title}</strong>
             </CardFooter>
           </Card>
         ))}

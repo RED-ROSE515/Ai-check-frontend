@@ -14,28 +14,28 @@ const SpecialSummary = ({ summary }: any) => {
   const { theme } = useTheme();
 
   return (
-    <div className="mt-2 w-full p-0 md:p-6">
+    <div className="mt-2 w-full p-0 md:p-4">
       <ShineBorder
-        borderWidth={5}
+        borderWidth={3}
         className="relative flex w-full flex-col items-start justify-start overflow-hidden rounded-lg border bg-background md:shadow-xl"
         color={["#36FF78", "#A07CFE", "#FE8FB5", "#FFBE7B", "#FFEC99"]}
       >
         <span
-          className={`text-2xl font-bold ${theme === "dark" ? `text-gray-100` : "text-slate-800"}`}
+          className={`text-xl sm:text-2xl font-bold ${theme === "dark" ? `text-gray-100` : "text-slate-800"}`}
         >
           Major Concerns
         </span>
         {summary.major_concerns?.map((concern: string, index: number) => (
           <p
             key={index}
-            className={`font-semibold ${theme === "dark" ? `text-gray-400` : "text-slate-700"}`}
+            className={`text-sm sm:text-medium font-semibold ${theme === "dark" ? `text-gray-400` : "text-slate-700"}`}
           >
             {concern}
           </p>
         ))}
 
         <span
-          className={`mt-4 text-2xl font-bold ${theme === "dark" ? `text-gray-100` : "text-slate-800"}`}
+          className={`mt-4 text-xl sm:text-2xl font-bold ${theme === "dark" ? `text-gray-100` : "text-slate-800"}`}
         >
           Improvement Priority
         </span>
@@ -43,26 +43,26 @@ const SpecialSummary = ({ summary }: any) => {
           (priority: string, index: number) => (
             <p
               key={index}
-              className={`font-semibold ${theme === "dark" ? `text-gray-400` : "text-slate-700"}`}
+              className={`text-sm sm:text-medium font-semibold ${theme === "dark" ? `text-gray-400` : "text-slate-700"}`}
             >
               {priority}
             </p>
-          ),
+          )
         )}
 
         <span
-          className={`mt-4 text-2xl font-bold ${theme === "dark" ? `text-gray-100` : "text-slate-800"}`}
+          className={`mt-4 text-xl sm:text-2xl font-bold ${theme === "dark" ? `text-gray-100` : "text-slate-800"}`}
         >
           Overall Assessment
         </span>
         <p
-          className={`font-semibold ${theme === "dark" ? `text-gray-400` : "text-slate-700"}`}
+          className={`text-sm sm:text-medium font-semibold ${theme === "dark" ? `text-gray-400` : "text-slate-700"}`}
         >
           {summary?.overall_assessment}
         </p>
 
         <span
-          className={`mt-4 text-2xl font-bold ${theme === "dark" ? `text-gray-100` : "text-slate-800"}`}
+          className={`mt-4 text-xl sm:text-2xl font-bold ${theme === "dark" ? `text-gray-100` : "text-slate-800"}`}
         >
           Total Quality Score : {summary?.quality_score} out of 10.
         </span>
