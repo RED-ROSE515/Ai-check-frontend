@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, FC } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import {
   Table,
@@ -16,9 +16,10 @@ import { Spinner } from "@heroui/spinner";
 import ShineBorder from "../../components/ui/shine-border";
 import SummaryWrapper from "../../components/SummaryWrapper";
 import AnalysisResult from "../../components/AnalysisResult";
-
+import FileUpload from "../../components/file-upload";
 import SpecialSummary from "@/components/SpecialSummary";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "next-themes";
 import { ShinyButton } from "@/components/ui/shiny-button";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -36,11 +37,13 @@ const NoActiveChip = () => {
     </Chip>
   );
 };
-
+type TriggerRefType = {
+  current: (() => void) | null;
+};
 export default function App() {
   const [page, setPage] = React.useState(1);
   const rowsPerPage = 4;
-
+  const { theme } = useTheme();
   const [pdfList, setPdfList] = useState([]);
 
   const [analysisResult, setAnalysisResult] = useState("");
@@ -102,8 +105,8 @@ export default function App() {
 
   useEffect(() => {
     getPdfList();
-  }, []);
-
+  }, [totalSummary]);
+  const triggerUploadRef: TriggerRefType = useRef(null);
   return (
     <div>
       <Table
@@ -158,37 +161,47 @@ export default function App() {
           )}
         </TableBody>
       </Table>
+      <div className="my-4 w-full">
+        <FileUpload
+          AnalyzePaper={(id: number) => handleAnalyze(id)}
+          getPdfList={() => getPdfList()}
+          onTriggerRef={triggerUploadRef}
+        />
+      </div>
       {isChecking && (
-        <div className="card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full">
-          <ShineBorder
-            borderWidth={3}
-            className="relative flex w-full flex-col items-stretch overflow-hidden rounded-lg border-2 bg-[#EEEEEEF0] p-6 shadow-xl md:shadow-xl"
-            color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-          >
-            <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-4">
-              {summaryLoading && <Spinner className="my-4" color="primary" />}
-              {summary && <SummaryWrapper summary={summary} />}
-            </div>
-
+        <div
+          className={`card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+        >
+          <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-4 w-full">
+            {summaryLoading && <Spinner className="my-4" color="primary" />}
             {summary && (
-              <div className="mb-6 md:mb-12">
-                <SpecialSummary summary={totalSummary} />
-                <div
-                  className={
-                    "flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-6"
-                  }
-                >
-                  {checkLoading && <Spinner className="my-4" color="primary" />}
-                  {analysisResult && (
-                    <AnalysisResult
-                      results={analysisResult}
-                      total_summary={totalSummary}
-                    />
-                  )}
-                </div>
-              </div>
+              <SummaryWrapper
+                summary={summary}
+                // input_tokens={input_tokens}
+                // output_tokens={output_tokens}
+                // total_cost={total_cost}
+              />
             )}
-          </ShineBorder>
+          </div>
+
+          {summary && (
+            <div className="mb-6 md:mb-12">
+              <SpecialSummary summary={totalSummary} />
+              <div
+                className={
+                  "flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-6"
+                }
+              >
+                {checkLoading && <Spinner className="my-4" color="primary" />}
+                {analysisResult && (
+                  <AnalysisResult
+                    results={analysisResult}
+                    total_summary={totalSummary}
+                  />
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

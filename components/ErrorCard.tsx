@@ -54,9 +54,14 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
     //   gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
     // >
     <div>
-      <div className="my-4 flex items-center justify-between">
+      <div className="my-4 flex flex-row items-center justify-between">
+        <h2
+          className={`text-md sm:text-3xl font-bold text-start capitalize ${theme === "dark" ? "text-gray-200" : "text-slate-800"}`}
+        >
+          {error.type} Errors
+        </h2>
         {Number(error.counts) === 0 && (
-          <div>
+          <div className="">
             <Confetti
               ref={confettiRef}
               className="absolute left-0 top-0 z-0 size-full"
@@ -71,13 +76,8 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
             />
           </div>
         )}
-        <h2
-          className={`text-md sm:text-3xl font-bold capitalize ${theme === "dark" ? "text-gray-200" : "text-slate-800"}`}
-        >
-          {error.type} Errors
-        </h2>
         <Chip
-          className={`rounded-full  px-3 py-1 text-xs sm:text-sm font-medium ${error.counts === 0 ? "bg-green-200 text-green-700" : error.counts <= 3 ? "bg-orange-200 text-orange-700" : "bg-red-100 text-red-700"} `}
+          className={`rounded-full  px-3 py-1 text-xs sm:text-sm font-medium ${Number(error.counts) === 0 ? "bg-green-200 text-green-700" : Number(error.counts) <= 3 ? "bg-orange-200 text-orange-700" : "bg-red-100 text-red-700"} `}
           variant="shadow"
         >
           {error.counts + " Issues"}

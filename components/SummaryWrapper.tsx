@@ -7,9 +7,7 @@ import {
   Accordion,
   AccordionItem,
   Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
+  Button,
   Divider,
   Link,
 } from "@heroui/react";
@@ -111,23 +109,29 @@ const SummaryWrapper = ({
               )
           )}
           {summary.metadata.authors.length > 3 && (
-            <ShinyButton
-              onClick={() => setExpand(!expand)}
+            <Button
+              size="sm"
+              variant="ghost"
+              onPress={() => setExpand(!expand)}
               className="w-full md:w-auto"
             >
               {`${expand ? "Show Little..." : "Load More..."}`}
-            </ShinyButton>
+            </Button>
           )}
         </div>
-        <div className="w-full md:w-auto">
-          <Card className="min-w-[125px] md:min-w-[150px] p-2 md:p-4 flex flex-col justify-center items-center">
-            <strong>{`IN: ${commify(input_tokens)}`}</strong>
-            <Divider />
-            <strong>{`OUT: ${commify(output_tokens)}`}</strong>
-            <Divider />
-            <strong>{`$ ${total_cost}`}</strong>
-          </Card>
-        </div>
+        {input_tokens && output_tokens && total_cost && (
+          <div className="w-full md:w-auto">
+            <Card
+              className={`min-w-[125px] md:min-w-[150px] p-2 md:p-4 flex flex-col justify-center items-center ${theme === "dark" ? "bg-[#001731]" : "bg-[#B1F1D7]"}`}
+            >
+              <strong>{`IN: ${commify(input_tokens)}`}</strong>
+              <Divider />
+              <strong>{`OUT: ${commify(output_tokens)}`}</strong>
+              <Divider />
+              <strong>{`$ ${total_cost}`}</strong>
+            </Card>
+          </div>
+        )}
       </div>
       {summary.metadata.paper_link && (
         <div>
