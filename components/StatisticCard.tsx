@@ -229,7 +229,10 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
                         color="primary"
                         className={`mr-2 ${theme === "dark" ? "text-gray-100" : "text-slate-800"}`}
                       >
-                        {(item.counts / list[0].counts) * 100}%
+                        {Number(
+                          ((item.counts / list[0].counts) * 100).toFixed(1)
+                        )}
+                        %
                       </span>
                     </div>
                     <CardBody

@@ -10,7 +10,7 @@ import {
   Video,
   X,
 } from "lucide-react";
-import { useRef, useCallback, useState } from "react";
+import { useRef, useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 
 import { useToast } from "../hooks/use-toast";
@@ -204,6 +204,17 @@ const FileUpload = ({
     maxFiles: 1,
     multiple: false,
   });
+
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <div>
       <div>

@@ -77,21 +77,27 @@ export default function App() {
     setIsChecking(true);
     setAnalyzingId(id);
     setSummaryLoading(true);
-    const resp = await axios.get(
-      API_BASE_URL + `api/papers/${id}/get_summary/`
-    );
+    try {
+      const resp = await axios.get(
+        API_BASE_URL + `api/papers/${id}/get_summary/`
+      );
 
-    setSummaryLoading(false);
-    setSummary(resp.data.summary);
-    setCheckLoading(true);
-    const response = await axios.get(
-      API_BASE_URL + `api/papers/${id}/check_paper/`
-    );
+      setSummaryLoading(false);
+      setSummary(resp.data.summary);
+      setCheckLoading(true);
+      const response = await axios.get(
+        API_BASE_URL + `api/papers/${id}/check_paper/`
+      );
 
-    setCheckLoading(false);
-    setAnalysisResult(response.data.analysis);
-    setTotalSummary(response.data.summary);
-    setAnalyzingId(null);
+      setCheckLoading(false);
+      setAnalysisResult(response.data.analysis);
+      setTotalSummary(response.data.summary);
+      setAnalyzingId(null);
+    } catch (error) {
+      setSummaryLoading(false);
+      setCheckLoading(false);
+      setAnalyzingId(null);
+    }
   };
 
   const pages = Math.ceil(pdfList.length / rowsPerPage);
