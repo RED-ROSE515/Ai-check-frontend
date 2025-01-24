@@ -4,6 +4,8 @@ import { Link } from "@heroui/link";
 import clsx from "clsx";
 
 import { Providers } from "./providers";
+import { AnalysisProvider } from "@/contexts/AnalysisContext";
+import { PaginationProvider } from "@/contexts/PaginationContext";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
@@ -43,16 +45,20 @@ export default function RootLayout({
         )}
       >
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex flex-col h-screen">
-            <Navbar />
-            <main className="w-screen overflow-x-hidden p-2 pt-4 flex-grow">
-              {children}
-            </main>
-            <Toaster />
-            <footer className="w-full flex items-center justify-center py-3">
-              <Footer />
-            </footer>
-          </div>
+          <AnalysisProvider>
+            <PaginationProvider>
+              <div className="relative flex flex-col h-screen">
+                <Navbar />
+                <main className="w-screen overflow-x-hidden p-2 pt-4 flex-grow">
+                  {children}
+                </main>
+                <Toaster />
+                <footer className="w-full flex items-center justify-center py-3">
+                  <Footer />
+                </footer>
+              </div>
+            </PaginationProvider>
+          </AnalysisProvider>
         </Providers>
       </body>
     </html>

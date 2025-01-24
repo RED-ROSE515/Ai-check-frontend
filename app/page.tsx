@@ -4,7 +4,7 @@ import { Spinner } from "@heroui/spinner";
 import axios from "axios";
 import { useTheme } from "next-themes";
 import { Pagination } from "@heroui/pagination";
-
+import { useAnalysis } from "@/contexts/AnalysisContext";
 import LeftSider from "../components/LeftSider";
 import StatisticCard from "../components/StatisticCard";
 import FileUpload from "../components/file-upload";
@@ -13,6 +13,8 @@ import SummaryWrapper from "../components/SummaryWrapper";
 import AnalysisResult from "../components/AnalysisResult";
 
 import SpecialSummary from "@/components/SpecialSummary";
+import { usePagination } from "@/contexts/PaginationContext";
+
 import { useToast } from "@/hooks/use-toast";
 
 type TriggerRefType = {
@@ -20,6 +22,8 @@ type TriggerRefType = {
 };
 
 export default function Home() {
+  const { isAnalyzing } = useAnalysis();
+  const { page, setTotalPage } = usePagination();
   const [pdfList, setPdfList] = useState([]);
   const [analysisResult, setAnalysisResult] = useState("");
   const [summary, setSummary] = useState("");
@@ -33,8 +37,6 @@ export default function Home() {
   const [totalSummary, setTotalSummary] = useState("");
   const [loading, setLoading] = useState(false);
   const [totalResults, setTotalResults] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(0);
   const [sortBy, setSortBy] = useState("");
   const [order, setOrder] = useState("desc");
 
@@ -75,7 +77,6 @@ export default function Home() {
       );
 
       setTotalResults(response.data?.data);
-      setPage(response.data.pagination.currentPage);
       setTotalPage(response.data.pagination.totalPages);
       toast({
         title: "Analysis Data",
@@ -151,6 +152,11 @@ export default function Home() {
       {User && (
         <div className="w-full md:w-1/6">
           <LeftSider onUpload={() => triggerUploadRef.current?.()} />
+        </div>
+      )}
+      {isAnalyzing && (
+        <div>
+          <strong>Analyzing</strong>
         </div>
       )}
       <div className="mt-8 w-full md:w-5/6 items-center flex flex-col justify-center">
@@ -237,15 +243,9 @@ export default function Home() {
               </div>
             );
           })}
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          initialPage={1}
-          page={page}
-          total={totalPage}
-          onChange={(newPage) => setPage(newPage)}
-        />
+        <span>
+          | All Rights Reserved | Terms and Conditions | Privacy Policy
+        </span>
       </div>
     </section>
   );

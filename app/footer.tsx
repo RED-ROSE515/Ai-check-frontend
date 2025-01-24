@@ -1,6 +1,9 @@
 "use client";
 import React from "react";
 import { Link } from "@heroui/link";
+import { usePagination } from "@/contexts/PaginationContext";
+import { Pagination } from "@heroui/pagination";
+
 const TwitterSvg = () => {
   return (
     <Link href="https://x.com/nerdbunny_com">
@@ -122,13 +125,22 @@ const InstagramSvg = () => {
   );
 };
 const Footer = () => {
+  const { page, totalPage, setPage } = usePagination();
   return (
     <div className="flex flex-col md:flex-row justify-between items-center w-4/5">
       <div className="flex flex-col justify-center items-center text-center">
         <span>Copyright © 2025 NerdBunny</span>
-        <span>
-          | All Rights Reserved | Terms and Conditions | Privacy Policy
-        </span>
+      </div>
+      <div>
+        <Pagination
+          isCompact
+          showControls
+          showShadow
+          initialPage={1}
+          page={page}
+          total={totalPage}
+          onChange={(newPage) => setPage(newPage)}
+        />
       </div>
       <div className="flex flex-row justify-center">
         <TelegramSvg />

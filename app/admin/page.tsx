@@ -12,7 +12,7 @@ import {
   Chip,
 } from "@heroui/react";
 import { Spinner } from "@heroui/spinner";
-
+import { useAnalysis } from "@/contexts/AnalysisContext";
 import ShineBorder from "../../components/ui/shine-border";
 import SummaryWrapper from "../../components/SummaryWrapper";
 import AnalysisResult from "../../components/AnalysisResult";
@@ -41,8 +41,9 @@ type TriggerRefType = {
   current: (() => void) | null;
 };
 export default function App() {
+  const { setIsAnalyzing } = useAnalysis();
   const [page, setPage] = React.useState(1);
-  const rowsPerPage = 4;
+  const rowsPerPage = 5;
   const { theme } = useTheme();
   const [pdfList, setPdfList] = useState([]);
 
@@ -77,27 +78,21 @@ export default function App() {
     setIsChecking(true);
     setAnalyzingId(id);
     setSummaryLoading(true);
-    try {
-      const resp = await axios.get(
-        API_BASE_URL + `api/papers/${id}/get_summary/`
-      );
+    const resp = await axios.get(
+      API_BASE_URL + `api/papers/${id}/get_summary/`
+    );
 
-      setSummaryLoading(false);
-      setSummary(resp.data.summary);
-      setCheckLoading(true);
-      const response = await axios.get(
-        API_BASE_URL + `api/papers/${id}/check_paper/`
-      );
+    setSummaryLoading(false);
+    setSummary(resp.data.summary);
+    setCheckLoading(true);
+    const response = await axios.get(
+      API_BASE_URL + `api/papers/${id}/check_paper/`
+    );
 
-      setCheckLoading(false);
-      setAnalysisResult(response.data.analysis);
-      setTotalSummary(response.data.summary);
-      setAnalyzingId(null);
-    } catch (error) {
-      setSummaryLoading(false);
-      setCheckLoading(false);
-      setAnalyzingId(null);
-    }
+    setCheckLoading(false);
+    setAnalysisResult(response.data.analysis);
+    setTotalSummary(response.data.summary);
+    setAnalyzingId(null);
   };
 
   const pages = Math.ceil(pdfList.length / rowsPerPage);

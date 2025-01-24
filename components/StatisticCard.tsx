@@ -212,6 +212,7 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
                   isPressable
                   isHoverable
                   isBlurred
+                  radius="sm"
                   className="min-w-[19vw]"
                   shadow="md"
                   key={index}

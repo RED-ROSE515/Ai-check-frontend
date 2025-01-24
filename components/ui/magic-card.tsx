@@ -37,7 +37,7 @@ export function MagicCard({
         mouseY.set(clientY - top);
       }
     },
-    [mouseX, mouseY],
+    [mouseX, mouseY]
   );
 
   const handleMouseOut = useCallback(
@@ -48,7 +48,7 @@ export function MagicCard({
         mouseY.set(-gradientSize);
       }
     },
-    [handleMouseMove, mouseX, gradientSize, mouseY],
+    [handleMouseMove, mouseX, gradientSize, mouseY]
   );
 
   const handleMouseEnter = useCallback(() => {
@@ -77,6 +77,7 @@ export function MagicCard({
   return (
     <div
       ref={cardRef}
+      style={{ cursor: "auto" }}
       className={cn("group relative flex size-full rounded-xl", className)}
     >
       <div className="absolute inset-px z-10 rounded-xl bg-background" />

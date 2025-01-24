@@ -78,7 +78,7 @@ const SummaryWrapper = ({
           <TextAnimate
             animation="slideLeft"
             by="character"
-            className={`animate-gradient bg-gradient-to-r  bg-[length:var(--bg-size)_100%] bg-clip-text text-2xl font-bold text-transparent ${theme === "dark" ? "from-[#000000] via-[#1304279f] to-[#000000]" : "from-[#ffaa40] via-[#9c40ff] to-[#ffaa40]"}`}
+            className={`animate-gradient bg-gradient-to-r  bg-[length:var(--bg-size)_100%] bg-clip-text text-2xl font-bold text-transparent ${theme === "dark" ? "from-[#000000] via-[#020005c4] to-[#000000]" : "from-[#ffaa40] via-[#9c40ff] to-[#ffaa40]"}`}
           >
             {summary.metadata.title}
           </TextAnimate>
@@ -122,13 +122,13 @@ const SummaryWrapper = ({
         {input_tokens && output_tokens && total_cost && (
           <div className="w-full md:w-auto">
             <Card
-              className={`min-w-[125px] md:min-w-[150px] p-2 md:p-4 flex flex-col justify-center items-center ${theme === "dark" ? "bg-[#001731]" : "bg-gray-200"}`}
+              className={`min-w-[120px] md:min-w-[135px] p-2 md:p-4 flex flex-col justify-start items-start ${theme === "dark" ? "bg-[#001731]" : "bg-gray-200"}`}
             >
-              <strong>{`IN: ${commify(input_tokens)}`}</strong>
+              <p>{`IN: ${commify(input_tokens)}`}</p>
               <Divider />
-              <strong>{`OUT: ${commify(output_tokens)}`}</strong>
+              <p>{`OUT: ${commify(output_tokens)}`}</p>
               <Divider />
-              <strong>{`$ ${total_cost}`}</strong>
+              <p>{`$ ${total_cost}`}</p>
             </Card>
           </div>
         )}
