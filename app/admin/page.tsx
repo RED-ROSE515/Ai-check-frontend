@@ -172,7 +172,7 @@ export default function App() {
         <div
           className={`card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
         >
-          <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-4 w-full">
+          <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
             {summaryLoading && <Spinner className="my-4" color="primary" />}
             {summary && (
               <SummaryWrapper
@@ -185,7 +185,7 @@ export default function App() {
           </div>
 
           {summary && (
-            <div className="mb-6 md:mb-12">
+            <div className="mb-0 sm:mb-2 w-full">
               <SpecialSummary summary={totalSummary} />
               <div
                 className={

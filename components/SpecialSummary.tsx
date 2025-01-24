@@ -14,7 +14,7 @@ const SpecialSummary = ({ summary }: any) => {
   const { theme } = useTheme();
 
   return (
-    <div className="mt-2 w-full p-0 md:p-4">
+    <div className="mt-2 w-full p-0">
       <ShineBorder
         borderWidth={3}
         className="relative flex w-full flex-col items-start justify-start overflow-hidden rounded-lg border bg-background md:shadow-xl"

@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Card, CardBody, CardFooter } from "@heroui/react";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Avatar,
+  Button,
+} from "@heroui/react";
 import { Marquee } from "./ui/marquee";
+import { useTheme } from "next-themes";
 import PaperImage from "../public/Papers.png";
 import MathImage from "../public/Math.png";
 import ResearchImage from "../public/Research.png";
@@ -11,6 +19,14 @@ import LogicalImage from "../public/Logical.png";
 import MethodologyImage from "../public/Methdology.png";
 import TechnicalImage from "../public/Technical.png";
 import DataImage from "../public/Data.png";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 interface ErrorStatistics {
   mathErrors: number;
@@ -33,6 +49,7 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
   const [cardColors, setCardColors] = useState<
     Array<{ bg: string; outline: string }>
   >([]);
+  const { theme } = useTheme();
   const [statistics, setStatistics] = useState<Statistics>({
     totalPapers: 0,
     totalAnalyses: 0,
@@ -101,7 +118,8 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
       sort: "total_errors",
       img: PaperImage,
       // back: "from-[#fbed96] to-[#abecd6]",
-      back: "bg-[#fbed96] ",
+      back: "hover:bg-[#338EF7] ",
+      whiteback: "hover:bg-[#001731] ",
       counts: statistics.totalPapers,
     },
     {
@@ -109,7 +127,8 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
       img: MathImage,
       sort: "math_errors",
       // back: "from-[#acb6e5] to-[#86fde8]",
-      back: "bg-[#FFD2A6]",
+      whiteback: "hover:bg-[#095028] ",
+      back: "hover:bg-[#AE7EDE]",
       counts: statistics.errorStatistics.mathErrors,
     },
     {
@@ -117,7 +136,8 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
       img: MethodologyImage,
       sort: "methodology_errors",
       // back: "from-[#5433FF] via-[#20BDFF] to-[#A5FECB]",
-      back: "bg-[#FFEAB0]",
+      whiteback: "hover:bg-[#610726] ",
+      back: "hover:bg-[#45D483]",
       counts: statistics.errorStatistics.methdologyErrors,
     },
     {
@@ -125,7 +145,8 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
       img: LogicalImage,
       sort: "logical_framework_errors",
       // back: "from-[#EFEFBB] to-[#D4D3DD]",
-      back: "bg-[#ABCAED]",
+      whiteback: "hover:bg-[#661F52] ",
+      back: "hover:bg-[#F54180]",
       counts: statistics.errorStatistics.dataAnalysisErrors,
     },
     {
@@ -133,7 +154,8 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
       img: DataImage,
       sort: "data_analysis_errors",
       // back: "from-[#FDFC47] to-[#24FE41]",
-      back: "bg-[#B1F1D7]",
+      whiteback: "hover:bg-[#001731] ",
+      back: "hover:bg-[#661F52]",
       counts: statistics.errorStatistics.dataAnalysisErrors,
     },
     {
@@ -141,7 +163,8 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
       img: TechnicalImage,
       sort: "technical_presentation_errors",
       // back: "from-[#BA5370] to-[#F4E2D8]",
-      back: "bg-[#BA5370]",
+      whiteback: "hover:bg-[#62420E] ",
+      back: "hover:bg-[#F5A524]",
       counts: statistics.errorStatistics.technicalPresentationErrors,
     },
     {
@@ -149,7 +172,8 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
       img: ResearchImage,
       sort: "research_quality_errors",
       // back: "from-[#0099F7] to-[#F11712]",
-      back: "bg-[#F4E2D8]",
+      back: "hover:bg-[#7EE7FC]",
+      whiteback: "hover:bg-[#0E8AAA]",
       counts: statistics.errorStatistics.researchQualityErrors,
     },
     {
@@ -157,7 +181,8 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
       img: FigureImage,
       sort: "technical_presentation_errors",
       // back: "from-[#70e1f5] to-[#ffd194]",
-      back: "bg-[#20BDFF]",
+      whiteback: "hover:bg-[#095028] ",
+      back: "hover:bg-[#20BDFF]",
       counts: statistics.errorStatistics.technicalPresentationErrors,
     },
     {
@@ -165,56 +190,73 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
       img: FormatImage,
       sort: "research_quality_errors",
       // back: "from-[#FFB457] to-[#FF705B]",
-      back: "bg-[#A5FECB]",
+      whiteback: "hover:bg-[#001731] ",
+      back: "hover:bg-[#A5FECB]",
       counts: statistics.errorStatistics.technicalPresentationErrors,
     },
   ];
 
   return (
     <React.Fragment>
-      <div className="mb-8 sm:grid grid-cols-1 gap-4 md:grid-cols-4 lg:grid-cols-4 hidden">
-        {list.map((item, index) => (
-          <Card
-            isPressable
-            isHoverable
-            isBlurred
-            shadow="md"
-            key={index}
-            onPress={() => setSortBy(item.sort)}
-          >
-            <CardBody
-              className={`overflow-visible bg-gradient-to-tr w-full h-[140px] flex justify-start items-end p-4 ${item.back}`}
-            >
-              <b className="text-6xl text-slate-900 font-bold">{item.counts}</b>
-            </CardBody>
-            <CardFooter className="justify-center before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10 text-slate-800">
-              <strong className="font-bold text-md">{item.title}</strong>
-            </CardFooter>
-          </Card>
-        ))}
+      <div className="flex flex-row justify-center">
+        <Carousel
+          opts={{
+            align: "start",
+          }}
+          className="w-full max-w-[60vw]"
+        >
+          <CarouselContent>
+            {list.map((item, index) => (
+              <CarouselItem key={index} className=" md:basis-1/2 lg:basis-1/3">
+                <Card
+                  isPressable
+                  isHoverable
+                  isBlurred
+                  className="min-w-[19vw]"
+                  shadow="md"
+                  key={index}
+                  style={{ position: "relative" }}
+                  onPress={() => setSortBy(item.sort)}
+                >
+                  <div
+                    className={`${theme === "dark" ? `bg-slate-700 ${item.whiteback}` : `bg-gray-100 ${item.back}`} w-full  `}
+                  >
+                    <div
+                      className={` w-full flex flex-row justify-end`}
+                      style={{ position: "absolute" }}
+                    >
+                      <span
+                        color="primary"
+                        className={`mr-2 ${theme === "dark" ? "text-gray-100" : "text-slate-800"}`}
+                      >
+                        {(item.counts / list[0].counts) * 100}%
+                      </span>
+                    </div>
+                    <CardBody
+                      className={` overflow-visible bg-gradient-to-tr w-full h-[140px] flex flex-row justify-start items-center p-4 `}
+                    >
+                      <b
+                        className={`text-7xl font-bold ${theme === "dark" ? "text-gray-100" : "text-slate-900"}`}
+                      >
+                        {item.counts}
+                      </b>
+                      <span
+                        className={`ml-4 z-10 ${theme === "dark" ? "text-gray-100" : "text-slate-800"}`}
+                      >
+                        <strong className="font-bold text-xl">
+                          {item.title}
+                        </strong>
+                      </span>
+                    </CardBody>
+                  </div>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
       </div>
-      <Marquee pauseOnHover className="[--duration:30s] sm:hidden">
-        {list.map((item, index) => (
-          <Card
-            isPressable
-            isHoverable
-            isBlurred
-            className="min-w-[225px]"
-            shadow="md"
-            key={index}
-            onPress={() => setSortBy(item.sort)}
-          >
-            <CardBody
-              className={`overflow-visible bg-gradient-to-tr w-full h-[140px] flex justify-start items-end p-4 ${item.back}`}
-            >
-              <b className="text-6xl text-slate-900 font-bold">{item.counts}</b>
-            </CardBody>
-            <CardFooter className="justify-center before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10 text-slate-800">
-              <strong className="font-bold text-md">{item.title}</strong>
-            </CardFooter>
-          </Card>
-        ))}
-      </Marquee>
     </React.Fragment>
   );
 };

@@ -20,9 +20,6 @@ type TriggerRefType = {
 };
 
 export default function Home() {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [uploadStatus, setUploadStatus] = useState("");
-  const [progress, setProgress] = useState(0);
   const [pdfList, setPdfList] = useState([]);
   const [analysisResult, setAnalysisResult] = useState("");
   const [summary, setSummary] = useState("");
@@ -150,11 +147,12 @@ export default function Home() {
   }, [page, sortBy]);
 
   return (
-    <section className="flex flex-col md:flex-row items-start justify-start gap-4">
-      <div className="w-full md:w-1/6">
-        {User && <LeftSider onUpload={() => triggerUploadRef.current?.()} />}
-      </div>
-
+    <section className="flex flex-col md:flex-row items-start justify-center gap-4">
+      {User && (
+        <div className="w-full md:w-1/6">
+          <LeftSider onUpload={() => triggerUploadRef.current?.()} />
+        </div>
+      )}
       <div className="mt-8 w-full md:w-5/6 items-center flex flex-col justify-center">
         <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-4 md:p-12 md:px-36">
           <StatisticCard setSortBy={setSortBy} setOrder={setOrder} />
@@ -208,9 +206,9 @@ export default function Home() {
             return (
               <div
                 key={index}
-                className={`card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+                className={`card mb-8 md:mb-16 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
               >
-                <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-4 w-full">
+                <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
                   {result?.paperSummary && (
                     <SummaryWrapper
                       summary={result.paperSummary}
@@ -221,7 +219,7 @@ export default function Home() {
                   )}
                 </div>
 
-                <div className="mb-6 md:mb-12 w-full">
+                <div className="mb-0 sm:mb-2 w-full">
                   <SpecialSummary summary={result.paperAnalysis.summary} />
                   <div
                     className={

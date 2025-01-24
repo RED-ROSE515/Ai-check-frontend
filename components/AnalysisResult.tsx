@@ -10,7 +10,7 @@ const AnalysisResult = ({ results, total_summary }: any) => {
   const [currentTab, setCurrentTab] = useState(0);
   const { theme } = useTheme();
   return (
-    <div className="flex w-full flex-col items-center justify-center md:px-4">
+    <div className="flex w-full flex-col items-center justify-center">
       <Tabs
         aria-label="Options"
         className="overflow-x-auto mt-4 w-full"

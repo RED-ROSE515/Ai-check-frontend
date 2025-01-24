@@ -122,7 +122,7 @@ const SummaryWrapper = ({
         {input_tokens && output_tokens && total_cost && (
           <div className="w-full md:w-auto">
             <Card
-              className={`min-w-[125px] md:min-w-[150px] p-2 md:p-4 flex flex-col justify-center items-center ${theme === "dark" ? "bg-[#001731]" : "bg-[#B1F1D7]"}`}
+              className={`min-w-[125px] md:min-w-[150px] p-2 md:p-4 flex flex-col justify-center items-center ${theme === "dark" ? "bg-[#001731]" : "bg-gray-200"}`}
             >
               <strong>{`IN: ${commify(input_tokens)}`}</strong>
               <Divider />

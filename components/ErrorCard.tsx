@@ -1,11 +1,6 @@
-import type { ConfettiRef } from "./ui/confetti";
-
 import React, { useRef, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { Chip } from "@heroui/react";
-
-import { MagicCard } from "./ui/magic-card";
-import Confetti from "./ui/confetti";
 
 interface ErrorDetails {
   type: string;
@@ -40,19 +35,8 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
         return "border-red-500"; // Default border color
     }
   };
-  const confettiRef = useRef<ConfettiRef>(null);
-
-  useEffect(() => {
-    if (confettiRef.current) {
-      confettiRef.current?.fire({});
-    }
-  }, []);
 
   return (
-    // <MagicCard
-    //   className="${className} md:shadow-x overflow-hiddenrounded-lg  relative my-1 sm:my-4 flex w-full cursor-pointer flex-col items-stretch justify-center border-2 bg-background p-6 shadow-2xl"
-    //   gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
-    // >
     <div>
       <div className="my-4 flex flex-row items-center justify-between">
         <h2
@@ -60,22 +44,6 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
         >
           {error.type} Errors
         </h2>
-        {Number(error.counts) === 0 && (
-          <div className="">
-            <Confetti
-              ref={confettiRef}
-              className="absolute left-0 top-0 z-0 size-full"
-              options={{
-                get angle() {
-                  return Math.random() * 360;
-                },
-              }}
-              onMouseEnter={() => {
-                confettiRef.current?.fire({});
-              }}
-            />
-          </div>
-        )}
         <Chip
           className={`rounded-full  px-3 py-1 text-xs sm:text-sm font-medium ${Number(error.counts) === 0 ? "bg-green-200 text-green-700" : Number(error.counts) <= 3 ? "bg-orange-200 text-orange-700" : "bg-red-100 text-red-700"} `}
           variant="shadow"
@@ -118,7 +86,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
                 {index + 1}
               </span>
               <div className="flex flex-col">
-                <span className="mr-4 sm:mr-0">
+                <span className="mr-6 sm:mr-0">
                   <strong>Error : </strong>
                   {finding.error}
                 </span>
@@ -146,7 +114,6 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
         ))}
       </div>
     </div>
-    // </MagicCard>
   );
 };
 

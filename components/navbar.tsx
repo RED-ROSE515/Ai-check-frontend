@@ -27,11 +27,7 @@ export const Navbar = () => {
         justify="start"
       >
         <NavbarItem className=" sm:flex gap-2 sm:w-1/3">
-          {theme === "dark" ? (
-            <Image alt="Logo" src={LogoLight} />
-          ) : (
-            <Image alt="Logo" src={LogoDark} />
-          )}
+          <Image alt="Logo" src={theme === "dark" ? LogoLight : LogoDark} />
         </NavbarItem>
       </NavbarContent>
 
