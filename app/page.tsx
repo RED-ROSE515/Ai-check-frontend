@@ -1,9 +1,9 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Spinner } from "@heroui/spinner";
+import { Link } from "@heroui/link";
 import axios from "axios";
 import { useTheme } from "next-themes";
-import { Pagination } from "@heroui/pagination";
 import { useAnalysis } from "@/contexts/AnalysisContext";
 import LeftSider from "../components/LeftSider";
 import StatisticCard from "../components/StatisticCard";
@@ -16,6 +16,7 @@ import SpecialSummary from "@/components/SpecialSummary";
 import { usePagination } from "@/contexts/PaginationContext";
 
 import { useToast } from "@/hooks/use-toast";
+import { Chip } from "@heroui/chip";
 
 type TriggerRefType = {
   current: (() => void) | null;
@@ -160,7 +161,7 @@ export default function Home() {
         </div>
       )}
       <div className="mt-8 w-full md:w-5/6 items-center flex flex-col justify-center">
-        <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-4 md:p-12 md:px-36">
+        <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-4 md:p-12 md:px-36 justify-center">
           <StatisticCard setSortBy={setSortBy} setOrder={setOrder} />
         </div>
         {User && (
@@ -207,45 +208,59 @@ export default function Home() {
             </ShineBorder>
           </div>
         )}
-        {totalResults.length > 0 &&
-          totalResults.map((result: any, index) => {
-            return (
-              <div
-                key={index}
-                className={`card mb-8 md:mb-16 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
-              >
-                <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
-                  {result?.paperSummary && (
-                    <SummaryWrapper
-                      summary={result.paperSummary}
-                      input_tokens={result.input_tokens}
-                      output_tokens={result.output_tokens}
-                      total_cost={result.total_cost}
-                    />
-                  )}
-                </div>
-
-                <div className="mb-0 sm:mb-2 w-full">
-                  <SpecialSummary summary={result.paperAnalysis.summary} />
+        <div>
+          <Chip color="success" variant="bordered" radius="sm" size="lg">
+            Next paper will be processed momentarily...
+          </Chip>
+          {totalResults.length > 0 &&
+            totalResults.map((result: any, index) => {
+              return (
+                <div key={index}>
+                  <Link href={"/results/" + result.id + "/"}>
+                    <h1
+                      className={`${theme === "dark" ? "text-gray-300" : "text-slate-800"} text-2xl font-bold my-4`}
+                    >
+                      Result #{(page - 1) * 3 + index + 1}
+                    </h1>
+                  </Link>
                   <div
-                    className={
-                      "flex flex-col items-center justify-center rounded-md p-0 md:flex-row"
-                    }
+                    key={index}
+                    className={`card mb-8 md:mb-16 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
                   >
-                    {result.paperAnalysis?.analysis && (
-                      <AnalysisResult
-                        results={result.paperAnalysis.analysis}
-                        total_summary={result.paperAnalysis.summary}
-                      />
-                    )}
+                    <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
+                      {result?.paperSummary && (
+                        <SummaryWrapper
+                          summary={result.paperSummary}
+                          input_tokens={result.input_tokens}
+                          output_tokens={result.output_tokens}
+                          total_cost={result.total_cost}
+                        />
+                      )}
+                    </div>
+
+                    <div className="mb-0 sm:mb-2 w-full">
+                      <SpecialSummary summary={result.paperAnalysis.summary} />
+                      <div
+                        className={
+                          "flex flex-col items-center justify-center rounded-md p-0 md:flex-row"
+                        }
+                      >
+                        {result.paperAnalysis?.analysis && (
+                          <AnalysisResult
+                            results={result.paperAnalysis.analysis}
+                            total_summary={result.paperAnalysis.summary}
+                          />
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        <span>
-          | All Rights Reserved | Terms and Conditions | Privacy Policy
-        </span>
+              );
+            })}
+          <span>
+            | All Rights Reserved | Terms and Conditions | Privacy Policy
+          </span>
+        </div>
       </div>
     </section>
   );

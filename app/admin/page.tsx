@@ -95,6 +95,9 @@ export default function App() {
     setAnalyzingId(null);
   };
 
+  const handleDelete = async (id: number) => {
+    const resp = await axios.delete(API_BASE_URL + `api/papers/${id}/`);
+  };
   const pages = Math.ceil(pdfList.length / rowsPerPage);
 
   const items = React.useMemo(() => {
@@ -150,13 +153,23 @@ export default function App() {
                 {item.has_analysis ? <ActiveChip /> : <NoActiveChip />}
               </TableCell>
               <TableCell>
-                <ShinyButton
-                  color="primary"
-                  disabled={analyzingId !== null}
-                  onClick={() => handleAnalyze(item.id)}
-                >
-                  {analyzingId === item.id ? "Analyzing..." : "Check"}
-                </ShinyButton>
+                <div className="flex flex-row justify-center">
+                  <ShinyButton
+                    color="primary"
+                    className="mr-2"
+                    disabled={analyzingId !== null}
+                    onClick={() => handleAnalyze(item.id)}
+                  >
+                    {analyzingId === item.id ? "Analyzing..." : "Check"}
+                  </ShinyButton>
+                  <ShinyButton
+                    color="primary"
+                    disabled={analyzingId !== null}
+                    onClick={() => handleDelete(item.id)}
+                  >
+                    {"Delete"}
+                  </ShinyButton>
+                </div>
               </TableCell>
             </TableRow>
           )}

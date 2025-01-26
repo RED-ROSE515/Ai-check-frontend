@@ -203,7 +203,7 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
           opts={{
             align: "start",
           }}
-          className="w-full max-w-[60vw]"
+          className="w-full max-w-[70vw]"
         >
           <CarouselContent>
             {list.map((item, index) => (
@@ -213,7 +213,7 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
                   isHoverable
                   isBlurred
                   radius="sm"
-                  className="min-w-[19vw]"
+                  className="min-w-[22vw] my-2"
                   shadow="md"
                   key={index}
                   style={{ position: "relative" }}
@@ -237,7 +237,7 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
                       </span>
                     </div>
                     <CardBody
-                      className={` overflow-visible bg-gradient-to-tr w-full h-[140px] flex flex-row justify-start items-center p-4 `}
+                      className={` overflow-visible bg-gradient-to-tr w-full h-[100px] flex flex-row justify-start items-center p-4 `}
                     >
                       <b
                         className={`text-7xl font-bold ${theme === "dark" ? "text-gray-100" : "text-slate-900"}`}

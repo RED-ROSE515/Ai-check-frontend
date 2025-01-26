@@ -10,9 +10,8 @@ import {
   Button,
   Divider,
   Link,
+  Tooltip,
 } from "@heroui/react";
-import { MagicCard } from "./ui/magic-card";
-import { ShinyButton } from "./ui/shiny-button";
 import childImage from "../public/NerdBunnyUI/navy.png";
 import collegeImage from "../public/NerdBunnyUI/white.png";
 import phDImage from "../public/NerdBunnyUI/gold.png";
@@ -92,20 +91,25 @@ const SummaryWrapper = ({
           }`}
         >
           <strong className="font-bold text-lg md:text-xl w-full md:w-auto">
-            Authors:{" "}
+            Authors:
           </strong>
           {summary.metadata.authors.map(
             (author: string, index: number) =>
               (index < 3 || expand) && (
-                <Chip
+                <Tooltip
                   key={index}
-                  className={`${theme === "dark" ? "secondary" : "primary"}`}
-                  variant="dot"
+                  content={author.split("(")[1]}
+                  placement="bottom"
+                  className="max-w-[50vw]"
+                  closeDelay={1000}
                 >
-                  {author.length > 40
-                    ? author.substring(0, 40) + "..."
-                    : author}
-                </Chip>
+                  <Chip
+                    className={`${theme === "dark" ? "secondary" : "primary"}`}
+                    variant="dot"
+                  >
+                    {author.split("(")[0]}
+                  </Chip>
+                </Tooltip>
               )
           )}
           {summary.metadata.authors.length > 3 && (
@@ -136,7 +140,7 @@ const SummaryWrapper = ({
       {summary.metadata.paper_link && (
         <div>
           <Link
-            className={`mb-4 block hover:underline truncate ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
+            className={`mb-4 block hover:underline truncate w-fit ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
             href={summary.metadata.paper_link}
             rel="noopener noreferrer"
             target="_blank"

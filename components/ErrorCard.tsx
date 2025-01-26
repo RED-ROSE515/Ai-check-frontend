@@ -56,7 +56,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
         {findingsList.map((finding, index) => (
           <div
             key={index}
-            className={`overflow-hidden relative flex w-full items-start justify-between gap-2 rounded border-2 p-2 ${theme === "dark" ? "text-gray-300" : "text-slate-700"} ${getBorderColorClass(
+            className={`overflow-hidden relative flex w-full items-start justify-between gap-2 rounded border-1 p-2 ${theme === "dark" ? "text-gray-300" : "text-slate-700"} ${getBorderColorClass(
               finding.severity
             )}`}
           >
@@ -69,13 +69,13 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
                       ? "#F31260"
                       : finding.severity.toLowerCase() === "medium"
                         ? "#F5A524"
-                        : "#006FEE",
+                        : "#17C964",
                   "--ribbon-background":
                     finding.severity.toLowerCase() === "high"
                       ? "#F31260"
                       : finding.severity.toLowerCase() === "medium"
                         ? "#F5A524"
-                        : "#006FEE",
+                        : "#17C964",
                 } as React.CSSProperties
               }
             >
