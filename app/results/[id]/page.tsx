@@ -7,10 +7,6 @@ import SummaryWrapper from "@/components/SummaryWrapper";
 import SpecialSummary from "@/components/SpecialSummary";
 import AnalysisResult from "@/components/AnalysisResult";
 
-interface ResultPageProps {
-  params: { id: number };
-}
-
 const ResultPage = ({ params }: any) => {
   const resolvedParams = use(params);
   const { id } = resolvedParams as any;
@@ -55,7 +51,9 @@ const ResultPage = ({ params }: any) => {
   };
 
   useEffect(() => {
-    getResultById(id);
+    const newId = id.split("%24")[1];
+    console.log(newId, id);
+    getResultById(newId);
   }, []);
 
   return (

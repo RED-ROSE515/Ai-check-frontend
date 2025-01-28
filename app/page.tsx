@@ -144,6 +144,10 @@ export default function Home() {
   };
 
   useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
     getPdfList();
     getTotalResults();
   }, [page, sortBy]);
@@ -208,7 +212,7 @@ export default function Home() {
             </ShineBorder>
           </div>
         )}
-        <div>
+        <div className="w-full">
           <Chip color="success" variant="bordered" radius="sm" size="lg">
             Next paper will be processed momentarily...
           </Chip>
@@ -216,7 +220,15 @@ export default function Home() {
             totalResults.map((result: any, index) => {
               return (
                 <div key={index}>
-                  <Link href={"/results/" + result.id + "/"}>
+                  <Link
+                    href={
+                      "/results/" +
+                      result.title.toLowerCase().split(" ").join("-") +
+                      "$" +
+                      result.id +
+                      "/"
+                    }
+                  >
                     <h1
                       className={`${theme === "dark" ? "text-gray-300" : "text-slate-800"} text-2xl font-bold my-4`}
                     >
