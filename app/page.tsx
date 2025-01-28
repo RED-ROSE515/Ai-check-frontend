@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-import { Spinner } from "@heroui/spinner";
+import { Spinner, Button } from "@heroui/react";
 import { Link } from "@heroui/link";
 import axios from "axios";
 import { useTheme } from "next-themes";
@@ -17,7 +17,8 @@ import { usePagination } from "@/contexts/PaginationContext";
 
 import { useToast } from "@/hooks/use-toast";
 import { Chip } from "@heroui/chip";
-
+import ShareButtons from "@/components/ShareButtons";
+import ShareButton from "@/components/ui/share-button";
 type TriggerRefType = {
   current: (() => void) | null;
 };
@@ -225,14 +226,14 @@ export default function Home() {
                       "/results/" +
                       result.title.toLowerCase().split(" ").join("-") +
                       "$" +
-                      result.id +
+                      result.result_id +
                       "/"
                     }
                   >
                     <h1
                       className={`${theme === "dark" ? "text-gray-300" : "text-slate-800"} text-2xl font-bold my-4`}
                     >
-                      Result #{(page - 1) * 3 + index + 1}
+                      Result #{result.result_id}
                     </h1>
                   </Link>
                   <div
@@ -265,6 +266,18 @@ export default function Home() {
                         )}
                       </div>
                     </div>
+                    {/* Social Sharing Buttons */}
+                    <ShareButtons
+                      url={
+                        `https://devai1.nobleblocks.com/results/` +
+                        result.title.toLowerCase().split(" ").join("-") +
+                        "$" +
+                        result.result_id +
+                        "/"
+                      }
+                      title={result.title}
+                      summary={result.paperSummary.summary.phd}
+                    />
                   </div>
                 </div>
               );

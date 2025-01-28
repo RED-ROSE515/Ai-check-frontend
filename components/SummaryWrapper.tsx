@@ -72,17 +72,19 @@ const SummaryWrapper = ({
           : { backgroundColor: "#EEEEEEF0" }
       }
     >
-      <Typography className="mb-4 text-center" component="h2" variant="h5">
-        <AnimatedGradientText>
-          <TextAnimate
-            animation="slideLeft"
-            by="character"
-            className={`animate-gradient bg-gradient-to-r  bg-[length:var(--bg-size)_100%] bg-clip-text text-2xl font-bold text-transparent ${theme === "dark" ? "from-[#000000] via-[#020005c4] to-[#000000]" : "from-[#ffaa40] via-[#9c40ff] to-[#ffaa40]"}`}
-          >
-            {summary.metadata.title}
-          </TextAnimate>
-        </AnimatedGradientText>
-      </Typography>
+      <div className="w-full flex flex-row justify-center">
+        <Typography className="mb-4 text-center" component="h2" variant="h5">
+          <AnimatedGradientText>
+            <TextAnimate
+              animation="slideLeft"
+              by="character"
+              className={`animate-gradient bg-gradient-to-r  bg-[length:var(--bg-size)_100%] bg-clip-text text-2xl font-bold text-transparent ${theme === "dark" ? "from-[#000000] via-[#020005c4] to-[#000000]" : "from-[#ffaa40] via-[#9c40ff] to-[#ffaa40]"}`}
+            >
+              {summary.metadata.title}
+            </TextAnimate>
+          </AnimatedGradientText>
+        </Typography>
+      </div>
 
       <div className="flex flex-col md:flex-row justify-between mt-4 gap-4">
         <div

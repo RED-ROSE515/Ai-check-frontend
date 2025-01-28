@@ -5,7 +5,7 @@ import { usePagination } from "@/contexts/PaginationContext";
 import { Pagination } from "@heroui/pagination";
 import { useTheme } from "next-themes";
 
-const TwitterSvg = ({ theme }: any) => {
+export const TwitterSvg = ({ theme }: any) => {
   return (
     <Link href="https://x.com/nerdbunny_com">
       <svg
@@ -23,7 +23,7 @@ const TwitterSvg = ({ theme }: any) => {
     </Link>
   );
 };
-const TiktokSvg = ({ theme }: any) => {
+export const TiktokSvg = ({ theme }: any) => {
   return (
     <Link href="#">
       <svg
@@ -41,7 +41,7 @@ const TiktokSvg = ({ theme }: any) => {
     </Link>
   );
 };
-const YoutubeSvg = ({ theme }: any) => {
+export const YoutubeSvg = ({ theme }: any) => {
   return (
     <Link href="#">
       <svg
@@ -59,7 +59,7 @@ const YoutubeSvg = ({ theme }: any) => {
     </Link>
   );
 };
-const TelegramSvg = ({ theme }: any) => {
+export const TelegramSvg = ({ theme }: any) => {
   return (
     <Link href="http://t.me/nerdbunny1">
       <svg
@@ -79,7 +79,7 @@ const TelegramSvg = ({ theme }: any) => {
     </Link>
   );
 };
-const InstagramSvg = ({ theme }: any) => {
+export const InstagramSvg = ({ theme }: any) => {
   return (
     <Link href="#">
       <svg
