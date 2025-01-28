@@ -110,7 +110,7 @@ const ResultPage = ({ params }: any) => {
                 <SpecialSummary summary={totalSummary} />
                 <div
                   className={
-                    "flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-6"
+                    "flex flex-col items-center justify-center rounded-md p-0 md:flex-row"
                   }
                 >
                   {checkLoading && <Spinner className="my-4" color="primary" />}

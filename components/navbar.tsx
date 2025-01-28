@@ -3,18 +3,15 @@ import { useState, useEffect } from "react";
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
-  NavbarMenu,
   NavbarItem,
-  NavbarMenuItem,
 } from "@heroui/navbar";
 import { Link } from "@heroui/link";
 import Image from "next/image";
 import LogoDark from "../public/LogoPurple.png";
 import LogoLight from "../public/LogoLime.png";
-import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { useTheme } from "next-themes";
-
+import { TwitterSvg, TelegramSvg, TiktokSvg } from "@/app/footer";
 export const Navbar = () => {
   const { theme } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
@@ -50,7 +47,10 @@ export const Navbar = () => {
           className="sm:flex w-full sm:basis-full"
           justify="end"
         >
-          <NavbarItem className="sm:flex gap-2">
+          <NavbarItem className="sm:flex gap-4">
+            <TwitterSvg theme={theme} />
+            <TelegramSvg theme={theme} />
+            <TiktokSvg theme={theme} />
             <ThemeSwitch />
           </NavbarItem>
         </NavbarContent>

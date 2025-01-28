@@ -25,7 +25,7 @@ export const TwitterSvg = ({ theme }: any) => {
 };
 export const TiktokSvg = ({ theme }: any) => {
   return (
-    <Link href="#">
+    <Link href="https://www.tiktok.com/@nerdbunnyofficial">
       <svg
         width="24"
         height="24"
@@ -110,8 +110,8 @@ const Footer = () => {
     return null;
   }
   return (
-    <div className="flex flex-col md:flex-row justify-between items-center w-4/5">
-      <div className="flex flex-col justify-center items-center text-center">
+    <div className="flex flex-col-reverse md:flex-row justify-between items-center w-4/5 gap-4">
+      <div className="flex flex-col justify-center items-center text-center mt-2 sm:mt-0">
         <span>Copyright © 2025 NerdBunny</span>
       </div>
       <div>

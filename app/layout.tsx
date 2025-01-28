@@ -11,6 +11,9 @@ import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 import { Toaster } from "@/components/ui/toaster";
 import Footer from "./footer";
+import SiteIcon from "@/public/favicon.ico";
+
+const siteIconUrl = SiteIcon.src;
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
@@ -18,7 +21,7 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   icons: {
-    icon: "/favicon.ico",
+    icon: siteIconUrl,
   },
 };
 

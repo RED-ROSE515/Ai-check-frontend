@@ -198,7 +198,11 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
 
   return (
     <React.Fragment>
-      <div className="flex flex-row justify-center">
+      <div className="flex flex-col justify-center items-center">
+        <span className="sm:font-semibold text-sm sm:text-md">
+          An AI-driven DeSci meme project, designed to detect errors, summarize
+          research, and simplify complex studies for everyone. 🧬🐇
+        </span>
         <Carousel
           opts={{
             align: "start",

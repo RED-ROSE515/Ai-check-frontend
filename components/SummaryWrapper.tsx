@@ -46,6 +46,7 @@ const SummaryWrapper = ({
   input_tokens,
   output_tokens,
   total_cost,
+  link,
 }: any) => {
   const { theme } = useTheme();
   const [expand, setExpand] = useState(false);
@@ -73,8 +74,13 @@ const SummaryWrapper = ({
       }
     >
       <div className="w-full flex flex-row justify-center">
-        <span className="mb-4 text-center font-bold text-2xl">
-          {summary.metadata.title}
+        <span>
+          <Link
+            href={link}
+            className="w-full mb-4 text-center font-bold text-2xl"
+          >
+            {summary.metadata.title}
+          </Link>
         </span>
       </div>
 

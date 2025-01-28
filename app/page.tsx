@@ -251,6 +251,17 @@ export default function Home() {
                           input_tokens={result.input_tokens}
                           output_tokens={result.output_tokens}
                           total_cost={result.total_cost}
+                          link={
+                            "/results/" +
+                            result.title
+                              .replace(/[^a-zA-Z0-9\s]/g, "")
+                              .toLowerCase()
+                              .split(" ")
+                              .join("-") +
+                            "_" +
+                            result.id +
+                            "/"
+                          }
                         />
                       )}
                     </div>
