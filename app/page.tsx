@@ -224,9 +224,13 @@ export default function Home() {
                   <Link
                     href={
                       "/results/" +
-                      result.title.toLowerCase().split(" ").join("-") +
-                      "$" +
-                      result.result_id +
+                      result.title
+                        .replace(/[^a-zA-Z0-9\s]/g, "")
+                        .toLowerCase()
+                        .split(" ")
+                        .join("-") +
+                      "_" +
+                      result.id +
                       "/"
                     }
                   >
@@ -267,24 +271,21 @@ export default function Home() {
                       </div>
                     </div>
                     {/* Social Sharing Buttons */}
-                    <ShareButtons
+                    {/* <ShareButtons
                       url={
                         `https://devai1.nobleblocks.com/results/` +
                         result.title.toLowerCase().split(" ").join("-") +
                         "$" +
-                        result.result_id +
+                        result.id +
                         "/"
                       }
                       title={result.title}
                       summary={result.paperSummary.summary.phd}
-                    />
+                    /> */}
                   </div>
                 </div>
               );
             })}
-          <span>
-            | All Rights Reserved | Terms and Conditions | Privacy Policy
-          </span>
         </div>
       </div>
     </section>

@@ -31,10 +31,11 @@ export const Navbar = () => {
       <HeroUINavbar
         maxWidth="xl"
         position="sticky"
-        className={`shadow-xl flex flex-row justify-between md:w-5/6 `}
+        className={`shadow-xl flex flex-row justify-between md:w-5/6 w-full`}
       >
         <NavbarContent
-          className="sm:flex basis-1/5 sm:basis-full"
+          className="sm:flex w-full sm:basis-full"
+          style={{ marginLeft: "-1.5rem" }}
           justify="start"
         >
           <NavbarItem className=" sm:flex gap-2 sm:w-1/3">
@@ -45,7 +46,8 @@ export const Navbar = () => {
         </NavbarContent>
 
         <NavbarContent
-          className="sm:flex basis-1/5 sm:basis-full"
+          style={{ marginRight: "-0.5rem" }}
+          className="sm:flex w-full sm:basis-full"
           justify="end"
         >
           <NavbarItem className="sm:flex gap-2">

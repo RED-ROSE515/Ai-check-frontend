@@ -65,7 +65,7 @@ const SummaryWrapper = ({
 
   return (
     <div
-      className="flex w-full flex-col rounded-lg p-4 md:p-0"
+      className="flex w-full flex-col rounded-lg p-4 md:px-4"
       style={
         theme === "dark"
           ? { backgroundColor: "#1f2a37" }
@@ -73,58 +73,65 @@ const SummaryWrapper = ({
       }
     >
       <div className="w-full flex flex-row justify-center">
-        <Typography className="mb-4 text-center" component="h2" variant="h5">
-          <AnimatedGradientText>
-            <TextAnimate
-              animation="slideLeft"
-              by="character"
-              className={`animate-gradient bg-gradient-to-r  bg-[length:var(--bg-size)_100%] bg-clip-text text-2xl font-bold text-transparent ${theme === "dark" ? "from-[#000000] via-[#020005c4] to-[#000000]" : "from-[#ffaa40] via-[#9c40ff] to-[#ffaa40]"}`}
-            >
-              {summary.metadata.title}
-            </TextAnimate>
-          </AnimatedGradientText>
-        </Typography>
+        <span className="mb-4 text-center font-bold text-2xl">
+          {summary.metadata.title}
+        </span>
       </div>
 
       <div className="flex flex-col md:flex-row justify-between mt-4 gap-4">
-        <div
-          className={`my-4 w-full flex flex-wrap gap-2 ${
-            theme === "dark" ? `text-gray-200` : "text-slate-700"
-          }`}
-        >
-          <strong className="font-bold text-lg md:text-xl w-full md:w-auto">
-            Authors:
-          </strong>
-          {summary.metadata.authors.map(
-            (author: string, index: number) =>
-              (index < 3 || expand) && (
-                <Tooltip
-                  key={index}
-                  content={author.split("(")[1]}
-                  placement="bottom"
-                  className="max-w-[50vw]"
-                  closeDelay={1000}
-                >
-                  <Chip
-                    className={`${theme === "dark" ? "secondary" : "primary"}`}
-                    variant="dot"
+        <div>
+          <div
+            className={`my-4 w-full flex flex-wrap gap-2 ${
+              theme === "dark" ? `text-gray-200` : "text-slate-700"
+            }`}
+          >
+            <strong className="font-bold text-lg md:text-xl w-full md:w-auto">
+              Authors:
+            </strong>
+            {summary.metadata.authors.map(
+              (author: string, index: number) =>
+                (index < 3 || expand) && (
+                  <Tooltip
+                    key={index}
+                    content={author.split("(")[1]}
+                    placement="bottom"
+                    className="max-w-[50vw]"
+                    closeDelay={1000}
                   >
-                    {author.split("(")[0]}
-                  </Chip>
-                </Tooltip>
-              )
-          )}
-          {summary.metadata.authors.length > 3 && (
-            <Button
-              size="sm"
-              variant="ghost"
-              onPress={() => setExpand(!expand)}
-              className="w-full md:w-auto"
-            >
-              {`${expand ? "Show Little..." : "Load More..."}`}
-            </Button>
+                    <Chip
+                      className={`${theme === "dark" ? "secondary" : "primary"}`}
+                      variant="dot"
+                    >
+                      {author.split("(")[0]}
+                    </Chip>
+                  </Tooltip>
+                )
+            )}
+            {summary.metadata.authors.length > 3 && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onPress={() => setExpand(!expand)}
+                className="w-full md:w-auto"
+              >
+                {`${expand ? "Show Little..." : "Load More..."}`}
+              </Button>
+            )}
+          </div>
+          {summary.metadata.paper_link && (
+            <div>
+              <Link
+                className={`mb-4 block hover:underline truncate w-fit ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
+                href={summary.metadata.paper_link}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                {summary.metadata.paper_link}
+              </Link>
+            </div>
           )}
         </div>
+
         {input_tokens && output_tokens && total_cost && (
           <div className="w-full md:w-auto">
             <Card
@@ -139,18 +146,7 @@ const SummaryWrapper = ({
           </div>
         )}
       </div>
-      {summary.metadata.paper_link && (
-        <div>
-          <Link
-            className={`mb-4 block hover:underline truncate w-fit ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
-            href={summary.metadata.paper_link}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            {summary.metadata.paper_link}
-          </Link>
-        </div>
-      )}
+
       <div className="mt-4 gap-1 w-full" style={{ marginLeft: "-0.5rem" }}>
         <Accordion
           className="w-full"
@@ -211,7 +207,7 @@ const SummaryWrapper = ({
               value={index.toString()}
             >
               <p
-                className={`text-md ${theme === "dark" ? "text-gray-200" : "text-slate-600"}`}
+                className={`text-md font-semibold ${theme === "dark" ? "text-gray-200" : "text-slate-800"}`}
               >
                 {level.content}
               </p>

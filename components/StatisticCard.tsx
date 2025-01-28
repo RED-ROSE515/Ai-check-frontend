@@ -240,14 +240,14 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
                       className={` overflow-visible bg-gradient-to-tr w-full h-[100px] flex flex-row justify-start items-center p-4 `}
                     >
                       <b
-                        className={`text-5xl sm:text-7xl font-bold ${theme === "dark" ? "text-gray-100" : "text-slate-900"}`}
+                        className={`text-4xl sm:text-4xl font-bold ${theme === "dark" ? "text-gray-100" : "text-slate-900"}`}
                       >
                         {item.counts}
                       </b>
                       <span
                         className={`ml-4 z-10 ${theme === "dark" ? "text-gray-100" : "text-slate-800"}`}
                       >
-                        <strong className="font-bold text-md sm:text-xl">
+                        <strong className="font-bold text-md sm:text-sm">
                           {item.title}
                         </strong>
                       </span>
