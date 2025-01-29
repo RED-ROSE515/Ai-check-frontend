@@ -201,8 +201,8 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
       <div className="flex flex-col justify-center items-center">
         <span className="sm:font-semibold text-md sm:text-xl text-center">
           An AI agent for DeSci that detects errors in research papers, makes
-          complex studies easier to understand, and brings a fun meme culture to
-          science. 🧬🐇
+          complex studies <br className="hidden sm:block" /> easier to
+          understand, and brings a fun meme culture to science. 🧬🐇
         </span>
         <Carousel
           opts={{

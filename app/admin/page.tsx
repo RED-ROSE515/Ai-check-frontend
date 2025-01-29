@@ -13,7 +13,7 @@ import {
 } from "@heroui/react";
 import { Spinner } from "@heroui/spinner";
 import { useAnalysis } from "@/contexts/AnalysisContext";
-import ShineBorder from "../../components/ui/shine-border";
+import _ from "lodash";
 import SummaryWrapper from "../../components/SummaryWrapper";
 import AnalysisResult from "../../components/AnalysisResult";
 import FileUpload from "../../components/file-upload";
@@ -58,8 +58,13 @@ export default function App() {
   const getPdfList = async () => {
     try {
       const response = await axios.get(API_BASE_URL + "api/papers/");
+      let data: any = _.sortBy(response.data, [
+        function (o) {
+          return o.updated_at;
+        },
+      ]);
 
-      setPdfList(response.data);
+      setPdfList(data);
       toast({
         title: "Paper Fetch",
         description: "Load Pdfs successfully!",
@@ -135,7 +140,7 @@ export default function App() {
         <TableHeader>
           <TableColumn key="id">Id</TableColumn>
           <TableColumn key="title">Title</TableColumn>
-          <TableColumn key="created_at">Created Date</TableColumn>
+          <TableColumn key="updated_at">Updated Date</TableColumn>
           <TableColumn key="Summary">Summary</TableColumn>
           <TableColumn key="Analysis">Analysis</TableColumn>
           <TableColumn key="Action">Action</TableColumn>
@@ -145,7 +150,7 @@ export default function App() {
             <TableRow key={item.id}>
               <TableCell>{item.id}</TableCell>
               <TableCell>{item.title}</TableCell>
-              <TableCell>{item.created_at}</TableCell>
+              <TableCell>{item.updated_at}</TableCell>
               <TableCell>
                 {item.has_summary ? <ActiveChip /> : <NoActiveChip />}
               </TableCell>
