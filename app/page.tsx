@@ -165,8 +165,8 @@ export default function Home() {
           <strong>Analyzing</strong>
         </div>
       )}
-      <div className="mt-8 w-full md:w-5/6 items-center flex flex-col justify-center">
-        <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-4 md:p-12 md:px-36 justify-center">
+      <div className="mt-4 w-full md:w-5/6 items-center flex flex-col justify-center">
+        <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-4 md:p-12 md:px-36 justify-center md:pt-0">
           <StatisticCard setSortBy={setSortBy} setOrder={setOrder} />
         </div>
         {User && (

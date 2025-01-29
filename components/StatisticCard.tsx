@@ -199,9 +199,9 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
   return (
     <React.Fragment>
       <div className="flex flex-col justify-center items-center">
-        <span className="sm:font-semibold text-md sm:text-xl text-center">
+        <span className="sm:font-semibold text-md sm:text-xl text-center mb-2">
           An AI agent for DeSci that detects errors in research papers, makes
-          complex studies <br className="hidden sm:block" /> easier to
+          complex studies <br className="hidden lg:block" /> easier to
           understand, and brings a fun meme culture to science. 🧬🐇
         </span>
         <Carousel
