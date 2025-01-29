@@ -7,7 +7,7 @@ import { useTheme } from "next-themes";
 
 export const TwitterSvg = ({ theme }: any) => {
   return (
-    <Link href="https://x.com/nerdbunny_com">
+    <Link isExternal href="https://x.com/nerdbunny_com">
       <svg
         width="24"
         height="24"
@@ -25,7 +25,7 @@ export const TwitterSvg = ({ theme }: any) => {
 };
 export const TiktokSvg = ({ theme }: any) => {
   return (
-    <Link href="https://www.tiktok.com/@nerdbunnyofficial">
+    <Link isExternal href="https://www.tiktok.com/@nerdbunnyofficial">
       <svg
         width="24"
         height="24"
@@ -43,7 +43,7 @@ export const TiktokSvg = ({ theme }: any) => {
 };
 export const YoutubeSvg = ({ theme }: any) => {
   return (
-    <Link href="#">
+    <Link isExternal href="#">
       <svg
         width="24"
         height="24"
@@ -61,7 +61,7 @@ export const YoutubeSvg = ({ theme }: any) => {
 };
 export const TelegramSvg = ({ theme }: any) => {
   return (
-    <Link href="http://t.me/nerdbunny1">
+    <Link isExternal href="http://t.me/nerdbunny1">
       <svg
         width="24"
         height="24"
@@ -81,7 +81,7 @@ export const TelegramSvg = ({ theme }: any) => {
 };
 export const InstagramSvg = ({ theme }: any) => {
   return (
-    <Link href="#">
+    <Link isExternal href="#">
       <svg
         width="24"
         height="24"

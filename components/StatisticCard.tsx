@@ -199,9 +199,10 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
   return (
     <React.Fragment>
       <div className="flex flex-col justify-center items-center">
-        <span className="sm:font-semibold text-sm sm:text-md">
-          An AI-driven DeSci meme project, designed to detect errors, summarize
-          research, and simplify complex studies for everyone. 🧬🐇
+        <span className="sm:font-semibold text-md sm:text-xl text-center">
+          An AI agent for DeSci that detects errors in research papers, makes
+          complex studies easier to understand, and brings a fun meme culture to
+          science. 🧬🐇
         </span>
         <Carousel
           opts={{
