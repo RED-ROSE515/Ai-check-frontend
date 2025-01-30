@@ -4,10 +4,11 @@ import { Link } from "@heroui/link";
 import { usePagination } from "@/contexts/PaginationContext";
 import { Pagination } from "@heroui/pagination";
 import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
 
 export const TwitterSvg = ({ theme }: any) => {
   return (
-    <Link isExternal href="https://x.com/nerdbunny_com">
+    <Link isExternal href="https://x.com/nerdbunnyai">
       <svg
         width="24"
         height="24"
@@ -101,7 +102,7 @@ const Footer = () => {
   const { theme } = useTheme();
   const { page, totalPage, setPage } = usePagination();
   const [isMounted, setIsMounted] = useState(false);
-
+  const pathname = usePathname();
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -114,23 +115,23 @@ const Footer = () => {
       <div className="flex flex-col justify-center items-center text-center mt-2 sm:mt-0">
         <span>Copyright © 2025 NerdBunny</span>
       </div>
-      <div>
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          initialPage={1}
-          page={page}
-          total={totalPage}
-          onChange={(newPage) => setPage(newPage)}
-        />
-      </div>
+      {pathname === "/" && (
+        <div>
+          <Pagination
+            isCompact
+            showControls
+            showShadow
+            initialPage={1}
+            page={page}
+            total={totalPage}
+            onChange={(newPage) => setPage(newPage)}
+          />
+        </div>
+      )}
       <div className="flex flex-row justify-center gap-2">
         <TelegramSvg theme={theme} />
         <TwitterSvg theme={theme} />
         <TiktokSvg theme={theme} />
-        <InstagramSvg theme={theme} />
-        <YoutubeSvg theme={theme} />
       </div>
     </div>
   );
