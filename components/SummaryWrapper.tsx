@@ -94,7 +94,7 @@ const SummaryWrapper = ({
             <strong className="font-bold text-lg md:text-xl w-full md:w-auto">
               Authors:
             </strong>
-            {summary.metadata.authors.map(
+            {summary.metadata.authors?.map(
               (author: string, index: number) =>
                 (index < 3 || expand) && (
                   <Tooltip
@@ -113,7 +113,7 @@ const SummaryWrapper = ({
                   </Tooltip>
                 )
             )}
-            {summary.metadata.authors.length > 3 && (
+            {summary.metadata.authors?.length > 3 && (
               <Button
                 size="sm"
                 variant="ghost"
@@ -124,7 +124,7 @@ const SummaryWrapper = ({
               </Button>
             )}
           </div>
-          {summary.metadata.paper_link && (
+          {summary.metadata.paper_link ? (
             <div>
               <Link
                 className={`mb-4 block hover:underline truncate w-fit ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
@@ -135,6 +135,13 @@ const SummaryWrapper = ({
                 {summary.metadata.paper_link}
               </Link>
             </div>
+          ) : (
+            <Link
+              href="#"
+              className={`mb-4 block hover:underline truncate w-fit ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
+            >
+              Unknown
+            </Link>
           )}
         </div>
 

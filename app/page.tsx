@@ -17,8 +17,6 @@ import { usePagination } from "@/contexts/PaginationContext";
 
 import { useToast } from "@/hooks/use-toast";
 import { Chip } from "@heroui/chip";
-import ShareButtons from "@/components/ShareButtons";
-import ShareButton from "@/components/ui/share-button";
 type TriggerRefType = {
   current: (() => void) | null;
 };
