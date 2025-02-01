@@ -52,10 +52,6 @@ export default function Home() {
       const response = await axios.get(API_BASE_URL + "api/papers/");
 
       setPdfList(response.data);
-      toast({
-        title: "Paper Fetch",
-        description: "Load Pdfs successfully!",
-      });
     } catch (error) {
       console.error(error);
       toast({
@@ -78,10 +74,6 @@ export default function Home() {
 
       setTotalResults(response.data?.data);
       setTotalPage(response.data.pagination.totalPages);
-      toast({
-        title: "Analysis Data",
-        description: "Load Analyzed Papers!",
-      });
       window.scrollTo({
         top: 0,
         behavior: "smooth",
@@ -232,11 +224,18 @@ export default function Home() {
                       "/"
                     }
                   >
-                    <h1
-                      className={`${theme === "dark" ? "text-gray-300" : "text-slate-800"} text-2xl font-bold my-4`}
+                    <Chip
+                      variant="bordered"
+                      radius="md"
+                      size="lg"
+                      className={`my-4 ${theme === "dark" ? "bg-lime-400 hover:bg-lime-600" : "bg-pink-500 hover:bg-pink-600"} `}
                     >
-                      Result #{result.result_id}
-                    </h1>
+                      <span
+                        className={`${theme === "dark" ? "text-black" : "text-white"} text-2xl font-bold`}
+                      >
+                        Result #{result.result_id}
+                      </span>
+                    </Chip>
                   </Link>
                   <div
                     key={index}
