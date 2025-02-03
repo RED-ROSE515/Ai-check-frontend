@@ -5,6 +5,9 @@ import { usePagination } from "@/contexts/PaginationContext";
 import { Pagination } from "@heroui/pagination";
 import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
+import SpeechPlayer from "@/components/SpeechPlayer";
+import { useSpeech } from "@/contexts/SpeechContext";
+import { AnimatePresence, motion } from "framer-motion";
 
 export const TwitterSvg = ({ theme }: any) => {
   return (
@@ -101,6 +104,7 @@ export const InstagramSvg = ({ theme }: any) => {
 const Footer = () => {
   const { theme } = useTheme();
   const { page, totalPage, setPage } = usePagination();
+  const { speechUrl, showSpeech } = useSpeech();
   const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
   useEffect(() => {
@@ -111,27 +115,42 @@ const Footer = () => {
     return null;
   }
   return (
-    <div className="flex flex-col-reverse md:flex-row justify-between items-center w-4/5 gap-4">
-      <div className="flex flex-col justify-center items-center text-center mt-2 sm:mt-0">
-        <span>Copyright © 2025 NerdBunny</span>
-      </div>
-      {pathname === "/" && (
-        <div>
-          <Pagination
-            isCompact
-            showControls
-            showShadow
-            initialPage={1}
-            page={page}
-            total={totalPage}
-            onChange={(newPage) => setPage(newPage)}
-          />
+    <div className="w-full flex flex-col justify-center items-center">
+      <AnimatePresence>
+        {showSpeech && speechUrl && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="w-full sm:px-12 mb-4 overflow-hidden"
+          >
+            <SpeechPlayer audio_url={speechUrl} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <div className="flex flex-col-reverse md:flex-row justify-between items-center w-[80%] gap-4">
+        <div className="flex flex-col justify-center items-center text-center mt-2 sm:mt-0">
+          <span>Copyright © 2025 NerdBunny</span>
         </div>
-      )}
-      <div className="flex flex-row justify-center gap-2">
-        <TelegramSvg theme={theme} />
-        <TwitterSvg theme={theme} />
-        <TiktokSvg theme={theme} />
+        {pathname === "/" && (
+          <div>
+            <Pagination
+              isCompact
+              showControls
+              showShadow
+              initialPage={1}
+              page={page}
+              total={totalPage}
+              onChange={(newPage) => setPage(newPage)}
+            />
+          </div>
+        )}
+        <div className="flex flex-row justify-center gap-2">
+          <TelegramSvg theme={theme} />
+          <TwitterSvg theme={theme} />
+          <TiktokSvg theme={theme} />
+        </div>
       </div>
     </div>
   );

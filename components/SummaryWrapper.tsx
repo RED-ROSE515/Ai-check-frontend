@@ -1,23 +1,36 @@
 import React, { useState } from "react";
 import { Typography, capitalize } from "@mui/material";
-import { Chip } from "@heroui/react";
-import Image from "next/image";
+
+import Image, { StaticImageData } from "next/image";
 import { useTheme } from "next-themes";
+import { useSpeech } from "@/contexts/SpeechContext";
+import { useToast } from "@/hooks/use-toast";
+import axios from "axios";
 import {
+  Chip,
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerBody,
+  DrawerFooter,
+  useDisclosure,
   Accordion,
   AccordionItem,
   Card,
   Button,
   Divider,
   Link,
+  Select,
+  SelectItem,
   Tooltip,
 } from "@heroui/react";
 import childImage from "../public/NerdBunnyUI/navy.png";
 import collegeImage from "../public/NerdBunnyUI/white.png";
 import phDImage from "../public/NerdBunnyUI/gold.png";
 import { commify } from "@/utils/number_utils";
-import { TextAnimate } from "./ui/text-animate";
-import AnimatedGradientText from "./ui/animated-gradient-text";
+import { FaPlay, FaPause } from "react-icons/fa";
+import { RiVoiceAiLine } from "react-icons/ri";
+import SpeechPlayer from "./SpeechPlayer";
 const getColorForScore = (score: number) => {
   switch (true) {
     case score >= 9:
@@ -41,6 +54,25 @@ const getColorForScore = (score: number) => {
   }
 };
 
+export const voices = [
+  { key: "alloy", label: "Alloy" },
+  { key: "ash", label: "Ash" },
+  { key: "coral", label: "Coral" },
+  { key: "echo", label: "Echo" },
+  { key: "fable", label: "Fable" },
+  { key: "onyx", label: "Onyx" },
+  { key: "nova", label: "Nova" },
+  { key: "sage", label: "Sage" },
+  { key: "shimmer", label: "Shimmer" },
+];
+
+interface SummaryType {
+  title: string;
+  content: string;
+  value: string;
+  audio_url: string;
+  image: StaticImageData;
+}
 const SummaryWrapper = ({
   summary,
   input_tokens,
@@ -50,19 +82,67 @@ const SummaryWrapper = ({
 }: any) => {
   const { theme } = useTheme();
   const [expand, setExpand] = useState(false);
+  const [currentSummary, setCurrentSummary] = useState<SummaryType>();
+  const { setSpeechUrl, setShowSpeech } = useSpeech();
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+  const [voice, setVoice] = useState("alloy");
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const summaryLevels = [
     {
       title: "Child Summary",
       content: summary.summary.child,
+      value: "child_summary",
+      audio_url: "",
       image: childImage,
     },
     {
       title: "College Summary",
       content: summary.summary.college,
+      value: "college_summary",
+      audio_url: "",
       image: collegeImage,
     },
-    { title: "PhD Summary", content: summary.summary.phd, image: phDImage },
+    {
+      title: "PhD Summary",
+      content: summary.summary.phd,
+      value: "phd_summary",
+      audio_url: "",
+      image: phDImage,
+    },
   ];
+
+  const generateSpeech = async () => {
+    try {
+      setLoading(true);
+      const paperId = link.split("_")[1].split("/")[0];
+      const response = await axios.get(
+        API_BASE_URL +
+          `api/papers/${paperId}/generate_speech/?voice_type=${voice}&speech_type=${currentSummary?.value}&text=${currentSummary?.content}`
+      );
+      setLoading(false);
+      onClose();
+      toast({
+        title: "Speech Generation",
+        description: (
+          <div className="flex flex-col">
+            <span>Speech generated successfully! </span>
+            <span className="text-md font-bold text-pink-500">
+              Cost : ${response.data.cost}
+            </span>
+          </div>
+        ),
+      });
+      setSpeechUrl(response.data.audio_url);
+      setShowSpeech(true);
+    } catch (error) {
+      toast({
+        title: "Speech Generation",
+        description: "Uh! Something went wrong!",
+      });
+    }
+  };
 
   return (
     <div
@@ -159,7 +239,7 @@ const SummaryWrapper = ({
           </div>
         )}
       </div>
-
+      {/* <audio src={`https://cdn.openai.com/API/docs/audio/ash.wav`} /> */}
       <div className="mt-4 gap-1 w-full" style={{ marginLeft: "-0.5rem" }}>
         <Accordion
           className="w-full"
@@ -216,14 +296,37 @@ const SummaryWrapper = ({
                   width="45"
                 />
               }
-              title={<strong className="text-lg">{level.title}</strong>}
+              className="w-full"
+              title={
+                <div className="flex flex-row justify-between w-full items-center">
+                  <strong className="text-lg">{level.title}</strong>
+                  {link && (
+                    <Button
+                      isIconOnly
+                      onPress={async (e) => {
+                        setCurrentSummary(level);
+                        onOpen();
+                      }}
+                      className="hover:bg-transparent hover:border-2 hover:text-pink-600"
+                    >
+                      {/* <FaPlay /> */}
+                      <RiVoiceAiLine
+                        className="w-full p-2"
+                        style={{ height: "fit-content" }}
+                      />
+                    </Button>
+                  )}
+                </div>
+              }
               value={index.toString()}
             >
-              <p
-                className={`text-md font-semibold ${theme === "dark" ? "text-gray-200" : "text-slate-800"}`}
-              >
-                {level.content}
-              </p>
+              <div>
+                <p
+                  className={`text-md font-semibold ${theme === "dark" ? "text-gray-200" : "text-slate-800"}`}
+                >
+                  {level.content}
+                </p>
+              </div>
             </AccordionItem>
           ))}
         </Accordion>
@@ -288,6 +391,63 @@ const SummaryWrapper = ({
           ))}
         </div>
       </div>
+
+      <Drawer
+        backdrop={"blur"}
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        size="3xl"
+      >
+        <DrawerContent>
+          {(onClose) => (
+            <>
+              <DrawerHeader className="flex flex-col gap-1 text-4xl">
+                AI Speech Gneration
+              </DrawerHeader>
+              <DrawerBody>
+                <div className="flex flex-col gap-4 mt-8">
+                  <Select
+                    isRequired
+                    className="max-w-sm"
+                    defaultSelectedKeys={["alloy"]}
+                    label="Favorite Voice"
+                    placeholder="Select a voice you want"
+                  >
+                    {voices.map((voice) => (
+                      <SelectItem
+                        onPress={() => setVoice(voice.key)}
+                        key={voice.key}
+                      >
+                        {voice.label}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                  <div className="mt-4">
+                    <SpeechPlayer
+                      audio_url={`https://cdn.openai.com/API/docs/audio/${voice}.wav`}
+                    />
+                  </div>
+                  <div className="mt-4">
+                    <span>{currentSummary?.content}</span>
+                  </div>
+                </div>
+              </DrawerBody>
+              <DrawerFooter>
+                <Button color="danger" variant="flat" onPress={onClose}>
+                  Close
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={generateSpeech}
+                  isLoading={loading}
+                >
+                  Generate
+                </Button>
+              </DrawerFooter>
+            </>
+          )}
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 };
