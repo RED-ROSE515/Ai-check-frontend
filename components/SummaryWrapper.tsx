@@ -240,7 +240,6 @@ const SummaryWrapper = ({
           </div>
         )}
       </div>
-      {/* <audio src={`https://cdn.openai.com/API/docs/audio/ash.wav`} /> */}
       <div className="mt-4 gap-1 w-full" style={{ marginLeft: "-0.5rem" }}>
         <Accordion
           className="w-full"
@@ -403,7 +402,7 @@ const SummaryWrapper = ({
           {(onClose) => (
             <>
               <DrawerHeader className="flex flex-col gap-1 text-4xl">
-                AI Speech Generation
+                Voice Generation
               </DrawerHeader>
               <DrawerBody>
                 <div className="flex flex-col gap-4 mt-8">

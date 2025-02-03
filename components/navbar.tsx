@@ -52,6 +52,10 @@ export const Navbar = () => {
             <TelegramSvg theme={theme} />
             <TiktokSvg theme={theme} />
             <ThemeSwitch />
+            <Link className="ml-8" href="/about">
+              About
+            </Link>
+            {/* <Link href="/white_paper">WhitePaper</Link> */}
           </NavbarItem>
         </NavbarContent>
       </HeroUINavbar>
