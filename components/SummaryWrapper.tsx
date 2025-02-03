@@ -28,8 +28,8 @@ import childImage from "../public/NerdBunnyUI/navy.png";
 import collegeImage from "../public/NerdBunnyUI/white.png";
 import phDImage from "../public/NerdBunnyUI/gold.png";
 import { commify } from "@/utils/number_utils";
-import { FaPlay, FaPause } from "react-icons/fa";
 import { RiVoiceAiLine } from "react-icons/ri";
+import useDeviceCheck from "@/hooks/useDeviceCheck";
 import SpeechPlayer from "./SpeechPlayer";
 const getColorForScore = (score: number) => {
   switch (true) {
@@ -87,6 +87,7 @@ const SummaryWrapper = ({
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const [voice, setVoice] = useState("alloy");
   const [loading, setLoading] = useState(false);
+  const { isMobile } = useDeviceCheck();
   const { toast } = useToast();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const summaryLevels = [
@@ -393,7 +394,7 @@ const SummaryWrapper = ({
       </div>
 
       <Drawer
-        backdrop={"blur"}
+        backdrop={isMobile ? "transparent" : "blur"}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         size="3xl"
@@ -402,7 +403,7 @@ const SummaryWrapper = ({
           {(onClose) => (
             <>
               <DrawerHeader className="flex flex-col gap-1 text-4xl">
-                AI Speech Gneration
+                AI Speech Generation
               </DrawerHeader>
               <DrawerBody>
                 <div className="flex flex-col gap-4 mt-8">
