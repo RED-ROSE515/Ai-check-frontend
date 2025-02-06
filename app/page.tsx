@@ -79,7 +79,7 @@ export default function Home() {
         if (response.data.paper === undefined || response.data.paper === null) {
           setStatus("No Paper is being analyzed.");
         } else {
-          setStatus(`Processing ${response.data.paper}`);
+          setStatus(`Processing :  ${response.data.paper}`);
         }
 
         const pusher = new Pusher("0d514904adb1d8e8521e", {

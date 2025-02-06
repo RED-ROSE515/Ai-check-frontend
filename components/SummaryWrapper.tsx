@@ -183,7 +183,11 @@ const SummaryWrapper = ({
               </Tooltip>
             </span>
           ) : (
-            <Link href={link}>{summary.metadata.title}</Link>
+            <Link href={link}>
+              <span className="text-md md:text-2xl font-bold text-center">
+                {summary.metadata.title}
+              </span>
+            </Link>
           )}
         </span>
       </div>
@@ -233,6 +237,7 @@ const SummaryWrapper = ({
               <Link
                 className={`mb-4 block hover:underline truncate w-fit ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
                 href={summary.metadata.paper_link}
+                style={{ maxWidth: "-webkit-fill-available" }}
                 rel="noopener noreferrer"
                 target="_blank"
               >

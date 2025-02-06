@@ -32,10 +32,10 @@ export const Navbar = () => {
         maxWidth="full"
         position="sticky"
         height={isMobile ? "4rem" : "7rem"}
-        className="shadow-xl flex flex-row justify-between w-5/6"
+        className="shadow-xl flex flex-row justify-between w-full md:w-5/6"
       >
         <NavbarContent className="flex w-full basis-full" justify="start">
-          <NavbarItem className="flex gap-2 w-auto md:w-1/3">
+          <NavbarItem className="flex md:gap-2 w-auto md:w-1/3">
             <NavbarBrand>
               <Link href="/">
                 <Image
@@ -58,16 +58,14 @@ export const Navbar = () => {
             </div>
 
             <ThemeSwitch />
-            <Link
-              className="hidden md:flex ml-2 md:ml-8 text-sm md:text-base"
-              href="/check"
-            >
-              Check
-            </Link>
-            <Link className="ml-2 md:ml-8 text-sm md:text-base" href="/about">
-              About
-            </Link>
-
+            <div className="flex flex-col md:flex-row justify-center gap-2">
+              <Link className="ml-2 md:ml-8 text-sm md:text-base" href="/check">
+                Check
+              </Link>
+              <Link className="ml-2 md:ml-8 text-sm md:text-base" href="/about">
+                About
+              </Link>
+            </div>
             <CircularProgressBar className="ml-2 md:ml-4 h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" />
           </NavbarItem>
         </NavbarContent>

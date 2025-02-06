@@ -92,6 +92,14 @@ export const AnalyzeProvider = ({
             duration: 5000,
           });
         }
+        if (currentProgress.toFixed(1) === "50.0") {
+          toast({
+            title: "Processing at 50%",
+            description:
+              "Checking for inconsistencies and potential errors in paper.",
+            duration: 5000,
+          });
+        }
         if (currentProgress.toFixed(1) === "75.0") {
           toast({
             title: "Processing at 75%",
@@ -106,13 +114,6 @@ export const AnalyzeProvider = ({
         API_BASE_URL + `api/papers/${id}/get_summary/`
       );
       totalDuration = (currentProgress / 50) * totalDuration;
-
-      await toast({
-        title: "Processing at 50%",
-        description:
-          "Checking for inconsistencies and potential errors in paper.",
-        duration: 5000,
-      });
 
       setSummaryLoading(false);
       setSummary(resp.data.summary);
