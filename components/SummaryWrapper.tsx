@@ -24,9 +24,9 @@ import {
   SelectItem,
   Tooltip,
 } from "@heroui/react";
-import childImage from "../public/NerdBunnyUI/navy.png";
-import collegeImage from "../public/NerdBunnyUI/white.png";
-import phDImage from "../public/NerdBunnyUI/gold.png";
+import childImage from "../public/NerdBunnyUI/child.png";
+import collegeImage from "../public/NerdBunnyUI/college.png";
+import phDImage from "../public/NerdBunnyUI/PhD.png";
 import { commify } from "@/utils/number_utils";
 import { RiVoiceAiLine } from "react-icons/ri";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
@@ -75,6 +75,7 @@ interface SummaryType {
 }
 const SummaryWrapper = ({
   summary,
+  isResult,
   input_tokens,
   output_tokens,
   total_cost,
@@ -130,7 +131,7 @@ const SummaryWrapper = ({
           <div className="flex flex-col">
             <span>Speech generated successfully! </span>
             <span className="text-md font-bold text-pink-500">
-              Cost : ${response.data.cost}
+              Cost : ${response.data.cost.toFixed(6)}
             </span>
           </div>
         ),
@@ -155,13 +156,35 @@ const SummaryWrapper = ({
       }
     >
       <div className="w-full flex flex-row justify-center">
-        <span>
-          <Link
-            href={link}
-            className="w-full mb-4 text-center font-bold text-2xl"
-          >
-            {summary.metadata.title}
-          </Link>
+        <span className="w-full mb-4 text-center font-bold text-2xl">
+          {isResult ? (
+            <span className="text-md md:text-2xl font-bold text-center">
+              {`AI Error Detection Report for : `}
+              <span className="text-md md:text-3xl italic">
+                {summary.metadata.title}
+              </span>
+              <Tooltip
+                content={
+                  <div
+                    className="flex flex-col cursor-pointer"
+                    onClick={() => {}}
+                  >
+                    <strong className="text-md font-bold text-center">
+                      This AI-generated report analyzes the paper’s structure,
+                      methodology, and technical accuracy. Click to learn more.
+                    </strong>
+                  </div>
+                }
+                placement="bottom"
+                className="max-w-[300px] min-h-[75px]"
+                closeDelay={1000}
+              >
+                <span className="ml-4"> ℹ️</span>
+              </Tooltip>
+            </span>
+          ) : (
+            <Link href={link}>{summary.metadata.title}</Link>
+          )}
         </span>
       </div>
 
@@ -229,7 +252,7 @@ const SummaryWrapper = ({
         {input_tokens && output_tokens && total_cost && (
           <div className="w-full md:w-auto">
             <Card
-              className={`min-w-[120px] md:min-w-[135px] p-2 md:p-4 flex flex-col justify-start items-start ${theme === "dark" ? "bg-[#001731]" : "bg-gray-200"}`}
+              className={`min-w-[120px] md:min-w-[135px] p-2 md:p-4 flex flex-col justify-start items-start ${theme === "dark" ? "bg-[#242F3C]" : "bg-gray-200"}`}
             >
               <p>{`IN: ${commify(input_tokens)}`}</p>
               <Divider />

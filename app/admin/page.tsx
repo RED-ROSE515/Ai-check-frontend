@@ -12,7 +12,6 @@ import {
   Chip,
 } from "@heroui/react";
 import { Spinner } from "@heroui/spinner";
-import { useAnalysis } from "@/contexts/AnalysisContext";
 import _ from "lodash";
 import SummaryWrapper from "../../components/SummaryWrapper";
 import AnalysisResult from "../../components/AnalysisResult";
@@ -21,49 +20,50 @@ import SpecialSummary from "@/components/SpecialSummary";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "next-themes";
 import { ShinyButton } from "@/components/ui/shiny-button";
+import { useAnalyze } from "@/contexts/AnalyzeContext";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-const ActiveChip = () => {
-  return (
-    <Chip color="success" variant="faded">
-      Checked
-    </Chip>
-  );
-};
-const NoActiveChip = () => {
-  return (
-    <Chip color="danger" variant="faded">
-      Not Checked
-    </Chip>
-  );
-};
+const ActiveChip = () => (
+  <Chip color="success" variant="faded">
+    Checked
+  </Chip>
+);
+const NoActiveChip = () => (
+  <Chip color="danger" variant="faded">
+    Not Checked
+  </Chip>
+);
+
 type TriggerRefType = {
   current: (() => void) | null;
 };
+
 export default function App() {
-  const { setIsAnalyzing } = useAnalysis();
   const [page, setPage] = React.useState(1);
   const rowsPerPage = 5;
   const { theme } = useTheme();
   const [pdfList, setPdfList] = useState([]);
-
-  const [analysisResult, setAnalysisResult] = useState("");
-  const [summary, setSummary] = useState("");
   const [analyzingId, setAnalyzingId] = useState<number | null>(null);
-  const [summaryLoading, setSummaryLoading] = useState(false);
-  const [checkLoading, setCheckLoading] = useState(false);
-  const [isChecking, setIsChecking] = useState(false);
-  const [totalSummary, setTotalSummary] = useState("");
   const { toast } = useToast();
+  const triggerUploadRef: TriggerRefType = useRef(null);
+
+  // Get analyze context values
+  const {
+    analysisResult,
+    summary,
+    totalSummary,
+    summaryLoading,
+    checkLoading,
+    isChecking,
+    handleAnalyze,
+    resetState,
+  } = useAnalyze();
+
   const getPdfList = async () => {
     try {
       const response = await axios.get(API_BASE_URL + "api/papers/");
-      let data: any = _.sortBy(response.data, [
-        function (o) {
-          return o.updated_at;
-        },
-      ]);
-
+      const data: any = _.sortBy(response.data, ["updated_at"]);
       setPdfList(data);
       toast({
         title: "Paper Fetch",
@@ -71,55 +71,51 @@ export default function App() {
       });
     } catch (error) {
       toast({
+        variant: "destructive",
         title: "Paper Fetch",
         description: "Uh, oh! Something went wrong!" + { error },
       });
     }
   };
 
-  const handleAnalyze = async (id: number) => {
-    setSummary("");
-    setAnalysisResult("");
-    setIsChecking(true);
+  const handleAnalyzeWithId = async (id: number) => {
     setAnalyzingId(id);
-    setSummaryLoading(true);
-    const resp = await axios.get(
-      API_BASE_URL + `api/papers/${id}/get_summary/`
-    );
-
-    setSummaryLoading(false);
-    setSummary(resp.data.summary);
-    setCheckLoading(true);
-    const response = await axios.get(
-      API_BASE_URL + `api/papers/${id}/check_paper/`
-    );
-
-    setCheckLoading(false);
-    setAnalysisResult(response.data.analysis);
-    setTotalSummary(response.data.summary);
+    await handleAnalyze(id);
     setAnalyzingId(null);
   };
 
   const handleDelete = async (id: number) => {
-    const resp = await axios.delete(API_BASE_URL + `api/papers/${id}/`);
+    try {
+      await axios.delete(API_BASE_URL + `api/papers/${id}/`);
+      await getPdfList();
+      toast({
+        title: "Success",
+        description: "Paper deleted successfully!",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete paper",
+      });
+    }
   };
-  const pages = Math.ceil(pdfList.length / rowsPerPage);
 
+  const pages = Math.ceil(pdfList.length / rowsPerPage);
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-
     return pdfList.slice(start, end);
   }, [page, pdfList]);
 
   useEffect(() => {
     getPdfList();
   }, [totalSummary]);
-  const triggerUploadRef: TriggerRefType = useRef(null);
+
   return (
     <div>
       <Table
-        aria-label="Example table with client side pagination"
+        aria-label="PDF list table"
         bottomContent={
           <div className="flex w-full justify-center">
             <Pagination
@@ -129,7 +125,7 @@ export default function App() {
               color="secondary"
               page={page}
               total={pages}
-              onChange={(page) => setPage(page)}
+              onChange={setPage}
             />
           </div>
         }
@@ -163,7 +159,7 @@ export default function App() {
                     color="primary"
                     className="mr-2"
                     disabled={analyzingId !== null}
-                    onClick={() => handleAnalyze(item.id)}
+                    onClick={() => handleAnalyzeWithId(item.id)}
                   >
                     {analyzingId === item.id ? "Analyzing..." : "Check"}
                   </ShinyButton>
@@ -172,7 +168,7 @@ export default function App() {
                     disabled={analyzingId !== null}
                     onClick={() => handleDelete(item.id)}
                   >
-                    {"Delete"}
+                    Delete
                   </ShinyButton>
                 </div>
               </TableCell>
@@ -180,37 +176,30 @@ export default function App() {
           )}
         </TableBody>
       </Table>
+
       <div className="my-4 w-full">
         <FileUpload
-          AnalyzePaper={(id: number) => handleAnalyze(id)}
-          getPdfList={() => getPdfList()}
+          AnalyzePaper={handleAnalyzeWithId}
+          getPdfList={getPdfList}
           onTriggerRef={triggerUploadRef}
         />
       </div>
+
       {isChecking && (
         <div
-          className={`card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+          className={`card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${
+            theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"
+          }`}
         >
           <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
             {summaryLoading && <Spinner className="my-4" color="primary" />}
-            {summary && (
-              <SummaryWrapper
-                summary={summary}
-                // input_tokens={input_tokens}
-                // output_tokens={output_tokens}
-                // total_cost={total_cost}
-              />
-            )}
+            {summary && <SummaryWrapper summary={summary} />}
           </div>
 
           {summary && (
             <div className="mb-0 sm:mb-2 w-full">
               <SpecialSummary summary={totalSummary} />
-              <div
-                className={
-                  "flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-6"
-                }
-              >
+              <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-6">
                 {checkLoading && <Spinner className="my-4" color="primary" />}
                 {analysisResult && (
                   <AnalysisResult

@@ -12,9 +12,9 @@ import {
 } from "lucide-react";
 import { useRef, useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-
+import _ from "lodash";
 import { useToast } from "../hooks/use-toast";
-
+import { ToastAction } from "@/components/ui/toast";
 import { Input } from "./ui/input";
 import { Progress } from "./ui/progress";
 import { useTheme } from "next-themes";
@@ -59,7 +59,8 @@ const OtherColor = {
   bgColor: "bg-gray-400",
   fillColor: "fill-gray-400",
 };
-
+export const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 export interface ImageUploadProps {
   getPdfList: () => void;
   AnalyzePaper: (id: number) => void;
@@ -163,6 +164,12 @@ const FileUpload = ({
     formData.append("title", file.name);
 
     try {
+      toast({
+        description: `Uploading file: ${_.truncate(file.name, {
+          length: 15,
+          omission: "...",
+        })} Please wait.`,
+      });
       const response = await axios.post(
         API_BASE_URL + "api/papers/",
         formData,
@@ -178,19 +185,38 @@ const FileUpload = ({
       );
 
       toast({
-        title: "Paper Upload",
-        description: "Upload successful!",
+        description: `Your file ${_.truncate(file.name, {
+          length: 15,
+          omission: "...",
+        })} has been uploaded and is now in the queue for AI analysis.`,
+        duration: 2500,
       });
+      await sleep(2500);
+      toast({
+        description: "File uploaded successfully!",
+        action: (
+          <ToastAction
+            altText="View Paper"
+            onClick={() => window.open(response.data.paper_path, "_blank")}
+          >
+            View
+          </ToastAction>
+        ),
+        duration: 5000,
+      });
+      await sleep(3000);
       AnalyzePaper(response.data.id);
-      getPdfList();
+      // getPdfList();
     } catch (error) {
       if (axios.isCancel(error)) {
         toast({
+          variant: "destructive",
           title: "Paper Upload",
           description: "Upload cancelled",
         });
       } else {
         toast({
+          variant: "destructive",
           title: "Paper Upload",
           description: "Upload failed: " + error,
         });

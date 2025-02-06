@@ -129,12 +129,12 @@ const Footer = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="flex flex-col-reverse md:flex-row justify-between items-center w-[80%] gap-4">
-        <div className="flex flex-col justify-center items-center text-center mt-2 sm:mt-0">
+      <div className="flex flex-col md:flex-row justify-between items-center w-[80%] gap-6">
+        <div className="flex flex-col justify-center items-center text-center order-3 md:order-1">
           <span>Copyright © 2025 NerdBunny</span>
         </div>
         {pathname === "/" && (
-          <div>
+          <div className="order-1 md:order-2">
             <Pagination
               isCompact
               showControls
@@ -146,7 +146,7 @@ const Footer = () => {
             />
           </div>
         )}
-        <div className="flex flex-row justify-center gap-2">
+        <div className="flex flex-row justify-center gap-2 order-2 md:order-3">
           <TelegramSvg theme={theme} />
           <TwitterSvg theme={theme} />
           <TiktokSvg theme={theme} />

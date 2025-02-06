@@ -11,27 +11,24 @@ import AnalysisResult from "@/components/AnalysisResult";
 const ResultPage = ({ params }: any) => {
   const resolvedParams = use(params);
   const { id } = resolvedParams as any;
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const [pageTitle, setPageTitle] = useState("AI Error Detector Result: ");
   const [pageDescription, setpageDescription] = useState(
     "Check out this AI error detection result: "
   );
-  const [pageUrl, setPageUrl] = useState(
-    `https://devai1.nobleblocks.com/results/${id}`
-  );
+  const [pageUrl, setPageUrl] = useState(`${API_BASE_URL}results/${id}`);
   const pageImage = "https:/nobleblocks.com/nerdbunny.png";
   const { theme } = useTheme();
   const [analysisResult, setAnalysisResult] = useState("");
   const [summary, setSummary] = useState<any>();
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [checkLoading, setCheckLoading] = useState(false);
-  const [isChecking, setIsChecking] = useState(false);
+  const [costdata, setCostData] = useState<any>({});
   const [totalSummary, setTotalSummary] = useState("");
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const getResultById = async (paperId: number) => {
     try {
       setAnalysisResult("");
-      setIsChecking(true);
       setSummaryLoading(true);
       const resp = await axios.get(
         API_BASE_URL + `api/papers/${paperId}/get_summary/`
@@ -46,6 +43,7 @@ const ResultPage = ({ params }: any) => {
 
       setCheckLoading(false);
       setAnalysisResult(response.data.analysis);
+      setCostData(response.data.costdata);
       setTotalSummary(response.data.summary);
       setPageTitle(
         `AI Error Detector Result: ${resp.data.summary.metadata.title}`
@@ -53,7 +51,7 @@ const ResultPage = ({ params }: any) => {
       setpageDescription(
         `Check out this AI error detection result: ${resp.data.summary.summary.child + summary.summary.college + summary.summary.phd}`
       );
-      setPageUrl(`https://devai1.nobleblocks.com/results/${id}`);
+      setPageUrl(`${API_BASE_URL}results/${id}`);
       // const result = await res.json();
       const result = { data: "KKK", title: id, description: "Description" };
       return result;
@@ -98,9 +96,21 @@ const ResultPage = ({ params }: any) => {
               {summary && (
                 <SummaryWrapper
                   summary={summary}
-                  // input_tokens={input_tokens}
-                  // output_tokens={output_tokens}
-                  // total_cost={total_cost}
+                  isResult={true}
+                  link={
+                    "/results/" +
+                    summary.metadata.title
+                      .replace(/[^a-zA-Z0-9\s]/g, "")
+                      .toLowerCase()
+                      .split(" ")
+                      .join("-") +
+                    "_" +
+                    summary.metadata.paper_id +
+                    "/"
+                  }
+                  input_tokens={costdata.input_tokens}
+                  output_tokens={costdata.output_tokens}
+                  total_cost={costdata.total_cost}
                 />
               )}
             </div>

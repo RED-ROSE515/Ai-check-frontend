@@ -1,109 +1,84 @@
 "use client";
-import React, { useState, useRef } from "react";
-import axios from "axios";
-
-import { Spinner } from "@heroui/spinner";
-import _ from "lodash";
+import React, { useRef } from "react";
+import { Spinner } from "@heroui/react";
 import SummaryWrapper from "../../components/SummaryWrapper";
 import AnalysisResult from "../../components/AnalysisResult";
 import FileUpload from "../../components/file-upload";
 import SpecialSummary from "@/components/SpecialSummary";
-import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "next-themes";
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import { useAnalyze } from "@/contexts/AnalyzeContext";
 
 type TriggerRefType = {
   current: (() => void) | null;
 };
+
 export default function App() {
   const { theme } = useTheme();
-
-  const [analysisResult, setAnalysisResult] = useState("");
-  const [summary, setSummary] = useState("");
-  const [summaryLoading, setSummaryLoading] = useState(false);
-  const [checkLoading, setCheckLoading] = useState(false);
-  const [isChecking, setIsChecking] = useState(false);
-  const [totalSummary, setTotalSummary] = useState("");
-  const { toast } = useToast();
-
-  const handleAnalyze = async (id: number) => {
-    try {
-      setSummary("");
-      setAnalysisResult("");
-      setIsChecking(true);
-      setSummaryLoading(true);
-      const resp = await axios.get(
-        API_BASE_URL + `api/papers/${id}/get_summary/`
-      );
-
-      setSummaryLoading(false);
-      setSummary(resp.data.summary);
-      setCheckLoading(true);
-      const response = await axios.get(
-        API_BASE_URL + `api/papers/${id}/check_paper/`
-      );
-
-      setCheckLoading(false);
-      setAnalysisResult(response.data.analysis);
-      setTotalSummary(response.data.summary);
-    } catch (err) {
-      console.log("err", err);
-      if (axios.isAxiosError(err)) {
-        toast({
-          title: "Error",
-          description: err.response?.data.message || "Something went wrong!",
-          duration: 1000,
-        });
-      }
-    }
-  };
+  const {
+    analysisResult,
+    summary,
+    totalSummary,
+    summaryLoading,
+    checkLoading,
+    isChecking,
+    handleAnalyze,
+  } = useAnalyze();
 
   const triggerUploadRef: TriggerRefType = useRef(null);
+
   return (
-    <div>
-      <div className="my-4 w-full">
-        <FileUpload
-          AnalyzePaper={(id: number) => handleAnalyze(id)}
-          getPdfList={() => {}}
-          onTriggerRef={triggerUploadRef}
-        />
-      </div>
-      {isChecking && (
-        <div
-          className={`card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
-        >
-          <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
-            {summaryLoading && <Spinner className="my-4" color="primary" />}
+    <div className="flex w-full flex-col items-center justify-center">
+      <div className="w-5/6">
+        <div className="my-4 w-full">
+          <FileUpload
+            AnalyzePaper={handleAnalyze}
+            getPdfList={() => {}}
+            onTriggerRef={triggerUploadRef}
+          />
+        </div>
+        {isChecking && (
+          <div
+            className={`card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${
+              theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"
+            }`}
+          >
+            <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
+              {summaryLoading && <Spinner className="my-4" color="primary" />}
+              {summary && (
+                <SummaryWrapper
+                  summary={summary}
+                  link={
+                    "/results/" +
+                    summary.metadata.title
+                      .replace(/[^a-zA-Z0-9\s]/g, "")
+                      .toLowerCase()
+                      .split(" ")
+                      .join("-") +
+                    "_" +
+                    summary.metadata.paper_id +
+                    "/"
+                  }
+                />
+              )}
+            </div>
+
             {summary && (
-              <SummaryWrapper
-                summary={summary}
-                // input_tokens={input_tokens}
-                // output_tokens={output_tokens}
-                // total_cost={total_cost}
-              />
+              <div className="mb-0 sm:mb-2 w-full">
+                {totalSummary && <SpecialSummary summary={totalSummary} />}
+                <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-6">
+                  {checkLoading && <Spinner className="my-4" color="primary" />}
+                  {analysisResult && (
+                    <AnalysisResult
+                      results={analysisResult}
+                      total_summary={totalSummary}
+                    />
+                  )}
+                </div>
+              </div>
             )}
           </div>
-
-          {summary && (
-            <div className="mb-0 sm:mb-2 w-full">
-              {totalSummary && <SpecialSummary summary={totalSummary} />}
-              <div
-                className={
-                  "flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-6"
-                }
-              >
-                {checkLoading && <Spinner className="my-4" color="primary" />}
-                {analysisResult && (
-                  <AnalysisResult
-                    results={analysisResult}
-                    total_summary={totalSummary}
-                  />
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
