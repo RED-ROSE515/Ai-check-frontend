@@ -10,6 +10,9 @@ import {
   TableCell,
   Pagination,
   Chip,
+  Card,
+  Input,
+  Button,
 } from "@heroui/react";
 import { Spinner } from "@heroui/spinner";
 import _ from "lodash";
@@ -47,6 +50,9 @@ export default function App() {
   const [analyzingId, setAnalyzingId] = useState<number | null>(null);
   const { toast } = useToast();
   const triggerUploadRef: TriggerRefType = useRef(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // Get analyze context values
   const {
@@ -101,6 +107,37 @@ export default function App() {
     }
   };
 
+  const handleLogin = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        API_BASE_URL + `api/papers/verify/?password=${password}`
+      );
+
+      if (response.data.status === "success") {
+        setIsAuthenticated(true);
+        toast({
+          title: "Success",
+          description: "Successfully authenticated!",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Invalid password",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Authentication failed",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const pages = Math.ceil(pdfList.length / rowsPerPage);
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -111,6 +148,35 @@ export default function App() {
   useEffect(() => {
     getPdfList();
   }, [totalSummary]);
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <Card
+          className={`p-8 rounded-lg shadow-lg max-w-md w-full mb-24`}
+          radius="lg"
+          shadow="lg"
+        >
+          <h2 className="text-2xl font-bold mb-6 text-center">Admin Login</h2>
+          <Input
+            type="password"
+            placeholder="Enter admin password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="mb-4"
+          />
+          <Button
+            color="primary"
+            className="w-full"
+            onPress={handleLogin}
+            disabled={isLoading}
+          >
+            {isLoading ? "Logging in..." : "Login"}
+          </Button>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div>
