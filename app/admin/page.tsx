@@ -24,6 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "next-themes";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { useAnalyze } from "@/contexts/AnalyzeContext";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -53,7 +54,8 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  const [captchaValue, setCaptchaValue] = useState<any>("");
+  const SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "";
   // Get analyze context values
   const {
     analysisResult,
@@ -65,6 +67,7 @@ export default function App() {
     handleAnalyze,
     resetState,
   } = useAnalyze();
+  const captchaRef = useRef<any>(null);
 
   const getPdfList = async () => {
     try {
@@ -109,23 +112,26 @@ export default function App() {
 
   const handleLogin = async () => {
     setIsLoading(true);
+    let token = captchaRef.current.getValue();
     try {
-      const response = await axios.get(
-        API_BASE_URL + `api/papers/verify/?password=${password}`
-      );
+      if (token) {
+        const response = await axios.get(
+          API_BASE_URL + `api/papers/verify/?password=${password}`
+        );
 
-      if (response.data.status === "success") {
-        setIsAuthenticated(true);
-        toast({
-          title: "Success",
-          description: "Successfully authenticated!",
-        });
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Invalid password",
-        });
+        if (response.data.status === "success") {
+          setIsAuthenticated(true);
+          toast({
+            title: "Success",
+            description: "Successfully authenticated!",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Invalid password",
+          });
+        }
       }
     } catch (error) {
       toast({
@@ -137,7 +143,9 @@ export default function App() {
       setIsLoading(false);
     }
   };
-
+  const onChange = (value: any) => {
+    setCaptchaValue(value);
+  };
   const pages = Math.ceil(pdfList.length / rowsPerPage);
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -151,9 +159,12 @@ export default function App() {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+      <div
+        className="flex flex-col items-center justify-center p-4"
+        style={{ height: "calc(100vh - 15rem)" }}
+      >
         <Card
-          className={`p-8 rounded-lg shadow-lg max-w-md w-full mb-24`}
+          className={`p-8 rounded-lg shadow-lg max-w-md w-full`}
           radius="lg"
           shadow="lg"
         >
@@ -163,13 +174,16 @@ export default function App() {
             placeholder="Enter admin password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            isRequired
             className="mb-4"
           />
+          <ReCAPTCHA sitekey={SITE_KEY} onChange={onChange} ref={captchaRef} />
           <Button
             color="primary"
-            className="w-full"
+            type="submit"
+            className="w-full mt-4"
             onPress={handleLogin}
-            disabled={isLoading}
+            isDisabled={isLoading || !captchaValue}
           >
             {isLoading ? "Logging in..." : "Login"}
           </Button>

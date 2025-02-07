@@ -77,7 +77,7 @@ export default function Home() {
           API_BASE_URL + `api/papers/get_current_paper_status/`
         );
         if (response.data.paper === undefined || response.data.paper === null) {
-          setStatus("No Paper is being analyzed.");
+          setStatus("The next paper will be analysed shortly...");
         } else {
           setStatus(`Processing :  ${response.data.paper}`);
         }
