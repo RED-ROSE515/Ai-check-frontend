@@ -157,38 +157,32 @@ const SummaryWrapper = ({
     >
       <div className="w-full flex flex-row justify-center">
         <span className="w-full mb-4 text-center font-bold text-2xl">
-          {isResult ? (
-            <span className="text-md md:text-2xl font-bold text-center">
-              {`AI Error Detection Report for : `}
-              <span className="text-md md:text-3xl italic">
-                {summary.metadata.title}
-              </span>
-              <Tooltip
-                content={
-                  <div
-                    className="flex flex-col cursor-pointer"
-                    onClick={() => {}}
-                  >
-                    <strong className="text-md font-bold text-center">
-                      This AI-generated report analyzes the paper’s structure,
-                      methodology, and technical accuracy. Click to learn more.
-                    </strong>
-                  </div>
-                }
-                placement="bottom"
-                className="max-w-[300px] min-h-[75px]"
-                closeDelay={1000}
-              >
-                <span className="ml-4"> ℹ️</span>
-              </Tooltip>
+          <span className="text-md md:text-2xl font-bold text-center">
+            {`AI Error Detection Report for`}
+            <Tooltip
+              content={
+                <div
+                  className="flex flex-col cursor-pointer"
+                  onClick={() => {}}
+                >
+                  <strong className="text-md font-bold text-center">
+                    This AI-generated report analyzes the paper’s structure,
+                    methodology, and technical accuracy.
+                    <Link className="ml-4 text-blue-700"> Learn more.</Link>
+                  </strong>
+                </div>
+              }
+              placement="top"
+              className="max-w-[300px] min-h-[75px]"
+              closeDelay={1000}
+            >
+              <span className="">ℹ️</span>
+            </Tooltip>
+            {` : `}
+            <span className="text-md md:text-3xl italic">
+              {summary.metadata.title}
             </span>
-          ) : (
-            <Link href={link}>
-              <span className="text-md md:text-2xl font-bold text-center">
-                {summary.metadata.title}
-              </span>
-            </Link>
-          )}
+          </span>
         </span>
       </div>
 
@@ -228,7 +222,7 @@ const SummaryWrapper = ({
                 onPress={() => setExpand(!expand)}
                 className="w-full md:w-auto"
               >
-                {`${expand ? "Show Little..." : "Load More..."}`}
+                {`${expand ? "Show Less..." : "Load More..."}`}
               </Button>
             )}
           </div>

@@ -169,7 +169,7 @@ export default function App() {
                     contact info@nobleblocks.com.
                   </p>
                 </div>
-                <div className="flex justify-end gap-4">
+                <div className="flex justify-center gap-4">
                   <button
                     onClick={handleDeny}
                     className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 text-black"
