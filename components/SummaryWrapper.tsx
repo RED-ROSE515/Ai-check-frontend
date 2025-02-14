@@ -354,20 +354,30 @@ const SummaryWrapper = ({
                 <div className="flex flex-row justify-between w-full items-center">
                   <strong className="text-lg">{level.title}</strong>
                   {link && (
-                    <Button
-                      isIconOnly
-                      onPress={async (e) => {
-                        setCurrentSummary(level);
-                        onOpen();
-                      }}
-                      className="hover:bg-transparent hover:border-2 hover:text-pink-600"
+                    <Tooltip
+                      content={
+                        <strong className="text-md font-bold text-center">
+                          Voice Generator
+                        </strong>
+                      }
+                      placement="top"
+                      closeDelay={1000}
                     >
-                      {/* <FaPlay /> */}
-                      <RiVoiceAiLine
-                        className="w-full p-2"
-                        style={{ height: "fit-content" }}
-                      />
-                    </Button>
+                      <Button
+                        isIconOnly
+                        onPress={async (e) => {
+                          setCurrentSummary(level);
+                          onOpen();
+                        }}
+                        className="hover:bg-transparent hover:border-2 hover:text-pink-600"
+                      >
+                        {/* <FaPlay /> */}
+                        <RiVoiceAiLine
+                          className="w-full p-2"
+                          style={{ height: "fit-content" }}
+                        />
+                      </Button>
+                    </Tooltip>
                   )}
                 </div>
               }
