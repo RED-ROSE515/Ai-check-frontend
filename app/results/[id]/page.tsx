@@ -3,15 +3,19 @@ import React, { useState, useEffect, use } from "react";
 import Head from "next/head";
 import { useTheme } from "next-themes";
 import axios from "axios";
-import { Spinner } from "@heroui/react";
+import { Spinner, Button } from "@heroui/react";
+import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
 import SummaryWrapper from "@/components/SummaryWrapper";
 import SpecialSummary from "@/components/SpecialSummary";
 import AnalysisResult from "@/components/AnalysisResult";
+import Comments from "@/components/Comments";
+import ShareButtons from "@/components/ShareButtons";
 
 const ResultPage = ({ params }: any) => {
   const resolvedParams = use(params);
   const { id } = resolvedParams as any;
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const [pageTitle, setPageTitle] = useState("AI Error Detector Result: ");
   const [pageDescription, setpageDescription] = useState(
     "Check out this AI error detection result: "
@@ -22,34 +26,56 @@ const ResultPage = ({ params }: any) => {
   const [analysisResult, setAnalysisResult] = useState("");
   const [summary, setSummary] = useState<any>();
   const [summaryLoading, setSummaryLoading] = useState(false);
-  const [checkLoading, setCheckLoading] = useState(false);
   const [costdata, setCostData] = useState<any>({});
   const [totalSummary, setTotalSummary] = useState("");
+  const [author, setAuthor] = useState<any>();
+  const [postDate, setPostDate] = useState("");
+  const [result, setResult] = useState<any>();
+  const [comments, setComments] = useState<any>([]);
+  const [link, setLink] = useState("");
 
   const getResultById = async (paperId: number) => {
     try {
       setAnalysisResult("");
       setSummaryLoading(true);
+      const response = await axios.get(API_BASE_URL + `/post/${paperId}`);
+      setResult(response.data);
+      setAuthor(response.data.user);
+      setSummary({
+        ...JSON.parse(response.data.description),
+        post_id: response.data.id,
+        post_title: response.data.title,
+        attached_links: response.data.attached_links,
+      });
+      const total_result = JSON.parse(response.data.ai_error_json);
+      setAnalysisResult(total_result.paperAnalysis.analysis);
+      setCostData({
+        input_tokens: total_result.input_tokens,
+        output_tokens: total_result.output_tokens,
+        total_cost: total_result.total_cost,
+      });
+      setPostDate(response.data.updated_at);
+      setTotalSummary(total_result.paperAnalysis.summary);
       const resp = await axios.get(
-        API_BASE_URL + `api/papers/${paperId}/get_summary/`
+        API_BASE_URL +
+          `/post/comments?parent_is_post=true&parent_id=${response.data.id}&start=0&limit=1000`
       );
-
+      setComments(resp.data);
+      setLink(
+        "/results/" +
+          response.data.title
+            .replace(/[^a-zA-Z0-9\s]/g, "")
+            .toLowerCase()
+            .split(" ")
+            .join("-") +
+          "_" +
+          response.data.id +
+          "/"
+      );
       setSummaryLoading(false);
-      setSummary(resp.data.summary);
-      setCheckLoading(true);
-      const response = await axios.get(
-        API_BASE_URL + `api/papers/${paperId}/check_paper/`
-      );
-
-      setCheckLoading(false);
-      setAnalysisResult(response.data.analysis);
-      setCostData(response.data.costdata);
-      setTotalSummary(response.data.summary);
-      setPageTitle(
-        `AI Error Detector Result: ${resp.data.summary.metadata.title}`
-      );
+      setPageTitle(`AI Error Detector Result: ${response.data.title}`);
       setpageDescription(
-        `Check out this AI error detection result: ${resp.data.summary.summary.child + summary.summary.college + summary.summary.phd}`
+        `Check out this AI error detection result: ${summary.child + summary.college + summary.phd}`
       );
       setPageUrl(`${API_BASE_URL}results/${id}`);
       // const result = await res.json();
@@ -59,6 +85,18 @@ const ResultPage = ({ params }: any) => {
       // Handle network or other errors
       // console.error("Error fetching result:", error);
       return null;
+    }
+  };
+
+  const refreshComments = async () => {
+    try {
+      const resp = await axios.get(
+        API_BASE_URL +
+          `/post/comments?parent_is_post=true&parent_id=${summary.post_id}&start=0&limit=1000`
+      );
+      setComments(resp.data);
+    } catch (error) {
+      console.error("Error refreshing comments:", error);
     }
   };
 
@@ -99,15 +137,17 @@ const ResultPage = ({ params }: any) => {
                   isResult={true}
                   link={
                     "/results/" +
-                    summary.metadata.title
+                    summary.post_title
                       .replace(/[^a-zA-Z0-9\s]/g, "")
                       .toLowerCase()
                       .split(" ")
                       .join("-") +
                     "_" +
-                    summary.metadata.paper_id +
+                    summary.post_id +
                     "/"
                   }
+                  userData={{ ...author }}
+                  postDate={postDate}
                   input_tokens={costdata.input_tokens}
                   output_tokens={costdata.output_tokens}
                   total_cost={costdata.total_cost}
@@ -115,7 +155,7 @@ const ResultPage = ({ params }: any) => {
               )}
             </div>
 
-            {summary && (
+            {analysisResult && (
               <div className="mb-0 sm:mb-2 w-full">
                 <SpecialSummary summary={totalSummary} />
                 <div
@@ -123,16 +163,47 @@ const ResultPage = ({ params }: any) => {
                     "flex flex-col items-center justify-center rounded-md p-0 md:flex-row"
                   }
                 >
-                  {checkLoading && <Spinner className="my-4" color="primary" />}
-                  {analysisResult && (
-                    <AnalysisResult
-                      results={analysisResult}
-                      total_summary={totalSummary}
-                    />
-                  )}
+                  <AnalysisResult
+                    results={analysisResult}
+                    total_summary={totalSummary}
+                  />
                 </div>
               </div>
             )}
+            <div className="flex items-center justify-start gap-4 w-full px-4 py-2 mt-2">
+              <Button
+                variant="ghost"
+                className="flex items-center gap-2"
+                onPress={() => console.log("Like clicked")}
+              >
+                <TbThumbUp size={24} />
+                <span>{result.count_like || 0}</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                className="flex items-center gap-2"
+                onPress={() => console.log("Comments clicked")}
+              >
+                <TbMessage size={24} />
+                <span>{result.count_comment || 0}</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                className="flex items-center gap-2"
+                onPress={() => console.log("Views clicked")}
+              >
+                <TbEye size={24} />
+                <span>{result.count_view || 0}</span>
+              </Button>
+              <ShareButtons url={DOMAIN + link} title={summary.post_title} />
+            </div>
+            <Comments
+              comments={comments}
+              postId={summary.post_id}
+              onCommentAdded={refreshComments}
+            />
           </div>
         )}
       </div>

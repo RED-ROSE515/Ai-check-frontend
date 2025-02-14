@@ -1,12 +1,21 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
   NavbarBrand,
   NavbarItem,
 } from "@heroui/navbar";
-import { Link } from "@heroui/link";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Link,
+  Button,
+} from "@heroui/react";
 import Image from "next/image";
 import LogoDark from "../public/LogoPurple.png";
 import LogoLight from "../public/LogoLime.png";
@@ -15,10 +24,13 @@ import { useTheme } from "next-themes";
 import { TwitterSvg, TelegramSvg, TiktokSvg } from "@/app/footer";
 import { CircularProgressBar } from "./CircularProgressBar";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
+import { Sling as Hamburger } from "hamburger-react";
 export const Navbar = () => {
   const { theme } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
   const { isMobile } = useDeviceCheck();
+  const [isOpen, setOpen] = useState(false);
+  const router = useRouter();
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -34,14 +46,17 @@ export const Navbar = () => {
         height={isMobile ? "4rem" : "7rem"}
         className="shadow-xl flex flex-row justify-between w-full md:w-5/6"
       >
-        <NavbarContent className="flex w-full basis-full" justify="start">
+        <NavbarContent
+          className="flex w-full basis-full overflow-y-hidden"
+          justify="start"
+        >
           <NavbarItem className="flex md:gap-2 w-auto md:w-1/3">
             <NavbarBrand>
               <Link href="/">
                 <Image
                   alt="Logo"
                   src={theme === "dark" ? LogoLight : LogoDark}
-                  className="w-auto " // Responsive image size
+                  className="w-auto" // Responsive image size
                 />
               </Link>
             </NavbarBrand>
@@ -50,7 +65,6 @@ export const Navbar = () => {
 
         <NavbarContent className="flex w-full basis-full" justify="end">
           <NavbarItem className="flex items-center gap-2 md:gap-4">
-            {/* Hide social icons on mobile */}
             <div className="hidden md:flex items-center gap-4">
               <TwitterSvg theme={theme} />
               <TelegramSvg theme={theme} />
@@ -59,12 +73,41 @@ export const Navbar = () => {
 
             <ThemeSwitch />
             <div className="flex flex-col md:flex-row justify-center gap-2">
-              <Link className="ml-2 md:ml-8 text-sm md:text-base" href="/check">
-                Check
-              </Link>
-              <Link className="ml-2 md:ml-8 text-sm md:text-base" href="/about">
-                About
-              </Link>
+              <Dropdown
+                backdrop="blur"
+                placement="bottom-end"
+                onClose={() => setOpen(false)}
+              >
+                <DropdownTrigger>
+                  <Button
+                    isIconOnly
+                    className="flex flex-row justify-center"
+                    variant="ghost"
+                  >
+                    <div>
+                      <Hamburger toggled={isOpen} toggle={setOpen} size={24} />
+                    </div>
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu aria-label="Profile Actions" variant="faded">
+                  <DropdownItem key="check">
+                    <Link
+                      className="ml-2 md:ml-8 text-sm md:text-base w-full"
+                      href="/check"
+                    >
+                      Check
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem key="about">
+                    <Link
+                      className="ml-2 md:ml-8 text-sm md:text-base w-full"
+                      href="/about"
+                    >
+                      About
+                    </Link>
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </div>
             <CircularProgressBar className="ml-2 md:ml-4 h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" />
           </NavbarItem>

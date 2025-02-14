@@ -7,6 +7,8 @@ import FileUpload from "../../components/file-upload";
 import SpecialSummary from "@/components/SpecialSummary";
 import { useTheme } from "next-themes";
 import { useAnalyze } from "@/contexts/AnalyzeContext";
+import { useAuth } from "@/contexts/AuthContext";
+import SignInDialog from "@/components/SignInDialog";
 
 type TriggerRefType = {
   current: (() => void) | null;
@@ -24,20 +26,24 @@ export default function App() {
     handleAnalyze,
   } = useAnalyze();
 
+  const { isAuthenticated } = useAuth();
+  const [showSignIn, setShowSignIn] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const [hasAccepted, setHasAccepted] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const triggerUploadRef: TriggerRefType = useRef(null);
 
   useEffect(() => {
-    setIsLoading(true);
-    const accepted = localStorage.getItem("disclaimerAccepted");
-    if (accepted === "true") {
-      setHasAccepted(true);
-      setShowDisclaimer(false);
+    if (handleProtectedAction()) {
+      setIsLoading(true);
+      const accepted = localStorage.getItem("disclaimerAccepted");
+      if (accepted === "true") {
+        setHasAccepted(true);
+        setShowDisclaimer(false);
+      }
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, []);
 
   const handleAccept = () => {
@@ -51,13 +57,27 @@ export default function App() {
     setShowDisclaimer(false);
   };
 
+  const handleProtectedAction = () => {
+    if (!isAuthenticated) {
+      setShowSignIn(true);
+      return false;
+    }
+    return true;
+  };
+
+  const handleAnalyzeWithPdf = async (id: number) => {
+    if (!handleProtectedAction()) return;
+    await handleAnalyze(id);
+  };
+
   return (
     <div className="flex w-full flex-col items-center justify-center">
+      <SignInDialog isOpen={showSignIn} onClose={() => setShowSignIn(false)} />
       {isLoading ? (
         <Spinner className="my-4" color="primary" />
       ) : (
         <>
-          {showDisclaimer && (
+          {showDisclaimer && isAuthenticated && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
               <Card className="max-w-3xl p-6 rounded-lg overflow-y-auto max-h-[80vh]">
                 <h2 className="text-2xl font-bold mb-4">
@@ -191,7 +211,7 @@ export default function App() {
             <div className="my-4 w-full">
               {hasAccepted ? (
                 <FileUpload
-                  AnalyzePaper={handleAnalyze}
+                  AnalyzePaper={handleAnalyzeWithPdf}
                   getPdfList={() => {}}
                   onTriggerRef={triggerUploadRef}
                 />

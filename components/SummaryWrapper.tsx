@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Typography, capitalize } from "@mui/material";
-
+import { TbExternalLink } from "react-icons/tb";
 import Image, { StaticImageData } from "next/image";
 import { useTheme } from "next-themes";
 import { useSpeech } from "@/contexts/SpeechContext";
@@ -31,6 +31,7 @@ import { commify } from "@/utils/number_utils";
 import { RiVoiceAiLine } from "react-icons/ri";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import SpeechPlayer from "./SpeechPlayer";
+import UserCard from "./UserCard";
 const getColorForScore = (score: number) => {
   switch (true) {
     case score >= 9:
@@ -76,6 +77,8 @@ interface SummaryType {
 const SummaryWrapper = ({
   summary,
   isResult,
+  postDate,
+  userData,
   input_tokens,
   output_tokens,
   total_cost,
@@ -94,27 +97,26 @@ const SummaryWrapper = ({
   const summaryLevels = [
     {
       title: "Child Summary",
-      content: summary.summary.child,
+      content: summary.summary?.child,
       value: "child_summary",
       audio_url: "",
       image: childImage,
     },
     {
       title: "College Summary",
-      content: summary.summary.college,
+      content: summary.summary?.college,
       value: "college_summary",
       audio_url: "",
       image: collegeImage,
     },
     {
       title: "PhD Summary",
-      content: summary.summary.phd,
+      content: summary.summary?.phd,
       value: "phd_summary",
       audio_url: "",
       image: phDImage,
     },
   ];
-
   const generateSpeech = async () => {
     try {
       setLoading(true);
@@ -155,35 +157,65 @@ const SummaryWrapper = ({
           : { backgroundColor: "#EEEEEEF0" }
       }
     >
-      <div className="w-full flex flex-row justify-center">
-        <span className="w-full mb-4 text-center font-bold text-2xl">
-          <span className="text-md md:text-2xl font-bold text-center">
-            {`AI Error Detection Report for`}
-            <Tooltip
-              content={
-                <div
-                  className="flex flex-col cursor-pointer"
-                  onClick={() => {}}
+      <UserCard userData={userData} postDate={postDate} />
+      <div className="w-full flex flex-row justify-center text-center font-bold text-2xl">
+        <span className="text-md md:text-2xl font-bold text-center md:min-w-fit md:flex hidden">
+          {`AI Error Detection Report for`}
+          <Tooltip
+            content={
+              <div className="flex flex-col cursor-pointer" onClick={() => {}}>
+                <strong className="text-md font-bold text-center">
+                  This AI-generated report analyzes the paper’s structure,
+                  methodology, and technical accuracy.
+                  <Link className="ml-4 text-blue-700"> Learn more.</Link>
+                </strong>
+              </div>
+            }
+            placement="top"
+            className="max-w-[300px] min-h-[75px]"
+            closeDelay={1000}
+          >
+            <span className="">ℹ️</span>
+          </Tooltip>
+          {` : `}
+        </span>
+        {isResult ? (
+          <Link href={summary.attached_links[0]}>
+            <span className="text-md md:text-3xl hover:text-purple-500 flex-1 items-center gap-1">
+              {summary.metadata.title}
+              <TbExternalLink className="ml-2 inline-block" />
+            </span>
+          </Link>
+        ) : (
+          <Link href={link}>
+            <span className="text-md md:text-3xl">
+              <p className="text-sm md:hidden">
+                {`AI Error Detection Report for`}
+                <Tooltip
+                  content={
+                    <div
+                      className="flex flex-col cursor-pointer"
+                      onClick={() => {}}
+                    >
+                      <strong className="text-md font-bold text-center">
+                        This AI-generated report analyzes the paper’s structure,
+                        methodology, and technical accuracy.
+                        <Link className="ml-4 text-blue-700"> Learn more.</Link>
+                      </strong>
+                    </div>
+                  }
+                  placement="top"
+                  className="max-w-[300px] min-h-[75px]"
+                  closeDelay={1000}
                 >
-                  <strong className="text-md font-bold text-center">
-                    This AI-generated report analyzes the paper’s structure,
-                    methodology, and technical accuracy.
-                    <Link className="ml-4 text-blue-700"> Learn more.</Link>
-                  </strong>
-                </div>
-              }
-              placement="top"
-              className="max-w-[300px] min-h-[75px]"
-              closeDelay={1000}
-            >
-              <span className="">ℹ️</span>
-            </Tooltip>
-            {` : `}
-            <span className="text-md md:text-3xl italic">
+                  <span className="">ℹ️</span>
+                </Tooltip>
+                {` : `}
+              </p>
               {summary.metadata.title}
             </span>
-          </span>
-        </span>
+          </Link>
+        )}
       </div>
 
       <div className="flex flex-col md:flex-row justify-between mt-4 gap-4">
@@ -204,7 +236,6 @@ const SummaryWrapper = ({
                     content={author.split("(")[1]}
                     placement="bottom"
                     className="max-w-[50vw]"
-                    closeDelay={1000}
                   >
                     <Chip
                       className={`${theme === "dark" ? "secondary" : "primary"}`}
@@ -235,7 +266,7 @@ const SummaryWrapper = ({
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                {summary.metadata.paper_link}
+                Paper Link : {summary.metadata.paper_link}
               </Link>
             </div>
           ) : (
@@ -243,7 +274,7 @@ const SummaryWrapper = ({
               href="#"
               className={`mb-4 block hover:underline truncate w-fit ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
             >
-              Unknown
+              Paper Link : Unknown
             </Link>
           )}
         </div>

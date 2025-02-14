@@ -13,6 +13,8 @@ import { Toaster } from "@/components/ui/toaster";
 import Footer from "./footer";
 import SiteIcon from "@/public/favicon.ico";
 import { AnalyzeProvider } from "@/contexts/AnalyzeContext";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const siteIconUrl = SiteIcon.src;
 export const metadata: Metadata = {
@@ -47,26 +49,30 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <ProgressProvider>
-            <SpeechProvider>
-              <AnalyzeProvider>
-                <PaginationProvider>
-                  <div className="relative flex flex-col h-screen">
-                    <Navbar />
-                    <main className="w-screen overflow-x-hidden p-2 pt-4 flex-grow">
-                      {children}
-                    </main>
-                    <Toaster />
-                    <footer className="w-full flex items-center justify-center py-3">
-                      <Footer />
-                    </footer>
-                  </div>
-                </PaginationProvider>
-              </AnalyzeProvider>
-            </SpeechProvider>
-          </ProgressProvider>
-        </Providers>
+        <GoogleOAuthProvider clientId="386932037035-k8v833noqjk7m4***********.apps.googleusercontent.com">
+          <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+            <ProgressProvider>
+              <SpeechProvider>
+                <AnalyzeProvider>
+                  <PaginationProvider>
+                    <AuthProvider>
+                      <div className="relative flex flex-col h-screen">
+                        <Navbar />
+                        <main className="w-screen overflow-x-hidden p-2 pt-4 flex-grow">
+                          {children}
+                        </main>
+                        <Toaster />
+                        <footer className="w-full flex items-center justify-center py-3">
+                          <Footer />
+                        </footer>
+                      </div>
+                    </AuthProvider>
+                  </PaginationProvider>
+                </AnalyzeProvider>
+              </SpeechProvider>
+            </ProgressProvider>
+          </Providers>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

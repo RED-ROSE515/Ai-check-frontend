@@ -1,7 +1,21 @@
-import React from "react";
-
+import React, { useState } from "react";
+import _ from "lodash";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  Snippet,
+  useDisclosure,
+} from "@heroui/react";
 import dynamic from "next/dynamic";
 
+const TbCloudShare = dynamic(
+  () => import("react-icons/tb").then((mod) => mod.TbCloudShare),
+  { ssr: false }
+);
 const FaFacebook = dynamic(
   () => import("react-icons/fa").then((mod) => mod.FaFacebook),
   { ssr: false }
@@ -30,63 +44,79 @@ import {
   WhatsappShareButton,
 } from "react-share";
 const ShareButtons = ({ url, title, summary }: any) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
-    <div className="flex space-x-4 mt-4 mb-2">
-      <FacebookShareButton url={url} title={title}>
-        <button className="bg-blue-600 hidden sm:flex text-white p-0 sm:px-4 sm:py-2 rounded  items-center  sm:text-md sm:font-bold">
-          <FaFacebook className="sm:mr-1" /> Share on Facebook
-        </button>
-        <button
-          aria-label="Facebook"
-          className="bg-blue-600 sm:hidden p-3 rounded-lg"
-        >
-          <FaFacebook />
-        </button>
-      </FacebookShareButton>
-      <TwitterShareButton url={url} title={title}>
-        <button className="bg-blue-400 text-white sm:px-4 sm:py-2 rounded hidden sm:flex items-center  sm:text-md sm:font-bold">
-          <FaTwitter className="sm:mr-1" /> Share on Twitter
-        </button>
-        <button
-          aria-label="Twitter"
-          className="bg-blue-400 sm:hidden p-3 rounded-lg"
-        >
-          <FaTwitter />
-        </button>
-      </TwitterShareButton>
-      <LinkedinShareButton url={url} title={title} summary={summary}>
-        <button className="bg-blue-700 text-white sm:px-4 sm:py-2 rounded hidden sm:flex items-center  sm:text-md sm:font-bold">
-          <FaLinkedin className="sm:mr-1" /> Share on LinkedIn
-        </button>
-        <button
-          aria-label="LinkedIn"
-          className="bg-blue-700 sm:hidden p-3 rounded-lg"
-        >
-          <FaLinkedin />
-        </button>
-      </LinkedinShareButton>
-      <TelegramShareButton url={url} title={title}>
-        <button className="bg-blue-500 text-white sm:px-4 sm:py-2 rounded hidden sm:flex items-center  sm:text-md sm:font-bold">
-          <FaTelegram className="sm:mr-1" /> Share on Telegram
-        </button>
-        <button
-          aria-label="Telegram"
-          className="bg-blue-500 sm:hidden  p-3 rounded-lg"
-        >
-          <FaTelegram />
-        </button>
-      </TelegramShareButton>
-      <WhatsappShareButton url={url} title={title}>
-        <button className="bg-green-500 text-white sm:px-4 sm:py-2 rounded hidden sm:flex items-center sm:text-md sm:font-bold">
-          <FaWhatsapp className="sm:mr-1" /> Share on WhatsApp
-        </button>
-        <button
-          aria-label="WhatsApp"
-          className="bg-green-500 sm:hidden p-3 rounded-lg"
-        >
-          <FaWhatsapp />
-        </button>
-      </WhatsappShareButton>
+    <div>
+      <Button
+        isIconOnly
+        className="capitalize"
+        variant="ghost"
+        onPress={onOpen}
+      >
+        <TbCloudShare size={24} />
+      </Button>
+      <Modal backdrop="blur" isOpen={isOpen} onClose={onClose} radius="lg">
+        <ModalContent>
+          <ModalHeader>Share</ModalHeader>
+          <ModalBody>
+            <div className="flex space-x-4 mt-4 mb-2 items-center justify-center">
+              <FacebookShareButton url={url} title={title}>
+                <button
+                  aria-label="Facebook"
+                  className="bg-blue-600 p-3 rounded-lg"
+                >
+                  <FaFacebook />
+                </button>
+              </FacebookShareButton>
+              <TwitterShareButton url={url} title={title}>
+                <button
+                  aria-label="Twitter"
+                  className="bg-blue-400 p-3 rounded-lg"
+                >
+                  <FaTwitter />
+                </button>
+              </TwitterShareButton>
+              <LinkedinShareButton url={url} title={title} summary={summary}>
+                <button
+                  aria-label="LinkedIn"
+                  className="bg-blue-700 p-3 rounded-lg"
+                >
+                  <FaLinkedin />
+                </button>
+              </LinkedinShareButton>
+              <TelegramShareButton url={url} title={title}>
+                <button
+                  aria-label="Telegram"
+                  className="bg-blue-500  p-3 rounded-lg"
+                >
+                  <FaTelegram />
+                </button>
+              </TelegramShareButton>
+              <WhatsappShareButton url={url} title={title}>
+                <button
+                  aria-label="WhatsApp"
+                  className="bg-green-500 p-3 rounded-lg"
+                >
+                  <FaWhatsapp />
+                </button>
+              </WhatsappShareButton>
+            </div>
+            <span className="w-full">Or share with link</span>
+            <Snippet variant="shadow" hideSymbol>
+              {_.truncate(url, {
+                length: 45,
+                omission: "...",
+              })}
+            </Snippet>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" variant="light" onPress={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 };
