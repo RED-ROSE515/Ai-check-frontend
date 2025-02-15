@@ -12,8 +12,8 @@ import {
 } from "@heroui/react";
 import dynamic from "next/dynamic";
 
-const TbCloudShare = dynamic(
-  () => import("react-icons/tb").then((mod) => mod.TbCloudShare),
+const FiShare = dynamic(
+  () => import("react-icons/fi").then((mod) => mod.FiShare),
   { ssr: false }
 );
 const FaFacebook = dynamic(
@@ -54,7 +54,7 @@ const ShareButtons = ({ url, title, summary }: any) => {
         variant="ghost"
         onPress={onOpen}
       >
-        <TbCloudShare size={24} />
+        <FiShare size={24} />
       </Button>
       <Modal backdrop="blur" isOpen={isOpen} onClose={onClose} radius="lg">
         <ModalContent>

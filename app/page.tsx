@@ -171,13 +171,13 @@ export default function Home() {
                     }
                   >
                     <Chip
-                      variant="bordered"
+                      variant="shadow"
                       radius="md"
                       size="lg"
-                      className={`my-4 ${theme === "dark" ? "bg-lime-400 hover:bg-lime-600" : "bg-pink-500 hover:bg-pink-600"} `}
+                      className={`my-4 ${theme === "dark" ? "bg-pink-500 hover:bg-pink-600" : "bg-lime-400 hover:bg-lime-600"} `}
                     >
                       <span
-                        className={`${theme === "dark" ? "text-black" : "text-white"} text-2xl font-bold`}
+                        className={`${theme === "dark" ? "text-white" : "text-black"} text-2xl font-bold`}
                       >
                         Result #{(page - 1) * 3 + index + 1}
                       </span>

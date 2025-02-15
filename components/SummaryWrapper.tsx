@@ -32,6 +32,7 @@ import { RiVoiceAiLine } from "react-icons/ri";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import SpeechPlayer from "./SpeechPlayer";
 import UserCard from "./UserCard";
+import { useAuth } from "@/contexts/AuthContext";
 const getColorForScore = (score: number) => {
   switch (true) {
     case score >= 9:
@@ -93,6 +94,7 @@ const SummaryWrapper = ({
   const [loading, setLoading] = useState(false);
   const { isMobile } = useDeviceCheck();
   const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const summaryLevels = [
     {
@@ -157,9 +159,9 @@ const SummaryWrapper = ({
           : { backgroundColor: "#EEEEEEF0" }
       }
     >
-      <UserCard userData={userData} postDate={postDate} />
+      <UserCard userData={userData} postDate={postDate} className="max-w-fit" />
       <div className="w-full flex flex-row justify-center text-center font-bold text-2xl">
-        <span className="text-md md:text-2xl font-bold text-center md:min-w-fit md:flex hidden">
+        {/* <span className="text-md md:text-2xl font-bold text-center md:min-w-fit md:flex hidden">
           {`AI Error Detection Report for`}
           <Tooltip
             content={
@@ -178,7 +180,7 @@ const SummaryWrapper = ({
             <span className="">ℹ️</span>
           </Tooltip>
           {` : `}
-        </span>
+        </span> */}
         {isResult ? (
           <Link href={summary.attached_links[0]}>
             <span className="text-md md:text-3xl hover:text-purple-500 flex-1 items-center gap-1">
@@ -251,7 +253,7 @@ const SummaryWrapper = ({
                 size="sm"
                 variant="ghost"
                 onPress={() => setExpand(!expand)}
-                className="w-full md:w-auto"
+                className={`w-full md:w-auto ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#C8E600]"}`}
               >
                 {`${expand ? "Show Less..." : "Load More..."}`}
               </Button>
@@ -503,6 +505,7 @@ const SummaryWrapper = ({
                   color="primary"
                   onPress={generateSpeech}
                   isLoading={loading}
+                  isDisabled={!isAuthenticated}
                 >
                   Generate
                 </Button>

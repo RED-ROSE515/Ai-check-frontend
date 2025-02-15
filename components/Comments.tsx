@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useTheme } from "next-themes";
-import { Button, Card, Textarea, Image, Tooltip, Slider } from "@heroui/react";
+import { Button, Card, Textarea, Image } from "@heroui/react";
 import { useAuth } from "@/contexts/AuthContext";
-import { TbReload } from "react-icons/tb";
 interface User {
   id: string;
   noble_id: string;
@@ -58,9 +57,6 @@ const Comments = ({ comments, postId, onCommentAdded }: CommentProps) => {
     <div className="w-full mt-4 p-4">
       <div className="flex flex-row justify-between mb-4 items-center">
         <h2 className="text-xl font-semibold">Comments</h2>
-        <Button isIconOnly onPress={onCommentAdded}>
-          <TbReload size={24} />
-        </Button>
       </div>
 
       {/* Comment Form */}

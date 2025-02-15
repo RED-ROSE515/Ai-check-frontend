@@ -65,14 +65,21 @@ export const Navbar = () => {
 
         <NavbarContent className="flex w-full basis-full" justify="end">
           <NavbarItem className="flex items-center gap-2 md:gap-4">
-            <div className="hidden md:flex items-center gap-4">
+            {/* <div className="hidden md:flex items-center gap-4">
               <TwitterSvg theme={theme} />
               <TelegramSvg theme={theme} />
               <TiktokSvg theme={theme} />
-            </div>
+            </div> */}
 
             <ThemeSwitch />
-            <div className="flex flex-col md:flex-row justify-center gap-2">
+
+            <div className="flex flex-row justify-center gap-2">
+              <Link
+                className="ml-2 md:ml-8 text-sm md:text-base w-full"
+                href="/check"
+              >
+                <Button variant="ghost">Check</Button>
+              </Link>
               <Dropdown
                 backdrop="blur"
                 placement="bottom-end"
@@ -81,7 +88,7 @@ export const Navbar = () => {
                 <DropdownTrigger>
                   <Button
                     isIconOnly
-                    className="flex flex-row justify-center"
+                    className={`flex flex-row justify-center ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#C8E600]"}`}
                     variant="ghost"
                   >
                     <div>
@@ -90,14 +97,7 @@ export const Navbar = () => {
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Profile Actions" variant="faded">
-                  <DropdownItem key="check">
-                    <Link
-                      className="ml-2 md:ml-8 text-sm md:text-base w-full"
-                      href="/check"
-                    >
-                      Check
-                    </Link>
-                  </DropdownItem>
+                  {/* <DropdownItem key="check"></DropdownItem> */}
                   <DropdownItem key="about">
                     <Link
                       className="ml-2 md:ml-8 text-sm md:text-base w-full"

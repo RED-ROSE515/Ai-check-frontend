@@ -127,7 +127,7 @@ const ResultPage = ({ params }: any) => {
       <div className="flex flex-row justify-center mt-16">
         {summary && (
           <div
-            className={`card w-5/6 mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+            className={`card w-full md:w-5/6 mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
           >
             <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
               {summaryLoading && <Spinner className="my-4" color="primary" />}
