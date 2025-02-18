@@ -12,9 +12,11 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@heroui/react";
+import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
 import { formatDistance, format, differenceInDays } from "date-fns";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
+import api from "@/utils/api";
 import _ from "lodash";
 const formatTimestamp = (date: string | Date) => {
   const parsedDate = new Date(date);
@@ -30,85 +32,37 @@ const formatTimestamp = (date: string | Date) => {
   return `Published on: ` + format(parsedDate, "MMM dd, yyyy • HH:mm 'UTC'");
 };
 
-export const UserTwitterCard = ({ userData, userDetail }: any) => {
-  const [isFollowed, setIsFollowed] = React.useState(userDetail.is_following);
-
-  return (
-    <Card className="max-w-[300px] border-none bg-transparent" shadow="none">
-      <CardHeader className="justify-between">
-        <div className="flex gap-3">
-          <Avatar isBordered radius="full" size="md" src={userData.avatar} />
-          <div className="flex flex-col items-start justify-center">
-            <h4 className="text-small font-semibold leading-none text-default-600">
-              {userData.first_name}
-            </h4>
-            <Link
-              isExternal
-              href={`https://uy7p3-zyaaa-aaaap-qpmoq-cai.icp0.io/@${userData.user_name}`}
-              size="sm"
-            >
-              <h5 className="text-small tracking-tight text-blue-700">
-                {`@` + userData.user_name}
-              </h5>
-            </Link>
-          </div>
-        </div>
-        <Button
-          className={
-            isFollowed
-              ? "bg-transparent text-foreground border-default-200 ml-2"
-              : "ml-2"
-          }
-          color="primary"
-          radius="full"
-          size="sm"
-          variant={isFollowed ? "bordered" : "solid"}
-          onPress={() => setIsFollowed(!isFollowed)}
-        >
-          {isFollowed ? "Unfollow" : "Follow"}
-        </Button>
-      </CardHeader>
-      <CardBody className="px-3 py-0">
-        <p className="text-small pl-px text-default-500">
-          {_.truncate(userData.about_me, {
-            length: 100,
-            omission: "...",
-          })}
-          <span aria-label="confetti" role="img">
-            🎉
-          </span>
-        </p>
-      </CardBody>
-      <CardFooter className="gap-3">
-        <div className="flex gap-1">
-          <p className="font-semibold text-default-600 text-small">
-            {userDetail.count_following}
-          </p>
-          <p className=" text-default-500 text-small">Following</p>
-        </div>
-        <div className="flex gap-1">
-          <p className="font-semibold text-default-600 text-small">
-            {userDetail.count_followers}
-          </p>
-          <p className="text-default-500 text-small">Followers</p>
-        </div>
-      </CardFooter>
-    </Card>
-  );
-};
-
 const UserCard = ({ userData, postDate }: any) => {
   const formattedDate = formatTimestamp(postDate);
   const { isMobile } = useDeviceCheck();
-  const [userDetail, setUserDetail] = useState();
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-  useEffect(() => {
-    const fetchUserDetail = async () => {
-      const response = await axios.get(
-        API_BASE_URL + `/user/profile?user_id=${userData.user_name}`
+  const [userDetail, setUserDetail] = useState<any>();
+  const [isHovered, setIsHovered] = useState(false);
+  const { toast } = useToast();
+  const fetchUserDetail = async () => {
+    const response = await api.get(
+      `/user/profile?user_id=${userData.user_name}`
+    );
+    setUserDetail(response.data);
+  };
+  const follow = async () => {
+    // https://dev.api.nobleblocks.com/api/v1/user/follow
+    try {
+      await api.post(
+        `/user/${userDetail?.is_following ? "unfollow" : "follow"}`,
+        {
+          followed_id: userDetail.id,
+        }
       );
-      setUserDetail(response.data);
-    };
+      await fetchUserDetail();
+      toast({
+        title: "Success",
+        description: "Successfully followed!",
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
     fetchUserDetail();
   }, []);
   return (
@@ -119,9 +73,17 @@ const UserCard = ({ userData, postDate }: any) => {
     >
       <CardBody>
         <div className="flex flex-row w-full justify-start gap-6">
-          <Popover showArrow placement="bottom">
+          <Popover
+            showArrow
+            placement="bottom"
+            isOpen={isHovered}
+            onOpenChange={(open) => setIsHovered(open)}
+          >
             <PopoverTrigger>
-              <div className="min-w-fit">
+              <div
+                className="min-w-fit"
+                onMouseEnter={() => setIsHovered(true)}
+              >
                 <Image
                   isBlurred
                   isZoomed
@@ -138,8 +100,81 @@ const UserCard = ({ userData, postDate }: any) => {
                 />
               </div>
             </PopoverTrigger>
-            <PopoverContent className="p-1">
-              <UserTwitterCard userData={userData} userDetail={userDetail} />
+            <PopoverContent
+              className="p-1"
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              <Card
+                className="max-w-[300px] border-none bg-transparent"
+                shadow="none"
+              >
+                <CardHeader className="justify-between">
+                  <div className="flex gap-3">
+                    <Avatar
+                      isBordered
+                      radius="full"
+                      size="md"
+                      src={userData.avatar}
+                    />
+                    <div className="flex flex-col items-start justify-center">
+                      <h4 className="text-small font-semibold leading-none text-default-600">
+                        {_.truncate(userData.first_name, {
+                          length: 15,
+                          omission: "...",
+                        })}
+                      </h4>
+                      <Link
+                        isExternal
+                        href={`https://uy7p3-zyaaa-aaaap-qpmoq-cai.icp0.io/@${userData.user_name}`}
+                        size="sm"
+                      >
+                        <h5 className="text-small tracking-tight text-blue-700">
+                          {`@` + userData.user_name}
+                        </h5>
+                      </Link>
+                    </div>
+                  </div>
+                  <Button
+                    className={
+                      userDetail?.is_following
+                        ? "bg-transparent text-foreground border-default-200 ml-2"
+                        : "ml-2"
+                    }
+                    color="primary"
+                    radius="full"
+                    size="sm"
+                    variant={userDetail?.is_following ? "bordered" : "solid"}
+                    onPress={() => follow()}
+                  >
+                    {userDetail?.is_following ? "Unfollow" : "Follow"}
+                  </Button>
+                </CardHeader>
+                <CardBody className="px-3 py-0">
+                  <p className="text-small pl-px text-default-500">
+                    {_.truncate(userData.about_me, {
+                      length: 100,
+                      omission: "...",
+                    })}
+                    <span aria-label="confetti" role="img">
+                      🎉
+                    </span>
+                  </p>
+                </CardBody>
+                <CardFooter className="gap-3">
+                  <div className="flex gap-1">
+                    <p className="font-semibold text-default-600 text-small">
+                      {userDetail?.count_following}
+                    </p>
+                    <p className=" text-default-500 text-small">Following</p>
+                  </div>
+                  <div className="flex gap-1">
+                    <p className="font-semibold text-default-600 text-small">
+                      {userDetail?.count_followers}
+                    </p>
+                    <p className="text-default-500 text-small">Followers</p>
+                  </div>
+                </CardFooter>
+              </Card>
             </PopoverContent>
           </Popover>
 

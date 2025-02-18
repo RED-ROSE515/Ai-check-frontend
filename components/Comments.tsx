@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useTheme } from "next-themes";
 import { Button, Card, Textarea, Image } from "@heroui/react";
 import { useAuth } from "@/contexts/AuthContext";
+import api from "@/utils/api";
 interface User {
   id: string;
   noble_id: string;
@@ -33,18 +33,16 @@ const Comments = ({ comments, postId, onCommentAdded }: CommentProps) => {
   const { theme } = useTheme();
   const { isAuthenticated } = useAuth();
   const [newComment, setNewComment] = useState("");
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
     try {
-      await axios.post(API_BASE_URL + "/post/comments", {
+      await api.post("/post/comment", {
         parent_id: postId,
         parent_is_post: true,
         description: newComment,
-        attached_links: [],
       });
       setNewComment("");
       onCommentAdded();

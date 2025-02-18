@@ -72,7 +72,7 @@ export default function SignInDialog({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
   const { toast } = useToast();
 
   const handleSubmit = async () => {
@@ -83,6 +83,7 @@ export default function SignInDialog({
         title: "Success",
         description: "Successfully signed in!",
       });
+      console.log(isAuthenticated, user);
       onSuccess?.();
       onClose();
     } catch (error) {

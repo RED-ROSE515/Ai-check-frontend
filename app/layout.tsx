@@ -58,7 +58,10 @@ export default function RootLayout({
                     <AuthProvider>
                       <div className="relative flex flex-col h-screen">
                         <Navbar />
-                        <main className="w-screen overflow-x-hidden p-2 pt-4 flex-grow">
+                        <main
+                          className="w-screen overflow-x-hidden p-2 pt-4 flex-grow"
+                          id="main"
+                        >
                           {children}
                         </main>
                         <Toaster />

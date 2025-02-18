@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Spinner, Button } from "@heroui/react";
 import { Link } from "@heroui/link";
 import axios from "axios";
+import api from "@/utils/api";
 import Pusher from "pusher-js";
 import { useTheme } from "next-themes";
 import LeftSider from "../components/LeftSider";
@@ -40,18 +41,13 @@ export default function Home() {
       // const response = await axios.get(
       //   `${API_BASE_URL}api/papers/get_analyzed_results/?page=${page}&sort_by=${sortBy}&order=${order}`
       // );
-      const response = await axios.get(
-        `${API_BASE_URL}/post/pagination?post_type=6&start=${(page - 1) * 3}&limit=3`
+      const response = await api.get(
+        `/post/pagination?post_type=6&start=${(page - 1) * 3}&limit=3`
       );
 
       setTotalResults(response.data.data);
-      setTotalPage(response.data.total_count / 3);
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+      setTotalPage(Math.ceil(response.data.total_count / 3));
     } catch (error) {
-      console.error(error);
       toast({
         variant: "destructive",
         title: "Analysis Data",
@@ -64,7 +60,8 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
-      window.scrollTo({
+      const mainElement = document.getElementById("main");
+      mainElement?.scrollTo({
         top: 0,
         behavior: "smooth",
       });
@@ -73,6 +70,25 @@ export default function Home() {
     fetchData();
   }, [page, sortBy]);
 
+  const like = async (post_id: string, liked_me: boolean) => {
+    try {
+      await api.post(`/post/${liked_me ? "unlike" : "like"}/post`, { post_id });
+      toast({
+        title: "Success",
+        description: "Successfully like the post.",
+      });
+      setTotalResults((totalResults: any) =>
+        totalResults.map((paper: any) =>
+          paper.id === post_id ? { ...paper, liked_me: !paper.liked_me } : paper
+        )
+      );
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "Uh, oh! Something went wrong!" + { error },
+      });
+    }
+  };
   // useEffect(() => {
   //   const fetchData = async () => {
   //     try {
@@ -156,92 +172,21 @@ export default function Home() {
             totalResults.length > 0 &&
             totalResults.map((result: any, index) => {
               return (
-                <div key={index}>
-                  <Link
-                    href={
-                      "/results/" +
-                      result.title
-                        .replace(/[^a-zA-Z0-9\s]/g, "")
-                        .toLowerCase()
-                        .split(" ")
-                        .join("-") +
-                      "_" +
-                      result.id +
-                      "/"
-                    }
-                  >
-                    <Chip
-                      variant="shadow"
-                      radius="md"
-                      size="lg"
-                      className={`my-4 ${theme === "dark" ? "bg-pink-500 hover:bg-pink-600" : "bg-lime-400 hover:bg-lime-600"} `}
-                    >
-                      <span
-                        className={`${theme === "dark" ? "text-white" : "text-black"} text-2xl font-bold`}
-                      >
-                        Result #{(page - 1) * 3 + index + 1}
-                      </span>
-                    </Chip>
-                  </Link>
-                  <div
-                    key={index}
-                    className={`card mb-8 md:mb-16 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
-                  >
-                    <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
-                      {result?.description &&
-                        result?.description[0] === "{" && (
-                          <SummaryWrapper
-                            summary={JSON.parse(result.description)}
-                            // input_tokens={result.input_tokens}
-                            // output_tokens={result.output_tokens}
-                            // total_cost={result.total_cost}
-                            userData={result.user}
-                            postDate={result.updated_at}
-                            link={
-                              DOMAIN +
-                              "/results/" +
-                              result.title
-                                .replace(/[^a-zA-Z0-9\s]/g, "")
-                                .toLowerCase()
-                                .split(" ")
-                                .join("-") +
-                              "_" +
-                              result.id +
-                              "/"
-                            }
-                          />
-                        )}
-                    </div>
-                    <div className="flex items-center justify-start gap-4 w-full px-4 py-2">
-                      <Button
-                        variant="ghost"
-                        className="flex items-center gap-2"
-                        onPress={() => console.log("Like clicked")}
-                      >
-                        <TbThumbUp size={24} />
-                        <span>{result.count_like || 0}</span>
-                      </Button>
-
-                      <Button
-                        variant="ghost"
-                        className="flex items-center gap-2"
-                        onPress={() => console.log("Comments clicked")}
-                      >
-                        <TbMessage size={24} />
-                        <span>{result.count_comment || 0}</span>
-                      </Button>
-
-                      <Button
-                        variant="ghost"
-                        className="flex items-center gap-2"
-                        onPress={() => console.log("Views clicked")}
-                      >
-                        <TbEye size={24} />
-                        <span>{result.count_view || 0}</span>
-                      </Button>
-                      <ShareButtons
-                        url={
-                          API_BASE_URL +
+                <div
+                  key={index}
+                  className={`card mb-8 md:mb-24 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+                >
+                  <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
+                    {result?.description && result?.description[0] === "{" && (
+                      <SummaryWrapper
+                        summary={JSON.parse(result.description)}
+                        // input_tokens={result.input_tokens}
+                        // output_tokens={result.output_tokens}
+                        // total_cost={result.total_cost}
+                        userData={result.user}
+                        postDate={result.updated_at}
+                        link={
+                          DOMAIN +
                           "/results/" +
                           result.title
                             .replace(/[^a-zA-Z0-9\s]/g, "")
@@ -252,31 +197,79 @@ export default function Home() {
                           result.id +
                           "/"
                         }
-                        title={result.title}
-                        // summary={result.summary.child}
                       />
-                    </div>
-                    <div className="flex flex-row justify-center w-full">
-                      <ShinyButton
-                        className={`mr-2 mb-2 ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#C8E600]"}`}
-                        onClick={() =>
-                          window.open(
-                            "/results/" +
-                              result.title
-                                .replace(/[^a-zA-Z0-9\s]/g, "")
-                                .toLowerCase()
-                                .split(" ")
-                                .join("-") +
-                              "_" +
-                              result.id +
-                              "/"
-                          )
-                        }
+                    )}
+                  </div>
+                  <div className="flex items-center justify-start gap-4 w-full px-4 py-2">
+                    <Button
+                      variant="ghost"
+                      color={result.liked_me ? "warning" : "default"}
+                      className="flex items-center gap-2"
+                      onPress={() => like(result.id, result.liked_me)}
+                    >
+                      <TbThumbUp size={24} />
+                      <span>{result.count_like || 0}</span>
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      className="flex items-center gap-2"
+                      onPress={() => console.log("Comments clicked")}
+                    >
+                      <TbMessage size={24} />
+                      <span>{result.count_comment || 0}</span>
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      className="flex items-center gap-2"
+                      isDisabled
+                    >
+                      <TbEye size={24} />
+                      <span>{result.count_view || 0}</span>
+                    </Button>
+                    <ShareButtons
+                      url={
+                        API_BASE_URL +
+                        "/results/" +
+                        result.title
+                          .replace(/[^a-zA-Z0-9\s]/g, "")
+                          .toLowerCase()
+                          .split(" ")
+                          .join("-") +
+                        "_" +
+                        result.id +
+                        "/"
+                      }
+                      title={result.title}
+                      // summary={result.summary.child}
+                    />
+                  </div>
+                  <div className="flex flex-row justify-center w-full">
+                    <ShinyButton
+                      className={`mr-2 mb-2 ${theme === "dark" ? "bg-[#C8E600]" : "bg-[#EE43DE]"}`}
+                      onClick={() =>
+                        window.open(
+                          "/results/" +
+                            result.title
+                              .replace(/[^a-zA-Z0-9\s]/g, "")
+                              .toLowerCase()
+                              .split(" ")
+                              .join("-") +
+                            "_" +
+                            result.id +
+                            "/"
+                        )
+                      }
+                    >
+                      <strong
+                        className={`${theme === "dark" ? "text-black" : "text-white"} font-bold`}
                       >
-                        <strong>{"Read full report  ➜"}</strong>
-                      </ShinyButton>
-                    </div>
-                    {/* <div className="mb-0 sm:mb-2 w-full">
+                        {"Read full report  ➜"}
+                      </strong>
+                    </ShinyButton>
+                  </div>
+                  {/* <div className="mb-0 sm:mb-2 w-full">
                       <SpecialSummary summary={result.paperAnalysis.summary} />
                       <div
                         className={
@@ -291,7 +284,6 @@ export default function Home() {
                         )}
                       </div>
                     </div> */}
-                  </div>
                 </div>
               );
             })

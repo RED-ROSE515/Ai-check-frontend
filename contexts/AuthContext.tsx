@@ -1,8 +1,10 @@
 "use client";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import api from "@/utils/api";
 
 type User = {
+  detail: any;
   email: string;
   token: string;
 } | null;
@@ -17,7 +19,22 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User>(null);
+  const [user, setUser] = useState<User>(() => {
+    // Check localStorage during initialization
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    }
+    return null;
+  });
+
+  // Add useEffect to handle hydration
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   const login = async (email: string, password: string) => {
     try {
@@ -32,19 +49,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (response.data.token) {
         const userData = {
           email,
-          token: response.data.token,
+          detail: { ...response.data.user },
+          token: response.data.token.token,
         };
         setUser(userData);
         localStorage.setItem("user", JSON.stringify(userData));
+        api.defaults.headers.common["Authorization"] =
+          `Bearer ${response.data.token.token}`;
       }
     } catch (error: any) {
-      throw new Error(error.response.data.message);
+      throw new Error(error.response?.data?.message || "Login failed");
     }
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    delete api.defaults.headers.common["Authorization"];
   };
 
   return (

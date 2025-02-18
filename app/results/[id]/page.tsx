@@ -3,8 +3,17 @@ import React, { useState, useEffect, use } from "react";
 import Head from "next/head";
 import { useTheme } from "next-themes";
 import axios from "axios";
-import { Spinner, Button } from "@heroui/react";
+import {
+  Spinner,
+  Button,
+  Badge,
+  Card,
+  CardBody,
+  Avatar,
+  Link,
+} from "@heroui/react";
 import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
+import _ from "lodash";
 import SummaryWrapper from "@/components/SummaryWrapper";
 import SpecialSummary from "@/components/SpecialSummary";
 import AnalysisResult from "@/components/AnalysisResult";
@@ -33,6 +42,7 @@ const ResultPage = ({ params }: any) => {
   const [result, setResult] = useState<any>();
   const [comments, setComments] = useState<any>([]);
   const [link, setLink] = useState("");
+  const [recentPapers, setRecentPapers] = useState<any>([]);
 
   const getResultById = async (paperId: number) => {
     try {
@@ -101,8 +111,15 @@ const ResultPage = ({ params }: any) => {
   };
 
   useEffect(() => {
-    const newId = id.split("_")[1];
-    getResultById(newId);
+    const fetchData = async () => {
+      const newId = id.split("_")[1];
+      const response = await axios.get(
+        `${API_BASE_URL}/post/pagination?post_type=6&start=0&limit=5`
+      );
+      setRecentPapers(response.data.data);
+      await getResultById(newId);
+    };
+    fetchData();
   }, []);
 
   return (
@@ -126,86 +143,151 @@ const ResultPage = ({ params }: any) => {
       </Head>
       <div className="flex flex-row justify-center mt-16">
         {summary && (
-          <div
-            className={`card w-full md:w-5/6 mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
-          >
-            <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
-              {summaryLoading && <Spinner className="my-4" color="primary" />}
-              {summary && (
-                <SummaryWrapper
-                  summary={summary}
-                  isResult={true}
-                  link={
-                    "/results/" +
-                    summary.post_title
-                      .replace(/[^a-zA-Z0-9\s]/g, "")
-                      .toLowerCase()
-                      .split(" ")
-                      .join("-") +
-                    "_" +
-                    summary.post_id +
-                    "/"
-                  }
-                  userData={{ ...author }}
-                  postDate={postDate}
-                  input_tokens={costdata.input_tokens}
-                  output_tokens={costdata.output_tokens}
-                  total_cost={costdata.total_cost}
-                />
-              )}
-            </div>
-
-            {analysisResult && (
-              <div className="mb-0 sm:mb-2 w-full">
-                <SpecialSummary summary={totalSummary} />
-                <div
-                  className={
-                    "flex flex-col items-center justify-center rounded-md p-0 md:flex-row"
-                  }
-                >
-                  <AnalysisResult
-                    results={analysisResult}
-                    total_summary={totalSummary}
+          <div className="w-full md:w-5/6 flex flex-row">
+            <div
+              className={`card w-full md:w-4/5 mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+            >
+              <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
+                {summaryLoading && <Spinner className="my-4" color="primary" />}
+                {summary && (
+                  <SummaryWrapper
+                    summary={summary}
+                    isResult={true}
+                    link={
+                      "/results/" +
+                      summary.post_title
+                        .replace(/[^a-zA-Z0-9\s]/g, "")
+                        .toLowerCase()
+                        .split(" ")
+                        .join("-") +
+                      "_" +
+                      summary.post_id +
+                      "/"
+                    }
+                    userData={{ ...author }}
+                    postDate={postDate}
+                    input_tokens={costdata.input_tokens}
+                    output_tokens={costdata.output_tokens}
+                    total_cost={costdata.total_cost}
                   />
-                </div>
+                )}
               </div>
-            )}
-            <div className="flex items-center justify-start gap-4 w-full px-4 py-2 mt-2">
-              <Button
-                variant="ghost"
-                className="flex items-center gap-2"
-                onPress={() => console.log("Like clicked")}
-              >
-                <TbThumbUp size={24} />
-                <span>{result.count_like || 0}</span>
-              </Button>
 
-              <Button
-                variant="ghost"
-                className="flex items-center gap-2"
-                onPress={() => console.log("Comments clicked")}
-              >
-                <TbMessage size={24} />
-                <span>{result.count_comment || 0}</span>
-              </Button>
+              {analysisResult && (
+                <div className="mb-0 sm:mb-2 w-full">
+                  <SpecialSummary summary={totalSummary} />
+                  <div
+                    className={
+                      "flex flex-col items-center justify-center rounded-md p-0 md:flex-row"
+                    }
+                  >
+                    <AnalysisResult
+                      results={analysisResult}
+                      total_summary={totalSummary}
+                    />
+                  </div>
+                </div>
+              )}
+              <div className="flex items-center justify-start gap-4 w-full px-4 py-2 mt-2">
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2"
+                  onPress={() => console.log("Like clicked")}
+                >
+                  <TbThumbUp size={24} />
+                  <span>{result.count_like || 0}</span>
+                </Button>
 
-              <Button
-                variant="ghost"
-                className="flex items-center gap-2"
-                onPress={() => console.log("Views clicked")}
-              >
-                <TbEye size={24} />
-                <span>{result.count_view || 0}</span>
-              </Button>
-              <ShareButtons url={DOMAIN + link} title={summary.post_title} />
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2"
+                  onPress={() => console.log("Comments clicked")}
+                >
+                  <TbMessage size={24} />
+                  <span>{result.count_comment || 0}</span>
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2"
+                  onPress={() => console.log("Views clicked")}
+                >
+                  <TbEye size={24} />
+                  <span>{result.count_view || 0}</span>
+                </Button>
+                <ShareButtons url={DOMAIN + link} title={summary.post_title} />
+              </div>
+              <Comments
+                comments={comments}
+                postId={summary.post_id}
+                onCommentAdded={refreshComments}
+              />
             </div>
-            <Comments
-              comments={comments}
-              postId={summary.post_id}
-              onCommentAdded={refreshComments}
-            />
+            <div className="ml-4 hidden md:flex flex-col gap-2 w-full">
+              {recentPapers.map((paper: any, index: number) => {
+                return (
+                  <Link
+                    key={index}
+                    href={
+                      "/results/" +
+                      paper.title
+                        .replace(/[^a-zA-Z0-9\s]/g, "")
+                        .toLowerCase()
+                        .split(" ")
+                        .join("-") +
+                      "_" +
+                      paper.id +
+                      "/"
+                    }
+                  >
+                    <Card
+                      isHoverable
+                      shadow="sm"
+                      className="cursor-pointer w-full"
+                    >
+                      <CardBody>
+                        <div className="flex flex-row justify-start items-center w-full">
+                          <Avatar
+                            isBordered
+                            radius="full"
+                            size="sm"
+                            src={paper.user.avatar}
+                          />
+                          <p className="ml-2">
+                            {_.truncate(paper.title, {
+                              length: 27,
+                              omission: "...",
+                            })}
+                          </p>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         )}
+      </div>
+      <div className="fixed bottom-12 right-5">
+        <Badge
+          color="warning"
+          content={result?.count_comment || 0}
+          variant="flat"
+        >
+          <Button
+            isIconOnly
+            onPress={() => {
+              const mainElement = document.getElementById("main");
+              mainElement?.scrollTo({
+                top: mainElement.scrollHeight,
+                behavior: "smooth",
+              });
+            }}
+          >
+            <TbMessage size={24} />
+          </Button>
+        </Badge>
       </div>
     </>
   );

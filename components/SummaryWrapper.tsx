@@ -191,7 +191,7 @@ const SummaryWrapper = ({
         ) : (
           <Link href={link}>
             <span className="text-md md:text-3xl">
-              <p className="text-sm md:hidden">
+              {/* <p className="text-sm md:hidden">
                 {`AI Error Detection Report for`}
                 <Tooltip
                   content={
@@ -213,7 +213,7 @@ const SummaryWrapper = ({
                   <span className="">ℹ️</span>
                 </Tooltip>
                 {` : `}
-              </p>
+              </p> */}
               {summary.metadata.title}
             </span>
           </Link>
@@ -253,7 +253,7 @@ const SummaryWrapper = ({
                 size="sm"
                 variant="ghost"
                 onPress={() => setExpand(!expand)}
-                className={`w-full md:w-auto ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#C8E600]"}`}
+                className={`w-full md:w-auto ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
               >
                 {`${expand ? "Show Less..." : "Load More..."}`}
               </Button>
