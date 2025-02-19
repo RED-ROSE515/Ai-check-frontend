@@ -193,7 +193,7 @@ export const Navbar = () => {
 
         <NavbarContent className="flex w-full basis-full" justify="end">
           <NavbarItem className="flex items-center gap-2 md:gap-4">
-            <CircularProgressBar className="ml-2 md:ml-4 h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" />
+            {/* <CircularProgressBar className="ml-2 md:ml-4 h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" /> */}
             <ThemeSwitch />
 
             <Popover
