@@ -5,7 +5,7 @@ import Image, { StaticImageData } from "next/image";
 import { useTheme } from "next-themes";
 import { useSpeech } from "@/contexts/SpeechContext";
 import { useToast } from "@/hooks/use-toast";
-import axios from "axios";
+import api from "@/utils/api";
 import {
   Chip,
   Drawer,
@@ -100,21 +100,21 @@ const SummaryWrapper = ({
     {
       title: "Child Summary",
       content: summary.summary?.child,
-      value: "child_summary",
+      value: "ChildSummary",
       audio_url: "",
       image: childImage,
     },
     {
       title: "College Summary",
       content: summary.summary?.college,
-      value: "college_summary",
+      value: "CollegeSummary",
       audio_url: "",
       image: collegeImage,
     },
     {
       title: "PhD Summary",
       content: summary.summary?.phd,
-      value: "phd_summary",
+      value: "PhDSummary",
       audio_url: "",
       image: phDImage,
     },
@@ -123,10 +123,11 @@ const SummaryWrapper = ({
     try {
       setLoading(true);
       const paperId = link.split("_")[1].split("/")[0];
-      const response = await axios.get(
-        API_BASE_URL +
-          `api/papers/${paperId}/generate_speech/?voice_type=${voice}&speech_type=${currentSummary?.value}&text=${currentSummary?.content}`
-      );
+      const response = await api.post(`post/generate_voice`, {
+        post_id: paperId,
+        speech_type: currentSummary?.value,
+        voice_type: voice,
+      });
       setLoading(false);
       onClose();
       toast({
