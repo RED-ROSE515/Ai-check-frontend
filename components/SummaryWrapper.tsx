@@ -80,6 +80,7 @@ const SummaryWrapper = ({
   isResult,
   postDate,
   userData,
+  showSignInModal,
   input_tokens,
   output_tokens,
   total_cost,
@@ -183,12 +184,9 @@ const SummaryWrapper = ({
           {` : `}
         </span> */}
         {isResult ? (
-          <Link href={summary.attached_links[0]}>
-            <span className="text-md md:text-3xl hover:text-purple-500 flex-1 items-center gap-1">
-              {summary.metadata.title}
-              <TbExternalLink className="ml-2 inline-block" />
-            </span>
-          </Link>
+          <span className="text-md md:text-3xl flex-1 items-center gap-1">
+            {summary.metadata.title}
+          </span>
         ) : (
           <Link href={link}>
             <span className="text-md md:text-3xl">
@@ -504,9 +502,14 @@ const SummaryWrapper = ({
                 </Button>
                 <Button
                   color="primary"
-                  onPress={generateSpeech}
+                  onPress={() =>
+                    isAuthenticated
+                      ? generateSpeech()
+                      : showSignInModal(
+                          "You need to Sign in first to leave a comment."
+                        )
+                  }
                   isLoading={loading}
-                  isDisabled={!isAuthenticated}
                 >
                   Generate
                 </Button>

@@ -140,10 +140,18 @@ const UserCard = ({ userData, postDate }: any) => {
                       color="primary"
                       radius="full"
                       size="sm"
-                      variant={userDetail?.is_following ? "bordered" : "solid"}
-                      onPress={() => follow()}
+                      // variant={userDetail?.is_following ? "bordered" : "solid"}
+                      variant={"bordered"}
+                      // onPress={() => follow()}
+                      onPress={() =>
+                        window.open(
+                          `https://uy7p3-zyaaa-aaaap-qpmoq-cai.icp0.io/@${userData.user_name}`,
+                          "_blank"
+                        )
+                      }
                     >
-                      {userDetail?.is_following ? "Unfollow" : "Follow"}
+                      {/* {userDetail?.is_following ? "Unfollow" : "Follow"} */}
+                      View Profile
                     </Button>
                   )}
                 </CardHeader>
@@ -178,7 +186,7 @@ const UserCard = ({ userData, postDate }: any) => {
 
           <div className="flex flex-col justify-between">
             <div className="flex justify-between items-start">
-              <h1 className="text-large font-bold">{userData.first_name}</h1>
+              <h1 className="text-xl font-bold">{userData.first_name}</h1>
               {/* <Button
                 isIconOnly
                 className="text-default-900/60 data-[hover]:bg-foreground/10 -translate-y-2 translate-x-2"
@@ -212,7 +220,7 @@ const UserCard = ({ userData, postDate }: any) => {
                   </span>
                 </Tooltip>
               )} */}
-              <span className="text-sm font-bold text-gray-500">
+              <span className="text-md font-semibold text-gray-500">
                 {formattedDate}
               </span>
             </div>

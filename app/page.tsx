@@ -8,7 +8,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
 } from "@heroui/react";
 
 import api from "@/utils/api";
@@ -25,6 +24,7 @@ import { Chip } from "@heroui/chip";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import ShareButtons from "@/components/ShareButtons";
 import { useAuth } from "@/contexts/AuthContext";
+import SignInDialog from "@/components/SignInDialog";
 type TriggerRefType = {
   current: (() => void) | null;
 };
@@ -36,6 +36,7 @@ export default function Home() {
   const [totalResults, setTotalResults] = useState([]);
   const [sortBy, setSortBy] = useState("");
   const [order, setOrder] = useState("desc");
+  const [showSignIn, setShowSignIn] = useState(false);
   const [postId, setPostId] = useState("");
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
@@ -108,6 +109,15 @@ export default function Home() {
       });
     }
   };
+
+  const showSignInModal = async (action: string) => {
+    toast({
+      title: "Info",
+      description: action,
+    });
+    setShowSignIn(true);
+  };
+
   // useEffect(() => {
   //   const fetchData = async () => {
   //     try {
@@ -150,6 +160,7 @@ export default function Home() {
           <LeftSider onUpload={() => triggerUploadRef.current?.()} />
         </div>
       )}
+
       <div className="mt-4 w-full md:w-5/6 items-center flex flex-col justify-center">
         {/* <div>
           <h1>OpenAI Response Preview</h1>
@@ -179,6 +190,10 @@ export default function Home() {
         {/* <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-4 md:p-12 md:px-36 justify-center md:pt-0">
           <StatisticCard setSortBy={setSortBy} setOrder={setOrder} />
         </div> */}
+        <SignInDialog
+          isOpen={showSignIn}
+          onClose={() => setShowSignIn(false)}
+        />
         <div className="w-full">
           {status && (
             <Chip color="success" variant="bordered" radius="sm" size="lg">
@@ -237,6 +252,7 @@ export default function Home() {
                         // output_tokens={result.output_tokens}
                         // total_cost={result.total_cost}
                         userData={result.user}
+                        showSignInModal={showSignInModal}
                         postDate={result.updated_at}
                         link={
                           DOMAIN +
@@ -259,8 +275,13 @@ export default function Home() {
                       variant="ghost"
                       color={result.liked_me ? "warning" : "default"}
                       className="flex items-center gap-2"
-                      isDisabled={!isAuthenticated}
-                      onPress={() => like(result.id, result.liked_me)}
+                      onPress={() =>
+                        isAuthenticated
+                          ? like(result.id, result.liked_me)
+                          : showSignInModal(
+                              "You need to Sign in first to like this post."
+                            )
+                      }
                     >
                       <TbThumbUp size={24} />
                       <span>{result.count_like || 0}</span>
@@ -269,10 +290,15 @@ export default function Home() {
                     <Button
                       variant="ghost"
                       className="flex items-center gap-2"
-                      isDisabled={!isAuthenticated}
                       onPress={() => {
-                        setPostId(result.id);
-                        onOpen();
+                        if (isAuthenticated) {
+                          setPostId(result.id);
+                          onOpen();
+                        } else {
+                          showSignInModal(
+                            "You need to Sign in first to leave a comment."
+                          );
+                        }
                       }}
                     >
                       <TbMessage size={24} />
@@ -308,17 +334,16 @@ export default function Home() {
                     <ShinyButton
                       className={`mr-2 mb-2 ${theme === "dark" ? "bg-[#C8E600]" : "bg-[#EE43DE]"}`}
                       onClick={() =>
-                        window.open(
+                        (window.location.href =
                           "/results/" +
-                            result.title
-                              .replace(/[^a-zA-Z0-9\s]/g, "")
-                              .toLowerCase()
-                              .split(" ")
-                              .join("-") +
-                            "_" +
-                            result.id +
-                            "/"
-                        )
+                          result.title
+                            .replace(/[^a-zA-Z0-9\s]/g, "")
+                            .toLowerCase()
+                            .split(" ")
+                            .join("-") +
+                          "_" +
+                          result.id +
+                          "/")
                       }
                     >
                       <strong

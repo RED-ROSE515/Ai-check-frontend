@@ -22,6 +22,7 @@ import Comments from "@/components/Comments";
 import ShareButtons from "@/components/ShareButtons";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import SignInDialog from "@/components/SignInDialog";
 
 const ResultPage = ({ params }: any) => {
   const resolvedParams = use(params);
@@ -43,6 +44,7 @@ const ResultPage = ({ params }: any) => {
   const [author, setAuthor] = useState<any>();
   const [postDate, setPostDate] = useState("");
   const [result, setResult] = useState<any>();
+  const [showSignIn, setShowSignIn] = useState(false);
   const [comments, setComments] = useState<any>([]);
   const [link, setLink] = useState("");
   const [recentPapers, setRecentPapers] = useState<any>([]);
@@ -134,6 +136,14 @@ const ResultPage = ({ params }: any) => {
     }
   };
 
+  const showSignInModal = async (action: string) => {
+    toast({
+      title: "Info",
+      description: action,
+    });
+    setShowSignIn(true);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const newId = id.split("_")[1];
@@ -166,6 +176,10 @@ const ResultPage = ({ params }: any) => {
         <meta name="twitter:image" content={pageImage} />
       </Head>
       <div className="flex flex-row justify-center mt-16">
+        <SignInDialog
+          isOpen={showSignIn}
+          onClose={() => setShowSignIn(false)}
+        />
         {summary && (
           <div className="w-full md:w-5/6 flex flex-row">
             <div
@@ -217,8 +231,14 @@ const ResultPage = ({ params }: any) => {
                   variant="ghost"
                   className="flex items-center gap-2"
                   color={result.liked_me ? "warning" : "default"}
-                  isDisabled={!isAuthenticated}
-                  onPress={() => like(result.id, result.liked_me)}
+                  // isDisabled={!isAuthenticated}
+                  onPress={() =>
+                    isAuthenticated
+                      ? like(result.id, result.liked_me)
+                      : showSignInModal(
+                          "You need to Sign in first to like this post."
+                        )
+                  }
                 >
                   <TbThumbUp size={24} />
                   <span>{result.count_like || 0}</span>
@@ -227,7 +247,7 @@ const ResultPage = ({ params }: any) => {
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2"
-                  isDisabled={!isAuthenticated}
+                  // isDisabled={!isAuthenticated}
                   onPress={() => console.log("Comments clicked")}
                 >
                   <TbMessage size={24} />
@@ -250,6 +270,7 @@ const ResultPage = ({ params }: any) => {
                 setComments={(data: any) => setComments(data)}
                 postId={summary.post_id}
                 onCommentAdded={refreshComments}
+                showSignInModal={showSignInModal}
               />
             </div>
             <div className="ml-4 hidden md:flex flex-col gap-2 w-full">
@@ -302,24 +323,24 @@ const ResultPage = ({ params }: any) => {
         )}
       </div>
       <div className="fixed bottom-12 right-5">
-        <Badge
+        {/* <Badge
           color="warning"
           content={result?.count_comment || 0}
           variant="flat"
+        > */}
+        <Button
+          isIconOnly
+          onPress={() => {
+            const mainElement = document.getElementById("main");
+            mainElement?.scrollTo({
+              top: mainElement.scrollHeight,
+              behavior: "smooth",
+            });
+          }}
         >
-          <Button
-            isIconOnly
-            onPress={() => {
-              const mainElement = document.getElementById("main");
-              mainElement?.scrollTo({
-                top: mainElement.scrollHeight,
-                behavior: "smooth",
-              });
-            }}
-          >
-            <TbMessage size={24} />
-          </Button>
-        </Badge>
+          <TbMessage size={24} />
+        </Button>
+        {/* </Badge> */}
       </div>
     </>
   );

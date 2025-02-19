@@ -30,13 +30,23 @@ interface CommentProps {
   setComments: any;
   postId: number;
   onCommentAdded: () => void;
+  showSignInModal: any;
 }
 
-export const PostCommentBox = ({ postId, onCommentAdded }: any) => {
+export const PostCommentBox = ({
+  postId,
+  onCommentAdded,
+  showSignInModal,
+}: any) => {
   const [newComment, setNewComment] = useState("");
   const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAuthenticated) {
+      showSignInModal("You need to Sign in first to leave a comment.");
+      return;
+    }
     if (!newComment.trim()) return;
 
     try {
@@ -80,9 +90,10 @@ const Comments = ({
   setComments,
   postId,
   onCommentAdded,
+  showSignInModal,
 }: CommentProps) => {
   const { theme } = useTheme();
-  const { isAuthenticated } = useAuth();
+
   const { toast } = useToast();
 
   const like = async (comment_id: string, liked_me: boolean) => {
@@ -188,13 +199,15 @@ const Comments = ({
           </Card>
         ))}
         {/* Comment Form */}
-        {isAuthenticated && (
-          <Card isBlurred>
-            <CardBody>
-              <PostCommentBox postId={postId} onCommentAdded={onCommentAdded} />
-            </CardBody>
-          </Card>
-        )}
+        <Card isBlurred>
+          <CardBody>
+            <PostCommentBox
+              postId={postId}
+              onCommentAdded={onCommentAdded}
+              showSignInModal={showSignInModal}
+            />
+          </CardBody>
+        </Card>
       </div>
     </div>
   );

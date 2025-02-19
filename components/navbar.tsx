@@ -40,7 +40,6 @@ import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
 import { CircularProgressBar } from "./CircularProgressBar";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
-import { Sling as Hamburger } from "hamburger-react";
 import { ImProfile } from "react-icons/im";
 import { MdLogin, MdLogout, MdCheck, MdInfo } from "react-icons/md";
 
@@ -129,17 +128,6 @@ export const Navbar = () => {
           ) : (
             <ListboxSection title="Guest Actions">
               <ListboxItem
-                key="login"
-                description="Log in"
-                startContent={<MdLogin className={iconClasses} />}
-                onPress={() => {
-                  setOpen(false);
-                  navigateTo("/signin");
-                }}
-              >
-                Log in
-              </ListboxItem>
-              <ListboxItem
                 key="check"
                 description="Check the paper"
                 startContent={<MdCheck className={iconClasses} />}
@@ -160,6 +148,17 @@ export const Navbar = () => {
                 }}
               >
                 About
+              </ListboxItem>
+              <ListboxItem
+                key="login"
+                description="Log in"
+                startContent={<MdLogin className={iconClasses} />}
+                onPress={() => {
+                  setOpen(false);
+                  navigateTo("/signin");
+                }}
+              >
+                Log in
               </ListboxItem>
             </ListboxSection>
           )}
@@ -208,7 +207,7 @@ export const Navbar = () => {
                   avatarProps={{
                     src: isAuthenticated
                       ? user?.detail.avatar
-                      : "https://avatars.githubusercontent.com/u/30373425?v=4",
+                      : "https://avatars.githubusercontent.com/u/146516559?s=400&u=8a2fcef9b9079ab60f01db2868d1b1893856a2c3&v=4",
                   }}
                   onClick={() => setOpen(true)}
                   className="cursor-pointer"
@@ -253,7 +252,7 @@ export const Navbar = () => {
                         src={
                           isAuthenticated
                             ? user?.detail.avatar
-                            : "https://avatars.githubusercontent.com/u/30373425?v=4"
+                            : "https://avatars.githubusercontent.com/u/146516559?s=400&u=8a2fcef9b9079ab60f01db2868d1b1893856a2c3&v=4"
                         }
                       />
                       <div className="flex flex-col items-start justify-center">

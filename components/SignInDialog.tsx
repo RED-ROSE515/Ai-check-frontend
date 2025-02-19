@@ -74,6 +74,7 @@ export default function SignInDialog({
   const [loading, setLoading] = useState(false);
   const { login, isAuthenticated, user } = useAuth();
   const { toast } = useToast();
+  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -104,15 +105,19 @@ export default function SignInDialog({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">Log in</ModalHeader>
-            <ModalBody>
+            <ModalHeader className="flex flex-col gap-1 justify-center items-center text-2xl font-bold my-4">
+              Login to Nerdbunny
+            </ModalHeader>
+            <ModalBody className="gap-8 my-4">
               <Input
                 endContent={
                   <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                 }
                 onChange={(e) => setEmail(e.target.value)}
                 label="Email"
+                size="lg"
                 placeholder="Enter your email"
+                labelPlacement="outside"
                 variant="bordered"
               />
               <Input
@@ -120,8 +125,10 @@ export default function SignInDialog({
                   <LockIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                 }
                 label="Password"
+                size="lg"
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
+                labelPlacement="outside"
                 type="password"
                 variant="bordered"
               />
@@ -139,19 +146,25 @@ export default function SignInDialog({
               </div> */}
             </ModalBody>
             <ModalFooter>
-              <Button
-                color="danger"
-                variant="flat"
-                onPress={() => {
-                  onClose();
-                  window.history.back();
-                }}
-              >
-                Close
-              </Button>
-              <Button color="primary" onPress={handleSubmit}>
-                Sign in
-              </Button>
+              <div className="w-full flex flex-col gap-2 justify-center items-center">
+                <Button
+                  className="w-full"
+                  color="primary"
+                  onPress={handleSubmit}
+                >
+                  Login
+                </Button>
+                <strong>
+                  Don't have an account?
+                  <Link
+                    href="/signup"
+                    underline="always"
+                    className="ml-2 text-blue-600"
+                  >
+                    <span>Sign up</span>
+                  </Link>
+                </strong>
+              </div>
             </ModalFooter>
           </>
         )}
