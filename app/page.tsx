@@ -1,8 +1,16 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-import { Spinner, Button } from "@heroui/react";
-import { Link } from "@heroui/link";
-import axios from "axios";
+import {
+  Spinner,
+  Button,
+  useDisclosure,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "@heroui/react";
+
 import api from "@/utils/api";
 import Pusher from "pusher-js";
 import { useTheme } from "next-themes";
@@ -11,11 +19,12 @@ import StatisticCard from "../components/StatisticCard";
 import SummaryWrapper from "../components/SummaryWrapper";
 import { usePagination } from "@/contexts/PaginationContext";
 import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
-
+import { PostCommentBox } from "@/components/Comments";
 import { useToast } from "@/hooks/use-toast";
 import { Chip } from "@heroui/chip";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import ShareButtons from "@/components/ShareButtons";
+import { useAuth } from "@/contexts/AuthContext";
 type TriggerRefType = {
   current: (() => void) | null;
 };
@@ -27,13 +36,15 @@ export default function Home() {
   const [totalResults, setTotalResults] = useState([]);
   const [sortBy, setSortBy] = useState("");
   const [order, setOrder] = useState("desc");
-
+  const [postId, setPostId] = useState("");
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const { toast } = useToast();
   const { theme } = useTheme();
+  const { isAuthenticated } = useAuth();
   const triggerUploadRef: TriggerRefType = useRef(null);
   const User = false;
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const getTotalResults = async () => {
     try {
@@ -79,7 +90,15 @@ export default function Home() {
       });
       setTotalResults((totalResults: any) =>
         totalResults.map((paper: any) =>
-          paper.id === post_id ? { ...paper, liked_me: !paper.liked_me } : paper
+          paper.id === post_id
+            ? {
+                ...paper,
+                liked_me: !paper.liked_me,
+                count_like: paper.liked_me
+                  ? paper.count_like - 1
+                  : paper.count_like + 1,
+              }
+            : paper
         )
       );
     } catch (error) {
@@ -166,6 +185,40 @@ export default function Home() {
               {status}
             </Chip>
           )}
+          <Modal
+            backdrop={"blur"}
+            isOpen={isOpen}
+            onClose={onClose}
+            size={"2xl"}
+          >
+            <ModalContent>
+              {(onClose) => (
+                <>
+                  <ModalHeader className="flex flex-col gap-1">
+                    Modal Title
+                  </ModalHeader>
+                  <ModalBody>
+                    <PostCommentBox
+                      postId={postId}
+                      onCommentAdded={() => {
+                        setTotalResults((totalResults: any) =>
+                          totalResults.map((paper: any) =>
+                            paper.id === postId
+                              ? {
+                                  ...paper,
+                                  count_comment: paper.count_comment + 1,
+                                }
+                              : paper
+                          )
+                        );
+                        onClose();
+                      }}
+                    />
+                  </ModalBody>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
           {loading ? (
             <Spinner />
           ) : (
@@ -200,11 +253,13 @@ export default function Home() {
                       />
                     )}
                   </div>
+
                   <div className="flex items-center justify-start gap-4 w-full px-4 py-2">
                     <Button
                       variant="ghost"
                       color={result.liked_me ? "warning" : "default"}
                       className="flex items-center gap-2"
+                      isDisabled={!isAuthenticated}
                       onPress={() => like(result.id, result.liked_me)}
                     >
                       <TbThumbUp size={24} />
@@ -214,7 +269,11 @@ export default function Home() {
                     <Button
                       variant="ghost"
                       className="flex items-center gap-2"
-                      onPress={() => console.log("Comments clicked")}
+                      isDisabled={!isAuthenticated}
+                      onPress={() => {
+                        setPostId(result.id);
+                        onOpen();
+                      }}
                     >
                       <TbMessage size={24} />
                       <span>{result.count_comment || 0}</span>

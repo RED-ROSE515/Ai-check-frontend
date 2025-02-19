@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { Button, Card, Textarea, Image } from "@heroui/react";
+import { Button, Card, Textarea, Image, CardBody } from "@heroui/react";
 import { useAuth } from "@/contexts/AuthContext";
+import { formatTimestamp } from "./UserCard";
+import { useToast } from "@/hooks/use-toast";
 import api from "@/utils/api";
 interface User {
   id: string;
@@ -25,15 +27,14 @@ interface Comment {
 
 interface CommentProps {
   comments: Comment[];
+  setComments: any;
   postId: number;
   onCommentAdded: () => void;
 }
 
-const Comments = ({ comments, postId, onCommentAdded }: CommentProps) => {
-  const { theme } = useTheme();
-  const { isAuthenticated } = useAuth();
+export const PostCommentBox = ({ postId, onCommentAdded }: any) => {
   const [newComment, setNewComment] = useState("");
-
+  const { toast } = useToast();
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
@@ -46,43 +47,91 @@ const Comments = ({ comments, postId, onCommentAdded }: CommentProps) => {
       });
       setNewComment("");
       onCommentAdded();
+      toast({
+        title: "Success",
+        description: "Successfully post the new comment.",
+      });
     } catch (error) {
-      console.error("Error posting comment:", error);
+      toast({
+        variant: "destructive",
+        description: "Uh, oh! Something went wrong!" + { error },
+      });
     }
   };
 
+  return (
+    <form onSubmit={handleSubmitComment} className="">
+      <Textarea
+        value={newComment}
+        onChange={(e) => setNewComment(e.target.value)}
+        className={`w-full rounded-md border`}
+        placeholder="Write a comment..."
+        rows={3}
+      />
+      <Button type="submit" variant="ghost" className="mt-2 px-4 py-2 ">
+        Post Comment
+      </Button>
+    </form>
+  );
+};
+
+const Comments = ({
+  comments,
+  setComments,
+  postId,
+  onCommentAdded,
+}: CommentProps) => {
+  const { theme } = useTheme();
+  const { isAuthenticated } = useAuth();
+  const { toast } = useToast();
+
+  const like = async (comment_id: string, liked_me: boolean) => {
+    try {
+      await api.post(`/post/${liked_me ? "unlike" : "like"}/comment`, {
+        comment_id,
+      });
+      toast({
+        title: "Success",
+        description: "Successfully like the comment.",
+      });
+      setComments((comments: any) =>
+        comments.map((comment: any) =>
+          comment.id === comment_id
+            ? {
+                ...comment,
+                count_like: comment.liked_me
+                  ? comment.count_like - 1
+                  : comment.count_like + 1,
+                liked_me: !comment.liked_me,
+              }
+            : comment
+        )
+      );
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "Uh, oh! Something went wrong!" + { error },
+      });
+    }
+  };
   return (
     <div className="w-full mt-4 p-4">
       <div className="flex flex-row justify-between mb-4 items-center">
         <h2 className="text-xl font-semibold">Comments</h2>
       </div>
 
-      {/* Comment Form */}
-      {isAuthenticated && (
-        <form onSubmit={handleSubmitComment} className="mb-6">
-          <Textarea
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            className={`w-full rounded-md border`}
-            placeholder="Write a comment..."
-            rows={3}
-          />
-          <Button type="submit" variant="ghost" className="mt-2 px-4 py-2 ">
-            Post Comment
-          </Button>
-        </form>
-      )}
-
       {/* Comments List */}
       <div className="space-y-4">
         {comments.map((comment) => (
           <Card
             key={comment.id}
-            className={`p-4 rounded-lg ${
+            onPress={() => like(comment.id, comment.liked_me)}
+            isPressable
+            className={`p-4 rounded-lg w-full  ${
               theme === "dark" ? "bg-gray-800" : "bg-gray-100"
             }`}
           >
-            <div className="flex items-center mb-2">
+            <div className="flex items-center justify-start mb-2">
               {comment.user.avatar && (
                 <div className="relative rounded-full overflow-hidden mr-3">
                   {/* <Image
@@ -103,7 +152,7 @@ const Comments = ({ comments, postId, onCommentAdded }: CommentProps) => {
                   />
                 </div>
               )}
-              <div className="flex flex-col">
+              <div className="flex flex-col justify-start items-start">
                 <span className="font-semibold">
                   {`${comment.user.first_name} ${comment.user.second_name}`}
                 </span>
@@ -112,12 +161,14 @@ const Comments = ({ comments, postId, onCommentAdded }: CommentProps) => {
                 </span>
               </div>
               <span className="ml-auto text-sm text-gray-500">
-                {new Date(comment.created_at).toLocaleDateString()}
+                {`Posted ` + formatTimestamp(comment.created_at)}
               </span>
             </div>
-            <p className="text-sm mt-2">{comment.description}</p>
+            <p className="text-sm mt-2 flex flex-1">{comment.description}</p>
             <div className="flex items-center mt-2 text-sm text-gray-500">
-              <button className="flex items-center space-x-1">
+              <button
+                className={`flex items-center space-x-1 border-2 p-1 rounded-md  ${comment.liked_me ? "bg-[#C8E600]" : ""}`}
+              >
                 <svg
                   className="w-4 h-4"
                   fill={comment.liked_me ? "currentColor" : "none"}
@@ -136,6 +187,14 @@ const Comments = ({ comments, postId, onCommentAdded }: CommentProps) => {
             </div>
           </Card>
         ))}
+        {/* Comment Form */}
+        {isAuthenticated && (
+          <Card isBlurred>
+            <CardBody>
+              <PostCommentBox postId={postId} onCommentAdded={onCommentAdded} />
+            </CardBody>
+          </Card>
+        )}
       </div>
     </div>
   );

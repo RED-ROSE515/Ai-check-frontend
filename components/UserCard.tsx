@@ -13,31 +13,27 @@ import {
   PopoverContent,
 } from "@heroui/react";
 import { useToast } from "@/hooks/use-toast";
-import axios from "axios";
+import { useAuth } from "@/contexts/AuthContext";
 import { formatDistance, format, differenceInDays } from "date-fns";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import api from "@/utils/api";
 import _ from "lodash";
-const formatTimestamp = (date: string | Date) => {
+export const formatTimestamp = (date: string | Date) => {
   const parsedDate = new Date(date);
   const isRecent = differenceInDays(new Date(), parsedDate) < 1;
 
-  if (isRecent) {
-    return (
-      `Published on: ` +
-      formatDistance(parsedDate, new Date(), { addSuffix: true })
-    );
-  }
-
-  return `Published on: ` + format(parsedDate, "MMM dd, yyyy • HH:mm 'UTC'");
+  if (isRecent)
+    return formatDistance(parsedDate, new Date(), { addSuffix: true });
+  return format(parsedDate, "MMM dd, yyyy • HH:mm 'UTC'");
 };
 
 const UserCard = ({ userData, postDate }: any) => {
-  const formattedDate = formatTimestamp(postDate);
+  const formattedDate = `Published on: ` + formatTimestamp(postDate);
   const { isMobile } = useDeviceCheck();
   const [userDetail, setUserDetail] = useState<any>();
   const [isHovered, setIsHovered] = useState(false);
   const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
   const fetchUserDetail = async () => {
     const response = await api.get(
       `/user/profile?user_id=${userData.user_name}`
@@ -134,20 +130,22 @@ const UserCard = ({ userData, postDate }: any) => {
                       </Link>
                     </div>
                   </div>
-                  <Button
-                    className={
-                      userDetail?.is_following
-                        ? "bg-transparent text-foreground border-default-200 ml-2"
-                        : "ml-2"
-                    }
-                    color="primary"
-                    radius="full"
-                    size="sm"
-                    variant={userDetail?.is_following ? "bordered" : "solid"}
-                    onPress={() => follow()}
-                  >
-                    {userDetail?.is_following ? "Unfollow" : "Follow"}
-                  </Button>
+                  {isAuthenticated && (
+                    <Button
+                      className={
+                        userDetail?.is_following
+                          ? "bg-transparent text-foreground border-default-200 ml-2"
+                          : "ml-2"
+                      }
+                      color="primary"
+                      radius="full"
+                      size="sm"
+                      variant={userDetail?.is_following ? "bordered" : "solid"}
+                      onPress={() => follow()}
+                    >
+                      {userDetail?.is_following ? "Unfollow" : "Follow"}
+                    </Button>
+                  )}
                 </CardHeader>
                 <CardBody className="px-3 py-0">
                   <p className="text-small pl-px text-default-500">

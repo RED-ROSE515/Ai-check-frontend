@@ -12,6 +12,7 @@ import {
   Avatar,
   Link,
 } from "@heroui/react";
+import api from "@/utils/api";
 import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
 import _ from "lodash";
 import SummaryWrapper from "@/components/SummaryWrapper";
@@ -19,6 +20,8 @@ import SpecialSummary from "@/components/SpecialSummary";
 import AnalysisResult from "@/components/AnalysisResult";
 import Comments from "@/components/Comments";
 import ShareButtons from "@/components/ShareButtons";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const ResultPage = ({ params }: any) => {
   const resolvedParams = use(params);
@@ -43,12 +46,13 @@ const ResultPage = ({ params }: any) => {
   const [comments, setComments] = useState<any>([]);
   const [link, setLink] = useState("");
   const [recentPapers, setRecentPapers] = useState<any>([]);
-
+  const { isAuthenticated } = useAuth();
+  const { toast } = useToast();
   const getResultById = async (paperId: number) => {
     try {
       setAnalysisResult("");
       setSummaryLoading(true);
-      const response = await axios.get(API_BASE_URL + `/post/${paperId}`);
+      const response = await api.get(`/post/${paperId}`);
       setResult(response.data);
       setAuthor(response.data.user);
       setSummary({
@@ -66,9 +70,8 @@ const ResultPage = ({ params }: any) => {
       });
       setPostDate(response.data.updated_at);
       setTotalSummary(total_result.paperAnalysis.summary);
-      const resp = await axios.get(
-        API_BASE_URL +
-          `/post/comments?parent_is_post=true&parent_id=${response.data.id}&start=0&limit=1000`
+      const resp = await api.get(
+        `/post/comments?parent_is_post=true&parent_id=${response.data.id}&start=0&limit=1000`
       );
       setComments(resp.data);
       setLink(
@@ -98,11 +101,32 @@ const ResultPage = ({ params }: any) => {
     }
   };
 
+  const like = async (post_id: string, liked_me: boolean) => {
+    try {
+      await api.post(`/post/${liked_me ? "unlike" : "like"}/post`, { post_id });
+      toast({
+        title: "Success",
+        description: "Successfully like the post.",
+      });
+      setResult({
+        ...result,
+        liked_me: !result.liked_me,
+        count_like: result.liked_me
+          ? result.count_like - 1
+          : result.count_like + 1,
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        description: "Uh, oh! Something went wrong!" + { error },
+      });
+    }
+  };
+
   const refreshComments = async () => {
     try {
-      const resp = await axios.get(
-        API_BASE_URL +
-          `/post/comments?parent_is_post=true&parent_id=${summary.post_id}&start=0&limit=1000`
+      const resp = await api.get(
+        `/post/comments?parent_is_post=true&parent_id=${summary.post_id}&start=0&limit=1000`
       );
       setComments(resp.data);
     } catch (error) {
@@ -192,7 +216,9 @@ const ResultPage = ({ params }: any) => {
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2"
-                  onPress={() => console.log("Like clicked")}
+                  color={result.liked_me ? "warning" : "default"}
+                  isDisabled={!isAuthenticated}
+                  onPress={() => like(result.id, result.liked_me)}
                 >
                   <TbThumbUp size={24} />
                   <span>{result.count_like || 0}</span>
@@ -201,6 +227,7 @@ const ResultPage = ({ params }: any) => {
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2"
+                  isDisabled={!isAuthenticated}
                   onPress={() => console.log("Comments clicked")}
                 >
                   <TbMessage size={24} />
@@ -210,6 +237,7 @@ const ResultPage = ({ params }: any) => {
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2"
+                  isDisabled={!isAuthenticated}
                   onPress={() => console.log("Views clicked")}
                 >
                   <TbEye size={24} />
@@ -219,11 +247,15 @@ const ResultPage = ({ params }: any) => {
               </div>
               <Comments
                 comments={comments}
+                setComments={(data: any) => setComments(data)}
                 postId={summary.post_id}
                 onCommentAdded={refreshComments}
               />
             </div>
             <div className="ml-4 hidden md:flex flex-col gap-2 w-full">
+              <span className="font-bold text-xl mb-2">
+                Recently Checked Papers
+              </span>
               {recentPapers.map((paper: any, index: number) => {
                 return (
                   <Link

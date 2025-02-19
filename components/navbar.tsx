@@ -42,7 +42,7 @@ import { CircularProgressBar } from "./CircularProgressBar";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { Sling as Hamburger } from "hamburger-react";
 import { ImProfile } from "react-icons/im";
-import { MdLogin, MdLogout } from "react-icons/md";
+import { MdLogin, MdLogout, MdCheck, MdInfo } from "react-icons/md";
 
 export const ListboxWrapper = ({ children }: any) => (
   <div className="w-full max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100">
@@ -56,7 +56,6 @@ export const Navbar = () => {
   const { isMobile } = useDeviceCheck();
   const [isOpen, setOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
-  const router = useRouter();
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -64,7 +63,9 @@ export const Navbar = () => {
   if (!isMounted) {
     return null;
   }
-
+  const navigateTo = (link: string) => {
+    window.location.href = link;
+  };
   const UserActions = () => {
     const iconClasses =
       "text-xl text-default-500 pointer-events-none flex-shrink-0";
@@ -78,16 +79,38 @@ export const Navbar = () => {
           {isAuthenticated ? (
             <ListboxSection title="User Actions">
               <ListboxItem
+                key="check"
+                description="Check the paper"
+                startContent={<MdCheck className={iconClasses} />}
+                onPress={() => {
+                  setOpen(false);
+                  navigateTo("/check");
+                }}
+              >
+                Check
+              </ListboxItem>
+              <ListboxItem
                 key="profile"
                 description="View Profile Page"
                 startContent={<ImProfile className={iconClasses} />}
                 onPress={() =>
-                  router.push(
+                  window.open(
                     `https://uy7p3-zyaaa-aaaap-qpmoq-cai.icp0.io/@${user?.detail.user_name}`
                   )
                 }
               >
                 View Profile
+              </ListboxItem>
+              <ListboxItem
+                key="about"
+                description="About the site"
+                startContent={<MdInfo className={iconClasses} />}
+                onPress={() => {
+                  setOpen(false);
+                  navigateTo("/about");
+                }}
+              >
+                About
               </ListboxItem>
               <ListboxItem
                 key="logout"
@@ -97,7 +120,7 @@ export const Navbar = () => {
                 startContent={<MdLogout className={iconClasses} />}
                 onPress={() => {
                   logout();
-                  router.push("");
+                  navigateTo("");
                 }}
               >
                 Log out
@@ -110,10 +133,33 @@ export const Navbar = () => {
                 description="Log in"
                 startContent={<MdLogin className={iconClasses} />}
                 onPress={() => {
-                  router.push("signin");
+                  setOpen(false);
+                  navigateTo("/signin");
                 }}
               >
                 Log in
+              </ListboxItem>
+              <ListboxItem
+                key="check"
+                description="Check the paper"
+                startContent={<MdCheck className={iconClasses} />}
+                onPress={() => {
+                  setOpen(false);
+                  navigateTo("/check");
+                }}
+              >
+                Check
+              </ListboxItem>
+              <ListboxItem
+                key="about"
+                description="About the site"
+                startContent={<MdInfo className={iconClasses} />}
+                onPress={() => {
+                  setOpen(false);
+                  navigateTo("/about");
+                }}
+              >
+                About
               </ListboxItem>
             </ListboxSection>
           )}
@@ -148,69 +194,23 @@ export const Navbar = () => {
 
         <NavbarContent className="flex w-full basis-full" justify="end">
           <NavbarItem className="flex items-center gap-2 md:gap-4">
-            {/* <div className="hidden md:flex items-center gap-4">
-              <TwitterSvg theme={theme} />
-              <TelegramSvg theme={theme} />
-              <TiktokSvg theme={theme} />
-            </div> */}
-
             <CircularProgressBar className="ml-2 md:ml-4 h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" />
             <ThemeSwitch />
-            <div className="flex flex-row justify-center gap-2">
-              {!isMobile && (
-                <Link
-                  className="ml-2 md:ml-8 text-sm md:text-base w-full"
-                  href="/check"
-                >
-                  <Button variant="ghost">Check</Button>
-                </Link>
-              )}
-            </div>
-            <Dropdown
-              backdrop="blur"
-              placement="bottom-end"
+
+            <Popover
+              showArrow
+              placement="bottom"
+              isOpen={isOpen}
               onClose={() => setOpen(false)}
             >
-              <DropdownTrigger>
-                <Button
-                  isIconOnly
-                  className={`flex flex-row justify-center ${theme === "dark" ? "bg-[#C8E600]" : "bg-[#EE43DE]"}`}
-                  variant="ghost"
-                >
-                  <div
-                    className={`${theme === "dark" ? "text-black" : "text-white"}`}
-                  >
-                    <Hamburger toggled={isOpen} toggle={setOpen} size={24} />
-                  </div>
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu aria-label="Profile Actions" variant="faded">
-                {isMobile ? (
-                  <DropdownItem key="check">
-                    <Link
-                      className="ml-2 md:ml-8 text-sm md:text-base w-full"
-                      href="/check"
-                    >
-                      Check
-                    </Link>
-                  </DropdownItem>
-                ) : null}
-                <DropdownItem key="about">
-                  <Link
-                    className="ml-2 md:ml-8 text-sm md:text-base w-full"
-                    href="/about"
-                  >
-                    About
-                  </Link>
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-            <Popover showArrow placement="bottom">
               <PopoverTrigger>
                 <User
                   avatarProps={{
-                    src: user?.detail.avatar,
+                    src: isAuthenticated
+                      ? user?.detail.avatar
+                      : "https://avatars.githubusercontent.com/u/30373425?v=4",
                   }}
+                  onClick={() => setOpen(true)}
                   className="cursor-pointer"
                   description={
                     <Link
@@ -250,7 +250,11 @@ export const Navbar = () => {
                             ? { height: "40px", width: "40px" }
                             : { height: "60px", width: "60px" }
                         }
-                        src={user?.detail.avatar}
+                        src={
+                          isAuthenticated
+                            ? user?.detail.avatar
+                            : "https://avatars.githubusercontent.com/u/30373425?v=4"
+                        }
                       />
                       <div className="flex flex-col items-start justify-center">
                         <h4 className="text-large font-bold leading-none text-default-600">
