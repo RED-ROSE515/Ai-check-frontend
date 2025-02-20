@@ -171,7 +171,7 @@ export const Navbar = () => {
       <HeroUINavbar
         maxWidth="full"
         position="sticky"
-        height={isMobile ? "4rem" : "7rem"}
+        height={isMobile ? "4rem" : "5rem"}
         className="shadow-xl flex flex-row justify-between w-full md:w-5/6"
       >
         <NavbarContent

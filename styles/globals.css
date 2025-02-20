@@ -157,3 +157,11 @@
   top: 25px;
   transform: rotate(45deg);
 }
+
+.bg-statistics {
+  height: calc(100vh - 10rem);
+  object-fit: cover;
+  background-color: #ffffff11;
+  /* background-image: url("../public/bg-statistics.jpg"); */
+  background-attachment: fixed;
+}

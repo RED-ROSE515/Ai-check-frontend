@@ -202,6 +202,7 @@ const ResultPage = ({ params }: any) => {
                       summary.post_id +
                       "/"
                     }
+                    showSignInModal={showSignInModal}
                     userData={{ ...author }}
                     postDate={postDate}
                     input_tokens={costdata.input_tokens}

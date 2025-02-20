@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Button, Card } from "@heroui/react";
-import { FaPlay, FaPause } from "react-icons/fa";
+import { FaPlay, FaPause, FaStop } from "react-icons/fa";
 import { useWavesurfer } from "@wavesurfer/react";
 import { useSpeech } from "@/contexts/SpeechContext";
 import { useTheme } from "next-themes";
@@ -33,7 +33,11 @@ const SpeechPlayer = ({ audio_url, height = 50 }: any) => {
       wavesurfer.playPause();
     }
   }, [wavesurfer]);
-
+  const toggleStop = useCallback(() => {
+    if (wavesurfer) {
+      wavesurfer.setTime(wavesurfer.getDuration());
+    }
+  }, [wavesurfer]);
   useEffect(() => {
     if (!wavesurfer) return;
 
@@ -71,6 +75,14 @@ const SpeechPlayer = ({ audio_url, height = 50 }: any) => {
           </span>
         </div>
       </div>
+      <Button
+        onPress={toggleStop}
+        isIconOnly
+        radius="sm"
+        style={{ width: "50px", height: "50px" }}
+      >
+        <FaStop />
+      </Button>
     </Card>
   );
 };
