@@ -79,7 +79,7 @@ export const Navbar = () => {
             <ListboxSection title="User Actions">
               <ListboxItem
                 key="check"
-                description="Check the paper"
+                description="Research Audit"
                 startContent={<MdCheck className={iconClasses} />}
                 onPress={() => {
                   setOpen(false);

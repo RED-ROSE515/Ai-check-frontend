@@ -78,7 +78,7 @@ const EChart = () => {
     };
   }, []);
 
-  return <div ref={chartRef} style={{ width: "100%", height: "375px" }} />;
+  return <div ref={chartRef} style={{ height: "375px" }} />;
 };
 
 export default EChart;
