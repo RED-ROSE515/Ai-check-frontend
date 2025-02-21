@@ -1,6 +1,7 @@
 "use client";
 
 import axios, { AxiosProgressEvent, CancelTokenSource } from "axios";
+import api from "@/utils/api";
 import {
   AudioWaveform,
   File,
@@ -63,7 +64,7 @@ export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 export interface ImageUploadProps {
   getPdfList: () => void;
-  AnalyzePaper: (id: number) => void;
+  AnalyzePaper: (s3_url: string) => void;
   onTriggerRef: React.MutableRefObject<(() => void) | null>;
 }
 
@@ -170,19 +171,15 @@ const FileUpload = ({
           omission: "...",
         })} Please wait.`,
       });
-      const response = await axios.post(
-        API_BASE_URL + "api/papers/",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          cancelToken: cancelSource.token,
-          onUploadProgress: (progressEvent) => {
-            onUploadProgress(progressEvent, file, cancelSource);
-          },
-        }
-      );
+      const response = await api.post("/util/upload/add/pdf", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        cancelToken: cancelSource.token,
+        onUploadProgress: (progressEvent) => {
+          onUploadProgress(progressEvent, file, cancelSource);
+        },
+      });
 
       toast({
         description: `Your file ${_.truncate(file.name, {
@@ -197,7 +194,7 @@ const FileUpload = ({
         action: (
           <ToastAction
             altText="View Paper"
-            onClick={() => window.open(response.data.paper_path, "_blank")}
+            onClick={() => window.open(response.data.attached_link, "_blank")}
           >
             View
           </ToastAction>
@@ -205,7 +202,7 @@ const FileUpload = ({
         duration: 5000,
       });
       await sleep(3000);
-      AnalyzePaper(response.data.id);
+      AnalyzePaper(response.data.attached_link);
       // getPdfList();
     } catch (error) {
       if (axios.isCancel(error)) {

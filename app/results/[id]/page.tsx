@@ -274,14 +274,15 @@ const ResultPage = ({ params }: any) => {
                 showSignInModal={showSignInModal}
               />
             </div>
-            <div className="ml-4 hidden md:flex flex-col gap-2 w-full">
-              <span className="font-bold text-xl mb-2">
+            <div className="ml-4 hidden md:flex flex-col gap-2 w-full overflow-hidden">
+              <span className="font-bold text-xl mb-2 truncate">
                 Recently Checked Papers
               </span>
               {recentPapers.map((paper: any, index: number) => {
                 return (
                   <Link
                     key={index}
+                    className="w-full"
                     href={
                       "/results/" +
                       paper.title
@@ -300,19 +301,14 @@ const ResultPage = ({ params }: any) => {
                       className="cursor-pointer w-full"
                     >
                       <CardBody>
-                        <div className="flex flex-row justify-start items-center w-full">
+                        <div className="flex flex-row justify-start items-center w-full max-w-full">
                           <Avatar
                             isBordered
                             radius="full"
                             size="sm"
                             src={paper.user.avatar}
                           />
-                          <p className="ml-2">
-                            {_.truncate(paper.title, {
-                              length: 27,
-                              omission: "...",
-                            })}
-                          </p>
+                          <p className="ml-2 truncate w-full">{paper.title}</p>
                         </div>
                       </CardBody>
                     </Card>

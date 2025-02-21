@@ -78,15 +78,15 @@ export const Navbar = () => {
           {isAuthenticated ? (
             <ListboxSection title="User Actions">
               <ListboxItem
-                key="check"
-                description="Research Audit"
+                key="Research Audit"
+                description="Check your own paper"
                 startContent={<MdCheck className={iconClasses} />}
                 onPress={() => {
                   setOpen(false);
                   navigateTo("/check");
                 }}
               >
-                Check
+                Research Audit
               </ListboxItem>
               <ListboxItem
                 key="profile"
@@ -128,15 +128,15 @@ export const Navbar = () => {
           ) : (
             <ListboxSection title="Guest Actions">
               <ListboxItem
-                key="check"
-                description="Check the paper"
+                key="Research Audit"
+                description="Check your own paper"
                 startContent={<MdCheck className={iconClasses} />}
                 onPress={() => {
                   setOpen(false);
                   navigateTo("/check");
                 }}
               >
-                Check
+                Research Audit
               </ListboxItem>
               <ListboxItem
                 key="about"

@@ -15,7 +15,7 @@ interface AnalyzeContextType {
   summaryLoading: boolean;
   checkLoading: boolean;
   isChecking: boolean;
-  handleAnalyze: (id: number) => Promise<void>;
+  handleAnalyze: (s3_url: string) => Promise<void>;
   resetState: () => void;
 }
 
@@ -54,7 +54,7 @@ export const AnalyzeProvider = ({
     setIsChecking(false);
   };
 
-  const handleAnalyze = async (id: number) => {
+  const handleAnalyze = async (s3_url: string) => {
     try {
       setLoading(true);
       setProgress(0);
@@ -110,51 +110,49 @@ export const AnalyzeProvider = ({
         }
       }, interval);
 
-      const resp = await axios.get(
-        API_BASE_URL + `api/papers/${id}/get_summary/`
-      );
-      totalDuration = (currentProgress / 50) * totalDuration;
-
-      setSummaryLoading(false);
-      setSummary(resp.data.summary);
-      setCheckLoading(true);
-
-      const response = await axios.get(
-        API_BASE_URL + `api/papers/${id}/check_paper/`
-      );
-      clearInterval(intervalId);
-      setProgress(100);
-      setCheckLoading(false);
-      setAnalysisResult(response.data.analysis);
-      setTotalSummary(response.data.summary);
-
-      await toast({
-        title: "Processing Complete",
-        description:
-          "Analysis complete for uploaded paper! Click here to view results.",
-        action: (
-          <ToastAction
-            altText="View Paper"
-            onClick={() =>
-              window.open(
-                "/results/" +
-                  response.data.metadata.title
-                    .replace(/[^a-zA-Z0-9\s]/g, "")
-                    .toLowerCase()
-                    .split(" ")
-                    .join("-") +
-                  "_" +
-                  response.data.metadata.paper_id +
-                  "/",
-                "_blank"
-              )
-            }
-          >
-            View
-          </ToastAction>
-        ),
-        duration: 5000,
+      const response = await axios.post(`post/create`, {
+        post_type: 6,
+        attached_links: [s3_url],
       });
+      // totalDuration = (currentProgress / 50) * totalDuration;
+
+      // setSummaryLoading(false);
+      // setSummary(response.data.summary);
+      // setCheckLoading(true);
+
+      // clearInterval(intervalId);
+      // setProgress(100);
+      // setCheckLoading(false);
+      // setAnalysisResult(response.data.analysis);
+      // setTotalSummary(response.data.summary);
+
+      // await toast({
+      //   title: "Processing Complete",
+      //   description:
+      //     "Analysis complete for uploaded paper! Click here to view results.",
+      //   action: (
+      //     <ToastAction
+      //       altText="View Paper"
+      //       onClick={() =>
+      //         window.open(
+      //           "/results/" +
+      //             response.data.metadata.title
+      //               .replace(/[^a-zA-Z0-9\s]/g, "")
+      //               .toLowerCase()
+      //               .split(" ")
+      //               .join("-") +
+      //             "_" +
+      //             response.data.metadata.paper_id +
+      //             "/",
+      //           "_blank"
+      //         )
+      //       }
+      //     >
+      //       View
+      //     </ToastAction>
+      //   ),
+      //   duration: 5000,
+      // });
       await sleep(5000);
     } catch (err) {
       if (axios.isAxiosError(err)) {

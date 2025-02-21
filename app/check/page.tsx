@@ -65,9 +65,9 @@ export default function App() {
     return true;
   };
 
-  const handleAnalyzeWithPdf = async (id: number) => {
+  const handleAnalyzeWithPdf = async (s3_url: string) => {
     if (!handleProtectedAction()) return;
-    await handleAnalyze(id);
+    await handleAnalyze(s3_url);
   };
 
   return (

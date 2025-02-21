@@ -130,12 +130,12 @@ const UserCard = ({ userData, postDate }: any) => {
                       </Link>
                     </div>
                   </div>
-                  {isAuthenticated && (
+                  {
                     <Button
                       className={
-                        userDetail?.is_following
-                          ? "bg-transparent text-foreground border-default-200 ml-2"
-                          : "ml-2"
+                        // userDetail?.is_following
+                        // ? "bg-transparent text-foreground border-default-200 ml-2"
+                        "ml-2"
                       }
                       color="primary"
                       radius="full"
@@ -153,7 +153,7 @@ const UserCard = ({ userData, postDate }: any) => {
                       {/* {userDetail?.is_following ? "Unfollow" : "Follow"} */}
                       View Profile
                     </Button>
-                  )}
+                  }
                 </CardHeader>
                 <CardBody className="px-3 py-0">
                   <p className="text-small pl-px text-default-500">
