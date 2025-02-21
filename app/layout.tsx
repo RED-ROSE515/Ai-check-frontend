@@ -18,13 +18,32 @@ import { AuthProvider } from "@/contexts/AuthContext";
 
 const siteIconUrl = SiteIcon.src;
 export const metadata: Metadata = {
-  title: {
-    default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
+  title: "NerdBunny - AI Error Detection for Research Papers",
+  description:
+    "NerdBunny is a DeSci AI agent that detects errors in research papers, makes complex studies easier to understand, and adds a fun meme culture to science. 🧬🐇",
+  openGraph: {
+    title: "NerdBunny - AI Error Detection for Research Papers",
+    description:
+      "NerdBunny is a DeSci AI agent that detects errors in research papers, makes complex studies easier to understand, and adds a fun meme culture to science. 🧬🐇",
+    url: "https://nerdbunny.com",
+    siteName: "NerdBunny",
+    images: [
+      {
+        url: "https://nerdbunny.com/social-preview.png",
+        width: 1200,
+        height: 630,
+        alt: "NerdBunny - AI Error Detection Platform",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
   },
-  description: siteConfig.description,
-  icons: {
-    icon: siteIconUrl,
+  twitter: {
+    card: "summary_large_image",
+    title: "NerdBunny - AI Error Detection for Research Papers in DeSci",
+    description:
+      "NerdBunny is a DeSci AI agent that detects errors in research papers, makes complex studies easier to understand, and adds a fun meme culture to science. 🧬🐇",
+    images: ["https://nerdbunny.com/social-preview.png"],
   },
 };
 

@@ -61,7 +61,7 @@ const Statistics = () => {
   }
   return (
     <div className="w-full flex flex-row justify-center">
-      <div className="bg-statistics w-5/6">
+      <div className="w-full bg-statistics md:w-5/6">
         <div className="flex flex-col justify-start items-start gap-4 px-6 py-6">
           <h1 className="text-3xl font-bold">
             Spot and Correct Research Errors
@@ -98,7 +98,7 @@ const Statistics = () => {
             </span>
           </div>
         </div>
-        <div className=" w-full flex flex-row gap-4 px-6 py-4">
+        <div className="w-full flex flex-col md:flex-row gap-4 px-6 py-4">
           <NewCard
             title="RESEARCH PAPERS"
             isHoverable
@@ -131,8 +131,12 @@ const Statistics = () => {
             <p className="mt-4">Papers Processed</p>
           </NewCard>
         </div>
-        <div className="w-full flex flex-row gap-4 px-6 pb-4">
-          <NewCard title="RECENT PAPERS" className="flex-1" isHoverable>
+        <div className="w-full flex flex-col md:flex-row gap-4 px-6 pb-4">
+          <NewCard
+            title="RECENT PAPERS"
+            className="flex-1 hidden md:flex"
+            isHoverable
+          >
             <div className="flex flex-col gap-2">
               {recentPapers.map((paper: any, index: number) => {
                 return (
@@ -173,12 +177,16 @@ const Statistics = () => {
               })}
             </div>
           </NewCard>
-          <Card className="flex-2 w-1/2 bg-transparent">
+          <Card className="flex-2 w-full md:w-1/2 bg-transparent">
             <CardBody>
               <EChart chartType={chart} />
             </CardBody>
           </Card>
-          <NewCard title="RECENT COMMENTS" className="flex-1" isHoverable>
+          <NewCard
+            title="RECENT COMMENTS"
+            className="flex-1 hidden md:flex"
+            isHoverable
+          >
             <div className="flex flex-col gap-2">
               {recentPapers.map((paper: any, index: number) => {
                 return (
@@ -241,7 +249,7 @@ const Statistics = () => {
           </NewCard>
           <NewCard
             title="Issue Distribution"
-            className="w-1/2"
+            className="w-full md:w-1/2"
             isHoverable
             isPressable
             onPress={() => setChart("issue")}
