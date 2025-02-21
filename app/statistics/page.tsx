@@ -228,7 +228,7 @@ const Statistics = () => {
             </div>
           </NewCard>
         </div>
-        <div className="w-full flex flex-row gap-4 px-6 pb-4">
+        <div className="w-full flex flex-col md:flex-row gap-4 px-6 pb-4">
           <NewCard
             title="Total Issues"
             className="flex-1 w-full"
