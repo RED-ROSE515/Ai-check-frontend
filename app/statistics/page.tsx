@@ -126,9 +126,15 @@ const Statistics = () => {
             <strong className="text-5xl">$0.80</strong>
             <p className="mt-4">Average Cost per Analysis</p>
           </NewCard>
-          <NewCard title="PROCESSED PAPERS" isHoverable isPressable>
-            <strong className="text-5xl">{commify(685)}</strong>
-            <p className="mt-4">Papers Processed</p>
+
+          <NewCard
+            title="Total Issues"
+            isHoverable
+            isPressable
+            onPress={() => setChart("issue")}
+          >
+            <strong className="text-5xl">3,543</strong>
+            <p className="mt-4">Issues Identified</p>
           </NewCard>
         </div>
         <div className="w-full flex flex-col md:flex-row gap-4 px-6 pb-4">
@@ -230,13 +236,13 @@ const Statistics = () => {
         </div>
         <div className="w-full flex flex-col md:flex-row gap-4 px-6 pb-4">
           <NewCard
-            title="Total Issues"
-            className="flex-1 w-full"
+            title="PROCESSED PAPERS"
+            className="flex-1"
             isHoverable
             isPressable
           >
-            <strong className="text-5xl">3,543</strong>
-            <p className="mt-4">Issues Identified</p>
+            <strong className="text-5xl">{commify(685)}</strong>
+            <p className="mt-4">Papers Processed</p>
           </NewCard>
           <NewCard
             title="Most Common Issue"
@@ -247,25 +253,23 @@ const Statistics = () => {
             <strong className="text-5xl">Technical</strong>
             <p className="mt-4">Found 1,256 Tech Presentation Issues</p>
           </NewCard>
-          <NewCard
-            title="Issue Distribution"
-            className="w-full md:w-1/2"
-            isHoverable
-            isPressable
-            onPress={() => setChart("issue")}
-          >
+          <NewCard title="Issue Distribution" className="w-full md:w-1/2">
             <div className="flex flex-row gap-3 w-full">
               {issues.map((issue, index: number) => {
                 return (
-                  <div
-                    key={index}
-                    className="flex flex-col justify-between items-center w-full"
-                  >
-                    <p className="font-bold text-lg">{issue.label}</p>
-                    <p className="font-semibold text-md">
-                      {commify(issue.value)}
-                    </p>
-                  </div>
+                  <Card className="bg-transparent" isPressable isHoverable>
+                    <CardBody>
+                      <div
+                        key={index}
+                        className="flex flex-col justify-between items-center w-full"
+                      >
+                        <p className="font-bold text-lg">{issue.label}</p>
+                        <p className="font-semibold text-md">
+                          {commify(issue.value)}
+                        </p>
+                      </div>
+                    </CardBody>
+                  </Card>
                 );
               })}
             </div>

@@ -1,13 +1,15 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import {
-  Spinner,
   Button,
   useDisclosure,
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
+  Tabs,
+  Tab,
+  Badge,
 } from "@heroui/react";
 
 import api from "@/utils/api";
@@ -25,6 +27,9 @@ import { ShinyButton } from "@/components/ui/shiny-button";
 import ShareButtons from "@/components/ShareButtons";
 import { useAuth } from "@/contexts/AuthContext";
 import SignInDialog from "@/components/SignInDialog";
+import { usePostActions } from "@/hooks/usePostActions";
+import Loader from "@/components/Loader";
+
 type TriggerRefType = {
   current: (() => void) | null;
 };
@@ -109,7 +114,19 @@ export default function Home() {
       });
     }
   };
-
+  const reportPost = async (id: string, reported_me: boolean) => {
+    await handleReport(id, reported_me);
+    setTotalResults((totalResults: any) =>
+      totalResults.map((paper: any) =>
+        paper.id === id
+          ? {
+              ...paper,
+              reported_me: !paper.reported_me,
+            }
+          : paper
+      )
+    );
+  };
   const showSignInModal = async (action: string) => {
     toast({
       title: "Info",
@@ -117,7 +134,9 @@ export default function Home() {
     });
     setShowSignIn(true);
   };
-
+  const { handleReport } = usePostActions({
+    showSignInModal,
+  });
   // useEffect(() => {
   //   const fetchData = async () => {
   //     try {
@@ -152,6 +171,34 @@ export default function Home() {
   //   };
   //   fetchData();
   // }, []);
+  const [currentTab, setCurrentTab] = useState(0);
+  const issues = [
+    { label: "Total", value: "3318" },
+    {
+      label: "Math",
+      value: "384",
+    },
+    {
+      label: "Methodology",
+      value: "371",
+    },
+    {
+      label: "Logical ",
+      value: "344",
+    },
+    {
+      label: "Data ",
+      value: "256",
+    },
+    {
+      label: "Technical ",
+      value: "1571",
+    },
+    {
+      label: "Research ",
+      value: "392",
+    },
+  ];
 
   return (
     <section className="flex flex-col md:flex-row items-start justify-center gap-4">
@@ -199,7 +246,7 @@ export default function Home() {
           isOpen={showSignIn}
           onClose={() => setShowSignIn(false)}
         />
-        <div className="w-full">
+        <div className="w-full items-center">
           {status && (
             <Chip color="success" variant="bordered" radius="sm" size="lg">
               {status}
@@ -239,8 +286,56 @@ export default function Home() {
               )}
             </ModalContent>
           </Modal>
+          <div className="w-full flex flex-row justify-center">
+            <span className="sm:font-semibold text-md sm:text-xl text-center mb-2">
+              An AI agent for DeSci that detects errors in research papers,
+              makes complex studies <br className="hidden lg:block" /> easier to
+              understand, and brings a fun meme culture to science. 🧬🐇
+            </span>
+          </div>
+          <div className="mb-8 mx-16">
+            <Tabs
+              aria-label="Options"
+              className="overflow-x-auto p-2 mt-4 w-full"
+              style={{ maxWidth: "83vw" }}
+              classNames={{
+                tabList: "gap-6 w-full relative rounded-none p-0 ",
+                cursor: `hidden ${theme === "dark" ? "bg-[#C8E600]" : "bg-[#C8E600]"}`,
+                tabContent: `group-data-[selected=true]:text-black ${theme === "dark" ? "text-gray-200" : "text-black"}`,
+              }}
+              selectedKey={String(currentTab)}
+              variant="underlined"
+              onSelectionChange={(key) => setCurrentTab(Number(key))}
+            >
+              {issues.map((issue: any, index: number) => {
+                return (
+                  <Tab
+                    key={index + 1}
+                    title={
+                      <Chip
+                        size="md"
+                        variant="light"
+                        classNames={{
+                          base: `bg-gradient-to-br from-indigo-500 to-pink-500 border-small ${theme === "dark" ? "border-black/50" : "border-white/50"} shadow-pink-500/30 p-4`,
+                          content: "drop-shadow shadow-black text-white",
+                        }}
+                      >
+                        <div className="flex items-center font-bold text-md space-x-2">
+                          <span>{issue.label}</span>
+                          <Chip size="sm" variant="faded">
+                            {issue.value}
+                          </Chip>
+                        </div>
+                      </Chip>
+                    }
+                  />
+                );
+              })}
+            </Tabs>
+          </div>
+
           {loading ? (
-            <Spinner />
+            <Loader />
           ) : (
             totalResults.length > 0 &&
             totalResults.map((result: any, index) => {
@@ -256,6 +351,10 @@ export default function Home() {
                         // input_tokens={result.input_tokens}
                         // output_tokens={result.output_tokens}
                         // total_cost={result.total_cost}
+                        reportPost={() =>
+                          reportPost(result.id, result.reported_me)
+                        }
+                        totalData={result}
                         userData={result.user}
                         showSignInModal={showSignInModal}
                         postDate={result.updated_at}

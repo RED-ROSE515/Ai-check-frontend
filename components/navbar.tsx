@@ -21,7 +21,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Divider,
+  Input,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -40,7 +40,7 @@ import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
 import { CircularProgressBar } from "./CircularProgressBar";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
-import { ImProfile } from "react-icons/im";
+import { ImProfile, ImSearch } from "react-icons/im";
 import { MdLogin, MdLogout, MdCheck, MdInfo } from "react-icons/md";
 
 export const ListboxWrapper = ({ children }: any) => (
@@ -174,11 +174,8 @@ export const Navbar = () => {
         height={isMobile ? "4rem" : "5rem"}
         className="shadow-xl flex flex-row justify-between w-full md:w-5/6"
       >
-        <NavbarContent
-          className="flex w-full basis-full overflow-y-hidden"
-          justify="start"
-        >
-          <NavbarItem className="flex md:gap-2 w-auto md:w-1/3">
+        <NavbarContent className="flex w-full basis-full overflow-y-hidden">
+          <NavbarItem className="flex md:gap-2 w-auto md:w-1/2">
             <NavbarBrand>
               <Link href="/">
                 <Image
@@ -188,6 +185,24 @@ export const Navbar = () => {
                 />
               </Link>
             </NavbarBrand>
+          </NavbarItem>
+        </NavbarContent>
+
+        <NavbarContent className="flex w-full basis-full">
+          <NavbarItem className="flex w-full items-center gap-2 justify-center">
+            <Input
+              classNames={{
+                base: "max-w-full w-2/3 h-10",
+                mainWrapper: "h-full",
+                input: "text-small",
+                inputWrapper:
+                  "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+              }}
+              placeholder="Type to search..."
+              size="sm"
+              startContent={<ImSearch size={18} />}
+              type="search"
+            />
           </NavbarItem>
         </NavbarContent>
 

@@ -78,8 +78,10 @@ interface SummaryType {
 const SummaryWrapper = ({
   summary,
   isResult,
+  totalData,
   postDate,
   userData,
+  reportPost,
   showSignInModal,
   input_tokens,
   output_tokens,
@@ -161,7 +163,15 @@ const SummaryWrapper = ({
           : { backgroundColor: "#EEEEEEF0" }
       }
     >
-      <UserCard userData={userData} postDate={postDate} className="max-w-fit" />
+      <UserCard
+        userData={userData}
+        postDate={postDate}
+        link={link}
+        reportPost={reportPost}
+        showSignInModal={showSignInModal}
+        totalData={totalData}
+        className="max-w-fit"
+      />
       <div className="w-full flex flex-row justify-center text-center font-bold text-2xl">
         {/* <span className="text-md md:text-2xl font-bold text-center md:min-w-fit md:flex hidden">
           {`AI Error Detection Report for`}
@@ -252,7 +262,7 @@ const SummaryWrapper = ({
                 size="sm"
                 variant="ghost"
                 onPress={() => setExpand(!expand)}
-                className={`w-full md:w-auto ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+                className={`w-full h-auto md:w-auto ${theme === "dark" ? "bg-slate-700 text-white" : "bg-gray-300 text-black"}`}
               >
                 {`${expand ? "Show Less..." : "Load More..."}`}
               </Button>
@@ -421,10 +431,24 @@ const SummaryWrapper = ({
             className={`${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
             variant="body1"
           >
-            <strong>Keywords: </strong>
-            {summary.metadata.publication_info.keywords
-              ? summary.metadata.publication_info.keywords.join(", ")
-              : "Unknown"}
+            <div className="flex flex-row justify-center gap-2">
+              <strong>Keywords: </strong>
+              {summary.metadata.publication_info.keywords
+                ? summary.metadata.publication_info.keywords.map(
+                    (keyword: string, index: number) => {
+                      return (
+                        <Chip
+                          variant="dot"
+                          key={index}
+                          className={`cursor-pointer hover:scale-105 ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
+                        >
+                          {keyword}
+                        </Chip>
+                      );
+                    }
+                  )
+                : "Unknown"}
+            </div>
           </Typography>
         </div>
       </div>

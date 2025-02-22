@@ -4,6 +4,7 @@ import { Button, Card, Textarea, Image, CardBody } from "@heroui/react";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatTimestamp } from "./UserCard";
 import { useToast } from "@/hooks/use-toast";
+import { MdReport } from "react-icons/md";
 import api from "@/utils/api";
 interface User {
   id: string;
@@ -93,17 +94,21 @@ const Comments = ({
   showSignInModal,
 }: CommentProps) => {
   const { theme } = useTheme();
-
+  const { isAuthenticated } = useAuth();
   const { toast } = useToast();
 
   const like = async (comment_id: string, liked_me: boolean) => {
     try {
+      if (!isAuthenticated) {
+        showSignInModal("You need to Sign in first to leave a comment.");
+        return;
+      }
       await api.post(`/post/${liked_me ? "unlike" : "like"}/comment`, {
         comment_id,
       });
       toast({
         title: "Success",
-        description: "Successfully like the comment.",
+        description: `Successfully ${liked_me ? "unlike" : "like"} the comment.`,
       });
       setComments((comments: any) =>
         comments.map((comment: any) =>
@@ -176,9 +181,11 @@ const Comments = ({
               </span>
             </div>
             <p className="text-sm mt-2 flex flex-1">{comment.description}</p>
-            <div className="flex items-center mt-2 text-sm text-gray-500">
-              <button
-                className={`flex items-center space-x-1 border-2 p-1 rounded-md  ${comment.liked_me ? "bg-[#C8E600]" : ""}`}
+            <div className="flex flex-row justify-between items-center mt-2 text-sm text-gray-500">
+              <Button
+                isIconOnly
+                onPress={() => like(comment.id, comment.liked_me)}
+                className={`flex items-center space-x-1 rounded-md  ${comment.liked_me ? "bg-[#C8E600]" : ""}`}
               >
                 <svg
                   className="w-4 h-4"
@@ -194,7 +201,13 @@ const Comments = ({
                   />
                 </svg>
                 <span>{comment.count_like}</span>
-              </button>
+              </Button>
+              {/* <Button
+                isIconOnly
+                className={`flex items-center space-x-1 rounded-md  ${comment.liked_me ? "bg-[#C8E600]" : ""}`}
+              >
+                <MdReport size={24} />
+              </Button> */}
             </div>
           </Card>
         ))}

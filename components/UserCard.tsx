@@ -16,8 +16,13 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatDistance, format, differenceInDays } from "date-fns";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
+import { MdReport, MdOutlineContentCopy } from "react-icons/md";
+import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
+import { useUserActions } from "@/hooks/useUserActions";
+
 import api from "@/utils/api";
 import _ from "lodash";
+
 export const formatTimestamp = (date: string | Date) => {
   const parsedDate = new Date(date);
   const isRecent = differenceInDays(new Date(), parsedDate) < 1;
@@ -27,13 +32,25 @@ export const formatTimestamp = (date: string | Date) => {
   return format(parsedDate, "MMM dd, yyyy • HH:mm 'UTC'");
 };
 
-const UserCard = ({ userData, postDate }: any) => {
+const UserCard = ({
+  userData,
+  postDate,
+  link,
+  showSignInModal,
+  totalData,
+  reportPost,
+}: any) => {
   const formattedDate = `Published on: ` + formatTimestamp(postDate);
   const { isMobile } = useDeviceCheck();
   const [userDetail, setUserDetail] = useState<any>();
+  const { isLoading, handleFollow } = useUserActions({
+    showSignInModal,
+  });
+
   const [isHovered, setIsHovered] = useState(false);
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
+  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const fetchUserDetail = async () => {
     const response = await api.get(
       `/user/profile?user_id=${userData.user_name}`
@@ -41,23 +58,12 @@ const UserCard = ({ userData, postDate }: any) => {
     setUserDetail(response.data);
   };
   const follow = async () => {
-    // https://dev.api.nobleblocks.com/api/v1/user/follow
-    try {
-      await api.post(
-        `/user/${userDetail?.is_following ? "unfollow" : "follow"}`,
-        {
-          followed_id: userDetail.id,
-        }
-      );
+    const success = await handleFollow(userDetail.id, userDetail?.is_following);
+    if (success) {
       await fetchUserDetail();
-      toast({
-        title: "Success",
-        description: "Successfully followed!",
-      });
-    } catch (error) {
-      console.error(error);
     }
   };
+
   useEffect(() => {
     fetchUserDetail();
   }, []);
@@ -184,16 +190,51 @@ const UserCard = ({ userData, postDate }: any) => {
             </PopoverContent>
           </Popover>
 
-          <div className="flex flex-col justify-between">
-            <div className="flex justify-between items-start">
+          <div className="flex flex-col justify-between w-full">
+            <div className="flex justify-between w-full items-start">
               <h1 className="text-xl font-bold">{userData.first_name}</h1>
-              {/* <Button
-                isIconOnly
-                className="text-default-900/60 data-[hover]:bg-foreground/10 -translate-y-2 translate-x-2"
-                radius="full"
-                variant="light"
-                onPress={() => console.log(userData)}
-              ></Button> */}
+              <Popover
+                showArrow
+                offset={10}
+                placement="bottom"
+                backdrop="transparent"
+              >
+                <PopoverTrigger>
+                  <Button
+                    isIconOnly
+                    className="text-default-900/60 data-[hover]:bg-foreground/10 -translate-y-2 translate-x-2"
+                    radius="full"
+                    variant="light"
+                    onPress={() => console.log(userData)}
+                  >
+                    <PiDotsThreeOutlineVerticalFill size={17} />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[200px]">
+                  {() => (
+                    <div className="px-1 py-2 w-full flex flex-col gap-2">
+                      <Button
+                        startContent={<MdOutlineContentCopy size={24} />}
+                        onPress={() => {
+                          navigator.clipboard.writeText(DOMAIN + link);
+                          toast({
+                            title: "Success",
+                            description: "Successfully Copied the link!",
+                          });
+                        }}
+                      >
+                        Copy Link
+                      </Button>
+                      <Button
+                        startContent={<MdReport size={24} />}
+                        onPress={reportPost}
+                      >
+                        {totalData.reported_me ? "UnReport" : "Report"}
+                      </Button>
+                    </div>
+                  )}
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="flex flex-col">

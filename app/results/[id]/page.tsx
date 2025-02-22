@@ -3,15 +3,7 @@ import React, { useState, useEffect, use } from "react";
 import Head from "next/head";
 import { useTheme } from "next-themes";
 import axios from "axios";
-import {
-  Spinner,
-  Button,
-  Badge,
-  Card,
-  CardBody,
-  Avatar,
-  Link,
-} from "@heroui/react";
+import { Button, Card, CardBody, Avatar, Link } from "@heroui/react";
 import api from "@/utils/api";
 import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
 import _ from "lodash";
@@ -25,7 +17,8 @@ import { useToast } from "@/hooks/use-toast";
 import SignInDialog from "@/components/SignInDialog";
 import Nerdbunny from "@/public/nerdbunny.png";
 import { Metadata } from "next";
-
+import { usePostActions } from "@/hooks/usePostActions";
+import Loader from "@/components/Loader";
 type Props = {
   params: { id: string };
 };
@@ -103,6 +96,18 @@ const ResultPage = ({ params }: any) => {
   const [recentPapers, setRecentPapers] = useState<any>([]);
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
+
+  const showSignInModal = async (action: string) => {
+    toast({
+      title: "Info",
+      description: action,
+    });
+    setShowSignIn(true);
+  };
+
+  const { handleReport } = usePostActions({
+    showSignInModal,
+  });
   const getResultById = async (paperId: number) => {
     try {
       setAnalysisResult("");
@@ -189,12 +194,9 @@ const ResultPage = ({ params }: any) => {
     }
   };
 
-  const showSignInModal = async (action: string) => {
-    toast({
-      title: "Info",
-      description: action,
-    });
-    setShowSignIn(true);
+  const reportPost = async () => {
+    await handleReport(result.id, result.reported_me);
+    setResult({ ...result, reported_me: !result.reported_me });
   };
 
   useEffect(() => {
@@ -236,14 +238,16 @@ const ResultPage = ({ params }: any) => {
         {summary && (
           <div className="w-full md:w-5/6 flex flex-row">
             <div
-              className={`card w-full md:w-4/5 mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+              className={`card w-full md:w-3/4 mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
             >
               <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
-                {summaryLoading && <Spinner className="my-4" color="primary" />}
-                {summary && (
+                {!summary ? (
+                  <Loader />
+                ) : (
                   <SummaryWrapper
                     summary={summary}
                     isResult={true}
+                    totalData={result}
                     link={
                       "/results/" +
                       summary.post_title
@@ -256,6 +260,7 @@ const ResultPage = ({ params }: any) => {
                       "/"
                     }
                     showSignInModal={showSignInModal}
+                    reportPost={reportPost}
                     userData={{ ...author }}
                     postDate={postDate}
                     input_tokens={costdata.input_tokens}
@@ -328,7 +333,7 @@ const ResultPage = ({ params }: any) => {
               />
             </div>
             <div className="ml-4 hidden md:flex flex-col gap-2 w-full overflow-hidden">
-              <span className="font-bold text-xl mb-2 truncate">
+              <span className="font-bold text-lg mb-2 truncate">
                 Recently Checked Papers
               </span>
               {recentPapers.map((paper: any, index: number) => {
