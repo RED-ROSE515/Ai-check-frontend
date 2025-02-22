@@ -195,8 +195,8 @@ const ResultPage = ({ params }: any) => {
   };
 
   const reportPost = async () => {
-    await handleReport(result.id, result.reported_me);
-    setResult({ ...result, reported_me: !result.reported_me });
+    const res = await handleReport(result.id, result.reported_me);
+    res && setResult({ ...result, reported_me: !result.reported_me });
   };
 
   useEffect(() => {

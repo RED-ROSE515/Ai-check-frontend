@@ -19,7 +19,13 @@ import LeftSider from "../components/LeftSider";
 import StatisticCard from "../components/StatisticCard";
 import SummaryWrapper from "../components/SummaryWrapper";
 import { usePagination } from "@/contexts/PaginationContext";
-import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
+import {
+  TbThumbUp,
+  TbMessage,
+  TbEye,
+  TbArrowNarrowLeft,
+  TbArrowNarrowRight,
+} from "react-icons/tb";
 import { PostCommentBox } from "@/components/Comments";
 import { useToast } from "@/hooks/use-toast";
 import { Chip } from "@heroui/chip";
@@ -39,6 +45,8 @@ export default function Home() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [totalResults, setTotalResults] = useState([]);
+  const [currentTab, setCurrentTab] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
   const [sortBy, setSortBy] = useState("");
   const [order, setOrder] = useState("desc");
   const [showSignIn, setShowSignIn] = useState(false);
@@ -115,17 +123,22 @@ export default function Home() {
     }
   };
   const reportPost = async (id: string, reported_me: boolean) => {
-    await handleReport(id, reported_me);
-    setTotalResults((totalResults: any) =>
-      totalResults.map((paper: any) =>
-        paper.id === id
-          ? {
-              ...paper,
-              reported_me: !paper.reported_me,
-            }
-          : paper
-      )
-    );
+    try {
+      const res = await handleReport(id, reported_me);
+      res &&
+        setTotalResults((totalResults: any) =>
+          totalResults.map((paper: any) =>
+            paper.id === id
+              ? {
+                  ...paper,
+                  reported_me: !paper.reported_me,
+                }
+              : paper
+          )
+        );
+    } catch (err) {
+      console.log(err);
+    }
   };
   const showSignInModal = async (action: string) => {
     toast({
@@ -171,7 +184,7 @@ export default function Home() {
   //   };
   //   fetchData();
   // }, []);
-  const [currentTab, setCurrentTab] = useState(0);
+
   const issues = [
     { label: "Total", value: "3318" },
     {
@@ -200,6 +213,47 @@ export default function Home() {
     },
   ];
 
+  // First, add a ref for the tabs container and a scroll amount state
+  const tabsContainerRef = useRef<HTMLDivElement>(null);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const handleScroll = (direction: "left" | "right") => {
+    const container = tabsContainerRef.current;
+    if (!container) return;
+
+    const scrollAmount = 200; // Adjust this value based on your needs
+    const newPosition =
+      direction === "left"
+        ? scrollPosition - scrollAmount
+        : scrollPosition + scrollAmount;
+
+    container.scrollTo({
+      left: newPosition,
+      behavior: "smooth",
+    });
+
+    setScrollPosition(newPosition);
+  };
+  // Add these scroll handler functions
+
+  useEffect(() => {
+    const container = tabsContainerRef.current;
+    if (!container) return;
+
+    const handleScrollEvent = () => {
+      setScrollPosition(container.scrollLeft);
+    };
+
+    container.addEventListener("scroll", handleScrollEvent);
+    return () => container.removeEventListener("scroll", handleScrollEvent);
+  }, []);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
   return (
     <section className="flex flex-col md:flex-row items-start justify-center gap-4">
       {User && (
@@ -293,24 +347,30 @@ export default function Home() {
               understand, and brings a fun meme culture to science. 🧬🐇
             </span>
           </div>
-          <div className="mb-8 mx-16">
-            <Tabs
-              aria-label="Options"
-              className="overflow-x-auto p-2 mt-4 w-full"
+          <div className="mb-8 mx-16 flex flex-row items-center">
+            <div
+              ref={tabsContainerRef}
+              className="overflow-hidden"
               style={{ maxWidth: "83vw" }}
-              classNames={{
-                tabList: "gap-6 w-full relative rounded-none p-0 ",
-                cursor: `hidden ${theme === "dark" ? "bg-[#C8E600]" : "bg-[#C8E600]"}`,
-                tabContent: `group-data-[selected=true]:text-black ${theme === "dark" ? "text-gray-200" : "text-black"}`,
-              }}
-              selectedKey={String(currentTab)}
-              variant="underlined"
-              onSelectionChange={(key) => setCurrentTab(Number(key))}
             >
-              {issues.map((issue: any, index: number) => {
-                return (
+              <Tabs
+                aria-label="Options"
+                className="overflow-x-auto p-2 w-full"
+                classNames={{
+                  tabList: "w-full relative rounded-none p-0",
+                  cursor: `hidden ${theme === "dark" ? "bg-[#C8E600]" : "bg-[#C8E600]"}`,
+                  tabContent: `group-data-[selected=true]:text-black ${
+                    theme === "dark" ? "text-gray-200" : "text-black"
+                  }`,
+                }}
+                selectedKey={String(currentTab)}
+                variant="underlined"
+                onSelectionChange={(key) => setCurrentTab(Number(key))}
+              >
+                {issues.map((issue: any, index: number) => (
                   <Tab
                     key={index + 1}
+                    className=""
                     title={
                       <Chip
                         size="md"
@@ -329,9 +389,9 @@ export default function Home() {
                       </Chip>
                     }
                   />
-                );
-              })}
-            </Tabs>
+                ))}
+              </Tabs>
+            </div>
           </div>
 
           {loading ? (

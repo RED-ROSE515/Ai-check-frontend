@@ -72,7 +72,7 @@ export default function SignInDialog({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login, isAuthenticated, user } = useAuth();
+  const { login, loginWithNobleblocks, isAuthenticated, user } = useAuth();
   const { toast } = useToast();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
 
@@ -100,6 +100,29 @@ export default function SignInDialog({
     }
   };
 
+  const handleLoginWithNobleblocks = async () => {
+    setLoading(true);
+    try {
+      await loginWithNobleblocks();
+      toast({
+        title: "Success",
+        description: "Successfully signed in!",
+      });
+      console.log(isAuthenticated, user);
+      onSuccess?.();
+      onClose();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An unexpected error occurred";
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: errorMessage,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Modal isOpen={isOpen} placement="top-center" onOpenChange={onClose}>
       <ModalContent>
@@ -153,6 +176,13 @@ export default function SignInDialog({
                   onPress={handleSubmit}
                 >
                   Login
+                </Button>
+                <Button
+                  className="w-full"
+                  color="primary"
+                  onPress={handleLoginWithNobleblocks}
+                >
+                  Login with Nobleblocks
                 </Button>
                 <strong>
                   Don't have an account?
