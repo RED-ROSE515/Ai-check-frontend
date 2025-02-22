@@ -136,6 +136,7 @@ export default function SignInDialog({
                 endContent={
                   <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                 }
+                required
                 onChange={(e) => setEmail(e.target.value)}
                 label="Email"
                 size="lg"
@@ -147,6 +148,7 @@ export default function SignInDialog({
                 endContent={
                   <LockIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                 }
+                required
                 label="Password"
                 size="lg"
                 onChange={(e) => setPassword(e.target.value)}
@@ -175,7 +177,7 @@ export default function SignInDialog({
                   color="primary"
                   onPress={handleSubmit}
                 >
-                  Login
+                  Login with Email and Password
                 </Button>
                 <Button
                   className="w-full"
@@ -187,7 +189,7 @@ export default function SignInDialog({
                 <strong>
                   Don't have an account?
                   <Link
-                    href="/signup"
+                    // href="/signup"
                     underline="always"
                     className="ml-2 text-blue-600"
                   >

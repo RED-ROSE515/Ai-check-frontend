@@ -14,6 +14,7 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<void>;
   loginWithNobleblocks: () => Promise<void>;
   logout: () => void;
+  setUser: React.Dispatch<React.SetStateAction<User>>;
   isAuthenticated: boolean;
 };
 
@@ -65,25 +66,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loginWithNobleblocks = async () => {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login_with_nobleblocks`,
-        {
-          app_name: "NerdBunny",
-          redirect_url: DOMAIN + "/login_with_nobleblocks",
-        }
-      );
-      console.log(response);
-      if (response.data.token) {
-        const userData = {
-          email: "",
-          detail: { ...response.data.user },
-          token: response.data.token.token,
-        };
-        setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData));
-        api.defaults.headers.common["Authorization"] =
-          `Bearer ${response.data.token.token}`;
-      }
+      window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login_with_nobleblocks?app_name=NerdBunny&redirect_url=${DOMAIN + "/login_with_nobleblocks"}`;
+      // console.log(response);
+      // if (response.data.token) {
+      //   const userData = {
+      //     email: "",
+      //     detail: { ...response.data.user },
+      //     token: response.data.token.token,
+      //   };
+      //   setUser(userData);
+      //   localStorage.setItem("user", JSON.stringify(userData));
+      //   api.defaults.headers.common["Authorization"] =
+      //     `Bearer ${response.data.token.token}`;
+      // }
     } catch (error: any) {
       throw new Error(error.response?.data?.message || "Login failed");
     }
@@ -102,6 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         loginWithNobleblocks,
         logout,
+        setUser,
         isAuthenticated: !!user,
       }}
     >
