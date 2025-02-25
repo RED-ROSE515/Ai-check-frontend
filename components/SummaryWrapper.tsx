@@ -424,14 +424,13 @@ const SummaryWrapper = ({
             className={`${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
             variant="body1"
           >
-            <strong>Journal: </strong>
+            <strong>Source: </strong>
             {summary.metadata?.publication_info?.journal || "Unknown"}
           </Typography>
-          <Typography
-            className={`${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
-            variant="body1"
+          <div
+            className={`w-full ${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
           >
-            <div className="flex flex-row justify-center gap-2">
+            <div className="flex flex-wrap justify-start gap-2">
               <strong>Keywords: </strong>
               {summary.metadata.publication_info.keywords
                 ? summary.metadata.publication_info.keywords.map(
@@ -449,7 +448,7 @@ const SummaryWrapper = ({
                   )
                 : "Unknown"}
             </div>
-          </Typography>
+          </div>
         </div>
       </div>
 

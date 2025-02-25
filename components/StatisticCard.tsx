@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Card,
+  Chip,
   CardHeader,
   CardBody,
   CardFooter,
@@ -105,7 +106,7 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
   };
 
   useEffect(() => {
-    getStatistics();
+    // getStatistics();
   }, []);
 
   if (cardColors.length === 0) {
@@ -196,6 +197,51 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
     },
   ];
 
+  const issues = [
+    {
+      label: "Total",
+      value: "3318",
+      back: "hover:bg-[#338EF7] ",
+      whiteback: "hover:bg-[#001731] ",
+    },
+    {
+      label: "Math",
+      value: "384",
+      whiteback: "hover:bg-[#095028] ",
+      back: "hover:bg-[#AE7EDE]",
+    },
+    {
+      label: "Methodology",
+      value: "371",
+      whiteback: "hover:bg-[#610726] ",
+      back: "hover:bg-[#45D483]",
+    },
+    {
+      label: "Logical ",
+      value: "344",
+      whiteback: "hover:bg-[#661F52] ",
+      back: "hover:bg-[#F54180]",
+    },
+    {
+      label: "Data ",
+      value: "256",
+      whiteback: "hover:bg-[#001731] ",
+      back: "hover:bg-[#661F52]",
+    },
+    {
+      label: "Technical ",
+      value: "1571",
+      whiteback: "hover:bg-[#62420E] ",
+      back: "hover:bg-[#F5A524]",
+    },
+    {
+      label: "Research ",
+      value: "392",
+      back: "hover:bg-[#7EE7FC]",
+      whiteback: "hover:bg-[#0E8AAA]",
+    },
+  ];
+
   return (
     <React.Fragment>
       <div className="flex flex-col justify-center items-center">
@@ -204,6 +250,7 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
           complex studies <br className="hidden lg:block" /> easier to
           understand, and brings a fun meme culture to science. 🧬🐇
         </span>
+
         <Carousel
           opts={{
             align: "start",
@@ -211,53 +258,24 @@ const StatisticCard = ({ setSortBy, setOrder }: any) => {
           className="w-full max-w-[70vw]"
         >
           <CarouselContent>
-            {list.map((item, index) => (
-              <CarouselItem key={index} className=" md:basis-1/2 lg:basis-1/3">
+            {issues.map((issue, index) => (
+              <CarouselItem key={index} className=" md:basis-1/4 lg:basis-1/5">
                 <Card
-                  isPressable
+                  key={index + 1}
                   isHoverable
-                  isBlurred
-                  radius="sm"
-                  className="w-full max-w-[70vw] sm:min-w-[22vw] my-2"
-                  shadow="md"
-                  key={index}
-                  style={{ position: "relative" }}
-                  onPress={() => setSortBy(item.sort)}
+                  isPressable
+                  className={`w-full`}
                 >
-                  <div
-                    className={`${theme === "dark" ? `bg-slate-700 ${item.whiteback}` : `bg-gray-100 ${item.back}`} w-full  `}
+                  <CardBody
+                    className={`w-full ${theme === "dark" ? `bg-slate-700 ${issue.whiteback}` : `bg-gray-200 ${issue.back}`} `}
                   >
-                    <div
-                      className={` w-full flex flex-row justify-end`}
-                      style={{ position: "absolute" }}
-                    >
-                      <span
-                        color="primary"
-                        className={`mr-2 ${theme === "dark" ? "text-gray-100" : "text-slate-800"}`}
-                      >
-                        {Number(
-                          ((item.counts / list[0].counts) * 100).toFixed(1)
-                        )}
-                        %
-                      </span>
+                    <div className="flex flex-row justify-between items-center font-bold text-md space-x-2">
+                      <span>{issue.label}</span>
+                      <Chip size="sm" variant="faded">
+                        {issue.value}
+                      </Chip>
                     </div>
-                    <CardBody
-                      className={` overflow-visible bg-gradient-to-tr w-full h-[100px] flex flex-row justify-start items-center p-4 `}
-                    >
-                      <b
-                        className={`text-4xl sm:text-4xl font-bold ${theme === "dark" ? "text-gray-100" : "text-slate-900"}`}
-                      >
-                        {item.counts}
-                      </b>
-                      <span
-                        className={`ml-4 z-10 ${theme === "dark" ? "text-gray-100" : "text-slate-800"}`}
-                      >
-                        <strong className="font-bold text-md sm:text-sm">
-                          {item.title}
-                        </strong>
-                      </span>
-                    </CardBody>
-                  </div>
+                  </CardBody>
                 </Card>
               </CarouselItem>
             ))}

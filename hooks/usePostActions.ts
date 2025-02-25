@@ -22,12 +22,6 @@ export const usePostActions = ({
       }
       setIsLoading(true);
       await postApis.reportPost(postId, status);
-      toast({
-        title: "Success",
-        description: status
-          ? "Successfully unreported!"
-          : "Successfully reported!",
-      });
       return true;
     } catch (error) {
       console.error(error);

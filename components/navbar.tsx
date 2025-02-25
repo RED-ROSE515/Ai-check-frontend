@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 
 import {
   Navbar as HeroUINavbar,
@@ -10,13 +11,8 @@ import {
 } from "@heroui/navbar";
 import _ from "lodash";
 import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
   Link,
   Button,
-  Avatar,
   Card,
   CardBody,
   CardFooter,
@@ -30,7 +26,6 @@ import {
   ListboxItem,
   ListboxSection,
   Image as HeroImage,
-  cn,
 } from "@heroui/react";
 import Image from "next/image";
 import LogoDark from "../public/LogoPurple.png";
@@ -42,6 +37,7 @@ import { CircularProgressBar } from "./CircularProgressBar";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { ImProfile, ImSearch } from "react-icons/im";
 import { MdLogin, MdLogout, MdCheck, MdInfo } from "react-icons/md";
+import { FcStatistics } from "react-icons/fc";
 
 export const ListboxWrapper = ({ children }: any) => (
   <div className="w-full max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100">
@@ -55,6 +51,8 @@ export const Navbar = () => {
   const { isMobile } = useDeviceCheck();
   const [isOpen, setOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -209,6 +207,18 @@ export const Navbar = () => {
         <NavbarContent className="flex w-full basis-full" justify="end">
           <NavbarItem className="flex items-center gap-2 md:gap-4">
             {/* <CircularProgressBar className="ml-2 md:ml-4 h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" /> */}
+            <Button
+              isIconOnly
+              variant="light"
+              isLoading={isPending}
+              onPress={() =>
+                startTransition(() => {
+                  router.push("/statistics");
+                })
+              }
+            >
+              <FcStatistics size={24} />
+            </Button>
             <ThemeSwitch />
 
             <Popover

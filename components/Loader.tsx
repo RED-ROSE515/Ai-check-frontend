@@ -1,8 +1,8 @@
 import React from "react";
-
-const Loader = () => {
+import { cn } from "@heroui/react";
+const Loader = ({ className }: any) => {
   return (
-    <div className="w-full flex flex-row justify-center">
+    <div className={cn("w-full flex flex-row justify-center", className)}>
       <div className="spinner">
         <div className="spinner1" />
       </div>

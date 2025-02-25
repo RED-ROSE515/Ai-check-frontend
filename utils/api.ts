@@ -13,7 +13,6 @@ api.interceptors.request.use((config) => {
   if (user) {
     config.headers.Authorization = `Bearer ${user.token}`;
   }
-  console.log(user, config);
   return config;
 });
 

@@ -106,10 +106,7 @@ const Comments = ({
       await api.post(`/post/${liked_me ? "unlike" : "like"}/comment`, {
         comment_id,
       });
-      toast({
-        title: "Success",
-        description: `Successfully ${liked_me ? "unlike" : "like"} the comment.`,
-      });
+
       setComments((comments: any) =>
         comments.map((comment: any) =>
           comment.id === comment_id

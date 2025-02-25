@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, use } from "react";
-import Head from "next/head";
 import { useTheme } from "next-themes";
 import axios from "axios";
 import { Button, Card, CardBody, Avatar, Link } from "@heroui/react";
@@ -15,60 +14,8 @@ import ShareButtons from "@/components/ShareButtons";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import SignInDialog from "@/components/SignInDialog";
-import Nerdbunny from "@/public/nerdbunny.png";
-import { Metadata } from "next";
 import { usePostActions } from "@/hooks/usePostActions";
 import Loader from "@/components/Loader";
-type Props = {
-  params: { id: string };
-};
-
-async function generateMetadata({ params }: Props): Promise<Metadata> {
-  // Fetch analysis results data
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/analysis/${params.id}`
-    );
-    const analysisData = await response.json();
-
-    const title = analysisData.paper?.title || "Research Paper Analysis";
-    const description = `NerdBunny AI analysis results for "${title}". View detected errors, improvements, and insights. 🧬🐇`;
-
-    return {
-      title: `${title} | NerdBunny Analysis`,
-      description,
-      openGraph: {
-        title: `Research Paper Analysis | NerdBunny`,
-        description,
-        url: `https://nerdbunny.com/results/${params.id}`,
-        siteName: "NerdBunny",
-        images: [
-          {
-            url: "https://nerdbunny.com/social-preview.png",
-            width: 1200,
-            height: 630,
-            alt: "NerdBunny Analysis Results",
-          },
-        ],
-        locale: "en_US",
-        type: "article",
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `Research Paper Analysis | NerdBunny`,
-        description,
-        images: ["https://nerdbunny.com/social-preview.png"],
-      },
-    };
-  } catch (error) {
-    // Fallback metadata if fetch fails
-    return {
-      title: "Research Paper Analysis | NerdBunny",
-      description:
-        "View AI-powered analysis results for research papers. Detect errors, get improvements, and gain insights with NerdBunny. 🧬🐇",
-    };
-  }
-}
 
 const ResultPage = ({ params }: any) => {
   const resolvedParams = use(params);
@@ -164,10 +111,7 @@ const ResultPage = ({ params }: any) => {
   const like = async (post_id: string, liked_me: boolean) => {
     try {
       await api.post(`/post/${liked_me ? "unlike" : "like"}/post`, { post_id });
-      toast({
-        title: "Success",
-        description: "Successfully like the post.",
-      });
+
       setResult({
         ...result,
         liked_me: !result.liked_me,
@@ -213,23 +157,6 @@ const ResultPage = ({ params }: any) => {
 
   return (
     <>
-      <Head>
-        <title>{pageTitle}</title>
-        <meta name="description" content={pageDescription} />
-
-        {/* Open Graph / Facebook */}
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={pageDescription} />
-        <meta property="og:image" content={Nerdbunny.src} />
-        <meta property="og:url" content={pageUrl} />
-        <meta property="og:type" content="website" />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={pageTitle} />
-        <meta name="twitter:description" content={pageDescription} />
-        <meta name="twitter:image" content={Nerdbunny.src} />
-      </Head>
       <div className="flex flex-row justify-center mt-16">
         <SignInDialog
           isOpen={showSignIn}

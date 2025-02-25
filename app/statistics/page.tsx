@@ -237,14 +237,14 @@ const Statistics = () => {
         <div className="w-full flex flex-col md:flex-row gap-4 px-6 pb-4">
           <NewCard
             title="PROCESSED PAPERS"
-            className="flex-1"
+            className="flex-1 md:w-1/4"
             isHoverable
             isPressable
           >
             <strong className="text-5xl">{commify(685)}</strong>
             <p className="mt-4">Papers Processed</p>
           </NewCard>
-          <NewCard
+          {/* <NewCard
             title="Most Common Issue"
             className="flex-1"
             isHoverable
@@ -252,9 +252,9 @@ const Statistics = () => {
           >
             <strong className="text-5xl">Technical</strong>
             <p className="mt-4">Found 1,256 Tech Presentation Issues</p>
-          </NewCard>
-          <NewCard title="Issue Distribution" className="w-full md:w-1/2">
-            <div className="flex flex-row gap-3 w-full">
+          </NewCard> */}
+          <NewCard title="Issue Distribution" className="w-full  md:w-fit">
+            <div className="flex flex-wrap gap-3 w-full">
               {issues.map((issue, index: number) => {
                 return (
                   <Card className="bg-transparent" isPressable isHoverable>

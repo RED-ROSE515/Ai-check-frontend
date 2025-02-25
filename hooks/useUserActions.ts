@@ -44,12 +44,6 @@ export const useUserActions = ({
       }
       setIsLoading(true);
       await userApis.reportUser(postId, status);
-      toast({
-        title: "Success",
-        description: status
-          ? "Successfully unreported!"
-          : "Successfully reported!",
-      });
       return true;
     } catch (error) {
       console.error(error);

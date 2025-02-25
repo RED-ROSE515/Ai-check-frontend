@@ -3,25 +3,19 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import api from "@/utils/api";
 
-type User = {
-  detail: any;
-  email: string;
-  token: string;
-} | null;
-
 type AuthContextType = {
-  user: User;
+  user: any;
   login: (email: string, password: string) => Promise<void>;
-  loginWithNobleblocks: () => Promise<void>;
+  loginWithNobleblocks: (status_code: string) => Promise<void>;
   logout: () => void;
-  setUser: React.Dispatch<React.SetStateAction<User>>;
+  setUserData: (userData: any) => void;
   isAuthenticated: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User>(() => {
+  const [user, setUser] = useState<any>(() => {
     // Check localStorage during initialization
     if (typeof window !== "undefined") {
       const storedUser = localStorage.getItem("user");
@@ -38,6 +32,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const setUserData = (userData: any) => {
+    setUser(userData);
+  };
   const login = async (email: string, password: string) => {
     try {
       const response = await axios.post(
@@ -64,21 +61,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const loginWithNobleblocks = async () => {
+  const loginWithNobleblocks = async (state_code: string) => {
     try {
-      window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login_with_nobleblocks?app_name=NerdBunny&redirect_url=${DOMAIN + "/login_with_nobleblocks"}`;
-      // console.log(response);
-      // if (response.data.token) {
-      //   const userData = {
-      //     email: "",
-      //     detail: { ...response.data.user },
-      //     token: response.data.token.token,
-      //   };
-      //   setUser(userData);
-      //   localStorage.setItem("user", JSON.stringify(userData));
-      //   api.defaults.headers.common["Authorization"] =
-      //     `Bearer ${response.data.token.token}`;
-      // }
+      //auth/loign_with_nobleblocks
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/loign_with_nobleblocks?state=${state_code}`
+      );
+
+      if (response.data.token) {
+        const userData = {
+          email: "",
+          detail: { ...response.data.user },
+          token: response.data.token.token,
+        };
+        setUser(userData);
+        localStorage.setItem("user", JSON.stringify(userData));
+        api.defaults.headers.common["Authorization"] =
+          `Bearer ${response.data.token.token}`;
+      }
     } catch (error: any) {
       throw new Error(error.response?.data?.message || "Login failed");
     }
@@ -97,7 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         loginWithNobleblocks,
         logout,
-        setUser,
+        setUserData,
         isAuthenticated: !!user,
       }}
     >

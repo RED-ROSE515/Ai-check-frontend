@@ -19,13 +19,7 @@ import LeftSider from "../components/LeftSider";
 import StatisticCard from "../components/StatisticCard";
 import SummaryWrapper from "../components/SummaryWrapper";
 import { usePagination } from "@/contexts/PaginationContext";
-import {
-  TbThumbUp,
-  TbMessage,
-  TbEye,
-  TbArrowNarrowLeft,
-  TbArrowNarrowRight,
-} from "react-icons/tb";
+import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
 import { PostCommentBox } from "@/components/Comments";
 import { useToast } from "@/hooks/use-toast";
 import { Chip } from "@heroui/chip";
@@ -35,6 +29,21 @@ import { useAuth } from "@/contexts/AuthContext";
 import SignInDialog from "@/components/SignInDialog";
 import { usePostActions } from "@/hooks/usePostActions";
 import Loader from "@/components/Loader";
+import { sleep } from "@/components/file-upload";
+
+import { useRouter } from "next/navigation";
+
+import Cookies from "js-cookie";
+import type { Metadata } from "next";
+
+const metadata: Metadata = {
+  title: "AI-Powered Research Paper Error Detection",
+  description:
+    "Upload your research paper and get instant AI-powered analysis. Detect errors, receive suggestions, and improve your academic writing with NerdBunny.",
+  alternates: {
+    canonical: "https://nerdbunny.com",
+  },
+};
 
 type TriggerRefType = {
   current: (() => void) | null;
@@ -53,12 +62,65 @@ export default function Home() {
   const [postId, setPostId] = useState("");
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
-  const { toast } = useToast();
+
   const { theme } = useTheme();
-  const { isAuthenticated } = useAuth();
   const triggerUploadRef: TriggerRefType = useRef(null);
   const User = false;
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter();
+  const { isAuthenticated, user, setUserData } = useAuth();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const initUser = async () => {
+      try {
+        if (!isAuthenticated) {
+          setLoading(true);
+          const storedUser = Cookies.get("NERDBUNNY_SESSION");
+          if (!storedUser) {
+            throw new Error("No stored user found");
+          }
+
+          await sleep(3000);
+
+          const tempUserData = JSON.parse(storedUser);
+          const userData = {
+            email: "",
+            detail: tempUserData?.user,
+            token: tempUserData?.token.token,
+          };
+          localStorage.setItem("user", JSON.stringify(userData));
+          setUserData(userData);
+          setLoading(false);
+
+          toast({
+            title: "Login with Nobleblocks",
+            description: "Successfully Login with Nobleblocks!",
+            duration: 2000,
+          });
+
+          await sleep(1000);
+          router.push("/");
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        toast({
+          variant: "destructive",
+          title: "Login Error",
+          description: "Something went wrong!" + { error },
+          duration: 2000,
+        });
+        setLoading(false);
+        router.push("/");
+      }
+    };
+
+    // initUser();
+  }, [isAuthenticated, setUserData, router, toast]);
+
+  useEffect(() => {
+    console.log("User state updated:", user);
+  }, [user]);
 
   const getTotalResults = async () => {
     try {
@@ -98,10 +160,7 @@ export default function Home() {
   const like = async (post_id: string, liked_me: boolean) => {
     try {
       await api.post(`/post/${liked_me ? "unlike" : "like"}/post`, { post_id });
-      toast({
-        title: "Success",
-        description: "Successfully like the post.",
-      });
+
       setTotalResults((totalResults: any) =>
         totalResults.map((paper: any) =>
           paper.id === post_id
@@ -185,67 +244,7 @@ export default function Home() {
   //   fetchData();
   // }, []);
 
-  const issues = [
-    { label: "Total", value: "3318" },
-    {
-      label: "Math",
-      value: "384",
-    },
-    {
-      label: "Methodology",
-      value: "371",
-    },
-    {
-      label: "Logical ",
-      value: "344",
-    },
-    {
-      label: "Data ",
-      value: "256",
-    },
-    {
-      label: "Technical ",
-      value: "1571",
-    },
-    {
-      label: "Research ",
-      value: "392",
-    },
-  ];
-
   // First, add a ref for the tabs container and a scroll amount state
-  const tabsContainerRef = useRef<HTMLDivElement>(null);
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const handleScroll = (direction: "left" | "right") => {
-    const container = tabsContainerRef.current;
-    if (!container) return;
-
-    const scrollAmount = 200; // Adjust this value based on your needs
-    const newPosition =
-      direction === "left"
-        ? scrollPosition - scrollAmount
-        : scrollPosition + scrollAmount;
-
-    container.scrollTo({
-      left: newPosition,
-      behavior: "smooth",
-    });
-
-    setScrollPosition(newPosition);
-  };
-  // Add these scroll handler functions
-
-  useEffect(() => {
-    const container = tabsContainerRef.current;
-    if (!container) return;
-
-    const handleScrollEvent = () => {
-      setScrollPosition(container.scrollLeft);
-    };
-
-    container.addEventListener("scroll", handleScrollEvent);
-    return () => container.removeEventListener("scroll", handleScrollEvent);
-  }, []);
 
   useEffect(() => {
     setIsMounted(true);
@@ -293,9 +292,9 @@ export default function Home() {
             {openAIResponse}
           </ReactMarkdown>
         </div> */}
-        {/* <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-4 md:p-12 md:px-36 justify-center md:pt-0">
+        <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-4 md:p-12 md:px-36 justify-center md:pt-0">
           <StatisticCard setSortBy={setSortBy} setOrder={setOrder} />
-        </div> */}
+        </div>
         <SignInDialog
           isOpen={showSignIn}
           onClose={() => setShowSignIn(false)}
@@ -346,52 +345,6 @@ export default function Home() {
               makes complex studies <br className="hidden lg:block" /> easier to
               understand, and brings a fun meme culture to science. 🧬🐇
             </span>
-          </div>
-          <div className="mb-8 mx-16 flex flex-row items-center">
-            <div
-              ref={tabsContainerRef}
-              className="overflow-hidden"
-              style={{ maxWidth: "83vw" }}
-            >
-              <Tabs
-                aria-label="Options"
-                className="overflow-x-auto p-2 w-full"
-                classNames={{
-                  tabList: "w-full relative rounded-none p-0",
-                  cursor: `hidden ${theme === "dark" ? "bg-[#C8E600]" : "bg-[#C8E600]"}`,
-                  tabContent: `group-data-[selected=true]:text-black ${
-                    theme === "dark" ? "text-gray-200" : "text-black"
-                  }`,
-                }}
-                selectedKey={String(currentTab)}
-                variant="underlined"
-                onSelectionChange={(key) => setCurrentTab(Number(key))}
-              >
-                {issues.map((issue: any, index: number) => (
-                  <Tab
-                    key={index + 1}
-                    className=""
-                    title={
-                      <Chip
-                        size="md"
-                        variant="light"
-                        classNames={{
-                          base: `bg-gradient-to-br from-indigo-500 to-pink-500 border-small ${theme === "dark" ? "border-black/50" : "border-white/50"} shadow-pink-500/30 p-4`,
-                          content: "drop-shadow shadow-black text-white",
-                        }}
-                      >
-                        <div className="flex items-center font-bold text-md space-x-2">
-                          <span>{issue.label}</span>
-                          <Chip size="sm" variant="faded">
-                            {issue.value}
-                          </Chip>
-                        </div>
-                      </Chip>
-                    }
-                  />
-                ))}
-              </Tabs>
-            </div>
           </div>
 
           {loading ? (

@@ -98,7 +98,11 @@ const UserCard = ({
                       ? { height: "65px", width: "65px" }
                       : { height: "85px", width: "85px" }
                   }
-                  src={userData.avatar}
+                  src={
+                    userData.avatar
+                      ? userData.avatar
+                      : "https://avatars.githubusercontent.com/u/146516559?s=400&u=8a2fcef9b9079ab60f01db2868d1b1893856a2c3&v=4"
+                  }
                 />
               </div>
             </PopoverTrigger>
