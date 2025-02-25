@@ -1,14 +1,11 @@
 "use client";
 import { title } from "@/components/primitives";
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
-import { Button } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Loader from "@/components/Loader";
 import { useToast } from "@/hooks/use-toast";
 import { sleep } from "@/components/file-upload";
-import { getCookie } from "cookies-next";
 
 const LoginWithNobleblocksPage = () => {
   const { isAuthenticated, user, loginWithNobleblocks } = useAuth();
