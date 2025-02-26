@@ -7,9 +7,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  Tabs,
-  Tab,
-  Badge,
+  Input,
 } from "@heroui/react";
 
 import api from "@/utils/api";
@@ -30,10 +28,8 @@ import SignInDialog from "@/components/SignInDialog";
 import { usePostActions } from "@/hooks/usePostActions";
 import Loader from "@/components/Loader";
 import { sleep } from "@/components/file-upload";
-
+import { ImSearch } from "react-icons/im";
 import { useRouter } from "next/navigation";
-
-import Cookies from "js-cookie";
 import type { Metadata } from "next";
 
 const metadata: Metadata = {
@@ -47,6 +43,15 @@ const metadata: Metadata = {
 
 type TriggerRefType = {
   current: (() => void) | null;
+};
+const summary = {
+  phd: "This paper introduces VMLoc, an end-to-end deep neural network framework that enhances 6-DoF camera localization by leveraging multimodal data fusion, specifically integrating RGB images and depth/lidar data. Recognizing the limitations of naive fusion methods (e.g., simple concatenation), the authors propose a variational Product-of-Experts (PoE) model to learn a joint latent representation from multiple sensor modalities. This approach allows each modality to contribute its strengths while accounting for their different characteristics. To provide a tighter estimation of the evidence lower bound (ELBO) and improve modeling capacity, the framework incorporates an unbiased objective function based on importance weighting, mitigating training variance. The architecture also includes an attention mechanism to focus on task-relevant features. Extensive evaluations on the 7-Scenes and Oxford RobotCar datasets show that VMLoc outperforms existing methods, achieving higher accuracy in both position and orientation estimation. Ablation studies confirm the effectiveness of each component, including the PoE fusion module and the importance weighting strategy. The work contributes a robust methodology for multimodal variational inference in camera localization, with implications for improving the performance of autonomous systems in complex, dynamic environments. Future research could explore scaling the framework to additional modalities and further reducing computational overhead during training.",
+  child:
+    "This research introduces a new way to help devices like self-driving cars and drones know exactly where they are by using both images and depth information (like distance measurements). Imagine trying to find your way in a crowded, changing city\u2014it's much easier if you can use both your eyes and a map. Similarly, the researchers combined different types of data to make location finding more accurate and reliable, especially in places where the environment changes a lot. They created a system called VMLoc that teaches computers to use this combined information effectively. This helps make technologies like autonomous vehicles safer and more dependable because they can better understand their surroundings even when conditions are tough, like in bad weather or when the environment changes.",
+  college:
+    "The paper presents VMLoc, a novel deep learning framework designed for 6-DoF camera localization by effectively fusing multiple sensor modalities, specifically RGB images and depth data. Traditional single-modality localization methods often struggle in dynamic environments or under varying lighting conditions. VMLoc addresses this challenge by employing a variational Product-of-Experts (PoE) approach to merge latent representations from different modalities into a common latent space. Additionally, it introduces an unbiased objective function based on importance weighting to provide a tighter estimation of the evidence lower bound (ELBO) in variational inference. The framework incorporates attention mechanisms to focus on the most informative features relevant to pose estimation. Extensive experiments conducted on indoor and outdoor datasets, such as the 7-Scenes and Oxford RobotCar datasets, demonstrate that VMLoc outperforms existing state-of-the-art methods in terms of localization accuracy. The results validate the efficacy of the proposed multimodal fusion strategy and its robustness under corrupted input conditions.",
+  error:
+    "**Summary of Key Issues and Recommendations**\n\n*VMLoc: Importance Variational Multimodal Fusion for Localization* introduces an end-to-end deep learning framework aimed at enhancing 6-DoF camera localization by effectively fusing RGB images and depth/lidar data. The proposed method utilizes a variational Product-of-Experts model to learn joint latent representations, incorporates importance weighting for improved variational inference, and employs attention mechanisms to focus on task-relevant features. The goal is to improve the accuracy and robustness of camera localization in complex, dynamic environments.\n\n**Key Issues Identified**\n\n1. **Mathematical and Calculation Analysis**\n\n   - **Inappropriate Use of Paired t-test for Independent Samples**\n     - *Problem:* The authors used paired t-tests to compare flame retardant (FR) levels between different polymer types, assuming the samples were dependent when they were actually independent.\n     - *Implications:* This misuse of statistical tests can lead to invalid conclusions about differences in FR levels, potentially compromising the study's findings.\n\n2. **Methodological Issues**\n\n   - **Potential Selection Bias Due to Limiting Analysis to High Br Levels**\n     - *Problem:* The study focused on the 20 items with the highest bromine (Br) concentrations (>50 ppm) for detailed FR analysis.\n     - *Implications:* This selective sampling may overestimate the prevalence and concentration of FRs in black plastic products, reducing the generalizability of the results.\n\n3. **Data Analysis**\n\n   - **Substitution of Non-detects with Limit of Detection (LOD) Values**\n     - *Problem:* Non-detected FR values were replaced with the LOD in statistical analyses.\n     - *Implications:* This approach can bias the results by overestimating mean concentrations and underestimating variability, leading to inaccurate interpretations.\n\n   - **Insufficient Address of Low Recovery Rates for 13C6-2,4,6-TBP**\n     - *Problem:* Low recovery rates (51% and 57%) for the internal standard 13C6-2,4,6-TBP were not adequately discussed.\n     - *Implications:* The accuracy of quantifying 2,4,6-TBP may be compromised, affecting the reliability of the findings related to this compound.\n\n4. **Research Quality**\n\n   - **Limited External Validity Due to Sample Selection**\n     - *Problem:* By analyzing only items with high Br levels, the study may not represent all black plastic household products.\n     - *Implications:* The findings may not be applicable to products with lower Br concentrations, limiting the study's overall impact and applicability.\n\n**Recommendations for Improvement**\n\n- **Statistical Analysis Correction**\n  - Use independent samples t-tests instead of paired t-tests when comparing FR levels between different polymer types to ensure appropriate statistical analysis of independent samples.\n\n- **Addressing Selection Bias**\n  - Expand the FR analysis to include a more diverse and representative sample of products with varying Br concentrations to enhance the generalizability of the results.\n\n- **Improved Handling of Non-detects**\n  - Apply statistical methods suitable for censored data (e.g., Kaplan-Meier estimators, Tobit regression, or maximum likelihood estimation) to handle non-detects more accurately and reduce potential biases.\n\n- **Detailed Discussion of Recovery Rates**\n  - Provide a thorough discussion on the impact of low recovery rates for 13C6-2,4,6-TBP on the quantification process, and consider methodological adjustments to improve recovery rates and data accuracy.\n\n- **Enhancing External Validity**\n  - Include a wider range of black plastic products in the sample selection to ensure the study's findings are representative of the market and applicable to various real-world contexts.\n\nBy addressing these issues, the authors can strengthen the validity and reliability of their study, thereby enhancing its contribution to the field of camera localization and multimodal data fusion.",
 };
 
 export default function Home() {
@@ -215,31 +220,21 @@ export default function Home() {
       />
 
       <div className="mt-4 w-full md:w-5/6 items-center flex flex-col justify-center">
-        {/* <div>
-          <h1>OpenAI Response Preview</h1>
-          <ReactMarkdown
-            components={{
-              h3: ({ children }) => (
-                <h3 className="mb-2 mt-6 text-xl font-bold">{children}</h3>
-              ),
-              h4: ({ children }) => (
-                <h4 className="mb-2 mt-4 text-lg font-semibold">{children}</h4>
-              ),
-              p: ({ children }) => <p className="mb-4">{children}</p>,
-              ul: ({ children }) => (
-                <ul className="mb-4 ml-6 list-disc">{children}</ul>
-              ),
-              li: ({ children }) => <li className="mb-2">{children}</li>,
-              strong: ({ children }) => (
-                <strong className="font-bold">{children}</strong>
-              ),
-              em: ({ children }) => <em className="italic">{children}</em>,
-              hr: () => <hr className="my-6 border-gray-200" />,
+        <div className="flex md:hidden flex-row justify-center">
+          <Input
+            classNames={{
+              base: "w-full h-10",
+              mainWrapper: "h-full",
+              input: "text-small",
+              inputWrapper:
+                "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
             }}
-          >
-            {openAIResponse}
-          </ReactMarkdown>
-        </div> */}
+            placeholder="Type to search..."
+            size="sm"
+            startContent={<ImSearch size={18} />}
+            type="search"
+          />
+        </div>
         <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-4 md:p-12 md:px-36 justify-center md:pt-0">
           <StatisticCard setSortBy={setSortBy} setOrder={setOrder} />
         </div>

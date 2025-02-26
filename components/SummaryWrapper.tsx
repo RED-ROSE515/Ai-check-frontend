@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Typography, capitalize } from "@mui/material";
-import { TbExternalLink } from "react-icons/tb";
+import ReactMarkdown from "react-markdown";
 import Image, { StaticImageData } from "next/image";
 import { useTheme } from "next-themes";
 import { useSpeech } from "@/contexts/SpeechContext";
@@ -121,6 +121,13 @@ const SummaryWrapper = ({
       audio_url: "",
       image: phDImage,
     },
+    // {
+    //   title: "Error Summary",
+    //   content: summary.summary?.error,
+    //   value: "ErrorSummary",
+    //   audio_url: "",
+    //   image: phDImage,
+    // },
   ];
   const generateSpeech = async () => {
     try {
@@ -395,13 +402,48 @@ const SummaryWrapper = ({
               }
               value={index.toString()}
             >
-              <div>
-                <p
-                  className={`text-md font-semibold ${theme === "dark" ? "text-gray-200" : "text-slate-800"}`}
-                >
-                  {level.content}
-                </p>
-              </div>
+              {level.value === "ErrorSummary" ? (
+                <div key={index}>
+                  <ReactMarkdown
+                    components={{
+                      h3: ({ children }) => (
+                        <h3 className="mb-2 mt-6 text-xl font-bold">
+                          {children}
+                        </h3>
+                      ),
+                      h4: ({ children }) => (
+                        <h4 className="mb-2 mt-4 text-lg font-semibold">
+                          {children}
+                        </h4>
+                      ),
+                      p: ({ children }) => <p className="mb-4">{children}</p>,
+                      ul: ({ children }) => (
+                        <ul className="mb-4 ml-6 list-disc">{children}</ul>
+                      ),
+                      li: ({ children }) => (
+                        <li className="mb-2">{children}</li>
+                      ),
+                      strong: ({ children }) => (
+                        <strong className="font-bold">{children}</strong>
+                      ),
+                      em: ({ children }) => (
+                        <em className="italic">{children}</em>
+                      ),
+                      hr: () => <hr className="my-6 border-gray-200" />,
+                    }}
+                  >
+                    {level.content}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <div>
+                  <p
+                    className={`text-md font-semibold ${theme === "dark" ? "text-gray-200" : "text-slate-800"}`}
+                  >
+                    {level.content}
+                  </p>
+                </div>
+              )}
             </AccordionItem>
           ))}
         </Accordion>

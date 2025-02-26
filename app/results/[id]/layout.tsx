@@ -29,13 +29,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const poster = analysisData?.user?.first_name;
 
   return {
-    title: `${poster}  -  ${title} | NerdBunny Analysis`,
+    title: `${poster}  -  Research Paper Analysis by NerdBunny`,
     description,
     alternates: {
       canonical: url,
     },
     openGraph: {
-      title: `${poster}  -  ${title} | NerdBunny Analysis`,
+      title: `${poster}  -  Research Paper Analysis by NerdBunny`,
       description,
       url,
       siteName: "NerdBunny",
@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${poster}  -  ${title} | NerdBunny Analysis`,
+      title: `${poster}  -  Research Paper Analysis by NerdBunny`,
       description,
       images: [analysisData?.user.avatar || Nerdbunny.src],
     },

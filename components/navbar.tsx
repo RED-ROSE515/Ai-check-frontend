@@ -186,7 +186,7 @@ export const Navbar = () => {
           </NavbarItem>
         </NavbarContent>
 
-        <NavbarContent className="flex w-full basis-full">
+        <NavbarContent className="w-full basis-full hidden md:flex">
           <NavbarItem className="flex w-full items-center gap-2 justify-center">
             <Input
               classNames={{
