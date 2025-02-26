@@ -62,7 +62,7 @@ const SpecialSummary = ({ summary }: any) => {
         </p>
 
         <span
-          className={`mt-4 w-full text-xl sm:text-2xl rounded-sm p-2 md:px-8 font-bold ${theme === "dark" ? `text-gray-100 bg-blue-600` : "text-slate-800 bg-pink-300"}`}
+          className={`mt-4 w-full text-xl sm:text-2xl rounded-sm p-2 md:px-8 font-bold ${theme === "dark" ? `text-gray-100 bg-slate-700` : "text-slate-800 bg-gray-200"}`}
         >
           Total Quality Score : {summary?.quality_score} out of 10.
         </span>

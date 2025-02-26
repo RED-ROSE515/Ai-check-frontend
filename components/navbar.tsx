@@ -37,7 +37,7 @@ import { CircularProgressBar } from "./CircularProgressBar";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { ImProfile, ImSearch } from "react-icons/im";
 import { MdLogin, MdLogout, MdCheck, MdInfo } from "react-icons/md";
-import { FcStatistics } from "react-icons/fc";
+import { MdOutlineAnalytics } from "react-icons/md";
 
 export const ListboxWrapper = ({ children }: any) => (
   <div className="w-full max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100">
@@ -217,7 +217,7 @@ export const Navbar = () => {
                 })
               }
             >
-              <FcStatistics size={24} />
+              <MdOutlineAnalytics size={24} />
             </Button>
             <ThemeSwitch />
 

@@ -147,7 +147,6 @@ export default function SignInDialog({
         title: "Success",
         description: "Successfully signed in!",
       });
-      console.log(isAuthenticated, user);
       onSuccess?.();
       onClose();
     } catch (error) {
@@ -167,11 +166,6 @@ export default function SignInDialog({
     setLoading(true);
     try {
       window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login_with_nobleblocks?app_name=NerdBunny&redirect_url=${DOMAIN + "/login_with_nobleblocks"}`;
-      toast({
-        title: "Success",
-        description: "Successfully signed in!",
-      });
-      console.log(isAuthenticated, user);
       onSuccess?.();
       onClose();
     } catch (error) {

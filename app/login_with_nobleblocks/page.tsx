@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { sleep } from "@/components/file-upload";
 
 const LoginWithNobleblocksPage = () => {
-  const { isAuthenticated, user, loginWithNobleblocks } = useAuth();
+  const { loginWithNobleblocks } = useAuth();
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const router = useRouter();
@@ -19,34 +19,6 @@ const LoginWithNobleblocksPage = () => {
         const path = window.location.href;
         const state = path.split("state=")[1];
         await loginWithNobleblocks(state);
-
-        // First, wait and check for cookie
-        // const storedUser = Cookies.get("NERDBUNNY_SESSION");
-        // console.log(storedUser);
-        // if (!storedUser) {
-        //   toast({
-        //     variant: "destructive",
-        //     title: "Login Error",
-        //     description: "No session found",
-        //     duration: 2000,
-        //   });
-        //   router.push("/");
-        //   return;
-        // }
-
-        // // Cookie exists, proceed with user initialization
-        // if (!isAuthenticated) {
-        //   await sleep(3000);
-        //   const tempUserData = JSON.parse(storedUser);
-        //   const userData = {
-        //     email: "",
-        //     detail: tempUserData?.user,
-        //     token: tempUserData?.token.token,
-        //   };
-
-        //   localStorage.setItem("user", JSON.stringify(userData));
-        //   setUserData(userData);
-
         toast({
           title: "Login with Nobleblocks",
           description: "Successfully Login with Nobleblocks!",
@@ -71,11 +43,6 @@ const LoginWithNobleblocksPage = () => {
 
     initializeUser();
   }, []);
-
-  useEffect(() => {
-    console.log("User state updated:", user);
-    console.log("///////////////////////////////////////////");
-  }, [user]);
 
   return (
     <div className="w-full flex justify-center">

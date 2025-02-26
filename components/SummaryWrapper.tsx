@@ -249,8 +249,9 @@ const SummaryWrapper = ({
                     className="max-w-[50vw]"
                   >
                     <Chip
-                      className={`${theme === "dark" ? "secondary" : "primary"}`}
+                      // className={`${theme === "dark" ? "secondary" : "primary"}`}
                       variant="dot"
+                      className={`cursor-pointer hover:scale-105 ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
                     >
                       {author.split("(")[0]}
                     </Chip>
