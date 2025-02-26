@@ -1,7 +1,9 @@
 import { Metadata } from "next";
-import Nerdbunny from "@/public/nerdbunny.png";
+import Nerdbunny from "@/public/nerdbunny-dark.jpg";
+const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
+
 export const defaultMetadata: Metadata = {
-  metadataBase: new URL("https://nerdbunny.com"),
+  metadataBase: new URL(DOMAIN || "https://nerdbunny.com"),
   title: {
     default: "NerdBunny - AI Error Detection for Research Papers",
     template: "%s | NerdBunny",

@@ -54,7 +54,6 @@ export default function Home() {
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [totalResults, setTotalResults] = useState([]);
-  const [currentTab, setCurrentTab] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
   const [sortBy, setSortBy] = useState("");
   const [order, setOrder] = useState("desc");
@@ -68,59 +67,8 @@ export default function Home() {
   const User = false;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
-  const { isAuthenticated, user, setUserData } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { toast } = useToast();
-
-  useEffect(() => {
-    const initUser = async () => {
-      try {
-        if (!isAuthenticated) {
-          setLoading(true);
-          const storedUser = Cookies.get("NERDBUNNY_SESSION");
-          if (!storedUser) {
-            throw new Error("No stored user found");
-          }
-
-          await sleep(3000);
-
-          const tempUserData = JSON.parse(storedUser);
-          const userData = {
-            email: "",
-            detail: tempUserData?.user,
-            token: tempUserData?.token.token,
-          };
-          localStorage.setItem("user", JSON.stringify(userData));
-          setUserData(userData);
-          setLoading(false);
-
-          toast({
-            title: "Login with Nobleblocks",
-            description: "Successfully Login with Nobleblocks!",
-            duration: 2000,
-          });
-
-          await sleep(1000);
-          router.push("/");
-        }
-      } catch (error) {
-        console.error("Login error:", error);
-        toast({
-          variant: "destructive",
-          title: "Login Error",
-          description: "Something went wrong!" + { error },
-          duration: 2000,
-        });
-        setLoading(false);
-        router.push("/");
-      }
-    };
-
-    // initUser();
-  }, [isAuthenticated, setUserData, router, toast]);
-
-  useEffect(() => {
-    console.log("User state updated:", user);
-  }, [user]);
 
   const getTotalResults = async () => {
     try {

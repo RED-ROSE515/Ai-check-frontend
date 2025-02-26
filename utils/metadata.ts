@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import Nerdbunny from "@/public/nerdbunny.png";
+import Nerdbunny from "@/public/nerdbunny-dark.jpg";
 
 export function generatePageMetadata({
   title,
@@ -16,7 +16,8 @@ export function generatePageMetadata({
 }): Metadata {
   const finalTitle = `${title} | NerdBunny`;
   const finalDescription = description.slice(0, 160);
-  const url = `https://nerdbunny.com${path}`;
+  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
+  const url = `${DOMAIN + path}`;
 
   return {
     title: finalTitle,

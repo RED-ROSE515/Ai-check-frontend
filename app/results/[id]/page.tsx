@@ -27,7 +27,6 @@ const ResultPage = ({ params }: any) => {
     "Check out this AI error detection result: "
   );
   const [pageUrl, setPageUrl] = useState(`${API_BASE_URL}results/${id}`);
-  const pageImage = "https:/nobleblocks.com/nerdbunny.png";
   const { theme } = useTheme();
   const [analysisResult, setAnalysisResult] = useState("");
   const [summary, setSummary] = useState<any>();
