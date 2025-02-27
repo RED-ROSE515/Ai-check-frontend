@@ -136,14 +136,7 @@ export const AnalyzeProvider = ({
       //       onClick={() =>
       //         window.open(
       //           "/results/" +
-      //             response.data.metadata.title
-      //               .replace(/[^a-zA-Z0-9\s]/g, "")
-      //               .toLowerCase()
-      //               .split(" ")
-      //               .join("-") +
-      //             "_" +
-      //             response.data.metadata.paper_id +
-      //             "/",
+      //             response.data.metadata.paper_id ,
       //           "_blank"
       //         )
       //       }

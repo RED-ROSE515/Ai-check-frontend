@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Divider } from "@mui/material";
-import { Tabs, Tab } from "@heroui/tabs";
-import { Chip } from "@heroui/chip";
+import { Tabs, Tab, Chip } from "@heroui/react";
 import { useTheme } from "next-themes";
 import { MagicCard } from "./ui/magic-card";
 import ErrorCard from "./ErrorCard";

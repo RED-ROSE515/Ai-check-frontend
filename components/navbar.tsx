@@ -3,12 +3,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
-import {
-  Navbar as HeroUINavbar,
-  NavbarContent,
-  NavbarBrand,
-  NavbarItem,
-} from "@heroui/navbar";
 import _ from "lodash";
 import {
   Link,
@@ -17,7 +11,6 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Input,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -26,6 +19,10 @@ import {
   ListboxItem,
   ListboxSection,
   Image as HeroImage,
+  Navbar as HeroUINavbar,
+  NavbarContent,
+  NavbarBrand,
+  NavbarItem,
 } from "@heroui/react";
 import Image from "next/image";
 import LogoDark from "../public/LogoPurple.png";
@@ -35,9 +32,10 @@ import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
 import { CircularProgressBar } from "./CircularProgressBar";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
-import { ImProfile, ImSearch } from "react-icons/im";
+import { ImProfile } from "react-icons/im";
 import { MdLogin, MdLogout, MdCheck, MdInfo } from "react-icons/md";
 import { MdOutlineAnalytics } from "react-icons/md";
+import SearchBar from "./SearchBar";
 
 export const ListboxWrapper = ({ children }: any) => (
   <div className="w-full max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100">
@@ -188,19 +186,7 @@ export const Navbar = () => {
 
         <NavbarContent className="w-full basis-full hidden md:flex">
           <NavbarItem className="flex w-full items-center gap-2 justify-center">
-            <Input
-              classNames={{
-                base: "max-w-full w-2/3 h-10",
-                mainWrapper: "h-full",
-                input: "text-small",
-                inputWrapper:
-                  "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
-              }}
-              placeholder="Type to search..."
-              size="sm"
-              startContent={<ImSearch size={18} />}
-              type="search"
-            />
+            <SearchBar />
           </NavbarItem>
         </NavbarContent>
 

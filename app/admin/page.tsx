@@ -13,8 +13,8 @@ import {
   Card,
   Input,
   Button,
+  Spinner,
 } from "@heroui/react";
-import { Spinner } from "@heroui/spinner";
 import _ from "lodash";
 import SummaryWrapper from "../../components/SummaryWrapper";
 import AnalysisResult from "../../components/AnalysisResult";

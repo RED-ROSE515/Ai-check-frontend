@@ -64,17 +64,7 @@ const ResultWrapper = ({ id }: any) => {
                 // input_tokens={input_tokens}
                 // output_tokens={output_tokens}
                 // total_cost={total_cost}
-                link={
-                  "/results/" +
-                  summary.metadata.title
-                    .replace(/[^a-zA-Z0-9\s]/g, "")
-                    .toLowerCase()
-                    .split(" ")
-                    .join("-") +
-                  "_" +
-                  analysisResult.metadata.paper_id +
-                  "/"
-                }
+                link={"/results/" + analysisResult.metadata.paper_id}
               />
             )}
           </div>

@@ -32,6 +32,7 @@ import { RiVoiceAiLine } from "react-icons/ri";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import SpeechPlayer from "./SpeechPlayer";
 import UserCard from "./UserCard";
+import { useSearch } from "@/contexts/SearchContext";
 import { useAuth } from "@/contexts/AuthContext";
 const getColorForScore = (score: number) => {
   switch (true) {
@@ -89,6 +90,8 @@ const SummaryWrapper = ({
   link,
 }: any) => {
   const { theme } = useTheme();
+
+  const { keyword, setKeyword } = useSearch();
   const [expand, setExpand] = useState(false);
   const [currentSummary, setCurrentSummary] = useState<SummaryType>();
   const { setSpeechUrl, setShowSpeech } = useSpeech();
@@ -477,14 +480,17 @@ const SummaryWrapper = ({
               <strong>Keywords: </strong>
               {summary.metadata.publication_info.keywords
                 ? summary.metadata.publication_info.keywords.map(
-                    (keyword: string, index: number) => {
+                    (label: string, index: number) => {
                       return (
                         <Chip
                           variant="dot"
                           key={index}
-                          className={`cursor-pointer hover:scale-105 ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
+                          onClick={() =>
+                            setKeyword(label === keyword ? "" : label)
+                          }
+                          className={`cursor-pointer hover:scale-105 ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"} ${label === keyword ? `${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}` : ""}`}
                         >
-                          {keyword}
+                          {label}
                         </Chip>
                       );
                     }

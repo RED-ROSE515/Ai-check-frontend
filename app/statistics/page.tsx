@@ -9,57 +9,151 @@ import _ from "lodash";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { commify } from "@/utils/number_utils";
+import { useSearch } from "@/contexts/SearchContext";
+import Loader from "@/components/Loader";
+
+interface ErrorStatistics {
+  mathErrors: number;
+  methodologyErrors: number;
+  logicalFrameworkErrors: number;
+  dataAnalysisErrors: number;
+  technicalPresentationErrors: number;
+  researchQualityErrors: number;
+  totalErrors: number;
+}
+
+interface Statistics {
+  totalPapers: number;
+  totalAnalyses: number;
+  errorStatistics: ErrorStatistics;
+}
+
 const Statistics = () => {
+  const { setSortBy } = useSearch();
+  const [loading, setLoading] = useState(false);
+  const [statistics, setStatistics] = useState<Statistics>({
+    totalPapers: 0,
+    totalAnalyses: 0,
+    errorStatistics: {
+      mathErrors: 0,
+      methodologyErrors: 0,
+      logicalFrameworkErrors: 0,
+      dataAnalysisErrors: 0,
+      technicalPresentationErrors: 0,
+      researchQualityErrors: 0,
+      totalErrors: 0,
+    },
+  });
   const issues = [
-    { label: "Total", value: "3318" },
     {
-      label: "Math",
-      value: "384",
+      category: "Total",
+      sort: "total_errors",
+      type: "",
+      // back: "from-[#fbed96] to-[#abecd6]",
+      back: "hover:bg-[#338EF7] ",
+      whiteback: "hover:bg-[#001731] ",
+      count: statistics?.errorStatistics?.totalErrors,
     },
     {
-      label: "Methodology",
-      value: "371",
+      category: "Math",
+      type: "MathError",
+      sort: "math_errors",
+      // back: "from-[#acb6e5] to-[#86fde8]",
+      whiteback: "hover:bg-[#095028] ",
+      back: "hover:bg-[#AE7EDE]",
+      count: statistics?.errorStatistics?.mathErrors,
     },
     {
-      label: "Logical ",
-      value: "344",
+      category: "Methodology",
+      type: "MethodologyError",
+      sort: "methodology_errors",
+      // back: "from-[#5433FF] via-[#20BDFF] to-[#A5FECB]",
+      whiteback: "hover:bg-[#610726] ",
+      back: "hover:bg-[#45D483]",
+      count: statistics?.errorStatistics?.methodologyErrors,
     },
     {
-      label: "Data ",
-      value: "256",
+      category: "Logical",
+      type: "LogicalFrameworkError",
+      sort: "logical_framework_errors",
+      // back: "from-[#EFEFBB] to-[#D4D3DD]",
+      whiteback: "hover:bg-[#661F52] ",
+      back: "hover:bg-[#F54180]",
+      count: statistics?.errorStatistics?.dataAnalysisErrors,
     },
     {
-      label: "Technical ",
-      value: "1571",
+      category: "Data",
+      sort: "data_analysis_errors",
+      type: "DataAnalysisError",
+      // back: "from-[#FDFC47] to-[#24FE41]",
+      whiteback: "hover:bg-[#001731] ",
+      back: "hover:bg-[#661F52]",
+      count: statistics?.errorStatistics?.dataAnalysisErrors,
     },
     {
-      label: "Research ",
-      value: "392",
+      category: "Technical",
+      sort: "technical_presentation_errors",
+      type: "TechnicalPresentationError",
+      // back: "from-[#BA5370] to-[#F4E2D8]",
+      whiteback: "hover:bg-[#62420E] ",
+      back: "hover:bg-[#F5A524]",
+      count: statistics?.errorStatistics?.technicalPresentationErrors,
+    },
+    {
+      category: "Research",
+      sort: "research_quality_errors",
+      type: "ResearchQualityError",
+      // back: "from-[#0099F7] to-[#F11712]",
+      back: "hover:bg-[#7EE7FC]",
+      whiteback: "hover:bg-[#0E8AAA]",
+      count: statistics?.errorStatistics?.researchQualityErrors,
     },
   ];
   const { theme } = useTheme();
   const router = useRouter();
+
   const [isMounted, setIsMounted] = useState(false);
   const [chart, setChart] = useState<"issue" | "speed" | "cost" | "paper">(
     "issue"
   );
   const [recentPapers, setRecentPapers] = useState<any>([]);
+  const [recentComments, setRecentComments] = useState<any>([]);
+  const getStatistics = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(`/papers/statistics`);
+      setStatistics(response.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const getRecentPapers = async () => {
+    const response = await api.get(
+      `/post/pagination?post_type=6&start=0&limit=7`
+    );
+    setRecentPapers(response.data.data);
+  };
+  const getRecentComments = async () => {
+    const response = await api.get(`/post/recent_comments`);
+    setRecentComments(response.data);
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await api.get(
-        `/post/pagination?post_type=6&start=0&limit=7`
-      );
-      setRecentPapers(response.data.data);
-    };
-    fetchData();
+    getStatistics();
+    getRecentPapers();
+    getRecentComments();
   }, []);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
   if (!isMounted) {
     return null;
   }
-  return (
+  return loading ? (
+    <Loader />
+  ) : (
     <div className="w-full flex flex-row justify-center">
       <div className="w-full bg-statistics md:w-5/6">
         <div className="flex flex-col justify-start items-start gap-4 px-6 py-6">
@@ -133,7 +227,9 @@ const Statistics = () => {
             isPressable
             onPress={() => setChart("issue")}
           >
-            <strong className="text-5xl">3,543</strong>
+            <strong className="text-5xl">
+              {commify(statistics?.errorStatistics?.totalErrors)}
+            </strong>
             <p className="mt-4">Issues Identified</p>
           </NewCard>
         </div>
@@ -149,17 +245,7 @@ const Statistics = () => {
                   <Link
                     key={index}
                     className="w-full"
-                    href={
-                      "/results/" +
-                      paper.title
-                        .replace(/[^a-zA-Z0-9\s]/g, "")
-                        .toLowerCase()
-                        .split(" ")
-                        .join("-") +
-                      "_" +
-                      paper.id +
-                      "/"
-                    }
+                    href={"/results/" + paper.id}
                   >
                     <Card
                       isHoverable
@@ -185,7 +271,10 @@ const Statistics = () => {
           </NewCard>
           <Card className="flex-2 w-full md:w-1/2 bg-transparent">
             <CardBody>
-              <EChart chartType={chart} />
+              <EChart
+                chartType={chart}
+                data={issues.filter((issue) => issue.category !== "Total")}
+              />
             </CardBody>
           </Card>
           <NewCard
@@ -194,22 +283,12 @@ const Statistics = () => {
             isHoverable
           >
             <div className="flex flex-col gap-2">
-              {recentPapers.map((paper: any, index: number) => {
+              {recentComments.map((comment: any, index: number) => {
                 return (
                   <Link
                     key={index}
                     className="w-full"
-                    href={
-                      "/results/" +
-                      paper.title
-                        .replace(/[^a-zA-Z0-9\s]/g, "")
-                        .toLowerCase()
-                        .split(" ")
-                        .join("-") +
-                      "_" +
-                      paper.id +
-                      "/"
-                    }
+                    href={"/results/" + comment.parent_id}
                   >
                     <Card
                       isHoverable
@@ -222,9 +301,11 @@ const Statistics = () => {
                             isBordered
                             radius="full"
                             size="sm"
-                            src={paper.user.avatar}
+                            src={comment.user.avatar}
                           />
-                          <p className="ml-3 truncate w-full">{paper.title}</p>
+                          <p className="ml-3 truncate w-full">
+                            {comment.description}
+                          </p>
                         </div>
                       </CardBody>
                     </Card>
@@ -241,7 +322,9 @@ const Statistics = () => {
             isHoverable
             isPressable
           >
-            <strong className="text-5xl">{commify(685)}</strong>
+            <strong className="text-5xl">
+              {commify(statistics.totalPapers)}
+            </strong>
             <p className="mt-4">Papers Processed</p>
           </NewCard>
           {/* <NewCard
@@ -257,15 +340,23 @@ const Statistics = () => {
             <div className="flex flex-wrap gap-3 w-full">
               {issues.map((issue, index: number) => {
                 return (
-                  <Card className="bg-transparent" isPressable isHoverable>
+                  <Card
+                    className="bg-transparent"
+                    isPressable
+                    isHoverable
+                    onPress={async () => {
+                      router.push("/");
+                      setSortBy(issue.type || "");
+                    }}
+                  >
                     <CardBody>
                       <div
                         key={index}
                         className="flex flex-col justify-between items-center w-full"
                       >
-                        <p className="font-bold text-lg">{issue.label}</p>
+                        <p className="font-bold text-lg">{issue.category}</p>
                         <p className="font-semibold text-md">
-                          {commify(issue.value)}
+                          {commify(issue.count)}
                         </p>
                       </div>
                     </CardBody>

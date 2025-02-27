@@ -244,17 +244,7 @@ export default function App() {
                   {summary && (
                     <SummaryWrapper
                       summary={summary}
-                      link={
-                        "/results/" +
-                        summary.metadata.title
-                          .replace(/[^a-zA-Z0-9\s]/g, "")
-                          .toLowerCase()
-                          .split(" ")
-                          .join("-") +
-                        "_" +
-                        summary.metadata.paper_id +
-                        "/"
-                      }
+                      link={"/results/" + summary.metadata.paper_id}
                     />
                   )}
                 </div>

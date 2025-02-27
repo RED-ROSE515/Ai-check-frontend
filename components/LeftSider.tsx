@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { Card, CardHeader, CardBody } from "@heroui/card";
+import { Card, CardHeader, CardBody } from "@heroui/react";
 
 import logoDark from "../public/LogoLime.png";
 import logoWhite from "../public/LogoPurple.png";

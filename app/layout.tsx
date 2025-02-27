@@ -15,6 +15,7 @@ import { AnalyzeProvider } from "@/contexts/AnalyzeContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { defaultMetadata } from "./shared-metadata";
+import { SearchProvider } from "@/contexts/SearchContext";
 
 const siteIconUrl = SiteIcon.src;
 export const metadata = defaultMetadata;
@@ -47,19 +48,21 @@ export default function RootLayout({
                 <AnalyzeProvider>
                   <PaginationProvider>
                     <AuthProvider>
-                      <div className="relative flex flex-col h-screen">
-                        <Navbar />
-                        <main
-                          className="w-screen overflow-x-hidden p-2 pt-4 flex-grow"
-                          id="main"
-                        >
-                          {children}
-                        </main>
-                        <Toaster />
-                        <footer className="w-full flex items-center justify-center py-3">
-                          <Footer />
-                        </footer>
-                      </div>
+                      <SearchProvider>
+                        <div className="relative flex flex-col h-screen">
+                          <Navbar />
+                          <main
+                            className="w-screen overflow-x-hidden p-2 pt-4 flex-grow"
+                            id="main"
+                          >
+                            {children}
+                          </main>
+                          <Toaster />
+                          <footer className="w-full flex items-center justify-center py-3">
+                            <Footer />
+                          </footer>
+                        </div>
+                      </SearchProvider>
                     </AuthProvider>
                   </PaginationProvider>
                 </AnalyzeProvider>

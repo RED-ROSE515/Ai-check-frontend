@@ -1,0 +1,88 @@
+"use client";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
+import api from "@/utils/api";
+import { useToast } from "@/hooks/use-toast";
+import { usePagination } from "./PaginationContext";
+
+interface SearchContextType {
+  keyword: string;
+  setKeyword: (keyword: string) => void;
+  sortBy: string;
+  setSortBy: (sortBy: string) => void;
+  order: string;
+  setOrder: (order: string) => void;
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
+  totalResults: any[];
+  getTotalResults: () => Promise<void>;
+  setTotalResults: React.Dispatch<React.SetStateAction<any[]>>;
+}
+
+const SearchContext = createContext<SearchContextType | undefined>(undefined);
+
+export function SearchProvider({ children }: { children: React.ReactNode }) {
+  const [keyword, setKeyword] = useState("");
+  const [sortBy, setSortBy] = useState("");
+  const [order, setOrder] = useState("desc");
+  const [loading, setLoading] = useState(false);
+  const [totalResults, setTotalResults] = useState<any[]>([]);
+
+  const { page, setTotalPage } = usePagination();
+  const { toast } = useToast();
+
+  const getTotalResults = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await api.get(
+        `/post/pagination?post_type=6&start=${(page - 1) * 3}&limit=3${keyword ? `&keyword=${keyword}` : ""}${sortBy ? `&error_type=${sortBy}` : ""}`
+      );
+
+      setTotalResults(response.data.data);
+      setTotalPage(Math.ceil(response.data.total_count / 3));
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Analysis Data",
+        description: "Uh, oh! Something went wrong!" + { error },
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [page, keyword, sortBy, setTotalPage, toast]);
+
+  useEffect(() => {
+    getTotalResults();
+  }, [page, keyword, sortBy, setTotalPage, toast]);
+
+  const value = {
+    keyword,
+    setKeyword,
+    sortBy,
+    setSortBy,
+    order,
+    setOrder,
+    loading,
+    setLoading,
+    totalResults,
+    getTotalResults,
+    setTotalResults,
+  };
+
+  return (
+    <SearchContext.Provider value={value}>{children}</SearchContext.Provider>
+  );
+}
+
+export function useSearch() {
+  const context = useContext(SearchContext);
+  if (context === undefined) {
+    throw new Error("useSearch must be used within a SearchProvider");
+  }
+  return context;
+}

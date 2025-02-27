@@ -113,35 +113,55 @@ const getPaperData = (type: string) => {
   }
 };
 
-const getIssueChartOptions = (): EChartsOption => ({
-  title: [{ text: "Issue Distribution" }],
-  polar: { radius: [30, "80%"] },
-  radiusAxis: { max: 1571 },
-  angleAxis: {
-    type: "category",
-    data: [
-      "Technical",
-      "Writing",
-      "Methodology",
-      "Logical",
-      "Data",
-      "Research",
-    ],
-    startAngle: 75,
-  },
-  tooltip: {},
-  series: {
-    type: "bar",
-    data: [1571, 384, 371, 344, 256, 392],
-    coordinateSystem: "polar",
-    label: {
-      show: false,
-      position: "right",
-      formatter: "{b}",
+// Update the type definition at the top of the file
+interface ChartData {
+  category: string;
+  sort: string;
+  type: string;
+  back: string;
+  whiteback: string;
+  count: number;
+}
+
+// Update getIssueChartOptions to accept data
+const getIssueChartOptions = (issuesData?: ChartData[]): EChartsOption => {
+  // Use default data if no data is provided
+  const defaultData = [
+    { category: "Technical", count: 1571 },
+    { category: "Writing", count: 384 },
+    { category: "Methodology", count: 371 },
+    { category: "Logical", count: 344 },
+    { category: "Data", count: 256 },
+    { category: "Research", count: 392 },
+  ];
+
+  const data = issuesData || defaultData;
+
+  return {
+    title: [{ text: "Issue Distribution" }],
+    polar: { radius: [30, "80%"] },
+    radiusAxis: {
+      max: Math.max(...data.map((item) => item.count)),
     },
-  },
-  animation: true,
-});
+    angleAxis: {
+      type: "category",
+      data: data.map((item) => item.category),
+      startAngle: 75,
+    },
+    tooltip: {},
+    series: {
+      type: "bar",
+      data: data.map((item) => item.count),
+      coordinateSystem: "polar",
+      label: {
+        show: false,
+        position: "right",
+        formatter: "{b}",
+      },
+    },
+    animation: true,
+  };
+};
 
 const getCostChartOptions = (costData: any[]): EChartsOption => ({
   title: { text: "Research Audit Cost Distribution" },
@@ -349,7 +369,13 @@ export const paperTypes = [
   { key: "scientific", label: "Scientific Field" },
 ];
 // Modify EChart component to handle speed chart
-const EChart = ({ chartType = "cost" }: { chartType?: ChartType }) => {
+const EChart = ({
+  chartType = "cost",
+  data,
+}: {
+  chartType?: ChartType;
+  data?: ChartData[];
+}) => {
   const [paperType, setPaperType] = useState("preprint");
   const chartRef = useRef<HTMLDivElement>(null);
   const costData = generateCostData();
@@ -363,7 +389,7 @@ const EChart = ({ chartType = "cost" }: { chartType?: ChartType }) => {
     const options = (() => {
       switch (chartType) {
         case "issue":
-          return getIssueChartOptions();
+          return getIssueChartOptions(data);
         case "speed":
           return getSpeedChartOptions(speedData);
         case "paper":
@@ -375,7 +401,7 @@ const EChart = ({ chartType = "cost" }: { chartType?: ChartType }) => {
 
     myChart.setOption(options);
     return () => myChart.dispose();
-  }, [chartType, costData, speedData]);
+  }, [chartType, costData, speedData, data]);
 
   return (
     <div className="">

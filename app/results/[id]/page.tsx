@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, use } from "react";
+import Head from "next/head";
 import { useTheme } from "next-themes";
 import axios from "axios";
 import { Button, Card, CardBody, Avatar, Link } from "@heroui/react";
@@ -14,6 +15,7 @@ import ShareButtons from "@/components/ShareButtons";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import SignInDialog from "@/components/SignInDialog";
+import Nerdbunny from "@/public/nerdbunny.png";
 import { usePostActions } from "@/hooks/usePostActions";
 import Loader from "@/components/Loader";
 
@@ -27,6 +29,7 @@ const ResultPage = ({ params }: any) => {
     "Check out this AI error detection result: "
   );
   const [pageUrl, setPageUrl] = useState(`${API_BASE_URL}results/${id}`);
+  const pageImage = "https:/nobleblocks.com/nerdbunny.png";
   const { theme } = useTheme();
   const [analysisResult, setAnalysisResult] = useState("");
   const [summary, setSummary] = useState<any>();
@@ -80,17 +83,7 @@ const ResultPage = ({ params }: any) => {
         `/post/comments?parent_is_post=true&parent_id=${response.data.id}&start=0&limit=1000`
       );
       setComments(resp.data);
-      setLink(
-        "/results/" +
-          response.data.title
-            .replace(/[^a-zA-Z0-9\s]/g, "")
-            .toLowerCase()
-            .split(" ")
-            .join("-") +
-          "_" +
-          response.data.id +
-          "/"
-      );
+      setLink("/results/" + response.data.id);
       setSummaryLoading(false);
       setPageTitle(`AI Error Detector Result: ${response.data.title}`);
       setpageDescription(
@@ -144,15 +137,14 @@ const ResultPage = ({ params }: any) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const newId = id.split("_")[1];
       const response = await axios.get(
         `${API_BASE_URL}/post/pagination?post_type=6&start=0&limit=5`
       );
       setRecentPapers(response.data.data);
-      await getResultById(newId);
     };
+    getResultById(id);
     fetchData();
-  }, []);
+  }, [id]);
 
   return (
     <>
@@ -174,17 +166,7 @@ const ResultPage = ({ params }: any) => {
                     summary={summary}
                     isResult={true}
                     totalData={result}
-                    link={
-                      "/results/" +
-                      summary.post_title
-                        .replace(/[^a-zA-Z0-9\s]/g, "")
-                        .toLowerCase()
-                        .split(" ")
-                        .join("-") +
-                      "_" +
-                      summary.post_id +
-                      "/"
-                    }
+                    link={"/results/" + summary.post_id}
                     showSignInModal={showSignInModal}
                     reportPost={reportPost}
                     userData={{ ...author }}
@@ -215,7 +197,7 @@ const ResultPage = ({ params }: any) => {
                 <Button
                   variant="ghost"
                   className="flex items-center gap-2"
-                  color={result.liked_me ? "warning" : "default"}
+                  color={result?.liked_me ? "warning" : "default"}
                   // isDisabled={!isAuthenticated}
                   onPress={() =>
                     isAuthenticated
@@ -267,17 +249,7 @@ const ResultPage = ({ params }: any) => {
                   <Link
                     key={index}
                     className="w-full"
-                    href={
-                      "/results/" +
-                      paper.title
-                        .replace(/[^a-zA-Z0-9\s]/g, "")
-                        .toLowerCase()
-                        .split(" ")
-                        .join("-") +
-                      "_" +
-                      paper.id +
-                      "/"
-                    }
+                    href={"/results/" + paper.id}
                   >
                     <Card
                       isHoverable

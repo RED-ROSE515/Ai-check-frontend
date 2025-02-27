@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const newId = resolvedParams.id.split("_")[1];
+  const newId = resolvedParams.id;
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
