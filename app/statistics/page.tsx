@@ -136,7 +136,7 @@ const Statistics = () => {
     setRecentPapers(response.data.data);
   };
   const getRecentComments = async () => {
-    const response = await api.get(`/post/recent_comments`);
+    const response = await api.get(`/post/recent_comments?start=0&limit=7`);
     setRecentComments(response.data);
   };
   useEffect(() => {
