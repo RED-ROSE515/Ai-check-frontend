@@ -57,7 +57,8 @@
     "react-markdown": "^9.0.3",
     "react-share": "^5.1.2",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "use-debounce": "^10.0.4"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.1.0",

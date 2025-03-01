@@ -292,8 +292,10 @@ const Statistics = () => {
                   >
                     <Card
                       isHoverable
+                      isPressable
                       shadow="sm"
                       className="cursor-pointer w-full"
+                      onPress={() => {}}
                     >
                       <CardBody>
                         <div className="flex flex-row justify-start items-center w-full max-w-full">

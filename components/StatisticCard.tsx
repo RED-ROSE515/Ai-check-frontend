@@ -38,7 +38,7 @@ interface Statistics {
 }
 
 const StatisticCard = () => {
-  const { sortBy, setSortBy } = useSearch();
+  const { sortBy, setSortBy, setKeyword } = useSearch();
   const [loading, setLoading] = useState(false);
   const [cardColors, setCardColors] = useState<
     Array<{ bg: string; outline: string }>
@@ -198,7 +198,10 @@ const StatisticCard = () => {
                   key={index + 1}
                   isHoverable
                   isPressable
-                  onPress={() => setSortBy(issue.type || "")}
+                  onPress={() => {
+                    setSortBy(issue.type || "");
+                    setKeyword("");
+                  }}
                   className={`w-full`}
                 >
                   <CardBody

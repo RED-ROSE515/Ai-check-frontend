@@ -45,11 +45,14 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
 
       setTotalResults(response.data.data);
       setTotalPage(Math.ceil(response.data.total_count / 3));
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Analysis Data",
-        description: "Uh, oh! Something went wrong!" + { error },
+        description:
+          "Uh, oh! Something went wrong!   (" +
+          error.response.data.message +
+          ")",
       });
     } finally {
       setLoading(false);

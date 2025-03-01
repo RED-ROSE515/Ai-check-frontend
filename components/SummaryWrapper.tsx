@@ -91,7 +91,7 @@ const SummaryWrapper = ({
 }: any) => {
   const { theme } = useTheme();
 
-  const { keyword, setKeyword } = useSearch();
+  const { keyword, setKeyword, setSortBy } = useSearch();
   const [expand, setExpand] = useState(false);
   const [currentSummary, setCurrentSummary] = useState<SummaryType>();
   const { setSpeechUrl, setShowSpeech } = useSpeech();
@@ -135,7 +135,8 @@ const SummaryWrapper = ({
   const generateSpeech = async () => {
     try {
       setLoading(true);
-      const paperId = link.split("_")[1].split("/")[0];
+      console.log(link);
+      const paperId = link.split("results/")[1];
       const response = await api.post(`post/generate_voice`, {
         post_id: paperId,
         speech_type: currentSummary?.value,
@@ -254,7 +255,7 @@ const SummaryWrapper = ({
                 (index < 3 || expand) && (
                   <Tooltip
                     key={index}
-                    content={author.split("(")[1]}
+                    content={"(" + author.split("(")[1]}
                     placement="bottom"
                     className="max-w-[50vw]"
                   >
@@ -485,9 +486,10 @@ const SummaryWrapper = ({
                         <Chip
                           variant="dot"
                           key={index}
-                          onClick={() =>
-                            setKeyword(label === keyword ? "" : label)
-                          }
+                          onClick={() => {
+                            setKeyword(label === keyword ? "" : label);
+                            setSortBy("");
+                          }}
                           className={`cursor-pointer hover:scale-105 ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"} ${label === keyword ? `${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}` : ""}`}
                         >
                           {label}

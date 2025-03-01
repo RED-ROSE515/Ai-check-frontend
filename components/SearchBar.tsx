@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { Autocomplete, AutocompleteItem } from "@heroui/react";
-import { ImSearch } from "react-icons/im";
+import { useRouter } from "next/navigation";
 import api from "@/utils/api";
 import { useSearch } from "@/contexts/SearchContext";
+import { usePagination } from "@/contexts/PaginationContext";
+import { useDebouncedCallback } from "use-debounce";
 
 const SearchIcon = ({
   size = 24,
@@ -63,35 +65,41 @@ const hashtags = [
   },
 ];
 const SearchBar = () => {
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState<any>();
   const [data, setData] = useState<any[]>(hashtags);
   const [cache, setCache] = useState<{ [key: string]: any[] }>({});
   const { setKeyword, keyword } = useSearch();
+  const { setPage } = usePagination();
+  const router = useRouter();
 
-  // API call with caching
-  const handleAPICall = async () => {
-    if (cache[searchValue]) {
-      setData(cache[searchValue]);
+  const handleInputChange = useDebouncedCallback(async (newValue: string) => {
+    // Don't make API call if the search value is empty
+    if (!newValue.trim()) {
+      setData(hashtags);
       return;
     }
-    try {
-      const response = await api.get(`papers/keywords?q=${searchValue}`);
 
+    // Check if we have cached results (including failed attempts)
+    // if (cache[newValue] !== undefined) {
+    //   setData(cache[newValue] || []); // Use empty array if cache value is null
+    //   return;
+    // }
+
+    try {
+      const response = await api.get(`papers/keywords?q=${newValue}`);
       const results = response.data;
       setData(results.hashtags);
-      setCache((prev) => ({ ...prev, [searchValue]: results.hashtags }));
+      // setCache((prev) => ({ ...prev, [newValue]: results.hashtags }));
     } catch (error) {
       console.error(error);
+      // Cache the failed attempt with null to prevent repeated calls
+      setData([]); // Set empty array for failed requests
     }
-  };
+  }, 500);
 
-  // Debounce API call
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      handleAPICall();
-    }, 300);
-    return () => clearTimeout(timeoutId);
-  }, [searchValue]);
+    handleInputChange("");
+  }, []);
 
   return (
     <div>
@@ -102,17 +110,26 @@ const SearchBar = () => {
           listboxWrapper: "max-h-[320px]",
           selectorButton: "text-default-500",
         }}
-        defaultItems={data}
+        items={data}
         inputProps={{
           classNames: {
             input: "ml-1",
             inputWrapper: "h-[48px]",
           },
         }}
-        onInputChange={(value) => setSearchValue(value)}
+        selectedKey={searchValue}
+        onInputChange={(val: string) => {
+          handleInputChange(val);
+        }}
         onSelectionChange={(id) => {
-          const hashtag = data.filter((hash) => hash.id === id)[0];
-          setKeyword(hashtag?.hashtag_name);
+          const hashtag = data.filter((hash) => hash.id === id)?.[0];
+          setSearchValue(id);
+
+          if (hashtag) {
+            setKeyword(hashtag?.hashtag_name);
+            setPage(1);
+            router.push("/");
+          }
         }}
         listboxProps={{
           hideSelectedIcon: true,
@@ -151,28 +168,6 @@ const SearchBar = () => {
         {(item) => (
           <AutocompleteItem key={item.id} textValue={item.hashtag_name}>
             <div className="flex justify-between items-center">
-              {/* <div className="flex gap-2 items-center">
-                  <Avatar
-                    alt={item.name}
-                    className="flex-shrink-0"
-                    size="sm"
-                    src={item.avatar}
-                  />
-                  <div className="flex flex-col">
-                    <span className="text-small">{item.name}</span>
-                    <span className="text-tiny text-default-400">
-                      {item.team}
-                    </span>
-                  </div>
-                </div>
-                <Button
-                  className="border-small mr-0.5 font-medium shadow-small"
-                  radius="full"
-                  size="sm"
-                  variant="bordered"
-                >
-                  Add
-                </Button> */}
               <span className="text-small">{item.hashtag_name}</span>
             </div>
           </AutocompleteItem>

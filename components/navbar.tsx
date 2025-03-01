@@ -34,8 +34,10 @@ import { CircularProgressBar } from "./CircularProgressBar";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { ImProfile } from "react-icons/im";
 import { MdLogin, MdLogout, MdCheck, MdInfo } from "react-icons/md";
+import { LuSpeech } from "react-icons/lu";
 import { MdOutlineAnalytics } from "react-icons/md";
 import SearchBar from "./SearchBar";
+import { useSearch } from "@/contexts/SearchContext";
 
 export const ListboxWrapper = ({ children }: any) => (
   <div className="w-full max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100">
@@ -46,6 +48,7 @@ export const ListboxWrapper = ({ children }: any) => (
 export const Navbar = () => {
   const { theme } = useTheme();
   const [isMounted, setIsMounted] = useState(false);
+  const { setSortBy, setKeyword } = useSearch();
   const { isMobile } = useDeviceCheck();
   const [isOpen, setOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
@@ -75,7 +78,7 @@ export const Navbar = () => {
             <ListboxSection title="User Actions">
               <ListboxItem
                 key="Research Audit"
-                description="Check your own paper"
+                className="py-3"
                 startContent={<MdCheck className={iconClasses} />}
                 onPress={() => {
                   setOpen(false);
@@ -85,8 +88,19 @@ export const Navbar = () => {
                 Research Audit
               </ListboxItem>
               <ListboxItem
+                key="about"
+                className="py-3"
+                startContent={<LuSpeech className={iconClasses} />}
+                onPress={() => {
+                  setOpen(false);
+                  navigateTo("/speeches");
+                }}
+              >
+                Speech Book
+              </ListboxItem>
+              <ListboxItem
                 key="profile"
-                description="View Profile Page"
+                className="py-3"
                 startContent={<ImProfile className={iconClasses} />}
                 onPress={() =>
                   window.open(
@@ -98,7 +112,7 @@ export const Navbar = () => {
               </ListboxItem>
               <ListboxItem
                 key="about"
-                description="About the site"
+                className="py-3"
                 startContent={<MdInfo className={iconClasses} />}
                 onPress={() => {
                   setOpen(false);
@@ -109,8 +123,7 @@ export const Navbar = () => {
               </ListboxItem>
               <ListboxItem
                 key="logout"
-                description="Log out"
-                className="text-danger"
+                className="text-danger py-3"
                 color="danger"
                 startContent={<MdLogout className={iconClasses} />}
                 onPress={() => {
@@ -125,7 +138,7 @@ export const Navbar = () => {
             <ListboxSection title="Guest Actions">
               <ListboxItem
                 key="Research Audit"
-                description="Check your own paper"
+                className="py-3"
                 startContent={<MdCheck className={iconClasses} />}
                 onPress={() => {
                   setOpen(false);
@@ -136,7 +149,7 @@ export const Navbar = () => {
               </ListboxItem>
               <ListboxItem
                 key="about"
-                description="About the site"
+                className="py-3"
                 startContent={<MdInfo className={iconClasses} />}
                 onPress={() => {
                   setOpen(false);
@@ -147,7 +160,7 @@ export const Navbar = () => {
               </ListboxItem>
               <ListboxItem
                 key="login"
-                description="Log in"
+                className="py-3"
                 startContent={<MdLogin className={iconClasses} />}
                 onPress={() => {
                   setOpen(false);
@@ -176,6 +189,10 @@ export const Navbar = () => {
               <Link href="/">
                 <Image
                   alt="Logo"
+                  onClick={() => {
+                    setSortBy("");
+                    setKeyword("");
+                  }}
                   src={theme === "dark" ? LogoLight : LogoDark}
                   className="w-auto" // Responsive image size
                 />
