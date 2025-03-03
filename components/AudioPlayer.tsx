@@ -6,6 +6,7 @@ import { useWavesurfer } from "@wavesurfer/react";
 import { useSpeech } from "@/contexts/SpeechContext";
 import { useTheme } from "next-themes";
 import api from "@/utils/api";
+import ShareButtons from "./ShareButtons";
 
 export const HeartIcon = ({
   size = 24,
@@ -187,14 +188,15 @@ export const ShuffleIcon = ({ size = 24, width, height, ...props }: any) => {
 };
 
 export default function AudioPlayer({ id }: any) {
-  const [liked, setLiked] = React.useState(false);
-
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [title, setTitle] = useState("");
   const [time, setTime] = useState("0:00");
   const [duration, setDuration] = useState("0:00");
   const { theme } = useTheme();
   const { setSpeechUrl, setShowSpeech, speechUrl } = useSpeech();
+
+  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   // Ensure that the container is correctly passed as a RefObject
   const { wavesurfer } = useWavesurfer({
     container: containerRef, // Pass the ref object itself, not its current property
@@ -240,19 +242,21 @@ export default function AudioPlayer({ id }: any) {
   }, [wavesurfer]);
 
   const fetchSpeech = async () => {
-    const response = await api.get(`user/speech?speech_id=${id}`);
+    const response = await api.get(`speech?speech_id=${id}`);
+    setTitle(response.data.post_title);
     setSpeechUrl(response.data.audio_url);
   };
+
   useEffect(() => {
     fetchSpeech();
   }, []);
 
   return (
     <div className="w-full flex flex-row justify-center h-full">
-      <div className="w-full md:w-2/3 items-center flex flex-row justify-center my-6">
+      <div className="w-full md:w-2/3 items-center flex flex-row justify-center">
         <Card
           isBlurred
-          className={`${theme === "dark" ? "bg-[#050506]" : "bg-[#F6F6F6]"} w-full h-full`}
+          className={`${theme === "dark" ? "bg-[#050506]" : "bg-[#F6F6F6]"} w-full h-full p-3`}
           shadow="lg"
         >
           <CardBody>
@@ -262,32 +266,26 @@ export default function AudioPlayer({ id }: any) {
                 loop
                 muted
                 src={`${theme === "dark" ? "/audio-bg2-dark.mp4" : "/audio-bg2-white.mp4"}`}
-                className="w-[35%] -z-10 opacity-50"
+                className="w-full md:w-[33%] -z-10 opacity-50"
               />
             </div>
             <div className="w-full h-full flex flex-col-reverse justity-end">
               <div
                 className={`flex flex-col w-full justify-end rounded-xl shadow-xl p-4 border-1 ${theme === "dark" ? "bg-black" : ""}`}
               >
-                <div className="flex justify-between items-start">
-                  <div className="flex flex-col gap-0">
+                <div className="flex flex-row justify-between items-start w-full">
+                  <div className="flex flex-col gap-0 w-[90%]">
                     <p className="text-small text-foreground/80">12 Tracks</p>
-                    <h1 className="text-large font-medium mt-2">
-                      Frontend Radio
+                    <h1 className="text-large font-medium mt-2 truncate">
+                      {title}
                     </h1>
                   </div>
-                  <Button
-                    isIconOnly
-                    className="text-default-900/60 data-[hover]:bg-foreground/10 -translate-y-2 translate-x-2"
-                    radius="full"
-                    variant="light"
-                    onPress={() => setLiked((v) => !v)}
-                  >
-                    <HeartIcon
-                      className={liked ? "[&>path]:stroke-transparent" : ""}
-                      fill={liked ? "currentColor" : "none"}
-                    />
-                  </Button>
+                  <ShareButtons
+                    className="w-full"
+                    url={DOMAIN + "/speeches/" + id}
+                    title={title}
+                    // summary={result.summary.child}
+                  />
                 </div>
 
                 <div className="flex flex-col mt-3 gap-1 w-full">

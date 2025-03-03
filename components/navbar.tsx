@@ -53,6 +53,7 @@ export const Navbar = () => {
   const [isOpen, setOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const [isPending, startTransition] = useTransition();
+  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const router = useRouter();
   useEffect(() => {
     setIsMounted(true);
@@ -163,11 +164,12 @@ export const Navbar = () => {
                 className="py-3"
                 startContent={<MdLogin className={iconClasses} />}
                 onPress={() => {
-                  setOpen(false);
-                  navigateTo("/signin");
+                  navigateTo(
+                    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login_with_nobleblocks?app_name=NerdBunny&redirect_url=${DOMAIN + "/login_with_nobleblocks"}`
+                  );
                 }}
               >
-                Log in
+                Log in with Nobleblocks
               </ListboxItem>
             </ListboxSection>
           )}
@@ -201,13 +203,10 @@ export const Navbar = () => {
           </NavbarItem>
         </NavbarContent>
 
-        <NavbarContent className="w-full basis-full hidden md:flex">
-          <NavbarItem className="flex w-full items-center gap-2 justify-center">
+        <NavbarContent className="flex w-full basis-full" justify="end">
+          <NavbarItem className="w-full items-center gap-2 hidden md:flex">
             <SearchBar />
           </NavbarItem>
-        </NavbarContent>
-
-        <NavbarContent className="flex w-full basis-full" justify="end">
           <NavbarItem className="flex items-center gap-2 md:gap-4">
             {/* <CircularProgressBar className="ml-2 md:ml-4 h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" /> */}
             <Button

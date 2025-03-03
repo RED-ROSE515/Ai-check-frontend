@@ -124,13 +124,13 @@ const SummaryWrapper = ({
       audio_url: "",
       image: phDImage,
     },
-    // {
-    //   title: "Error Summary",
-    //   content: summary.summary?.error,
-    //   value: "ErrorSummary",
-    //   audio_url: "",
-    //   image: phDImage,
-    // },
+    {
+      title: "Error Summary",
+      content: summary.summary?.error,
+      value: "ErrorSummary",
+      audio_url: "",
+      image: phDImage,
+    },
   ];
   const generateSpeech = async () => {
     try {

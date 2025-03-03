@@ -71,11 +71,15 @@ const SearchBar = () => {
   const { setKeyword, keyword } = useSearch();
   const { setPage } = usePagination();
   const router = useRouter();
-
+  const getHashtags = async (newValue: string) => {
+    const response = await api.get(`papers/keywords?q=${newValue}`);
+    const results = response.data;
+    setData(results.hashtags);
+  };
   const handleInputChange = useDebouncedCallback(async (newValue: string) => {
     // Don't make API call if the search value is empty
     if (!newValue.trim()) {
-      setData(hashtags);
+      getHashtags("");
       return;
     }
 
@@ -86,9 +90,7 @@ const SearchBar = () => {
     // }
 
     try {
-      const response = await api.get(`papers/keywords?q=${newValue}`);
-      const results = response.data;
-      setData(results.hashtags);
+      getHashtags(newValue);
       // setCache((prev) => ({ ...prev, [newValue]: results.hashtags }));
     } catch (error) {
       console.error(error);

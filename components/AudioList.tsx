@@ -21,7 +21,7 @@ export const columns = [
   { name: "", uid: "speech" },
   { name: "PAPER", uid: "paper" },
   { name: "SPEECH TYPE", uid: "speech_type" },
-  { name: "VOICE TYPE", uid: "voice_type" },
+  { name: "PERSON", uid: "voice_type" },
   { name: "COST", uid: "cost" },
   { name: "STATUS", uid: "status" },
   { name: "DATE", uid: "created_at" },

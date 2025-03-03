@@ -11,6 +11,17 @@ import {
   Video,
   X,
 } from "lucide-react";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Listbox,
+  ListboxItem,
+  Button,
+  useDisclosure,
+} from "@heroui/react";
 import { useRef, useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import _ from "lodash";
@@ -68,6 +79,12 @@ export interface ImageUploadProps {
   onTriggerRef: React.MutableRefObject<(() => void) | null>;
 }
 
+export const ListboxWrapper = ({ children }: any) => (
+  <div className="w-full border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100">
+    {children}
+  </div>
+);
+
 const FileUpload = ({
   getPdfList,
   AnalyzePaper,
@@ -76,6 +93,8 @@ const FileUpload = ({
   const [currentFile, setCurrentFile] = useState<FileUploadProgress | null>(
     null
   );
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [visibility, setVisibility] = useState(new Set(["everyone"]));
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const { toast } = useToast();
   const { theme } = useTheme();
@@ -149,7 +168,7 @@ const FileUpload = ({
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
-
+    onOpen();
     const file = acceptedFiles[0];
     const cancelSource = axios.CancelToken.source();
 
@@ -202,7 +221,8 @@ const FileUpload = ({
         duration: 5000,
       });
       await sleep(3000);
-      AnalyzePaper(response.data.attached_link);
+      onOpen();
+      // AnalyzePaper(response.data.attached_link);
       // getPdfList();
     } catch (error) {
       if (axios.isCancel(error)) {
@@ -240,6 +260,51 @@ const FileUpload = ({
 
   return (
     <div>
+      <Modal
+        isDismissable={false}
+        isKeyboardDismissDisabled={true}
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Research Audit Options
+              </ModalHeader>
+              <ModalBody>
+                <ListboxWrapper>
+                  <Listbox
+                    disallowEmptySelection
+                    aria-label="Single selection example"
+                    selectedKeys={visibility}
+                    selectionMode="single"
+                    variant="flat"
+                    onSelectionChange={(keys) =>
+                      setVisibility(new Set([...keys] as string[]))
+                    }
+                  >
+                    <ListboxItem key="everyone">Everyone</ListboxItem>
+                    <ListboxItem key="followers">My Followers</ListboxItem>
+                    <ListboxItem key="specific_users">
+                      Specific Users
+                    </ListboxItem>
+                    <ListboxItem key="nobody">Nobody</ListboxItem>
+                  </Listbox>
+                </ListboxWrapper>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={onClose}>
+                  Create
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <div>
         <label
           {...getRootProps()}

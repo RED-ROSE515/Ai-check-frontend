@@ -103,11 +103,12 @@ const ShareButtons = ({ url, title, summary }: any) => {
               </WhatsappShareButton>
             </div>
             <span className="w-full">Or share with link</span>
-            <Snippet variant="shadow" hideSymbol>
-              {_.truncate(url, {
-                length: 45,
-                omission: "...",
-              })}
+            <Snippet
+              variant="shadow"
+              hideSymbol
+              classNames={{ base: "w-full", pre: "truncate max-w-full" }}
+            >
+              <span className="w-full">{url}</span>
             </Snippet>
           </ModalBody>
           <ModalFooter>

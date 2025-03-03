@@ -1,10 +1,5 @@
 "use client";
 import React, { useState, useEffect, use } from "react";
-import { Card, CardBody, Image, Button, Slider } from "@heroui/react";
-import { FaPlay, FaPause, FaStop } from "react-icons/fa";
-import { useWavesurfer } from "@wavesurfer/react";
-import { useSpeech } from "@/contexts/SpeechContext";
-import { useTheme } from "next-themes";
 import AudioPlayer from "@/components/AudioPlayer";
 
 export default function App({ params }: any) {
