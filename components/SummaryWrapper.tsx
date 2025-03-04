@@ -94,7 +94,8 @@ const SummaryWrapper = ({
   const { keyword, setKeyword, setSortBy } = useSearch();
   const [expand, setExpand] = useState(false);
   const [currentSummary, setCurrentSummary] = useState<SummaryType>();
-  const { setSpeechUrl, setShowSpeech } = useSpeech();
+  const { setSpeechUrl, setShowSpeech, setSpeechId, setSpeechTitle } =
+    useSpeech();
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
   const [voice, setVoice] = useState("alloy");
   const [loading, setLoading] = useState(false);
@@ -135,7 +136,6 @@ const SummaryWrapper = ({
   const generateSpeech = async () => {
     try {
       setLoading(true);
-      console.log(link);
       const paperId = link.split("results/")[1];
       const response = await api.post(`post/generate_voice`, {
         post_id: paperId,
@@ -156,6 +156,8 @@ const SummaryWrapper = ({
         ),
       });
       setSpeechUrl(response.data.audio_url);
+      setSpeechId(response.data.id);
+      setSpeechTitle(summary.metadata.title);
       setShowSpeech(true);
     } catch (error) {
       toast({
@@ -562,11 +564,47 @@ const SummaryWrapper = ({
                   </Select>
                   <div className="mt-4">
                     <SpeechPlayer
+                      isSpeech={false}
                       audio_url={`https://cdn.openai.com/API/docs/audio/${voice}.wav`}
                     />
                   </div>
                   <div className="mt-4">
-                    <span>{currentSummary?.content}</span>
+                    {currentSummary?.value === "ErrorSummary" ? (
+                      <ReactMarkdown
+                        components={{
+                          h3: ({ children }) => (
+                            <h3 className="mb-2 mt-6 text-xl font-bold">
+                              {children}
+                            </h3>
+                          ),
+                          h4: ({ children }) => (
+                            <h4 className="mb-2 mt-4 text-lg font-semibold">
+                              {children}
+                            </h4>
+                          ),
+                          p: ({ children }) => (
+                            <p className="mb-4">{children}</p>
+                          ),
+                          ul: ({ children }) => (
+                            <ul className="mb-4 ml-6 list-disc">{children}</ul>
+                          ),
+                          li: ({ children }) => (
+                            <li className="mb-2">{children}</li>
+                          ),
+                          strong: ({ children }) => (
+                            <strong className="font-bold">{children}</strong>
+                          ),
+                          em: ({ children }) => (
+                            <em className="italic">{children}</em>
+                          ),
+                          hr: () => <hr className="my-6 border-gray-200" />,
+                        }}
+                      >
+                        {currentSummary?.content}
+                      </ReactMarkdown>
+                    ) : (
+                      <span>{currentSummary?.content}</span>
+                    )}
                   </div>
                 </div>
               </DrawerBody>
@@ -579,9 +617,7 @@ const SummaryWrapper = ({
                   onPress={() =>
                     isAuthenticated
                       ? generateSpeech()
-                      : showSignInModal(
-                          "You need to Sign in first to leave a comment."
-                        )
+                      : showSignInModal("You need to sign in to continue.")
                   }
                   isLoading={loading}
                 >

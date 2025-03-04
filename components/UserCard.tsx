@@ -220,7 +220,7 @@ const UserCard = ({
                       <Button
                         startContent={<MdOutlineContentCopy size={24} />}
                         onPress={() => {
-                          navigator.clipboard.writeText(DOMAIN + link);
+                          navigator.clipboard.writeText(link);
                           toast({
                             title: "Success",
                             description: "Successfully Copied the link!",

@@ -17,7 +17,7 @@ export const usePostActions = ({
   const handleReport = async (postId: string, status: boolean) => {
     try {
       if (!isAuthenticated) {
-        showSignInModal?.("You need to Sign in first to report this post.");
+        showSignInModal?.("You need to sign in to continue.");
         return false;
       }
       setIsLoading(true);

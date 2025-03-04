@@ -43,7 +43,13 @@ import {
   TelegramShareButton,
   WhatsappShareButton,
 } from "react-share";
-const ShareButtons = ({ url, title, summary }: any) => {
+const ShareButtons = ({
+  url,
+  title,
+  summary,
+  useIcon = true,
+  isSpeech = false,
+}: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -51,10 +57,16 @@ const ShareButtons = ({ url, title, summary }: any) => {
       <Button
         isIconOnly
         className="capitalize"
-        variant="ghost"
+        variant={useIcon ? (isSpeech ? "solid" : "ghost") : "light"}
         onPress={onOpen}
+        radius="sm"
+        style={
+          isSpeech
+            ? { width: "50px", height: "50px", marginLeft: "0.5rem " }
+            : {}
+        }
       >
-        <FiShare size={24} />
+        {useIcon ? <FiShare size={24} /> : "Share"}
       </Button>
       <Modal backdrop="blur" isOpen={isOpen} onClose={onClose} radius="lg">
         <ModalContent>

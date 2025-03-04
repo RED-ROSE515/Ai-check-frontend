@@ -229,7 +229,7 @@ export default function Home() {
                         isAuthenticated
                           ? like(result.id, result.liked_me)
                           : showSignInModal(
-                              "You need to Sign in first to like this post."
+                              "You need to sign in to continue."
                             )
                       }
                     >
@@ -246,7 +246,7 @@ export default function Home() {
                           onOpen();
                         } else {
                           showSignInModal(
-                            "You need to Sign in first to leave a comment."
+                            "You need to sign in to continue."
                           );
                         }
                       }}

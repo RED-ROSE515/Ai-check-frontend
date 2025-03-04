@@ -45,7 +45,7 @@ export const PostCommentBox = ({
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAuthenticated) {
-      showSignInModal("You need to Sign in first to leave a comment.");
+      showSignInModal("You need to sign in to continue.");
       return;
     }
     if (!newComment.trim()) return;
@@ -100,7 +100,7 @@ const Comments = ({
   const like = async (comment_id: string, liked_me: boolean) => {
     try {
       if (!isAuthenticated) {
-        showSignInModal("You need to Sign in first to leave a comment.");
+        showSignInModal("You need to sign in to continue.");
         return;
       }
       await api.post(`/post/${liked_me ? "unlike" : "like"}/comment`, {
