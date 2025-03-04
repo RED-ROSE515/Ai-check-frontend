@@ -227,7 +227,7 @@ const UserCard = ({
                           });
                         }}
                       >
-                        Copy Link
+                        Share
                       </Button>
                       <Button
                         startContent={<MdReport size={24} />}

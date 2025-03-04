@@ -211,7 +211,7 @@ export const Navbar = () => {
                   >
                     <DropdownItem
                       key="Research Audit"
-                      shortcut="⌘C"
+                      //shortcut="⌘C"
                       className="py-3"
                       startContent={<MdCheck className={iconClasses} />}
                       onPress={() => {
@@ -223,7 +223,7 @@ export const Navbar = () => {
                     </DropdownItem>
                     <DropdownItem
                       key="speeches"
-                      shortcut="⌘S"
+                      //shortcut="⌘S"
                       className="py-3"
                       startContent={<LuSpeech className={iconClasses} />}
                       onPress={() => {
@@ -235,7 +235,7 @@ export const Navbar = () => {
                     </DropdownItem>
                     <DropdownItem
                       key="profile"
-                      shortcut="⌘P"
+                      //shortcut="⌘P"
                       className="py-3"
                       startContent={<ImProfile className={iconClasses} />}
                       onPress={() =>
@@ -248,7 +248,7 @@ export const Navbar = () => {
                     </DropdownItem>
                     <DropdownItem
                       key="about"
-                      shortcut="⌘A"
+                      //shortcut="⌘A"
                       className="py-3"
                       startContent={<MdInfo className={iconClasses} />}
                       onPress={() => {
@@ -260,7 +260,7 @@ export const Navbar = () => {
                     </DropdownItem>
                     <DropdownItem
                       key="logout"
-                      shortcut="⌘Q"
+                      //shortcut="⌘Q"
                       className="text-danger py-3"
                       color="danger"
                       startContent={<MdLogout className={iconClasses} />}
@@ -276,7 +276,7 @@ export const Navbar = () => {
                   <DropdownSection title="Guest Actions">
                     <DropdownItem
                       key="Research Audit"
-                      shortcut="⌘C"
+                      //shortcut="⌘C"
                       className="py-3"
                       startContent={<MdCheck className={iconClasses} />}
                       onPress={() => {
@@ -288,7 +288,7 @@ export const Navbar = () => {
                     </DropdownItem>
                     <DropdownItem
                       key="about"
-                      shortcut="⌘A"
+                      //shortcut="⌘A"
                       className="py-3"
                       startContent={<MdInfo className={iconClasses} />}
                       onPress={() => {
@@ -300,7 +300,7 @@ export const Navbar = () => {
                     </DropdownItem>
                     <DropdownItem
                       key="login"
-                      shortcut="⌘L"
+                      //shortcut="⌘L"
                       className="py-3"
                       startContent={<MdLogin className={iconClasses} />}
                       onPress={() => {
