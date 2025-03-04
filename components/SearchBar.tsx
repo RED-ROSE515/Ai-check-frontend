@@ -79,7 +79,7 @@ const SearchBar = () => {
   const handleInputChange = useDebouncedCallback(async (newValue: string) => {
     // Don't make API call if the search value is empty
     if (!newValue.trim()) {
-      getHashtags("");
+      // getHashtags("");
       return;
     }
 
@@ -101,6 +101,7 @@ const SearchBar = () => {
 
   useEffect(() => {
     handleInputChange("");
+    getHashtags("");
   }, []);
 
   return (

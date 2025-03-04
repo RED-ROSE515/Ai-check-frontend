@@ -1,7 +1,6 @@
 "use client";
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { Card, CardBody, Image, Button, Slider } from "@heroui/react";
-import { FaPlay, FaPause, FaStop } from "react-icons/fa";
+import { Card, CardBody, Button } from "@heroui/react";
 import { useWavesurfer } from "@wavesurfer/react";
 import { useSpeech } from "@/contexts/SpeechContext";
 import { useTheme } from "next-themes";
@@ -275,7 +274,7 @@ export default function AudioPlayer({ id }: any) {
               >
                 <div className="flex flex-row justify-between items-start w-full">
                   <div className="flex flex-col gap-0 w-[90%]">
-                    <p className="text-small text-foreground/80">12 Tracks</p>
+                    <p className="text-small text-foreground/80">Narrations</p>
                     <h1 className="text-large font-medium mt-2 truncate">
                       {title}
                     </h1>

@@ -23,6 +23,11 @@ import {
   NavbarContent,
   NavbarBrand,
   NavbarItem,
+  DropdownMenu,
+  Dropdown,
+  DropdownTrigger,
+  DropdownItem,
+  DropdownSection,
 } from "@heroui/react";
 import Image from "next/image";
 import LogoDark from "../public/LogoPurple.png";
@@ -38,6 +43,7 @@ import { LuSpeech } from "react-icons/lu";
 import { MdOutlineAnalytics } from "react-icons/md";
 import SearchBar from "./SearchBar";
 import { useSearch } from "@/contexts/SearchContext";
+import { usePagination } from "@/contexts/PaginationContext";
 
 export const ListboxWrapper = ({ children }: any) => (
   <div className="w-full max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100">
@@ -47,6 +53,7 @@ export const ListboxWrapper = ({ children }: any) => (
 
 export const Navbar = () => {
   const { theme } = useTheme();
+  const { setPage } = usePagination();
   const [isMounted, setIsMounted] = useState(false);
   const { setSortBy, setKeyword } = useSearch();
   const { isMobile } = useDeviceCheck();
@@ -65,118 +72,8 @@ export const Navbar = () => {
   const navigateTo = (link: string) => {
     window.location.href = link;
   };
-  const UserActions = () => {
-    const iconClasses =
-      "text-xl text-default-500 pointer-events-none flex-shrink-0";
-    return (
-      <ListboxWrapper>
-        <Listbox
-          aria-label="Listbox menu with sections"
-          variant="flat"
-          // disabledKeys={isAuthenticated ? [""] : ["profile", "logout"]}
-        >
-          {isAuthenticated ? (
-            <ListboxSection title="User Actions">
-              <ListboxItem
-                key="Research Audit"
-                className="py-3"
-                startContent={<MdCheck className={iconClasses} />}
-                onPress={() => {
-                  setOpen(false);
-                  navigateTo("/check");
-                }}
-              >
-                Research Audit
-              </ListboxItem>
-              <ListboxItem
-                key="about"
-                className="py-3"
-                startContent={<LuSpeech className={iconClasses} />}
-                onPress={() => {
-                  setOpen(false);
-                  navigateTo("/speeches");
-                }}
-              >
-                Speech Book
-              </ListboxItem>
-              <ListboxItem
-                key="profile"
-                className="py-3"
-                startContent={<ImProfile className={iconClasses} />}
-                onPress={() =>
-                  window.open(
-                    `https://uy7p3-zyaaa-aaaap-qpmoq-cai.icp0.io/@${user?.detail.user_name}`
-                  )
-                }
-              >
-                View Profile
-              </ListboxItem>
-              <ListboxItem
-                key="about"
-                className="py-3"
-                startContent={<MdInfo className={iconClasses} />}
-                onPress={() => {
-                  setOpen(false);
-                  navigateTo("/about");
-                }}
-              >
-                About
-              </ListboxItem>
-              <ListboxItem
-                key="logout"
-                className="text-danger py-3"
-                color="danger"
-                startContent={<MdLogout className={iconClasses} />}
-                onPress={() => {
-                  logout();
-                  navigateTo("");
-                }}
-              >
-                Log out
-              </ListboxItem>
-            </ListboxSection>
-          ) : (
-            <ListboxSection title="Guest Actions">
-              <ListboxItem
-                key="Research Audit"
-                className="py-3"
-                startContent={<MdCheck className={iconClasses} />}
-                onPress={() => {
-                  setOpen(false);
-                  navigateTo("/check");
-                }}
-              >
-                Research Audit
-              </ListboxItem>
-              <ListboxItem
-                key="about"
-                className="py-3"
-                startContent={<MdInfo className={iconClasses} />}
-                onPress={() => {
-                  setOpen(false);
-                  navigateTo("/about");
-                }}
-              >
-                About
-              </ListboxItem>
-              <ListboxItem
-                key="login"
-                className="py-3"
-                startContent={<MdLogin className={iconClasses} />}
-                onPress={() => {
-                  navigateTo(
-                    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login_with_nobleblocks?app_name=NerdBunny&redirect_url=${DOMAIN + "/login_with_nobleblocks"}`
-                  );
-                }}
-              >
-                Log in with Nobleblocks
-              </ListboxItem>
-            </ListboxSection>
-          )}
-        </Listbox>
-      </ListboxWrapper>
-    );
-  };
+  const iconClasses =
+    "text-xl text-default-500 pointer-events-none flex-shrink-0";
   return (
     <div className="flex items-center justify-center flex-row w-full">
       <HeroUINavbar
@@ -194,6 +91,7 @@ export const Navbar = () => {
                   onClick={() => {
                     setSortBy("");
                     setKeyword("");
+                    setPage(1);
                   }}
                   src={theme === "dark" ? LogoLight : LogoDark}
                   className="w-auto" // Responsive image size
@@ -223,13 +121,14 @@ export const Navbar = () => {
             </Button>
             <ThemeSwitch />
 
-            <Popover
-              showArrow
-              placement="bottom"
-              isOpen={isOpen}
-              onClose={() => setOpen(false)}
+            <Dropdown
+              placement="bottom-end"
+              classNames={{
+                base: "before:bg-default-200", // change arrow background
+                content: "py-1 px-1 border border-default-200 ",
+              }}
             >
-              <PopoverTrigger>
+              <DropdownTrigger>
                 <User
                   avatarProps={{
                     src: isAuthenticated
@@ -256,13 +155,14 @@ export const Navbar = () => {
                   }
                   name={isAuthenticated ? user?.detail.first_name : "Guest"}
                 />
-              </PopoverTrigger>
-              <PopoverContent className="p-1">
-                <Card
-                  className="min-w-[300px] border-none bg-transparent"
-                  shadow="none"
-                >
-                  <CardHeader className="justify-between">
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label="Dropdown menu with description"
+                variant="faded"
+                className="w-[300px]"
+              >
+                <DropdownSection title="">
+                  <DropdownItem key="avatar">
                     <div className="flex gap-3">
                       <HeroImage
                         isBlurred
@@ -302,26 +202,119 @@ export const Navbar = () => {
                         </Link>
                       </div>
                     </div>
-                  </CardHeader>
-                  <CardBody className="px-3 py-0">
-                    {user?.detail.about_me && (
-                      <p className="text-small pl-px text-default-500">
-                        {_.truncate(user?.detail.about_me, {
-                          length: 100,
-                          omission: "...",
-                        })}
-                        <span aria-label="confetti" role="img">
-                          🎉
-                        </span>
-                      </p>
-                    )}
-                  </CardBody>
-                  <CardFooter className="gap-3">
-                    <UserActions />
-                  </CardFooter>
-                </Card>
-              </PopoverContent>
-            </Popover>
+                  </DropdownItem>
+                </DropdownSection>
+                {isAuthenticated ? (
+                  <DropdownSection
+                    title="User Actions"
+                    className="border-2 rounded-md border-default-200 p-2 w-full"
+                  >
+                    <DropdownItem
+                      key="Research Audit"
+                      shortcut="⌘C"
+                      className="py-3"
+                      startContent={<MdCheck className={iconClasses} />}
+                      onPress={() => {
+                        setOpen(false);
+                        navigateTo("/check");
+                      }}
+                    >
+                      Research Audit
+                    </DropdownItem>
+                    <DropdownItem
+                      key="speeches"
+                      shortcut="⌘S"
+                      className="py-3"
+                      startContent={<LuSpeech className={iconClasses} />}
+                      onPress={() => {
+                        setOpen(false);
+                        navigateTo("/speeches");
+                      }}
+                    >
+                      Speech Book
+                    </DropdownItem>
+                    <DropdownItem
+                      key="profile"
+                      shortcut="⌘P"
+                      className="py-3"
+                      startContent={<ImProfile className={iconClasses} />}
+                      onPress={() =>
+                        window.open(
+                          `https://uy7p3-zyaaa-aaaap-qpmoq-cai.icp0.io/@${user?.detail.user_name}`
+                        )
+                      }
+                    >
+                      View Profile
+                    </DropdownItem>
+                    <DropdownItem
+                      key="about"
+                      shortcut="⌘A"
+                      className="py-3"
+                      startContent={<MdInfo className={iconClasses} />}
+                      onPress={() => {
+                        setOpen(false);
+                        navigateTo("/about");
+                      }}
+                    >
+                      About
+                    </DropdownItem>
+                    <DropdownItem
+                      key="logout"
+                      shortcut="⌘Q"
+                      className="text-danger py-3"
+                      color="danger"
+                      startContent={<MdLogout className={iconClasses} />}
+                      onPress={() => {
+                        logout();
+                        navigateTo("");
+                      }}
+                    >
+                      Log out
+                    </DropdownItem>
+                  </DropdownSection>
+                ) : (
+                  <DropdownSection title="Guest Actions">
+                    <DropdownItem
+                      key="Research Audit"
+                      shortcut="⌘C"
+                      className="py-3"
+                      startContent={<MdCheck className={iconClasses} />}
+                      onPress={() => {
+                        setOpen(false);
+                        navigateTo("/check");
+                      }}
+                    >
+                      Research Audit
+                    </DropdownItem>
+                    <DropdownItem
+                      key="about"
+                      shortcut="⌘A"
+                      className="py-3"
+                      startContent={<MdInfo className={iconClasses} />}
+                      onPress={() => {
+                        setOpen(false);
+                        navigateTo("/about");
+                      }}
+                    >
+                      About
+                    </DropdownItem>
+                    <DropdownItem
+                      key="login"
+                      shortcut="⌘L"
+                      className="py-3"
+                      startContent={<MdLogin className={iconClasses} />}
+                      onPress={() => {
+                        navigateTo(
+                          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login_with_nobleblocks?app_name=NerdBunny&redirect_url=${DOMAIN + "/login_with_nobleblocks"}`
+                        );
+                      }}
+                    >
+                      Log in with Nobleblocks
+                    </DropdownItem>
+                  </DropdownSection>
+                )}
+              </DropdownMenu>
+            </Dropdown>
           </NavbarItem>
         </NavbarContent>
       </HeroUINavbar>
