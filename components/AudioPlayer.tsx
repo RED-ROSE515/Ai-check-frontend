@@ -1,10 +1,11 @@
 "use client";
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Card, CardBody, Image, Button, Slider } from "@heroui/react";
-import { FaPlay, FaPause, FaStop } from "react-icons/fa";
+import { TiArrowBack } from "react-icons/ti";
 import { useWavesurfer } from "@wavesurfer/react";
 import { useSpeech } from "@/contexts/SpeechContext";
 import { useTheme } from "next-themes";
+import { useTransition } from "react";
 import api from "@/utils/api";
 import ShareButtons from "./ShareButtons";
 
@@ -194,6 +195,7 @@ export default function AudioPlayer({ id }: any) {
   const [time, setTime] = useState("0:00");
   const [duration, setDuration] = useState("0:00");
   const { theme } = useTheme();
+  const [isPending, startTransition] = useTransition();
   const { setSpeechUrl, setShowSpeech, speechUrl } = useSpeech();
 
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
@@ -260,6 +262,19 @@ export default function AudioPlayer({ id }: any) {
           shadow="lg"
         >
           <CardBody>
+            <Button
+              isIconOnly
+              variant="light"
+              isLoading={isPending}
+              onPress={() => {
+                startTransition(() => {
+                  history.back();
+                });
+              }}
+              className="absolute left-0 top-0"
+            >
+              <TiArrowBack size={32} />
+            </Button>
             <div className="w-full flex flex-row justify-center items-center">
               <video
                 autoPlay
@@ -284,6 +299,7 @@ export default function AudioPlayer({ id }: any) {
                     className="w-full"
                     url={DOMAIN + "/speeches/" + id}
                     title={title}
+                    useIcon={false}
                     // summary={result.summary.child}
                   />
                 </div>

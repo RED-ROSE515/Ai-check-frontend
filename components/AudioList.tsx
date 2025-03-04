@@ -168,7 +168,7 @@ export default function AduioList({ speeches }: any) {
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {speech.post_id}
+                {speech.post_title}
               </p>
             </div>
           );

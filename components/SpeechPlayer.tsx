@@ -1,18 +1,25 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Button, Card } from "@heroui/react";
-import { FaPlay, FaPause, FaStop } from "react-icons/fa";
+import { FaPlay, FaPause, FaStop, FaExpandArrowsAlt } from "react-icons/fa";
+import { ImCross } from "react-icons/im";
 import { useWavesurfer } from "@wavesurfer/react";
+import { useRouter } from "next/navigation";
 import { useSpeech } from "@/contexts/SpeechContext";
 import { useTheme } from "next-themes";
+import { useTransition } from "react";
+import ShareButtons from "./ShareButtons";
 
-const SpeechPlayer = ({ audio_url, height = 50 }: any) => {
+const SpeechPlayer = ({ audio_url, height = 50, isSpeech = true }: any) => {
   // Corrected the type of useRef to match the expected type for the container
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
+  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const [isPlaying, setIsPlaying] = useState(false);
   const [time, setTime] = useState("0:00");
   const [duration, setDuration] = useState("0:00");
   const { theme } = useTheme();
-  const { setSpeechUrl, setShowSpeech } = useSpeech();
+  const { setShowSpeech, speechId, speechTitle } = useSpeech();
+  const [isPending, startTransition] = useTransition();
   // Ensure that the container is correctly passed as a RefObject
   const { wavesurfer } = useWavesurfer({
     container: containerRef, // Pass the ref object itself, not its current property
@@ -33,9 +40,16 @@ const SpeechPlayer = ({ audio_url, height = 50 }: any) => {
       wavesurfer.playPause();
     }
   }, [wavesurfer]);
-  const toggleStop = useCallback(() => {
+
+  const pause = useCallback(() => {
     if (wavesurfer) {
-      wavesurfer.setTime(wavesurfer.getDuration());
+      wavesurfer.pause();
+    }
+  }, [wavesurfer]);
+
+  const stop = useCallback(() => {
+    if (wavesurfer) {
+      wavesurfer.stop();
     }
   }, [wavesurfer]);
   useEffect(() => {
@@ -76,13 +90,52 @@ const SpeechPlayer = ({ audio_url, height = 50 }: any) => {
         </div>
       </div>
       <Button
-        onPress={toggleStop}
+        onPress={stop}
         isIconOnly
         radius="sm"
         style={{ width: "50px", height: "50px" }}
       >
         <FaStop />
       </Button>
+      {isSpeech && (
+        <Button
+          onPress={() => {
+            startTransition(() => {
+              router.push(`/speeches/${speechId}`);
+            });
+            stop();
+            setShowSpeech(false);
+          }}
+          isLoading={isPending}
+          isIconOnly
+          radius="sm"
+          className="ml-2"
+          style={{ width: "50px", height: "50px" }}
+        >
+          <FaExpandArrowsAlt />
+        </Button>
+      )}
+      {isSpeech && (
+        <ShareButtons
+          url={DOMAIN + "/speeches/" + speechId}
+          title={speechTitle}
+          isSpeech={true}
+        />
+      )}
+      {isSpeech && (
+        <Button
+          onPress={() => {
+            pause();
+            setShowSpeech(false);
+          }}
+          className="ml-2"
+          isIconOnly
+          radius="sm"
+          style={{ width: "50px", height: "50px" }}
+        >
+          <ImCross />
+        </Button>
+      )}
     </Card>
   );
 };
