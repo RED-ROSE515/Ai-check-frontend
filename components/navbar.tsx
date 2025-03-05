@@ -61,6 +61,7 @@ export const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const [isPending, startTransition] = useTransition();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
+  const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
   const router = useRouter();
   useEffect(() => {
     setIsMounted(true);
@@ -140,7 +141,7 @@ export const Navbar = () => {
                   description={
                     <Link
                       isExternal
-                      href={`https://uy7p3-zyaaa-aaaap-qpmoq-cai.icp0.io/@${user?.detail.user_name}`}
+                      href={`${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`}
                       size="sm"
                       isDisabled={!isAuthenticated}
                     >
@@ -191,7 +192,7 @@ export const Navbar = () => {
                         </h4>
                         <Link
                           isExternal
-                          href={`https://uy7p3-zyaaa-aaaap-qpmoq-cai.icp0.io/@${user?.detail.user_name}`}
+                          href={`${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`}
                           size="sm"
                           isDisabled={!isAuthenticated}
                         >
@@ -240,7 +241,7 @@ export const Navbar = () => {
                       startContent={<ImProfile className={iconClasses} />}
                       onPress={() =>
                         window.open(
-                          `https://uy7p3-zyaaa-aaaap-qpmoq-cai.icp0.io/@${user?.detail.user_name}`
+                          `${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`
                         )
                       }
                     >

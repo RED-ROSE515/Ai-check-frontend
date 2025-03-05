@@ -51,6 +51,7 @@ const UserCard = ({
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
+  const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
   const fetchUserDetail = async () => {
     const response = await api.get(
       `/user/profile?user_id=${userData.user_name}`
@@ -131,7 +132,7 @@ const UserCard = ({
                       </h4>
                       <Link
                         isExternal
-                        href={`https://uy7p3-zyaaa-aaaap-qpmoq-cai.icp0.io/@${userData.user_name}`}
+                        href={`${NOBLEBLOCKS_DOMAIN}/@${userData.user_name}`}
                         size="sm"
                       >
                         <h5 className="text-small tracking-tight text-blue-700">
@@ -155,7 +156,7 @@ const UserCard = ({
                       // onPress={() => follow()}
                       onPress={() =>
                         window.open(
-                          `https://uy7p3-zyaaa-aaaap-qpmoq-cai.icp0.io/@${userData.user_name}`,
+                          `${NOBLEBLOCKS_DOMAIN}/@${userData.user_name}`,
                           "_blank"
                         )
                       }
