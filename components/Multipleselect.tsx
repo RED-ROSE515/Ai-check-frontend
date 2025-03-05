@@ -12,6 +12,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { Avatar } from "@heroui/react";
 import { cn } from "@/lib/utils";
 
 export interface Option {
@@ -20,6 +21,7 @@ export interface Option {
   disable?: boolean;
   /** fixed option that can't be removed. */
   fixed?: boolean;
+  avatar: string;
   /** Group the options by providing key. */
   [key: string]: string | boolean | undefined;
 }
@@ -355,7 +357,9 @@ const MultipleSelector = React.forwardRef<
     const CreatableItem = () => {
       if (!creatable) return undefined;
       if (
-        isOptionsExist(options, [{ value: inputValue, label: inputValue }]) ||
+        isOptionsExist(options, [
+          { value: inputValue, label: inputValue, avatar: "" },
+        ]) ||
         selected.find((s) => s.value === inputValue)
       ) {
         return undefined;
@@ -375,7 +379,10 @@ const MultipleSelector = React.forwardRef<
               return;
             }
             setInputValue("");
-            const newOptions = [...selected, { value, label: value }];
+            const newOptions = [
+              ...selected,
+              { value, label: value, avatar: "" },
+            ];
             setSelected(newOptions);
             onChange?.(newOptions);
           }}
@@ -611,7 +618,15 @@ const MultipleSelector = React.forwardRef<
                                   "cursor-default text-muted-foreground"
                               )}
                             >
-                              {option.label}
+                              {option.avatar ? (
+                                <Avatar src={option.avatar || undefined} />
+                              ) : (
+                                <Avatar name={option.label} />
+                              )}
+
+                              <span>
+                                {option.label + "(" + option.value + ")"}
+                              </span>
                             </CommandItem>
                           );
                         })}

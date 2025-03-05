@@ -13,6 +13,8 @@ import {
 } from "@heroui/react";
 import speechIcon from "@/public/speech.png";
 import { useRouter } from "next/navigation";
+import { RiMic2AiLine } from "react-icons/ri";
+
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
@@ -22,7 +24,6 @@ export const columns = [
   { name: "PAPER", uid: "paper" },
   { name: "SPEECH TYPE", uid: "speech_type" },
   { name: "PERSON", uid: "voice_type" },
-  { name: "COST", uid: "cost" },
   { name: "STATUS", uid: "status" },
   { name: "DATE", uid: "created_at" },
   { name: "ACTIONS", uid: "actions" },
@@ -148,11 +149,6 @@ export const EditIcon = (props: IconSvgProps) => {
     </svg>
   );
 };
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
 
 export default function AduioList({ speeches }: any) {
   const router = useRouter();
@@ -163,11 +159,14 @@ export default function AduioList({ speeches }: any) {
 
       switch (columnKey) {
         case "speech":
-          return <Avatar radius="sm" size="sm" src={speechIcon.src} />;
+          return <RiMic2AiLine size={18} />;
         case "paper":
           return (
             <div className="flex flex-col">
-              <p className="text-bold text-sm capitalize text-default-400">
+              <p
+                className="text-bold text-sm capitalize text-default-400 cursor-pointer"
+                onClick={() => router.push("/speeches/" + speech.id)}
+              >
                 {speech.post_title}
               </p>
             </div>
@@ -192,17 +191,6 @@ export default function AduioList({ speeches }: any) {
               variant="flat"
             >
               {cellValue}
-            </Chip>
-          );
-        case "cost":
-          return (
-            <Chip
-              className="capitalize"
-              color="danger"
-              size="sm"
-              variant="flat"
-            >
-              $ {cellValue}
             </Chip>
           );
         case "status":

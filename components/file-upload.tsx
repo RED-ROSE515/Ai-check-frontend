@@ -1,5 +1,4 @@
 "use client";
-
 import axios, { AxiosProgressEvent, CancelTokenSource } from "axios";
 import api from "@/utils/api";
 import {
@@ -11,17 +10,7 @@ import {
   Video,
   X,
 } from "lucide-react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Listbox,
-  ListboxItem,
-  Button,
-  useDisclosure,
-} from "@heroui/react";
+import { Button, Select, SelectItem } from "@heroui/react";
 import { useRef, useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import _ from "lodash";
@@ -30,6 +19,9 @@ import { ToastAction } from "@/components/ui/toast";
 import { Input } from "./ui/input";
 import { Progress } from "./ui/progress";
 import { useTheme } from "next-themes";
+import UserSearchBar from "./UserSearch";
+import { useAnalyze } from "@/contexts/AnalyzeContext";
+import { ShinyButton } from "./ui/shiny-button";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -45,6 +37,16 @@ enum FileTypes {
   Audio = "audio",
   Video = "video",
   Other = "other",
+}
+export interface Option {
+  value: string;
+  label: string;
+  disable?: boolean;
+  avatar: string;
+  /** fixed option that can't be removed. */
+  fixed?: boolean;
+  /** Group the options by providing key. */
+  [key: string]: string | boolean | undefined;
 }
 
 const ImageColor = {
@@ -71,11 +73,18 @@ const OtherColor = {
   bgColor: "bg-gray-400",
   fillColor: "fill-gray-400",
 };
+
+export const options = [
+  { key: "everyone", label: "Everyone" },
+  { key: "followers", label: "My Followers" },
+  { key: "specific_users", label: "Specific Users" },
+  { key: "nobody", label: "Nobody" },
+];
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
 export interface ImageUploadProps {
   getPdfList: () => void;
-  AnalyzePaper: (s3_url: string) => void;
   onTriggerRef: React.MutableRefObject<(() => void) | null>;
 }
 
@@ -85,17 +94,15 @@ export const ListboxWrapper = ({ children }: any) => (
   </div>
 );
 
-const FileUpload = ({
-  getPdfList,
-  AnalyzePaper,
-  onTriggerRef,
-}: ImageUploadProps) => {
+const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const [currentFile, setCurrentFile] = useState<FileUploadProgress | null>(
     null
   );
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [visibility, setVisibility] = useState(new Set(["everyone"]));
+  const [users, setUsers] = useState<Option[]>([]);
+  const [visibility, setVisibility] = useState(["everyone"]);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [s3_link, setS3Link] = useState("");
+  const { handleAnalyze } = useAnalyze();
   const { toast } = useToast();
   const { theme } = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -168,7 +175,7 @@ const FileUpload = ({
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
-    onOpen();
+
     const file = acceptedFiles[0];
     const cancelSource = axios.CancelToken.source();
 
@@ -221,7 +228,7 @@ const FileUpload = ({
         duration: 5000,
       });
       await sleep(3000);
-      onOpen();
+      setS3Link(response.data.attached_link);
       // AnalyzePaper(response.data.attached_link);
       // getPdfList();
     } catch (error) {
@@ -260,51 +267,6 @@ const FileUpload = ({
 
   return (
     <div>
-      <Modal
-        isDismissable={false}
-        isKeyboardDismissDisabled={true}
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Research Audit Options
-              </ModalHeader>
-              <ModalBody>
-                <ListboxWrapper>
-                  <Listbox
-                    disallowEmptySelection
-                    aria-label="Single selection example"
-                    selectedKeys={visibility}
-                    selectionMode="single"
-                    variant="flat"
-                    onSelectionChange={(keys) =>
-                      setVisibility(new Set([...keys] as string[]))
-                    }
-                  >
-                    <ListboxItem key="everyone">Everyone</ListboxItem>
-                    <ListboxItem key="followers">My Followers</ListboxItem>
-                    <ListboxItem key="specific_users">
-                      Specific Users
-                    </ListboxItem>
-                    <ListboxItem key="nobody">Nobody</ListboxItem>
-                  </Listbox>
-                </ListboxWrapper>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Create
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
       <div>
         <label
           {...getRootProps()}
@@ -371,28 +333,64 @@ const FileUpload = ({
 
       {uploadedFile && (
         <div>
-          <p className="my-2 mt-6 text-sm font-medium text-muted-foreground">
-            Uploaded File
-          </p>
-          <div className="group flex justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0">
-            <div className="flex flex-1 items-center p-2">
-              <div className="text-white">
-                {getFileIconAndColor(uploadedFile).icon}
-              </div>
-              <div className="ml-2 w-full space-y-1">
-                <div className="flex justify-between text-sm">
-                  <p className="text-muted-foreground">
-                    {uploadedFile.name.slice(0, 25)}
-                  </p>
+          <div>
+            <p className="my-2 mt-6 text-sm font-medium text-muted-foreground">
+              Uploaded File
+            </p>
+            <div className="group flex justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0">
+              <div className="flex flex-1 items-center p-2">
+                <div className="text-white">
+                  {getFileIconAndColor(uploadedFile).icon}
+                </div>
+                <div className="ml-2 w-full space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <p className="text-muted-foreground">
+                      {uploadedFile.name.slice(0, 25)}
+                    </p>
+                  </div>
                 </div>
               </div>
+              <button
+                className="hidden items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
+                onClick={removeFile}
+              >
+                <X size={20} />
+              </button>
             </div>
-            <button
-              className="hidden items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
-              onClick={removeFile}
+          </div>
+          <div className="flex md:flex-row flex-col justify-center w-full gap-5 mt-4">
+            <div className="w-full md:w-[20%]">
+              <Select
+                isRequired
+                variant="faded"
+                className="max-w-xs"
+                defaultSelectedKeys={["everyone"]}
+                placeholder="Select visibility."
+                selectedKeys={new Set(visibility)}
+                onSelectionChange={(keys) =>
+                  setVisibility([...keys] as string[])
+                }
+              >
+                {options.map((option) => (
+                  <SelectItem key={option.key}>{option.label}</SelectItem>
+                ))}
+              </Select>
+            </div>
+            <UserSearchBar
+              setUsers={setUsers}
+              users={users}
+              disabled={visibility[0] !== "specific_users"}
+            />
+            <ShinyButton
+              className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+              onClick={() => handleAnalyze(s3_link, visibility[0], users)}
             >
-              <X size={20} />
-            </button>
+              <strong
+                className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+              >
+                Analyze for Errors
+              </strong>
+            </ShinyButton>
           </div>
         </div>
       )}

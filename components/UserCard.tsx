@@ -214,11 +214,12 @@ const UserCard = ({
                     <PiDotsThreeOutlineVerticalFill size={17} />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[200px]">
+                <PopoverContent className="w-[150px]">
                   {() => (
                     <div className="px-1 py-2 w-full flex flex-col gap-2">
                       <Button
                         startContent={<MdOutlineContentCopy size={24} />}
+                        variant="ghost"
                         onPress={() => {
                           navigator.clipboard.writeText(link);
                           toast({
@@ -230,6 +231,7 @@ const UserCard = ({
                         Share
                       </Button>
                       <Button
+                        variant="ghost"
                         startContent={<MdReport size={24} />}
                         onPress={reportPost}
                       >

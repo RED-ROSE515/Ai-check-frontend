@@ -93,9 +93,6 @@ export default function App() {
     setAnalyzingId(null);
   };
 
-  const handleAnalyzeWithPdf = async (s3_url: string) => {
-    await handleAnalyze(s3_url);
-  };
   const handleDelete = async (id: number) => {
     try {
       await axios.delete(API_BASE_URL + `api/papers/${id}/`);
@@ -261,11 +258,7 @@ export default function App() {
       </Table>
 
       <div className="my-4 w-full">
-        <FileUpload
-          AnalyzePaper={handleAnalyzeWithPdf}
-          getPdfList={getPdfList}
-          onTriggerRef={triggerUploadRef}
-        />
+        <FileUpload getPdfList={getPdfList} onTriggerRef={triggerUploadRef} />
       </div>
 
       {isChecking && (

@@ -16,6 +16,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { defaultMetadata } from "./shared-metadata";
 import { SearchProvider } from "@/contexts/SearchContext";
+import { CircularProgressBar } from "@/components/CircularProgressBar";
 
 const siteIconUrl = SiteIcon.src;
 export const metadata = defaultMetadata;
@@ -56,6 +57,7 @@ export default function RootLayout({
                             id="main"
                           >
                             {children}
+                            <CircularProgressBar className="h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" />
                           </main>
                           <Toaster />
                           <footer className="w-full flex items-center justify-center py-3">

@@ -9,6 +9,8 @@ import { useTheme } from "next-themes";
 import { useAnalyze } from "@/contexts/AnalyzeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import SignInDialog from "@/components/SignInDialog";
+import Loader from "@/components/Loader";
+import { useRouter } from "next/navigation";
 
 type TriggerRefType = {
   current: (() => void) | null;
@@ -16,22 +18,14 @@ type TriggerRefType = {
 
 export default function App() {
   const { theme } = useTheme();
-  const {
-    analysisResult,
-    summary,
-    totalSummary,
-    summaryLoading,
-    checkLoading,
-    isChecking,
-    handleAnalyze,
-  } = useAnalyze();
-
+  const { isChecking, handleAnalyze, postId } = useAnalyze();
+  const router = useRouter();
   const { isAuthenticated } = useAuth();
   const [showSignIn, setShowSignIn] = useState(false);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const [hasAccepted, setHasAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const triggerUploadRef: TriggerRefType = useRef(null);
 
   useEffect(() => {
@@ -46,6 +40,11 @@ export default function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (postId) {
+      router.push(DOMAIN + "/results/" + postId);
+    }
+  }, [postId]);
   const handleAccept = () => {
     setHasAccepted(true);
     setShowDisclaimer(false);
@@ -63,11 +62,6 @@ export default function App() {
       return false;
     }
     return true;
-  };
-
-  const handleAnalyzeWithPdf = async (s3_url: string) => {
-    if (!handleProtectedAction()) return;
-    await handleAnalyze(s3_url);
   };
 
   return (
@@ -211,7 +205,6 @@ export default function App() {
             <div className="my-4 w-full">
               {hasAccepted ? (
                 <FileUpload
-                  AnalyzePaper={handleAnalyzeWithPdf}
                   getPdfList={() => {}}
                   onTriggerRef={triggerUploadRef}
                 />
@@ -231,42 +224,7 @@ export default function App() {
                 )
               )}
             </div>
-            {isChecking && (
-              <div
-                className={`card mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${
-                  theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"
-                }`}
-              >
-                <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
-                  {summaryLoading && (
-                    <Spinner className="my-4" color="primary" />
-                  )}
-                  {summary && (
-                    <SummaryWrapper
-                      summary={summary}
-                      link={"/results/" + summary.metadata.paper_id}
-                    />
-                  )}
-                </div>
-
-                {summary && (
-                  <div className="mb-0 sm:mb-2 w-full">
-                    {totalSummary && <SpecialSummary summary={totalSummary} />}
-                    <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-6">
-                      {checkLoading && (
-                        <Spinner className="my-4" color="primary" />
-                      )}
-                      {analysisResult && (
-                        <AnalysisResult
-                          results={analysisResult}
-                          total_summary={totalSummary}
-                        />
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
+            {isChecking && <Loader />}
           </div>
         </>
       )}

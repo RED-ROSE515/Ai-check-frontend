@@ -5,8 +5,7 @@ import { sleep } from "@/components/file-upload";
 import { useToast } from "@/hooks/use-toast";
 import { useLoading } from "@/contexts/ProgressContext";
 import { ToastAction } from "@/components/ui/toast";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import api from "@/utils/api";
 
 interface AnalyzeContextType {
   analysisResult: string;
@@ -15,8 +14,24 @@ interface AnalyzeContextType {
   summaryLoading: boolean;
   checkLoading: boolean;
   isChecking: boolean;
-  handleAnalyze: (s3_url: string) => Promise<void>;
+  postId: string;
+  handleAnalyze: (
+    s3_url: string,
+    shower_type: string,
+    shower_ids: Option[]
+  ) => Promise<void>;
   resetState: () => void;
+}
+
+export interface Option {
+  value: string;
+  label: string;
+  disable?: boolean;
+  avatar: string;
+  /** fixed option that can't be removed. */
+  fixed?: boolean;
+  /** Group the options by providing key. */
+  [key: string]: string | boolean | undefined;
 }
 
 const AnalyzeContext = createContext<AnalyzeContextType>({
@@ -26,6 +41,7 @@ const AnalyzeContext = createContext<AnalyzeContextType>({
   summaryLoading: false,
   checkLoading: false,
   isChecking: false,
+  postId: "",
   handleAnalyze: async () => {},
   resetState: () => {},
 });
@@ -41,7 +57,7 @@ export const AnalyzeProvider = ({
   const [checkLoading, setCheckLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
   const [totalSummary, setTotalSummary] = useState("");
-
+  const [postId, setPostId] = useState("");
   const { setLoading, setProgress } = useLoading();
   const { toast } = useToast();
 
@@ -54,7 +70,11 @@ export const AnalyzeProvider = ({
     setIsChecking(false);
   };
 
-  const handleAnalyze = async (s3_url: string) => {
+  const handleAnalyze = async (
+    s3_url: string,
+    shower_type: string,
+    shower_ids: Option[]
+  ) => {
     try {
       setLoading(true);
       setProgress(0);
@@ -76,23 +96,68 @@ export const AnalyzeProvider = ({
       setAnalysisResult("");
       setIsChecking(true);
       setSummaryLoading(true);
+      const new_shower_ids = shower_ids.map((id) => id.value);
 
-      let totalDuration = 200000;
-      let interval = 200;
+      const response = await api.post(`post/create`, {
+        post_type: 6,
+        attached_links: [s3_url],
+        shower_type:
+          shower_type === "specific_users"
+            ? 0
+            : shower_type === "followers"
+              ? 1
+              : shower_type === "everyone"
+                ? 2
+                : 3,
+        shower_ids: shower_type === "specific_users" ? new_shower_ids : [],
+      });
+
       let currentProgress = 0;
+      const checkStatus = async () => {
+        const pendingResponse = await api.get("post/pending");
+        const isPending =
+          pendingResponse.data && pendingResponse.data.length > 0;
 
-      const intervalId = setInterval(() => {
-        currentProgress += (interval / totalDuration) * 100;
+        if (!isPending) {
+          clearInterval(progressInterval);
+          clearInterval(statusInterval);
+          setProgress(100);
+          setIsChecking(false);
+          setSummaryLoading(false);
+          setCheckLoading(false);
+          setPostId(response.data.id);
+          await toast({
+            title: "Processing Complete",
+            description:
+              "Analysis complete for uploaded paper! Click here to view results.",
+            action: (
+              <ToastAction
+                altText="View Result"
+                onClick={() =>
+                  window.open("/results/" + response.data.id, "_blank")
+                }
+              >
+                View
+              </ToastAction>
+            ),
+            duration: 5000,
+          });
+        }
+      };
+
+      // Progress update interval
+      const progressInterval = setInterval(() => {
+        currentProgress += 0.1;
         setProgress(Math.min(currentProgress, 99));
 
-        if (currentProgress.toFixed(1) === "25.0") {
+        if (currentProgress === 25) {
           toast({
             title: "Processing at 25%",
             description: "Analyzing text and structure of paper.",
             duration: 5000,
           });
         }
-        if (currentProgress.toFixed(1) === "50.0") {
+        if (currentProgress === 50) {
           toast({
             title: "Processing at 50%",
             description:
@@ -100,7 +165,7 @@ export const AnalyzeProvider = ({
             duration: 5000,
           });
         }
-        if (currentProgress.toFixed(1) === "75.0") {
+        if (currentProgress === 75) {
           toast({
             title: "Processing at 75%",
             description:
@@ -108,45 +173,25 @@ export const AnalyzeProvider = ({
             duration: 5000,
           });
         }
-      }, interval);
+      }, 300); // Update progress every 3 seconds
 
-      const response = await axios.post(`post/create`, {
-        post_type: 6,
-        attached_links: [s3_url],
-      });
-      // totalDuration = (currentProgress / 50) * totalDuration;
+      // Status check interval
+      const statusInterval = setInterval(checkStatus, 10000); // Check status every 5 seconds
 
-      // setSummaryLoading(false);
-      // setSummary(response.data.summary);
-      // setCheckLoading(true);
-
-      // clearInterval(intervalId);
-      // setProgress(100);
-      // setCheckLoading(false);
-      // setAnalysisResult(response.data.analysis);
-      // setTotalSummary(response.data.summary);
-
-      // await toast({
-      //   title: "Processing Complete",
-      //   description:
-      //     "Analysis complete for uploaded paper! Click here to view results.",
-      //   action: (
-      //     <ToastAction
-      //       altText="View Paper"
-      //       onClick={() =>
-      //         window.open(
-      //           "/results/" +
-      //             response.data.metadata.paper_id ,
-      //           "_blank"
-      //         )
-      //       }
-      //     >
-      //       View
-      //     </ToastAction>
-      //   ),
-      //   duration: 5000,
-      // });
-      await sleep(5000);
+      // Cleanup intervals after 5 minutes (300000ms) if not completed
+      setTimeout(() => {
+        clearInterval(progressInterval);
+        clearInterval(statusInterval);
+        resetState();
+        if (currentProgress < 100) {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Processing timeout. Please try again later.",
+            duration: 5000,
+          });
+        }
+      }, 600000);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         toast({
@@ -156,6 +201,8 @@ export const AnalyzeProvider = ({
           duration: 1000,
         });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -167,6 +214,7 @@ export const AnalyzeProvider = ({
         totalSummary,
         summaryLoading,
         checkLoading,
+        postId,
         isChecking,
         handleAnalyze,
         resetState,

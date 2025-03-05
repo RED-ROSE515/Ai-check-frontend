@@ -12,7 +12,6 @@ export const AnalysisContext = createContext<AnalysisContextType | undefined>(
 
 export function AnalysisProvider({ children }: { children: React.ReactNode }) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-
   return (
     <AnalysisContext.Provider value={{ isAnalyzing, setIsAnalyzing }}>
       {children}
