@@ -52,13 +52,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ],
       locale: "en_US",
       type: "music.song", // Changed type to music.song for audio content
-      audio: audioUrl, // Add audio URL
+      audio: [
+        {
+          url: audioUrl,
+          secureUrl: audioUrl,
+          type: "audio/mpeg",
+        },
+      ],
     },
     twitter: {
       card: "player", // Changed to player for audio content
       title: `Listen - Research Paper Analysis by NerdBunny`,
+      site: "@Nobleblocks",
       description,
       images: [Nerdbunny.src],
+      players: [
+        {
+          playerUrl: `${DOMAIN}/speeches/${resolvedParams.id}`,
+          streamUrl: audioUrl,
+          width: 435,
+          height: 250,
+        },
+      ],
     },
   };
 }
