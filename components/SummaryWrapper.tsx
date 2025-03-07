@@ -220,6 +220,19 @@ const SummaryWrapper = ({
           totalData={totalData}
           className="max-w-fit"
         />
+        {input_tokens && output_tokens && total_cost && (
+          <div className="w-full md:w-auto">
+            <Card
+              className={`text-sm md:text-lg w-full items-center space-x-4 p-2 md:p-4 flex flex-row justify-center  ${theme === "dark" ? "bg-[#242F3C]" : "bg-gray-200"}`}
+            >
+              <p>{`IN: ${commify(input_tokens)}`}</p>
+              <p>|</p>
+              <p>{`OUT: ${commify(output_tokens)}`}</p>
+              <p>|</p>
+              <p>{`$ ${total_cost}`}</p>
+            </Card>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col md:flex-row justify-between mt-4 gap-4">
@@ -298,20 +311,6 @@ const SummaryWrapper = ({
             )}
           </div>
         </div>
-
-        {input_tokens && output_tokens && total_cost && (
-          <div className="w-full md:w-auto">
-            <Card
-              className={`min-w-[120px] md:min-w-[135px] p-2 md:p-4 flex flex-col justify-start items-start ${theme === "dark" ? "bg-[#242F3C]" : "bg-gray-200"}`}
-            >
-              <p>{`IN: ${commify(input_tokens)}`}</p>
-              <Divider />
-              <p>{`OUT: ${commify(output_tokens)}`}</p>
-              <Divider />
-              <p>{`$ ${total_cost}`}</p>
-            </Card>
-          </div>
-        )}
       </div>
       <div className="mt-4 gap-1 w-full" style={{ marginLeft: "-0.5rem" }}>
         <Accordion
