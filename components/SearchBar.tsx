@@ -107,10 +107,11 @@ const SearchBar = () => {
   return (
     <div>
       <Autocomplete
+        className="w-full"
         aria-label="Search by keyword."
         classNames={{
-          base: "max-w-xs",
-          listboxWrapper: "max-h-[320px]",
+          base: "min-w-[100%]",
+          listboxWrapper: "max-h-[320px] bg-[#2E3D4C]",
           selectorButton: "text-default-500",
         }}
         items={data}
@@ -150,7 +151,7 @@ const SearchBar = () => {
             ],
           },
         }}
-        placeholder="Search what you want."
+        placeholder="Search what you want ..."
         popoverProps={{
           offset: 10,
           classNames: {

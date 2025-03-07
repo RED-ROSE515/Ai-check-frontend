@@ -9,7 +9,7 @@ import {
   ModalBody,
   Input,
 } from "@heroui/react";
-
+import { Link, Pagination } from "@heroui/react";
 import api from "@/utils/api";
 // import Pusher from "pusher-js";
 import { useTheme } from "next-themes";
@@ -76,6 +76,8 @@ export default function Home() {
   const { toast } = useToast();
   const { loading, totalResults, setTotalResults } = useSearch(); // Add this
 
+  const { page, totalPage, setPage } = usePagination();
+
   const like = async (post_id: string, liked_me: boolean) => {
     try {
       await api.post(`/post/${liked_me ? "unlike" : "like"}/post`, { post_id });
@@ -90,8 +92,8 @@ export default function Home() {
                   ? paper.count_like - 1
                   : paper.count_like + 1,
               }
-            : paper
-        )
+            : paper,
+        ),
       );
     } catch (error) {
       toast({
@@ -111,8 +113,8 @@ export default function Home() {
                   ...paper,
                   reported_me: !paper.reported_me,
                 }
-              : paper
-          )
+              : paper,
+          ),
         );
     } catch (err) {
       console.log(err);
@@ -183,8 +185,8 @@ export default function Home() {
                                     ...paper,
                                     count_comment: paper.count_comment + 1,
                                   }
-                                : paper
-                            )
+                                : paper,
+                            ),
                           );
                           onClose();
                         }}
@@ -194,104 +196,104 @@ export default function Home() {
                 )}
               </ModalContent>
             </Modal>
+            <div className="flex flex-col gap-[36px] mt-15">
+              <h1 className="text-md md:text-3xl text-center font-semibold md:font-bold">
+                See How NerdBunny is Improving Research Integrity
+              </h1>
+              {loading ? (
+                <Loader />
+              ) : totalResults.length > 0 ? (
+                <React.Fragment>
+                  {totalResults.map((result: any, index) => {
+                    return (
+                      <div
+                        key={index}
+                        className={`card flex flex-col items-center justify-center rounded-2xl shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+                      >
+                        <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
+                          {result?.description &&
+                            result?.description[0] === "{" && (
+                              <SummaryWrapper
+                                summary={JSON.parse(result.description)}
+                                // input_tokens={result.input_tokens}
+                                // output_tokens={result.output_tokens}
+                                // total_cost={result.total_cost}
+                                reportPost={() =>
+                                  reportPost(result.id, result.reported_me)
+                                }
+                                totalData={result}
+                                userData={result.user}
+                                showSignInModal={showSignInModal}
+                                postDate={result.updated_at}
+                                link={DOMAIN + "/results/" + result.id}
+                              />
+                            )}
+                        </div>
 
-            {loading ? (
-              <Loader />
-            ) : totalResults.length > 0 ? (
-              <React.Fragment>
-                <h1 className="text-md md:text-3xl text-center mb-4 font-semibold md:font-bold">
-                  See How NerdBunny is Improving Research Integrity
-                </h1>
-                {totalResults.map((result: any, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className={`card mb-8 md:mb-24 flex flex-col items-center justify-center rounded-2xl shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
-                    >
-                      <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
-                        {result?.description &&
-                          result?.description[0] === "{" && (
-                            <SummaryWrapper
-                              summary={JSON.parse(result.description)}
-                              // input_tokens={result.input_tokens}
-                              // output_tokens={result.output_tokens}
-                              // total_cost={result.total_cost}
-                              reportPost={() =>
-                                reportPost(result.id, result.reported_me)
-                              }
-                              totalData={result}
-                              userData={result.user}
-                              showSignInModal={showSignInModal}
-                              postDate={result.updated_at}
-                              link={DOMAIN + "/results/" + result.id}
-                            />
-                          )}
-                      </div>
-
-                      <div className="flex items-center justify-start gap-4 w-full px-4 py-2">
-                        <Button
-                          variant="ghost"
-                          color={result.liked_me ? "warning" : "default"}
-                          className="flex items-center gap-2"
-                          onPress={() =>
-                            isAuthenticated
-                              ? like(result.id, result.liked_me)
-                              : showSignInModal(
-                                  "You need to sign in to continue."
-                                )
-                          }
-                        >
-                          <TbThumbUp size={24} />
-                          <span>{result.count_like || 0}</span>
-                        </Button>
-
-                        <Button
-                          variant="ghost"
-                          className="flex items-center gap-2"
-                          onPress={() => {
-                            if (isAuthenticated) {
-                              setPostId(result.id);
-                              onOpen();
-                            } else {
-                              showSignInModal(
-                                "You need to sign in to continue."
-                              );
+                        <div className="flex items-center justify-start gap-4 w-full px-4 py-2">
+                          <Button
+                            variant="ghost"
+                            color={result.liked_me ? "warning" : "default"}
+                            className="flex items-center gap-2"
+                            onPress={() =>
+                              isAuthenticated
+                                ? like(result.id, result.liked_me)
+                                : showSignInModal(
+                                    "You need to sign in to continue.",
+                                  )
                             }
-                          }}
-                        >
-                          <TbMessage size={24} />
-                          <span>{result.count_comment || 0}</span>
-                        </Button>
-
-                        <Button
-                          variant="ghost"
-                          className="flex items-center gap-2"
-                          isDisabled
-                        >
-                          <TbEye size={24} />
-                          <span>{result.count_view || 0}</span>
-                        </Button>
-                        <ShareButtons
-                          url={API_BASE_URL + "/results/" + result.id}
-                          title={result.title}
-                          // summary={result.summary.child}
-                        />
-                      </div>
-                      <div className="flex flex-row justify-center w-full">
-                        <ShinyButton
-                          className={`mr-2 mb-2 ${theme === "dark" ? "bg-[#C8E600]" : "bg-[#EE43DE]"}`}
-                          onClick={() =>
-                            (window.location.href = "/results/" + result.id)
-                          }
-                        >
-                          <strong
-                            className={`${theme === "dark" ? "text-black" : "text-white"} font-bold`}
                           >
-                            {"Read full report  ➜"}
-                          </strong>
-                        </ShinyButton>
-                      </div>
-                      {/* <div className="mb-0 sm:mb-2 w-full">
+                            <TbThumbUp size={24} />
+                            <span>{result.count_like || 0}</span>
+                          </Button>
+
+                          <Button
+                            variant="ghost"
+                            className="flex items-center gap-2"
+                            onPress={() => {
+                              if (isAuthenticated) {
+                                setPostId(result.id);
+                                onOpen();
+                              } else {
+                                showSignInModal(
+                                  "You need to sign in to continue.",
+                                );
+                              }
+                            }}
+                          >
+                            <TbMessage size={24} />
+                            <span>{result.count_comment || 0}</span>
+                          </Button>
+
+                          <Button
+                            variant="ghost"
+                            className="flex items-center gap-2"
+                            isDisabled
+                          >
+                            <TbEye size={24} />
+                            <span>{result.count_view || 0}</span>
+                          </Button>
+                          <ShareButtons
+                            url={API_BASE_URL + "/results/" + result.id}
+                            title={result.title}
+                            // summary={result.summary.child}
+                          />
+                        </div>
+                        <div className="flex flex-row justify-center w-full">
+                          <ShinyButton
+                            className={`mr-2 mb-2 ${theme === "dark" ? "bg-[#C8E600]" : "bg-[#EE43DE]"}`}
+                            onClick={() =>
+                              (window.location.href = "/results/" + result.id)
+                            }
+                          >
+                            <strong
+                              className={`${theme === "dark" ? "text-black" : "text-white"} font-bold`}
+                            >
+                              {"Read full report  ➜"}
+                            </strong>
+                          </ShinyButton>
+                        </div>
+                        {/* <div className="mb-0 sm:mb-2 w-full">
                       <SpecialSummary summary={result.paperAnalysis.summary} />
                       <div
                         className={
@@ -306,22 +308,35 @@ export default function Home() {
                         )}
                       </div>
                     </div> */}
-                    </div>
-                  );
-                })}
-              </React.Fragment>
-            ) : (
-              <div className="w-full flex flex-row justify-center">
-                <strong className="text-lg md:text-4xl">
-                  Nothing to show!
-                </strong>
+                      </div>
+                    );
+                  })}
+                </React.Fragment>
+              ) : (
+                <div className="w-full flex flex-row justify-center">
+                  <strong className="text-lg md:text-4xl">
+                    Nothing to show!
+                  </strong>
+                </div>
+              )}
+              <div className="order-1 md:order-2 w-full flex justify-center">
+                <Pagination
+                  isCompact
+                  showControls
+                  showShadow
+                  initialPage={1}
+                  page={page}
+                  total={totalPage}
+                  onChange={(newPage) => setPage(newPage)}
+                />
               </div>
-            )}
-
-            <NerdbunnyReason />
-            <WorkFlow />
-            <ResearchSection />
-            <LastSection />
+            </div>
+            <div className="flex flex-col gap-[96px]">
+              <NerdbunnyReason />
+              <WorkFlow />
+              <ResearchSection />
+              <LastSection />
+            </div>
           </div>
         </div>
       </div>

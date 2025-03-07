@@ -113,8 +113,8 @@ const WorkFlow = () => {
   const { theme } = useTheme();
   const { isMobile } = useDeviceCheck();
   return (
-    <div className="flex flex-col justify-center gap-4 mt-8">
-      <div className="flex flex-row justify-between items-center mb-4">
+    <div className="flex flex-col justify-center gap-9">
+      <div className="flex flex-row justify-between items-center">
         <div className="w-full text-center">
           <span
             className={`text-lg md:text-xl ${theme === "dark" ? "text-[#9C9C9C]" : "text-slate-700"}`}
@@ -127,7 +127,7 @@ const WorkFlow = () => {
         </div>
       </div>
       <div
-        className={`flex ${isMobile ? "flex-wrap" : "flex-row"} justify-center items-center gap-10 w-full`}
+        className={`flex ${isMobile ? "flex-wrap" : "flex-row"} justify-center items-center gap-3 w-full`}
       >
         <Card>
           <CardHeader>
@@ -173,12 +173,12 @@ const WorkFlow = () => {
       <div className="w-full flex flex-row justify-center items-center">
         <ShimmerButton
           shimmerSize="0.2em"
-          background={`${theme === "dark" ? "#C8E600" : "#EE43DE"}`}
-          shimmerColor={`${theme === "dark" ? "#000" : "#FFF"}`}
+          background={`${theme === "dark" ? "#EE43DE" : "#EE43DE"}`}
+          shimmerColor={`${theme === "dark" ? "#FFF" : "#FFF"}`}
           className={`shadow-2xl `}
         >
           <strong
-            className={`flex flex-row justify-center items-center whitespace-pre-wrap text-center text-xs md:text-md font-medium leading-none tracking-tight ${theme === "dark" ? "text-black" : "text-white"}`}
+            className={`text-[16px] flex flex-row justify-center items-center whitespace-pre-wrap text-center font-medium leading-none tracking-tight ${theme === "dark" ? "text-white" : "text-white"}`}
           >
             {"Start Free Analysis"}
             <FaPlus className="ml-2" />

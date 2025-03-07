@@ -41,9 +41,12 @@ import { ImProfile } from "react-icons/im";
 import { MdLogin, MdLogout, MdCheck, MdInfo } from "react-icons/md";
 import { LuSpeech } from "react-icons/lu";
 import { MdOutlineAnalytics } from "react-icons/md";
+import { LuChartColumn } from "react-icons/lu";
 import SearchBar from "./SearchBar";
 import { useSearch } from "@/contexts/SearchContext";
 import { usePagination } from "@/contexts/PaginationContext";
+import { DotPattern } from "./magicui/dot-pattern";
+import { cn } from "@/lib/utils";
 
 export const ListboxWrapper = ({ children }: any) => (
   <div className="w-full max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100">
@@ -76,21 +79,20 @@ export const Navbar = () => {
   const iconClasses =
     "text-xl text-default-500 pointer-events-none flex-shrink-0";
   return (
-    <div className="flex items-center justify-center flex-row w-full">
+    <div className="flex items-center justify-center flex-row w-full relative">
       <HeroUINavbar
         maxWidth="full"
         position="sticky"
-        height={isMobile ? "4rem" : "4.5rem"}
         style={{
           background: `${theme === "dark" ? "linear-gradient(0deg, #1E2A36 0%, #1E2A36 100%)" : "linear-gradient(0deg, #C8AAFF 0%, #C8AAFF 100%)"}`,
         }}
-        shouldHideOnScroll
-        className="flex flex-row justify-between w-full bg-transparent"
+        // shouldHideOnScroll
+        className="flex flex-row justify-between w-full bg-transparent h-[78px]"
       >
         <NavbarContent className="flex w-full basis-full overflow-y-hidden">
-          <NavbarItem className="flex md:gap-2 w-auto md:w-1/3">
+          <NavbarItem className="flex md:gap-2 md:w-1/3">
             <NavbarBrand>
-              <Link href="/">
+              <Link href="/" className="w-[210px]">
                 <Image
                   alt="Logo"
                   onClick={() => {
@@ -98,20 +100,22 @@ export const Navbar = () => {
                     setKeyword("");
                     setPage(1);
                   }}
-                  src={theme === "dark" ? LogoLight : LogoDark}
-                  className="w-auto" // Responsive image size
+                  src={LogoLight}
+                  className="h-[37px] w-[209px]" // Responsive image size
                 />
               </Link>
             </NavbarBrand>
           </NavbarItem>
         </NavbarContent>
-
-        <NavbarContent className="flex w-full basis-full" justify="end">
-          <NavbarItem className="w-full items-center gap-2 hidden md:flex">
+        <NavbarContent className="flex w-full basis-full">
+          <NavbarItem className="w-full items-center gap-2 hidden md:flex justify-center">
             <SearchBar />
           </NavbarItem>
-          <NavbarItem className="flex items-center gap-2 md:gap-4">
+        </NavbarContent>
+        <NavbarContent className="flex w-full basis-full" justify="end">
+          <NavbarItem className="flex items-center gap-[6px]">
             {/* <CircularProgressBar className="ml-2 md:ml-4 h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" /> */}
+            <ThemeSwitch />
             <Button
               isIconOnly
               variant="light"
@@ -121,10 +125,10 @@ export const Navbar = () => {
                   router.push("/statistics");
                 })
               }
+              className="w-[36px] h-[36px] min-w-[36px] min-h-[36px] rounded-[50%] bg-[#ffffff40] flex items-center justify-center opacity-[0.5]"
             >
-              <MdOutlineAnalytics size={24} />
+              <LuChartColumn size={20} />
             </Button>
-            <ThemeSwitch />
 
             <Dropdown
               placement="bottom-end"
@@ -139,6 +143,7 @@ export const Navbar = () => {
                     src: isAuthenticated
                       ? user?.detail.avatar
                       : "https://avatars.githubusercontent.com/u/146516559?s=400&u=8a2fcef9b9079ab60f01db2868d1b1893856a2c3&v=4",
+                    className: "w-[36px] h-[36px]",
                   }}
                   onClick={() => setOpen(true)}
                   className="cursor-pointer"
@@ -148,6 +153,7 @@ export const Navbar = () => {
                       href={`${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`}
                       size="sm"
                       isDisabled={!isAuthenticated}
+                      className="text-[13px] opacity-[.6]"
                     >
                       @
                       {isAuthenticated
@@ -245,7 +251,7 @@ export const Navbar = () => {
                       startContent={<ImProfile className={iconClasses} />}
                       onPress={() =>
                         window.open(
-                          `${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`
+                          `${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`,
                         )
                       }
                     >
@@ -310,7 +316,7 @@ export const Navbar = () => {
                       startContent={<MdLogin className={iconClasses} />}
                       onPress={() => {
                         navigateTo(
-                          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login_with_nobleblocks?app_name=NerdBunny&redirect_url=${DOMAIN + "/login_with_nobleblocks"}`
+                          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login_with_nobleblocks?app_name=NerdBunny&redirect_url=${DOMAIN + "/login_with_nobleblocks"}`,
                         );
                       }}
                     >

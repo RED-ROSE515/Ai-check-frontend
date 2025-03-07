@@ -114,7 +114,7 @@ const Footer = () => {
     return null;
   }
   return (
-    <div className="w-full flex flex-col justify-center items-center">
+    <div className="w-full flex flex-col justify-center items-center h-[114px]">
       <AnimatePresence>
         {showSpeech && speechUrl && (
           <motion.div
@@ -128,27 +128,31 @@ const Footer = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="flex flex-col md:flex-row justify-between items-center w-[80%] gap-6">
-        <div className="flex flex-col justify-center items-center text-center order-3 md:order-1">
-          <span>Copyright © 2025 NerdBunny</span>
-        </div>
-        {pathname === "/" && totalPage !== 0 && (
-          <div className="order-1 md:order-2">
-            <Pagination
-              isCompact
-              showControls
-              showShadow
-              initialPage={1}
-              page={page}
-              total={totalPage}
-              onChange={(newPage) => setPage(newPage)}
-            />
-          </div>
-        )}
-        <div className="flex flex-row justify-center gap-2 order-2 md:order-3">
+      <div className="flex justify-between items-center w-[80%] gap-6">
+        <div className="flex flex-row justify-center gap-3">
           <TelegramSvg theme={theme} />
           <TwitterSvg theme={theme} />
           <TiktokSvg theme={theme} />
+        </div>
+        <div className="flex items-center gap-[36px]">
+          <a href="#" className="text-[#697078]">
+            About Us
+          </a>
+          <a href="#" className="text-[#697078]">
+            Contact
+          </a>
+          <a href="#" className="text-[#697078]">
+            Privacy Policy
+          </a>
+          <a href="#" className="text-[#697078]">
+            Terms of Service
+          </a>
+          <a href="#" className="text-[#697078]">
+            FAQ
+          </a>
+        </div>
+        <div className="flex flex-col justify-center items-center text-center text-[#697078]">
+          <span>Copyright © 2025 NerdBunny</span>
         </div>
       </div>
     </div>

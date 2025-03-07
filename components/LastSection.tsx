@@ -41,7 +41,7 @@ const LastSection = () => {
   const { theme } = useTheme();
   const { isMobile } = useDeviceCheck();
   return (
-    <div className="flex flex-col justify-center mt-8 bg-[#6365F1] rounded-xl relative gap-2 md:gap-6">
+    <div className="flex flex-col justify-center bg-[#6365F1] rounded-xl relative gap-2 md:gap-6">
       <div className="flex flex-row justify-center mt-4">
         <h1 className="font-bold text-lg md:text-4xl max-w-[50%] text-center">
           Make Research Better – One Error at a Time
@@ -49,12 +49,14 @@ const LastSection = () => {
       </div>
       {!isMobile && <LineSVG className="z-0 absolute left-0 top-[66px]" />}
       {!isMobile && <FlowerSVG className="z-0 absolute right-0 bottom-0" />}
-      <span className="text-center">
-        Try NerdBunny AI Error Detection for Free
-      </span>
-      <span className="text-center">
-        Enhance your research credibility and avoid costly mistakes.
-      </span>
+      <div className="flex flex-col w-full items-center">
+        <span className="text-center">
+          Try NerdBunny AI Error Detection for Free
+        </span>
+        <span className="text-center">
+          Enhance your research credibility and avoid costly mistakes.
+        </span>
+      </div>
       <div className="w-full justify-center flex flex-row">
         <div className="w-full md:w-1/2 p-4 flex flex-col md:flex-row justify-center gap-1 md:gap-4 items-center mb-8 px-8 md:px-0">
           <ShinyButton

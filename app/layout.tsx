@@ -39,7 +39,7 @@ export default function RootLayout({
       <body
         className={clsx(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
+          fontSans.variable,
         )}
       >
         <GoogleOAuthProvider clientId="386932037035-k8v833noqjk7m4***********.apps.googleusercontent.com">
@@ -52,17 +52,14 @@ export default function RootLayout({
                       <SearchProvider>
                         <div className="relative flex flex-col h-screen">
                           <Navbar />
-                          <main
-                            className="w-screen overflow-x-hidden flex-grow"
-                            id="main"
-                          >
+                          <main className="w-screen" id="main">
                             {children}
                             <CircularProgressBar className="h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" />
                           </main>
                           <Toaster />
-                          <footer className="w-full flex items-center justify-center py-3">
+                          <div className="w-full flex items-center justify-center py-3">
                             <Footer />
-                          </footer>
+                          </div>
                         </div>
                       </SearchProvider>
                     </AuthProvider>

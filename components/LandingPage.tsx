@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ShinyButton } from "./ui/shiny-button";
 import { TextAnimate } from "./ui/text-animate";
 import { useTheme } from "next-themes";
@@ -25,7 +25,7 @@ const LandingPage = () => {
           cy={1}
           cr={1}
           className={cn(
-            `${isMobile ? "hidden" : "[mask-image:radial-gradient(900px_circle_at_left,white,transparent)]"} `
+            `${isMobile ? "hidden" : "[mask-image:radial-gradient(900px_circle_at_left,white,transparent)]"} `,
           )}
         />
         <DotPattern
@@ -35,17 +35,17 @@ const LandingPage = () => {
           cy={1}
           cr={1}
           className={cn(
-            `${isMobile ? "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]" : "[mask-image:radial-gradient(900px_circle_at_right,white,transparent)]"} `
+            `${isMobile ? "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]" : "[mask-image:radial-gradient(900px_circle_at_right,white,transparent)]"} `,
           )}
         />
       </div>
       <div className="w-full flex flex-col justify-center items-center">
         <div className="flex flex-row justify-center">
           <TextAnimate
-            animation="blurIn"
+            // animation="blurIn"
             by="character"
             as="h1"
-            className="text-2xl font-bold md:text-6xl md:font-semibold text-center max-w-[75%] md:max-w-[55%]"
+            className="pt-[60px] text-2xl font-bold md:text-6xl md:font-semibold text-center max-w-[75%] md:max-w-[55%]"
           >
             Find Errors in Research Papers Effortlessly
           </TextAnimate>
@@ -57,26 +57,32 @@ const LandingPage = () => {
             as="h1"
             className="text-sm  md:text-lg md:font-semibold text-center max-w-[70%] md:max-w-[55%]"
           >
-            Uncover hidden flaws, logical inconsistencies, and methodological
-            issues with AI-powered precision. Try it for free!
+            Uncover hidden flaws, inconsistencies, and methodological issues
+            with our AI-powered Decentralized Science (DeSci) platform, backed
+            by blockchain.
           </TextAnimate>
         </div>
         <div className="flex flex-row justify-center mt-6 gap-2 md:gap-8 items-center">
           <ShimmerButton
             shimmerSize="0.2em"
-            background={`${theme === "dark" ? "#C8E600" : "#EE43DE"}`}
-            shimmerColor={`${theme === "dark" ? "#000" : "#FFF"}`}
-            className={`shadow-2xl`}
+            background={`${theme === "dark" ? "#EE43DE" : "#EE43DE"}`}
+            shimmerColor={`${theme === "dark" ? "#FFF" : "#FFF"}`}
+            className={`shadow-2xl h-[46px]`}
           >
             <strong
-              className={`whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight ${theme === "dark" ? "text-black" : "text-white"}`}
+              className={`whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight ${theme === "dark" ? "text-white" : "text-white"}`}
             >
               {"Start Free Trial"}
             </strong>
           </ShimmerButton>
-          <ShimmerButton className={`shadow-2xl`} shimmerSize="0.2em">
+          <ShimmerButton
+            className={`shadow-2xl h-[46px]`}
+            shimmerSize="0.2em"
+            background={`${theme === "dark" ? "#FFFFFF" : "#FFFFFF"}`}
+            shimmerColor={`${theme === "dark" ? "#000" : "#000"}`}
+          >
             <strong
-              className={`whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight `}
+              className={`whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight text-black`}
             >
               {"Try For FREE!"}
             </strong>

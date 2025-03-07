@@ -56,7 +56,7 @@ const UserCard = ({
   const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
   const fetchUserDetail = async () => {
     const response = await api.get(
-      `/user/profile?user_id=${userData.user_name}`
+      `/user/profile?user_id=${userData.user_name}`,
     );
     setUserDetail(response.data);
   };
@@ -75,10 +75,10 @@ const UserCard = ({
       // isBlurred
       className="border-none bg-transparent"
       // className="border-none bg-background/60 dark:bg-default-100/50 mb-4 "
-      // shadow="sm"
+      shadow="none"
     >
       <CardBody>
-        <div className="flex flex-row w-full justify-start gap-6">
+        <div className="flex flex-row w-full justify-start gap-3">
           <Popover
             showArrow
             placement="bottom"
@@ -94,13 +94,13 @@ const UserCard = ({
                   isBlurred
                   isZoomed
                   alt="User Avatar"
-                  className="object-cover"
-                  width={isMobile ? 45 : 65}
+                  className="object-cover rounded-[50%]"
+                  width={isMobile ? 36 : 36}
                   shadow="lg"
                   style={
                     isMobile
-                      ? { height: "45px", width: "45px" }
-                      : { height: "65px", width: "65px" }
+                      ? { height: "36px", width: "36px" }
+                      : { height: "36px", width: "36px" }
                   }
                   src={
                     userData.avatar
@@ -160,7 +160,7 @@ const UserCard = ({
                       onPress={() =>
                         window.open(
                           `${NOBLEBLOCKS_DOMAIN}/@${userData.user_name}`,
-                          "_blank"
+                          "_blank",
                         )
                       }
                     >
@@ -197,96 +197,71 @@ const UserCard = ({
               </Card>
             </PopoverContent>
           </Popover>
-
-          <div className="flex flex-col justify-between w-full">
-            <div className="flex justify-between w-full items-start">
-              <h1 className="text-xl font-bold">{userData.first_name}</h1>
-              <div className="flex flex-row justify-center items-center">
-                <AnimatedSubscribeButton>
-                  <span className="group inline-flex items-center text-sm">
-                    Follow
-                    <ChevronRightIcon className="ml-1 size-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </span>
-                  <span className="group inline-flex items-center text-sm">
-                    <CheckIcon className="mr-2 size-4" />
-                    Followed
-                  </span>
-                </AnimatedSubscribeButton>
-                <Popover
-                  offset={10}
-                  placement="bottom-end"
-                  backdrop="transparent"
-                >
-                  <PopoverTrigger>
-                    <Button
-                      isIconOnly
-                      className="text-default-900/60 data-[hover]:bg-foreground/10"
-                      radius="full"
-                      variant="light"
-                      onPress={() => console.log(userData)}
-                    >
-                      <PiDotsThreeOutlineVerticalFill size={17} />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[150px] bg-[#2E3E4E] border-2 border-[#4B5C6E]">
-                    {() => (
-                      <div className="w-full flex flex-col gap-2 bg-[#2E3E4E]">
-                        <Button
-                          startContent={<MdOutlineContentCopy size={24} />}
-                          className="w-full"
-                          variant="light"
-                          onPress={() => {
-                            navigator.clipboard.writeText(link);
-                            toast({
-                              title: "Success",
-                              description: "Successfully Copied the link!",
-                            });
-                          }}
-                        >
-                          Share
-                        </Button>
-                        <Button
-                          variant="light"
-                          className="w-full"
-                          startContent={<MdReport size={24} />}
-                          onPress={reportPost}
-                        >
-                          {totalData.reported_me ? "UnReport" : "Report"}
-                        </Button>
-                      </div>
-                    )}
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-
-            <div className="flex flex-col">
-              {/* {userData.about_me && (
-                <Tooltip
-                  className="max-w-[80%]"
-                  placement="right-end"
-                  content={
-                    (userData.about_me as String).length > 150 && (
-                      <div className="px-1 py-2 ">
-                        <div className="text-xs md:text-small font-semibold">
-                          {userData.about_me}
-                        </div>
-                      </div>
-                    )
-                  }
-                  isDisabled={(userData.about_me as string).length <= 100}
-                >
-                  <span className="text-xs md:text-medium">
-                    {_.truncate(userData.about_me, {
-                      length: isMobile ? 35 : 150,
-                      omission: "...",
-                    })}
-                  </span>
-                </Tooltip>
-              )} */}
-              <span className="text-sm font-semibold text-gray-500">
+          <div className="flex justify-between items-center w-full">
+            <div className="flex flex-col gap-[1px]">
+              <span className="font-bold text-[16px] leading-[16px]">
+                {userData.first_name}
+              </span>
+              <span className="text-[14px] font-normal text-gray-500 leading-[20px]">
                 {formattedDate}
               </span>
+            </div>
+            <div className="flex flex-row justify-center items-center">
+              <AnimatedSubscribeButton>
+                <span className="group inline-flex items-center text-sm">
+                  Follow
+                  {/* <ChevronRightIcon className="ml-1 size-4 transition-transform duration-300 group-hover:translate-x-1" /> */}
+                </span>
+                <span className="group inline-flex items-center text-sm">
+                  <CheckIcon className="mr-2 size-4" />
+                  Followed
+                </span>
+              </AnimatedSubscribeButton>
+              <Popover
+                offset={10}
+                placement="bottom-end"
+                backdrop="transparent"
+              >
+                <PopoverTrigger>
+                  <Button
+                    isIconOnly
+                    className="text-default-900/60 data-[hover]:bg-foreground/10"
+                    radius="full"
+                    variant="light"
+                    onPress={() => console.log(userData)}
+                  >
+                    <PiDotsThreeOutlineVerticalFill size={17} />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[150px] bg-[#2E3E4E] border-2 border-[#4B5C6E]">
+                  {() => (
+                    <div className="w-full flex flex-col gap-2 bg-[#2E3E4E]">
+                      <Button
+                        startContent={<MdOutlineContentCopy size={24} />}
+                        className="w-full"
+                        variant="light"
+                        onPress={() => {
+                          navigator.clipboard.writeText(link);
+                          toast({
+                            title: "Success",
+                            description: "Successfully Copied the link!",
+                          });
+                        }}
+                      >
+                        Share
+                      </Button>
+                      <Button
+                        variant="light"
+                        className="w-full"
+                        startContent={<MdReport size={24} />}
+                        onPress={reportPost}
+                      >
+                        {totalData.reported_me ? "UnReport" : "Report"}
+                      </Button>
+                    </div>
+                  )}
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
         </div>

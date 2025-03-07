@@ -261,7 +261,7 @@ const SummaryWrapper = ({
                         {author.split("(")[0]}
                       </Chip>
                     </Tooltip>
-                  )
+                  ),
               )}
               {summary.metadata.authors?.length > 3 && (
                 <Button
@@ -508,7 +508,7 @@ const SummaryWrapper = ({
                           {label}
                         </Chip>
                       );
-                    }
+                    },
                   )
                 : "Unknown"}
             </div>
@@ -526,7 +526,7 @@ const SummaryWrapper = ({
           {Object.entries(
             summary.technical_assessment
               ? summary.technical_assessment
-              : summary.summary.technical_assessment
+              : summary.summary.technical_assessment,
           ).map(([key, value]: any) => (
             <Chip
               key={key}
