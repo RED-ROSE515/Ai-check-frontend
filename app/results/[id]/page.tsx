@@ -154,7 +154,7 @@ const ResultPage = ({ params }: any) => {
           onClose={() => setShowSignIn(false)}
         />
         {summary && (
-          <div className="w-full md:w-5/6 flex flex-row">
+          <div className="w-full md:w-[1100px] flex flex-row">
             <div
               className={`card w-full md:w-3/4 mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
             >
@@ -202,9 +202,7 @@ const ResultPage = ({ params }: any) => {
                   onPress={() =>
                     isAuthenticated
                       ? like(result.id, result.liked_me)
-                      : showSignInModal(
-                          "You need to sign in to continue."
-                        )
+                      : showSignInModal("You need to sign in to continue.")
                   }
                 >
                   <TbThumbUp size={24} />

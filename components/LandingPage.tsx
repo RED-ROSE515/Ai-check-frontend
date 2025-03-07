@@ -13,7 +13,9 @@ const LandingPage = () => {
   return (
     <div
       className="w-full relative pt-4 md:pb-20"
-      style={{ background: "linear-gradient(0deg, #06070C 0%, #1E2A36 100%)" }}
+      style={{
+        background: `${theme === "dark" ? "linear-gradient(0deg, #09090B 0%, #1E2A36 100%)" : "linear-gradient(0deg, #FFFFFF 0%, #C8AAFF 100%)"}`,
+      }}
     >
       <div className="absolute flex size-full w-full h-full items-center justify-center overflow-hidden">
         <DotPattern

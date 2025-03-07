@@ -199,7 +199,7 @@ export default function Home() {
               <Loader />
             ) : totalResults.length > 0 ? (
               <React.Fragment>
-                <h1 className="text-md md:text-3xl text-center mb-4 font-semibold">
+                <h1 className="text-md md:text-3xl text-center mb-4 font-semibold md:font-bold">
                   See How NerdBunny is Improving Research Integrity
                 </h1>
                 {totalResults.map((result: any, index) => {

@@ -139,7 +139,7 @@ const ResearchSection = () => {
           >
             Why Choose NerdBunny?
           </span>
-          <h1 className="text-lg md:text-4xl">
+          <h1 className="font-bold text-lg md:text-4xl">
             Ensuring Accuracy, Integrity, and Insight in Research
           </h1>
         </div>

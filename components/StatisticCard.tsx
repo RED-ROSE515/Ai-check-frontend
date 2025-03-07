@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "@/utils/api";
-import { Card, Chip, CardBody } from "@heroui/react";
+import { Card, Chip, CardBody, Divider } from "@heroui/react";
 import { useTheme } from "next-themes";
 import PaperImage from "../public/Papers.png";
 import MathImage from "../public/Math.png";
@@ -183,7 +183,7 @@ const StatisticCard = () => {
           opts={{
             align: "start",
           }}
-          className="w-full max-w-[70vw]"
+          className="w-full max-w-[55vw]"
         >
           <CarouselContent>
             {issues.map((issue, index) => (
@@ -192,19 +192,21 @@ const StatisticCard = () => {
                   key={index + 1}
                   isHoverable
                   isPressable
+                  radius="lg"
                   onPress={() => {
                     setSortBy(issue.type || "");
                     setKeyword("");
                   }}
-                  className={`w-full`}
+                  className={`w-full rounded-full`}
                 >
                   <CardBody
-                    className={`w-full ${theme === "dark" ? `bg-slate-700 ${issue.whiteback}` : `bg-gray-200 ${issue.back}`} ${issue.type === sortBy ? `border-2 ${theme === "dark" ? "border-[#C8E600]" : "border-[#EE43DE]"} rounded-2xl` : ``}`}
+                    className={`w-full rounded-full ${theme === "dark" ? `bg-slate-700 ${issue.whiteback}` : `bg-gray-200 ${issue.back}`} ${issue.type === sortBy ? `border-2 ${theme === "dark" ? "border-[#C8E600]" : "border-[#EE43DE]"} rounded-full` : ``}`}
                   >
-                    <div className="flex flex-row justify-between items-center font-bold text-md space-x-2">
+                    <div className="flex flex-row justify-between items-center font-bold text-md">
                       <span>{issue.title}</span>
-                      <Chip size="sm" variant="faded">
-                        {issue.counts}
+                      <span>|</span>
+                      <Chip size="sm" variant="light">
+                        <span className="text-lg">{issue.counts}</span>
                       </Chip>
                     </div>
                   </CardBody>

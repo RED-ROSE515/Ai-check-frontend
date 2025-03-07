@@ -21,7 +21,7 @@ export const RightArrow = () => {
 const NerdbunnyReason = () => {
   return (
     <div className="mt-4">
-      <h1 className="text-lg md:text-4xl text-center my-4">
+      <h1 className="font-bold text-lg md:text-4xl text-center my-4">
         Why You Need NerdBunny Ai Error Detection
       </h1>
       <div className="flex flex-col justify-center gap-2">

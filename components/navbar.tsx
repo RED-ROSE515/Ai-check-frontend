@@ -82,7 +82,7 @@ export const Navbar = () => {
         position="sticky"
         height={isMobile ? "4rem" : "4.5rem"}
         style={{
-          background: "linear-gradient(0deg, #1E2A36 0%, #1E2A36 100%)",
+          background: `${theme === "dark" ? "linear-gradient(0deg, #1E2A36 0%, #1E2A36 100%)" : "linear-gradient(0deg, #C8AAFF 0%, #C8AAFF 100%)"}`,
         }}
         shouldHideOnScroll
         className="flex flex-row justify-between w-full bg-transparent"
