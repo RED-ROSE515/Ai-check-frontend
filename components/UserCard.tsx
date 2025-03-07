@@ -19,9 +19,11 @@ import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { MdReport, MdOutlineContentCopy } from "react-icons/md";
 import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
 import { useUserActions } from "@/hooks/useUserActions";
+import { CheckIcon, ChevronRightIcon } from "lucide-react";
 
 import api from "@/utils/api";
 import _ from "lodash";
+import { AnimatedSubscribeButton } from "./magicui/animated-subscribe-button";
 
 export const formatTimestamp = (date: string | Date) => {
   const parsedDate = new Date(date);
@@ -70,9 +72,10 @@ const UserCard = ({
   }, []);
   return (
     <Card
-      isBlurred
-      className="border-none bg-background/60 dark:bg-default-100/50 mb-4 "
-      shadow="sm"
+      // isBlurred
+      className="border-none bg-transparent"
+      // className="border-none bg-background/60 dark:bg-default-100/50 mb-4 "
+      // shadow="sm"
     >
       <CardBody>
         <div className="flex flex-row w-full justify-start gap-6">
@@ -92,12 +95,12 @@ const UserCard = ({
                   isZoomed
                   alt="User Avatar"
                   className="object-cover"
-                  width={isMobile ? 65 : 85}
+                  width={isMobile ? 45 : 65}
                   shadow="lg"
                   style={
                     isMobile
-                      ? { height: "65px", width: "65px" }
-                      : { height: "85px", width: "85px" }
+                      ? { height: "45px", width: "45px" }
+                      : { height: "65px", width: "65px" }
                   }
                   src={
                     userData.avatar
@@ -198,50 +201,63 @@ const UserCard = ({
           <div className="flex flex-col justify-between w-full">
             <div className="flex justify-between w-full items-start">
               <h1 className="text-xl font-bold">{userData.first_name}</h1>
-              <Popover
-                showArrow
-                offset={10}
-                placement="bottom"
-                backdrop="transparent"
-              >
-                <PopoverTrigger>
-                  <Button
-                    isIconOnly
-                    className="text-default-900/60 data-[hover]:bg-foreground/10 -translate-y-2 translate-x-2"
-                    radius="full"
-                    variant="light"
-                    onPress={() => console.log(userData)}
-                  >
-                    <PiDotsThreeOutlineVerticalFill size={17} />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[150px]">
-                  {() => (
-                    <div className="px-1 py-2 w-full flex flex-col gap-2">
-                      <Button
-                        startContent={<MdOutlineContentCopy size={24} />}
-                        variant="ghost"
-                        onPress={() => {
-                          navigator.clipboard.writeText(link);
-                          toast({
-                            title: "Success",
-                            description: "Successfully Copied the link!",
-                          });
-                        }}
-                      >
-                        Share
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        startContent={<MdReport size={24} />}
-                        onPress={reportPost}
-                      >
-                        {totalData.reported_me ? "UnReport" : "Report"}
-                      </Button>
-                    </div>
-                  )}
-                </PopoverContent>
-              </Popover>
+              <div className="flex flex-row justify-center items-center">
+                <AnimatedSubscribeButton>
+                  <span className="group inline-flex items-center text-sm">
+                    Follow
+                    <ChevronRightIcon className="ml-1 size-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </span>
+                  <span className="group inline-flex items-center text-sm">
+                    <CheckIcon className="mr-2 size-4" />
+                    Followed
+                  </span>
+                </AnimatedSubscribeButton>
+                <Popover
+                  offset={10}
+                  placement="bottom-end"
+                  backdrop="transparent"
+                >
+                  <PopoverTrigger>
+                    <Button
+                      isIconOnly
+                      className="text-default-900/60 data-[hover]:bg-foreground/10"
+                      radius="full"
+                      variant="light"
+                      onPress={() => console.log(userData)}
+                    >
+                      <PiDotsThreeOutlineVerticalFill size={17} />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[150px] bg-[#2E3E4E] border-2 border-[#4B5C6E]">
+                    {() => (
+                      <div className="w-full flex flex-col gap-2 bg-[#2E3E4E]">
+                        <Button
+                          startContent={<MdOutlineContentCopy size={24} />}
+                          className="w-full"
+                          variant="light"
+                          onPress={() => {
+                            navigator.clipboard.writeText(link);
+                            toast({
+                              title: "Success",
+                              description: "Successfully Copied the link!",
+                            });
+                          }}
+                        >
+                          Share
+                        </Button>
+                        <Button
+                          variant="light"
+                          className="w-full"
+                          startContent={<MdReport size={24} />}
+                          onPress={reportPost}
+                        >
+                          {totalData.reported_me ? "UnReport" : "Report"}
+                        </Button>
+                      </div>
+                    )}
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
 
             <div className="flex flex-col">
@@ -268,7 +284,7 @@ const UserCard = ({
                   </span>
                 </Tooltip>
               )} */}
-              <span className="text-md font-semibold text-gray-500">
+              <span className="text-sm font-semibold text-gray-500">
                 {formattedDate}
               </span>
             </div>

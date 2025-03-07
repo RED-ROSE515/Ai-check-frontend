@@ -14,7 +14,6 @@ import api from "@/utils/api";
 // import Pusher from "pusher-js";
 import { useTheme } from "next-themes";
 import LeftSider from "../components/LeftSider";
-import StatisticCard from "../components/StatisticCard";
 import SummaryWrapper from "../components/SummaryWrapper";
 import { usePagination } from "@/contexts/PaginationContext";
 import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
@@ -33,6 +32,11 @@ import { useRouter } from "next/navigation";
 import type { Metadata } from "next";
 import SearchBar from "@/components/SearchBar";
 import { useSearch } from "@/contexts/SearchContext"; // Add this import
+import LandingPage from "@/components/LandingPage";
+import WorkFlow from "@/components/WorkFlow";
+import NerdbunnyReason from "@/components/NerdbunnyReason";
+import ResearchSection from "@/components/ResearchSection";
+import LastSection from "@/components/LastSection";
 
 const metadata: Metadata = {
   title: "AI-Powered Research Paper Error Detection",
@@ -133,157 +137,161 @@ export default function Home() {
     return null;
   }
   return (
-    <section className="flex flex-col md:flex-row items-start justify-center gap-4">
-      {User && (
-        <div className="w-full md:w-1/6">
-          <LeftSider onUpload={() => triggerUploadRef.current?.()} />
-        </div>
-      )}
-      <title>NerdBunny - AI Error Detection for Research Papers</title>
-      <meta
-        name="description"
-        content="NerdBunny is a DeSci AI agent that detects errors in research papers, makes complex studies easier to understand, and adds a fun meme culture to science. 🧬🐇"
-      />
-
-      <div className="mt-4 w-full md:w-5/6 items-center flex flex-col justify-center">
-        <div className="flex md:hidden flex-row justify-center">
-          <SearchBar />
-        </div>
-        <div className="mx-auto grid w-full flex-row flex-wrap gap-6 p-4 md:p-12 md:px-36 justify-center md:pt-0">
-          <StatisticCard />
-        </div>
-        <SignInDialog
-          isOpen={showSignIn}
-          onClose={() => setShowSignIn(false)}
+    <section className="w-full">
+      <LandingPage />
+      <div className="flex flex-col md:flex-row items-start justify-center gap-4">
+        {User && (
+          <div className="w-full md:w-1/6">
+            <LeftSider onUpload={() => triggerUploadRef.current?.()} />
+          </div>
+        )}
+        <title>NerdBunny - AI Error Detection for Research Papers</title>
+        <meta
+          name="description"
+          content="NerdBunny is a DeSci AI agent that detects errors in research papers, makes complex studies easier to understand, and adds a fun meme culture to science. 🧬🐇"
         />
-        <div className="w-full items-center">
-          <Modal
-            backdrop={"blur"}
-            isOpen={isOpen}
-            onClose={onClose}
-            size={"2xl"}
-          >
-            <ModalContent>
-              {(onClose) => (
-                <>
-                  <ModalHeader className="flex flex-col gap-1">
-                    Modal Title
-                  </ModalHeader>
-                  <ModalBody>
-                    <PostCommentBox
-                      postId={postId}
-                      onCommentAdded={() => {
-                        setTotalResults((totalResults: any) =>
-                          totalResults.map((paper: any) =>
-                            paper.id === postId
-                              ? {
-                                  ...paper,
-                                  count_comment: paper.count_comment + 1,
-                                }
-                              : paper
-                          )
-                        );
-                        onClose();
-                      }}
-                    />
-                  </ModalBody>
-                </>
-              )}
-            </ModalContent>
-          </Modal>
 
-          {loading ? (
-            <Loader />
-          ) : totalResults.length > 0 ? (
-            totalResults.map((result: any, index) => {
-              return (
-                <div
-                  key={index}
-                  className={`card mb-8 md:mb-24 flex flex-col items-center justify-center rounded border-2 shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
-                >
-                  <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
-                    {result?.description && result?.description[0] === "{" && (
-                      <SummaryWrapper
-                        summary={JSON.parse(result.description)}
-                        // input_tokens={result.input_tokens}
-                        // output_tokens={result.output_tokens}
-                        // total_cost={result.total_cost}
-                        reportPost={() =>
-                          reportPost(result.id, result.reported_me)
-                        }
-                        totalData={result}
-                        userData={result.user}
-                        showSignInModal={showSignInModal}
-                        postDate={result.updated_at}
-                        link={DOMAIN + "/results/" + result.id}
-                      />
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-start gap-4 w-full px-4 py-2">
-                    <Button
-                      variant="ghost"
-                      color={result.liked_me ? "warning" : "default"}
-                      className="flex items-center gap-2"
-                      onPress={() =>
-                        isAuthenticated
-                          ? like(result.id, result.liked_me)
-                          : showSignInModal(
-                              "You need to sign in to continue."
+        <div className="mt-4 w-full md:w-[1100px] items-center flex flex-col justify-center">
+          <div className="flex md:hidden flex-row justify-center mb-4">
+            <SearchBar />
+          </div>
+          <SignInDialog
+            isOpen={showSignIn}
+            onClose={() => setShowSignIn(false)}
+          />
+          <div className="w-full items-center px-2">
+            <Modal
+              backdrop={"blur"}
+              isOpen={isOpen}
+              onClose={onClose}
+              size={"2xl"}
+            >
+              <ModalContent>
+                {(onClose) => (
+                  <>
+                    <ModalHeader className="flex flex-col gap-1">
+                      Modal Title
+                    </ModalHeader>
+                    <ModalBody>
+                      <PostCommentBox
+                        postId={postId}
+                        onCommentAdded={() => {
+                          setTotalResults((totalResults: any) =>
+                            totalResults.map((paper: any) =>
+                              paper.id === postId
+                                ? {
+                                    ...paper,
+                                    count_comment: paper.count_comment + 1,
+                                  }
+                                : paper
                             )
-                      }
-                    >
-                      <TbThumbUp size={24} />
-                      <span>{result.count_like || 0}</span>
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      className="flex items-center gap-2"
-                      onPress={() => {
-                        if (isAuthenticated) {
-                          setPostId(result.id);
-                          onOpen();
-                        } else {
-                          showSignInModal(
-                            "You need to sign in to continue."
                           );
-                        }
-                      }}
-                    >
-                      <TbMessage size={24} />
-                      <span>{result.count_comment || 0}</span>
-                    </Button>
+                          onClose();
+                        }}
+                      />
+                    </ModalBody>
+                  </>
+                )}
+              </ModalContent>
+            </Modal>
 
-                    <Button
-                      variant="ghost"
-                      className="flex items-center gap-2"
-                      isDisabled
+            {loading ? (
+              <Loader />
+            ) : totalResults.length > 0 ? (
+              <React.Fragment>
+                <h1 className="text-md md:text-3xl text-center mb-4 font-semibold">
+                  See How NerdBunny is Improving Research Integrity
+                </h1>
+                {totalResults.map((result: any, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className={`card mb-8 md:mb-24 flex flex-col items-center justify-center rounded-2xl shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
                     >
-                      <TbEye size={24} />
-                      <span>{result.count_view || 0}</span>
-                    </Button>
-                    <ShareButtons
-                      url={API_BASE_URL + "/results/" + result.id}
-                      title={result.title}
-                      // summary={result.summary.child}
-                    />
-                  </div>
-                  <div className="flex flex-row justify-center w-full">
-                    <ShinyButton
-                      className={`mr-2 mb-2 ${theme === "dark" ? "bg-[#C8E600]" : "bg-[#EE43DE]"}`}
-                      onClick={() =>
-                        (window.location.href = "/results/" + result.id)
-                      }
-                    >
-                      <strong
-                        className={`${theme === "dark" ? "text-black" : "text-white"} font-bold`}
-                      >
-                        {"Read full report  ➜"}
-                      </strong>
-                    </ShinyButton>
-                  </div>
-                  {/* <div className="mb-0 sm:mb-2 w-full">
+                      <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
+                        {result?.description &&
+                          result?.description[0] === "{" && (
+                            <SummaryWrapper
+                              summary={JSON.parse(result.description)}
+                              // input_tokens={result.input_tokens}
+                              // output_tokens={result.output_tokens}
+                              // total_cost={result.total_cost}
+                              reportPost={() =>
+                                reportPost(result.id, result.reported_me)
+                              }
+                              totalData={result}
+                              userData={result.user}
+                              showSignInModal={showSignInModal}
+                              postDate={result.updated_at}
+                              link={DOMAIN + "/results/" + result.id}
+                            />
+                          )}
+                      </div>
+
+                      <div className="flex items-center justify-start gap-4 w-full px-4 py-2">
+                        <Button
+                          variant="ghost"
+                          color={result.liked_me ? "warning" : "default"}
+                          className="flex items-center gap-2"
+                          onPress={() =>
+                            isAuthenticated
+                              ? like(result.id, result.liked_me)
+                              : showSignInModal(
+                                  "You need to sign in to continue."
+                                )
+                          }
+                        >
+                          <TbThumbUp size={24} />
+                          <span>{result.count_like || 0}</span>
+                        </Button>
+
+                        <Button
+                          variant="ghost"
+                          className="flex items-center gap-2"
+                          onPress={() => {
+                            if (isAuthenticated) {
+                              setPostId(result.id);
+                              onOpen();
+                            } else {
+                              showSignInModal(
+                                "You need to sign in to continue."
+                              );
+                            }
+                          }}
+                        >
+                          <TbMessage size={24} />
+                          <span>{result.count_comment || 0}</span>
+                        </Button>
+
+                        <Button
+                          variant="ghost"
+                          className="flex items-center gap-2"
+                          isDisabled
+                        >
+                          <TbEye size={24} />
+                          <span>{result.count_view || 0}</span>
+                        </Button>
+                        <ShareButtons
+                          url={API_BASE_URL + "/results/" + result.id}
+                          title={result.title}
+                          // summary={result.summary.child}
+                        />
+                      </div>
+                      <div className="flex flex-row justify-center w-full">
+                        <ShinyButton
+                          className={`mr-2 mb-2 ${theme === "dark" ? "bg-[#C8E600]" : "bg-[#EE43DE]"}`}
+                          onClick={() =>
+                            (window.location.href = "/results/" + result.id)
+                          }
+                        >
+                          <strong
+                            className={`${theme === "dark" ? "text-black" : "text-white"} font-bold`}
+                          >
+                            {"Read full report  ➜"}
+                          </strong>
+                        </ShinyButton>
+                      </div>
+                      {/* <div className="mb-0 sm:mb-2 w-full">
                       <SpecialSummary summary={result.paperAnalysis.summary} />
                       <div
                         className={
@@ -298,14 +306,23 @@ export default function Home() {
                         )}
                       </div>
                     </div> */}
-                </div>
-              );
-            })
-          ) : (
-            <div className="w-full flex flex-row justify-center">
-              <strong className="text-lg md:text-4xl">Nothing to show!</strong>
-            </div>
-          )}
+                    </div>
+                  );
+                })}
+              </React.Fragment>
+            ) : (
+              <div className="w-full flex flex-row justify-center">
+                <strong className="text-lg md:text-4xl">
+                  Nothing to show!
+                </strong>
+              </div>
+            )}
+
+            <NerdbunnyReason />
+            <WorkFlow />
+            <ResearchSection />
+            <LastSection />
+          </div>
         </div>
       </div>
     </section>

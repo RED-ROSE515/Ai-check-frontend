@@ -34,6 +34,8 @@ import SpeechPlayer from "./SpeechPlayer";
 import UserCard from "./UserCard";
 import { useSearch } from "@/contexts/SearchContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { FaClock, FaGlobe, FaLink, FaMinus, FaPlus } from "react-icons/fa";
+import { SiSharp } from "react-icons/si";
 const getColorForScore = (score: number) => {
   switch (true) {
     case score >= 9:
@@ -172,20 +174,11 @@ const SummaryWrapper = ({
       className="flex w-full flex-col rounded-lg p-4 md:px-4"
       style={
         theme === "dark"
-          ? { backgroundColor: "#1f2a37" }
+          ? { backgroundColor: "#1E2A36" }
           : { backgroundColor: "#EEEEEEF0" }
       }
     >
-      <UserCard
-        userData={userData}
-        postDate={postDate}
-        link={link}
-        reportPost={reportPost}
-        showSignInModal={showSignInModal}
-        totalData={totalData}
-        className="max-w-fit"
-      />
-      <div className="w-full flex flex-row justify-center text-center font-bold text-2xl">
+      <div className="w-full flex flex-col justify-center text-center font-bold text-2xl gap-4">
         {/* <span className="text-md md:text-2xl font-bold text-center md:min-w-fit md:flex hidden">
           {`AI Error Detection Report for`}
           <Tooltip
@@ -207,101 +200,102 @@ const SummaryWrapper = ({
           {` : `}
         </span> */}
         {isResult ? (
-          <span className="text-md md:text-3xl flex-1 items-center gap-1">
+          <span className="text-md md:text-3xl flex-1 items-center gap-1 px-2">
             {summary.metadata.title}
           </span>
         ) : (
           <Link href={link}>
-            <span className="text-md md:text-3xl">
-              {/* <p className="text-sm md:hidden">
-                {`AI Error Detection Report for`}
-                <Tooltip
-                  content={
-                    <div
-                      className="flex flex-col cursor-pointer"
-                      onClick={() => {}}
-                    >
-                      <strong className="text-md font-bold text-center">
-                        This AI-generated report analyzes the paper’s structure,
-                        methodology, and technical accuracy.
-                        <Link className="ml-4 text-blue-700"> Learn more.</Link>
-                      </strong>
-                    </div>
-                  }
-                  placement="top"
-                  className="max-w-[300px] min-h-[75px]"
-                  closeDelay={1000}
-                >
-                  <span className="">ℹ️</span>
-                </Tooltip>
-                {` : `}
-              </p> */}
+            <span className="text-md md:text-3xl px-2">
               {summary.metadata.title}
             </span>
           </Link>
         )}
+        <UserCard
+          userData={userData}
+          postDate={postDate}
+          link={link}
+          reportPost={reportPost}
+          showSignInModal={showSignInModal}
+          totalData={totalData}
+          className="max-w-fit"
+        />
       </div>
 
       <div className="flex flex-col md:flex-row justify-between mt-4 gap-4">
-        <div>
-          <div
-            className={`my-4 w-full flex flex-wrap gap-2 ${
-              theme === "dark" ? `text-gray-200` : "text-slate-700"
-            }`}
-          >
-            <strong className="font-bold text-lg md:text-xl w-full md:w-auto">
+        <div className="flex flex-row justify-center items-center gap-10 w-full">
+          <div className={`my-4 w-1/2`}>
+            <span
+              className={`font-bold text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
+            >
               Authors:
-            </strong>
-            {summary.metadata.authors?.map(
-              (author: string, index: number) =>
-                (index < 3 || expand) && (
-                  <Tooltip
-                    key={index}
-                    content={"(" + author.split("(")[1]}
-                    placement="bottom"
-                    className="max-w-[50vw]"
-                  >
-                    <Chip
-                      // className={`${theme === "dark" ? "secondary" : "primary"}`}
-                      variant="dot"
-                      className={`cursor-pointer hover:scale-105 ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {summary.metadata.authors?.map(
+                (author: string, index: number) =>
+                  (index < 3 || expand) && (
+                    <Tooltip
+                      key={index}
+                      content={"(" + author.split("(")[1]}
+                      placement="bottom"
+                      className="max-w-[50vw]"
                     >
-                      {author.split("(")[0]}
-                    </Chip>
-                  </Tooltip>
-                )
-            )}
-            {summary.metadata.authors?.length > 3 && (
-              <Button
-                size="sm"
-                variant="ghost"
-                onPress={() => setExpand(!expand)}
-                className={`w-full h-auto md:w-auto ${theme === "dark" ? "bg-slate-700 text-white" : "bg-gray-300 text-black"}`}
+                      <Chip
+                        // className={`${theme === "dark" ? "secondary" : "primary"}`}
+                        variant="dot"
+                        className={`cursor-pointer hover:scale-105 ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
+                      >
+                        {author.split("(")[0]}
+                      </Chip>
+                    </Tooltip>
+                  )
+              )}
+              {summary.metadata.authors?.length > 3 && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  endContent={expand ? <FaMinus /> : <FaPlus />}
+                  onPress={() => setExpand(!expand)}
+                  className={`w-full h-auto md:w-auto ${theme === "dark" ? "bg-slate-700 text-white" : "bg-gray-300 text-black"}`}
+                >
+                  {`${expand ? "Show Less " : "Load More "}`}
+                </Button>
+              )}
+            </div>
+          </div>
+          <div className="w-1/2">
+            <span
+              className={`font-bold text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
+            >
+              Paper Link :
+            </span>
+            {summary.metadata.paper_link ? (
+              <div>
+                <Link
+                  className={`mb-4 block hover:underline truncate w-fit ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
+                  href={summary.metadata.paper_link}
+                  style={{ maxWidth: "-webkit-fill-available" }}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  <Chip
+                    startContent={<FaLink className="ml-2" />}
+                    variant="dot"
+                  >
+                    {summary.metadata.paper_link}
+                  </Chip>
+                </Link>
+              </div>
+            ) : (
+              <Link
+                href="#"
+                className={`mb-4 block hover:underline truncate w-fit ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
               >
-                {`${expand ? "Show Less..." : "Load More..."}`}
-              </Button>
+                <Chip startContent={<FaLink className="ml-2" />} variant="dot">
+                  Unknown
+                </Chip>
+              </Link>
             )}
           </div>
-          {summary.metadata.paper_link ? (
-            <div>
-              <Link
-                className={`mb-4 block hover:underline truncate w-fit ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
-                href={summary.metadata.paper_link}
-                style={{ maxWidth: "-webkit-fill-available" }}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                Paper Link : {summary.metadata.paper_link}
-              </Link>
-            </div>
-          ) : (
-            <Link
-              href="#"
-              className={`mb-4 block hover:underline truncate w-fit ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
-            >
-              Paper Link : Unknown
-            </Link>
-          )}
         </div>
 
         {input_tokens && output_tokens && total_cost && (
@@ -457,30 +451,46 @@ const SummaryWrapper = ({
 
       <div className="mt-4">
         <span
-          className={`text-xl font-bold ${theme === "dark" ? `text-gray-200` : "text-slate-700"}`}
+          className={`font-bold text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
         >
-          Publication Info
+          Information:
         </span>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-10 mb-2">
           <Typography
-            className={`${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
+            className={`flex flex-row justify-center items-center gap-1 ${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
             variant="body1"
           >
-            <strong>Date: </strong>{" "}
+            <span
+              className={`${theme === "dark" ? "text-[#495D72]" : "text-slate-700"} mr-1`}
+            >
+              <FaClock />
+            </span>
+            <span>Date: </span>
             {summary.metadata.publication_info.date || "Unknown"}
           </Typography>
           <Typography
-            className={`${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
+            className={`flex flex-row justify-center items-center ml-8 gap-1 ${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
             variant="body1"
           >
+            <span
+              className={`${theme === "dark" ? "text-[#495D72]" : "text-slate-700"} mr-1`}
+            >
+              <FaGlobe />
+            </span>
             <strong>Source: </strong>
             {summary.metadata?.publication_info?.journal || "Unknown"}
           </Typography>
-          <div
-            className={`w-full ${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
-          >
+        </div>
+        <div
+          className={`w-full ${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
+        >
+          <div className="flex flex-col justify-start gap-2">
+            <span
+              className={`font-bold text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
+            >
+              Keywords:
+            </span>
             <div className="flex flex-wrap justify-start gap-2">
-              <strong>Keywords: </strong>
               {summary.metadata.publication_info.keywords
                 ? summary.metadata.publication_info.keywords.map(
                     (label: string, index: number) => {
@@ -492,6 +502,7 @@ const SummaryWrapper = ({
                             setKeyword(label === keyword ? "" : label);
                             setSortBy("");
                           }}
+                          startContent={<SiSharp className="ml-1" />}
                           className={`cursor-pointer hover:scale-105 ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"} ${label === keyword ? `${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}` : ""}`}
                         >
                           {label}
@@ -507,9 +518,9 @@ const SummaryWrapper = ({
 
       <div className="mt-4">
         <span
-          className={`text-xl font-bold ${theme === "dark" ? `text-gray-200` : "text-slate-700"}`}
+          className={`font-bold text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
         >
-          Technical Assessment
+          Technical Assessment:
         </span>
         <div className="flex flex-wrap gap-2">
           {Object.entries(

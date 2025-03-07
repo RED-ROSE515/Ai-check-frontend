@@ -53,7 +53,7 @@ export default function RootLayout({
                         <div className="relative flex flex-col h-screen">
                           <Navbar />
                           <main
-                            className="w-screen overflow-x-hidden p-2 pt-4 flex-grow"
+                            className="w-screen overflow-x-hidden flex-grow"
                             id="main"
                           >
                             {children}

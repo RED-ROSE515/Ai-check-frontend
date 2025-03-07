@@ -80,11 +80,15 @@ export const Navbar = () => {
       <HeroUINavbar
         maxWidth="full"
         position="sticky"
-        height={isMobile ? "4rem" : "5rem"}
-        className="shadow-xl flex flex-row justify-between w-full md:w-5/6"
+        height={isMobile ? "4rem" : "4.5rem"}
+        style={{
+          background: "linear-gradient(0deg, #1E2A36 0%, #1E2A36 100%)",
+        }}
+        shouldHideOnScroll
+        className="flex flex-row justify-between w-full bg-transparent"
       >
         <NavbarContent className="flex w-full basis-full overflow-y-hidden">
-          <NavbarItem className="flex md:gap-2 w-auto md:w-1/2">
+          <NavbarItem className="flex md:gap-2 w-auto md:w-1/3">
             <NavbarBrand>
               <Link href="/">
                 <Image

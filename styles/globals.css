@@ -215,3 +215,14 @@
   object-fit: cover;
   z-index: 0;
 }
+
+.landing-text {
+  color: #fff;
+  text-align: center;
+  /* font-family: "TWK Lausanne"; */
+  font-size: 4rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 72px;
+  letter-spacing: -1.44px;
+}
