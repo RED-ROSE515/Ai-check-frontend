@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useTransition } from "react";
 import { Button } from "@heroui/react";
-import { ShimmerButton } from "./magicui/shimmer-button";
 import { FaPlus } from "react-icons/fa";
+import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
 
 export const RightArrow = () => {
   return (
@@ -21,6 +22,10 @@ export const RightArrow = () => {
   );
 };
 const NerdbunnyReason = () => {
+  const { theme } = useTheme();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
   return (
     <div className="mt-24 flex flex-col gap-[48px]">
       <h1 className="font-bold text-lg md:text-4xl text-center my-4">
@@ -67,11 +72,15 @@ const NerdbunnyReason = () => {
           </div>
         </div>
         <div className="w-full flex flex-row justify-center items-center">
-          <ShimmerButton
-            shimmerSize="0.2em"
-            background={`#EE43DE`}
-            shimmerColor={`#FFF`}
-            className={`shadow-2xl h-[36px]`}
+          <Button
+            isLoading={isPending}
+            className={`shadow-2xl h-[46px] ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#C8E600]"}`}
+            radius="full"
+            onPress={() =>
+              startTransition(() => {
+                router.push("/check");
+              })
+            }
           >
             <strong
               className={`text-[16px] flex flex-row justify-center items-center whitespace-pre-wrap text-center font-medium leading-none tracking-tight text-white`}
@@ -79,7 +88,7 @@ const NerdbunnyReason = () => {
               {"Try it Now - It's Free"}
               <RightArrow />
             </strong>
-          </ShimmerButton>
+          </Button>
         </div>
       </div>
     </div>

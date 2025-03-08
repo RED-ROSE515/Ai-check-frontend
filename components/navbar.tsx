@@ -89,7 +89,7 @@ export const Navbar = () => {
         // shouldHideOnScroll
         className="flex flex-row justify-between w-full bg-transparent h-[78px]"
       >
-        <NavbarContent className="flex w-full basis-full overflow-y-hidden">
+        <NavbarContent className="flex w-full flex-grow-0 basis-full overflow-y-hidden">
           <NavbarItem className="flex md:gap-2 md:w-1/3">
             <NavbarBrand>
               <Link href="/" className="w-[210px]">
@@ -107,7 +107,7 @@ export const Navbar = () => {
             </NavbarBrand>
           </NavbarItem>
         </NavbarContent>
-        <NavbarContent className="flex w-full basis-full">
+        <NavbarContent className="flex w-full ">
           <NavbarItem className="w-full items-center gap-2 hidden md:flex justify-center">
             <SearchBar />
           </NavbarItem>

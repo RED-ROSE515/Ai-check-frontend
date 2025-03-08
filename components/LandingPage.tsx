@@ -1,10 +1,8 @@
-import React, { useTransition, useEffect, useState } from "react";
-import { ShinyButton } from "./ui/shiny-button";
-import { TextAnimate } from "./ui/text-animate";
+import React, { useTransition } from "react";
 import { useTheme } from "next-themes";
-import { ShimmerButton } from "./magicui/shimmer-button";
 import { DotPattern } from "./magicui/dot-pattern";
 import { cn } from "@/lib/utils";
+import { Button } from "@heroui/react";
 import StatisticCard from "./StatisticCard";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { useRouter } from "next/navigation";
@@ -56,13 +54,11 @@ const LandingPage = () => {
           </strong>
         </div>
         <div className="flex flex-row justify-center mt-6 gap-2 md:gap-8 items-center">
-          <ShimmerButton
-            shimmerSize="0.2em"
+          <Button
             isLoading={isPending}
-            background={`${theme === "dark" ? "#EE43DE" : "#EE43DE"}`}
-            shimmerColor={`${theme === "dark" ? "#FFF" : "#FFF"}`}
-            className={`shadow-2xl h-[46px]`}
-            onClick={() =>
+            className={`shadow-2xl h-[46px] ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#C8E600]"}`}
+            radius="full"
+            onPress={() =>
               startTransition(() => {
                 router.push("/check");
               })
@@ -73,14 +69,12 @@ const LandingPage = () => {
             >
               {"Start Free Trial"}
             </strong>
-          </ShimmerButton>
-          <ShimmerButton
-            className={`shadow-2xl h-[46px]`}
-            shimmerSize="0.2em"
+          </Button>
+          <Button
             isLoading={isPending}
-            background={`${theme === "dark" ? "#FFFFFF" : "#FFFFFF"}`}
-            shimmerColor={`${theme === "dark" ? "#000" : "#000"}`}
-            onClick={() =>
+            className={`shadow-2xl h-[46px] ${theme === "dark" ? "bg-[#FFF]" : "bg-[#000]"}`}
+            radius="full"
+            onPress={() =>
               startTransition(() => {
                 router.push("/check");
               })
@@ -91,7 +85,7 @@ const LandingPage = () => {
             >
               {"Try For FREE!"}
             </strong>
-          </ShimmerButton>
+          </Button>
         </div>
       </div>
       <div className="mx-auto mt-10 grid w-full flex-row flex-wrap gap-6 justify-center">

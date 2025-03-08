@@ -1,9 +1,10 @@
-import React from "react";
-import { ShimmerButton } from "./magicui/shimmer-button";
-import { useTheme } from "next-themes";
+import React, { useTransition } from "react";
 import { FaArrowRight, FaPlus } from "react-icons/fa";
-import { Card, CardHeader, CardBody } from "@heroui/react";
+import { Card, Button, CardBody } from "@heroui/react";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
+import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
+
 export const DataStreamSVG = () => {
   return (
     <svg
@@ -128,8 +129,10 @@ export const RightArrow = () => {
   );
 };
 const ResearchSection = () => {
-  const { theme } = useTheme();
   const { isMobile } = useDeviceCheck();
+  const { theme } = useTheme();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   return (
     <div className="flex flex-col justify-center gap-9">
       <div className="flex flex-row justify-between items-center">
@@ -187,11 +190,15 @@ const ResearchSection = () => {
         </Card>
       </div>
       <div className="w-full flex flex-row justify-center items-center">
-        <ShimmerButton
-          shimmerSize="0.2em"
-          background={`${theme === "dark" ? "#EE43DE" : "#EE43DE"}`}
-          shimmerColor={`${theme === "dark" ? "#FFF" : "#FFF"}`}
-          className={`shadow-2xl `}
+        <Button
+          isLoading={isPending}
+          className={`shadow-2xl h-[46px] ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#C8E600]"}`}
+          radius="full"
+          onPress={() =>
+            startTransition(() => {
+              router.push("/check");
+            })
+          }
         >
           <strong
             className={`text-[16px] flex flex-row justify-center items-center whitespace-pre-wrap text-center font-medium leading-none tracking-tight ${theme === "dark" ? "text-white" : "text-white"}`}
@@ -199,7 +206,7 @@ const ResearchSection = () => {
             {"Start Your Free Trial"}
             <FaArrowRight className="ml-2" />
           </strong>
-        </ShimmerButton>
+        </Button>
       </div>
     </div>
   );

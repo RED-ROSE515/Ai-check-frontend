@@ -1,10 +1,10 @@
-import React from "react";
-import { ShimmerButton } from "./magicui/shimmer-button";
+import React, { useTransition } from "react";
 import { useTheme } from "next-themes";
 import { FaPlus } from "react-icons/fa";
-import { Card, CardHeader, CardBody } from "@heroui/react";
+import { Card, CardHeader, CardBody, Button } from "@heroui/react";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { useRouter } from "next/navigation";
+
 export const TransferSVG = () => {
   return (
     <svg
@@ -113,6 +113,7 @@ export const CloudAPISVG = () => {
 const WorkFlow = () => {
   const { theme } = useTheme();
   const { isMobile } = useDeviceCheck();
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
   return (
     <div className="flex flex-col justify-center gap-9">
@@ -173,12 +174,15 @@ const WorkFlow = () => {
         </Card>
       </div>
       <div className="w-full flex flex-row justify-center items-center">
-        <ShimmerButton
-          shimmerSize="0.2em"
-          background={`${theme === "dark" ? "#EE43DE" : "#EE43DE"}`}
-          shimmerColor={`${theme === "dark" ? "#FFF" : "#FFF"}`}
-          className={`shadow-2xl `}
-          onClick={() => router.push("/check")}
+        <Button
+          isLoading={isPending}
+          className={`shadow-2xl h-[46px] ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#C8E600]"}`}
+          radius="full"
+          onPress={() =>
+            startTransition(() => {
+              router.push("/check");
+            })
+          }
         >
           <strong
             className={`text-[16px] flex flex-row justify-center items-center whitespace-pre-wrap text-center font-medium leading-none tracking-tight ${theme === "dark" ? "text-white" : "text-white"}`}
@@ -186,7 +190,7 @@ const WorkFlow = () => {
             {"Start Free Analysis"}
             <FaPlus className="ml-2" />
           </strong>
-        </ShimmerButton>
+        </Button>
       </div>
     </div>
   );
