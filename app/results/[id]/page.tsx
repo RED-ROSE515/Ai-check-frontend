@@ -15,7 +15,6 @@ import ShareButtons from "@/components/ShareButtons";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import SignInDialog from "@/components/SignInDialog";
-import Nerdbunny from "@/public/nerdbunny.png";
 import { usePostActions } from "@/hooks/usePostActions";
 import Loader from "@/components/Loader";
 
@@ -156,87 +155,108 @@ const ResultPage = ({ params }: any) => {
         {summary && (
           <div className="w-full md:w-[1100px] flex flex-row">
             <div
-              className={`card w-full md:w-3/4 mb-8 flex flex-col items-center justify-center rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+              className={`card w-full md:w-3/4 mb-8 flex flex-col items-center justify-center gap-4`}
             >
-              <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
-                {!summary ? (
-                  <Loader />
-                ) : (
-                  <SummaryWrapper
-                    summary={summary}
-                    isResult={true}
-                    totalData={result}
-                    link={"/results/" + summary.post_id}
-                    showSignInModal={showSignInModal}
-                    reportPost={reportPost}
-                    userData={{ ...author }}
-                    postDate={postDate}
-                    input_tokens={costdata.input_tokens}
-                    output_tokens={costdata.output_tokens}
-                    total_cost={costdata.total_cost}
-                  />
+              <div
+                className={`rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+              >
+                <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
+                  {!summary ? (
+                    <Loader />
+                  ) : (
+                    <SummaryWrapper
+                      summary={summary}
+                      isResult={true}
+                      totalData={result}
+                      link={DOMAIN + "/results/" + summary.post_id}
+                      showSignInModal={showSignInModal}
+                      reportPost={reportPost}
+                      userData={{ ...author }}
+                      postDate={postDate}
+                      input_tokens={costdata.input_tokens}
+                      output_tokens={costdata.output_tokens}
+                      total_cost={costdata.total_cost}
+                    />
+                  )}
+                </div>
+              </div>
+              <div
+                className={`rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+              >
+                {analysisResult && <SpecialSummary summary={totalSummary} />}
+              </div>
+              <div
+                className={`rounded w-full border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+              >
+                {analysisResult && (
+                  <div className="mb-0 sm:mb-2 w-full">
+                    <div
+                      className={
+                        "flex flex-col items-center justify-center rounded-md p-0 md:flex-row"
+                      }
+                    >
+                      <AnalysisResult
+                        results={analysisResult}
+                        total_summary={totalSummary}
+                      />
+                    </div>
+                    <div className="flex items-center justify-start gap-4 w-full px-4 py-2 mt-6">
+                      <Button
+                        variant="ghost"
+                        className="flex items-center gap-2"
+                        color={result?.liked_me ? "warning" : "default"}
+                        // isDisabled={!isAuthenticated}
+                        onPress={() =>
+                          isAuthenticated
+                            ? like(result.id, result.liked_me)
+                            : showSignInModal(
+                                "You need to sign in to continue."
+                              )
+                        }
+                      >
+                        <TbThumbUp size={24} />
+                        <span>{result.count_like || 0}</span>
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        className="flex items-center gap-2"
+                        // isDisabled={!isAuthenticated}
+                        onPress={() => console.log("Comments clicked")}
+                      >
+                        <TbMessage size={24} />
+                        <span>{result.count_comment || 0}</span>
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        className="flex items-center gap-2"
+                        isDisabled={!isAuthenticated}
+                        onPress={() => console.log("Views clicked")}
+                      >
+                        <TbEye size={24} />
+                        <span>{result.count_view || 0}</span>
+                      </Button>
+                      <ShareButtons
+                        url={DOMAIN + link}
+                        title={summary.post_title}
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
 
-              {analysisResult && (
-                <div className="mb-0 sm:mb-2 w-full">
-                  <SpecialSummary summary={totalSummary} />
-                  <div
-                    className={
-                      "flex flex-col items-center justify-center rounded-md p-0 md:flex-row"
-                    }
-                  >
-                    <AnalysisResult
-                      results={analysisResult}
-                      total_summary={totalSummary}
-                    />
-                  </div>
-                </div>
-              )}
-              <div className="flex items-center justify-start gap-4 w-full px-4 py-2 mt-2">
-                <Button
-                  variant="ghost"
-                  className="flex items-center gap-2"
-                  color={result?.liked_me ? "warning" : "default"}
-                  // isDisabled={!isAuthenticated}
-                  onPress={() =>
-                    isAuthenticated
-                      ? like(result.id, result.liked_me)
-                      : showSignInModal("You need to sign in to continue.")
-                  }
-                >
-                  <TbThumbUp size={24} />
-                  <span>{result.count_like || 0}</span>
-                </Button>
-
-                <Button
-                  variant="ghost"
-                  className="flex items-center gap-2"
-                  // isDisabled={!isAuthenticated}
-                  onPress={() => console.log("Comments clicked")}
-                >
-                  <TbMessage size={24} />
-                  <span>{result.count_comment || 0}</span>
-                </Button>
-
-                <Button
-                  variant="ghost"
-                  className="flex items-center gap-2"
-                  isDisabled={!isAuthenticated}
-                  onPress={() => console.log("Views clicked")}
-                >
-                  <TbEye size={24} />
-                  <span>{result.count_view || 0}</span>
-                </Button>
-                <ShareButtons url={DOMAIN + link} title={summary.post_title} />
+              <div
+                className={`w-full rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+              >
+                <Comments
+                  comments={comments}
+                  setComments={(data: any) => setComments(data)}
+                  postId={summary.post_id}
+                  onCommentAdded={refreshComments}
+                  showSignInModal={showSignInModal}
+                />
               </div>
-              <Comments
-                comments={comments}
-                setComments={(data: any) => setComments(data)}
-                postId={summary.post_id}
-                onCommentAdded={refreshComments}
-                showSignInModal={showSignInModal}
-              />
             </div>
             <div className="ml-4 hidden md:flex flex-col gap-2 w-full overflow-hidden">
               <span className="font-bold text-lg mb-2 truncate">

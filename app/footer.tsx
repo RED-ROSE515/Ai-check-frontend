@@ -115,19 +115,21 @@ const Footer = () => {
   }
   return (
     <div className="w-full flex flex-col justify-center items-center h-[114px]">
-      <AnimatePresence>
-        {showSpeech && speechUrl && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="w-full sm:px-12 mb-4 overflow-hidden"
-          >
-            <SpeechPlayer audio_url={speechUrl} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div className="w-full sticky">
+        <AnimatePresence>
+          {showSpeech && speechUrl && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="w-full sm:px-12 mb-4 overflow-hidden"
+            >
+              <SpeechPlayer audio_url={speechUrl} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
       <div className="flex justify-between items-center w-[80%] gap-6">
         <div className="flex flex-row justify-center gap-3">
           <TelegramSvg theme={theme} />

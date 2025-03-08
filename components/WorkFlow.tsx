@@ -4,6 +4,7 @@ import { useTheme } from "next-themes";
 import { FaPlus } from "react-icons/fa";
 import { Card, CardHeader, CardBody } from "@heroui/react";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
+import { useRouter } from "next/navigation";
 export const TransferSVG = () => {
   return (
     <svg
@@ -112,6 +113,7 @@ export const CloudAPISVG = () => {
 const WorkFlow = () => {
   const { theme } = useTheme();
   const { isMobile } = useDeviceCheck();
+  const router = useRouter();
   return (
     <div className="flex flex-col justify-center gap-9">
       <div className="flex flex-row justify-between items-center">
@@ -176,6 +178,7 @@ const WorkFlow = () => {
           background={`${theme === "dark" ? "#EE43DE" : "#EE43DE"}`}
           shimmerColor={`${theme === "dark" ? "#FFF" : "#FFF"}`}
           className={`shadow-2xl `}
+          onClick={() => router.push("/check")}
         >
           <strong
             className={`text-[16px] flex flex-row justify-center items-center whitespace-pre-wrap text-center font-medium leading-none tracking-tight ${theme === "dark" ? "text-white" : "text-white"}`}

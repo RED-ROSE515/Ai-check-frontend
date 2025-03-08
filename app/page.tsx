@@ -92,8 +92,8 @@ export default function Home() {
                   ? paper.count_like - 1
                   : paper.count_like + 1,
               }
-            : paper,
-        ),
+            : paper
+        )
       );
     } catch (error) {
       toast({
@@ -113,8 +113,8 @@ export default function Home() {
                   ...paper,
                   reported_me: !paper.reported_me,
                 }
-              : paper,
-          ),
+              : paper
+          )
         );
     } catch (err) {
       console.log(err);
@@ -185,8 +185,8 @@ export default function Home() {
                                     ...paper,
                                     count_comment: paper.count_comment + 1,
                                   }
-                                : paper,
-                            ),
+                                : paper
+                            )
                           );
                           onClose();
                         }}
@@ -239,7 +239,7 @@ export default function Home() {
                               isAuthenticated
                                 ? like(result.id, result.liked_me)
                                 : showSignInModal(
-                                    "You need to sign in to continue.",
+                                    "You need to sign in to continue."
                                   )
                             }
                           >
@@ -256,7 +256,7 @@ export default function Home() {
                                 onOpen();
                               } else {
                                 showSignInModal(
-                                  "You need to sign in to continue.",
+                                  "You need to sign in to continue."
                                 );
                               }
                             }}

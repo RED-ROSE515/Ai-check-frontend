@@ -187,7 +187,7 @@ const StatisticCard = () => {
         >
           <CarouselContent>
             {issues.map((issue, index) => (
-              <CarouselItem key={index} className="md:basis-1/4 lg:basis-1/5">
+              <CarouselItem key={index} className="md:basis-1/3 lg:basis-1/4">
                 <Card
                   key={index + 1}
                   isHoverable

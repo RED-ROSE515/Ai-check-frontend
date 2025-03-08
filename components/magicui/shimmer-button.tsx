@@ -7,6 +7,7 @@ export interface ShimmerButtonProps extends ComponentPropsWithoutRef<"button"> {
   shimmerSize?: string;
   borderRadius?: string;
   shimmerDuration?: string;
+  isLoading?: boolean;
   background?: string;
   className?: string;
   children?: React.ReactNode;
@@ -25,12 +26,14 @@ export const ShimmerButton = React.forwardRef<
       background = "rgba(0, 0, 0, 1)",
       className,
       children,
+      isLoading,
       ...props
     },
     ref
   ) => {
     return (
       <button
+        disabled={isLoading}
         style={
           {
             "--spread": "90deg",
@@ -44,6 +47,7 @@ export const ShimmerButton = React.forwardRef<
         className={cn(
           "group relative z-0 flex cursor-pointer items-center justify-center overflow-hidden whitespace-nowrap border border-white/10 px-6 py-3 text-white [background:var(--bg)] [border-radius:var(--radius)] dark:text-black",
           "transform-gpu transition-transform duration-300 ease-in-out active:translate-y-px",
+          "disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}
         ref={ref}
@@ -62,7 +66,14 @@ export const ShimmerButton = React.forwardRef<
             <div className="absolute -inset-full w-auto rotate-0 animate-spin-around [background:conic-gradient(from_calc(270deg-(var(--spread)*0.5)),transparent_0,var(--shimmer-color)_var(--spread),transparent_var(--spread))] [translate:0_0]" />
           </div>
         </div>
-        {children}
+        {isLoading ? (
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            <span>Loading...</span>
+          </div>
+        ) : (
+          children
+        )}
 
         {/* Highlight */}
         <div

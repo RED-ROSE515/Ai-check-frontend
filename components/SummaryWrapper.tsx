@@ -35,8 +35,16 @@ import SpeechPlayer from "./SpeechPlayer";
 import UserCard from "./UserCard";
 import { useSearch } from "@/contexts/SearchContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { FaClock, FaGlobe, FaLink, FaMinus, FaPlus } from "react-icons/fa";
+import {
+  FaClock,
+  FaGlobe,
+  FaLink,
+  FaMinus,
+  FaPlus,
+  FaUser,
+} from "react-icons/fa";
 import { SiSharp } from "react-icons/si";
+import { useRouter } from "next/navigation";
 const getColorForScore = (score: number) => {
   switch (true) {
     case score >= 9:
@@ -72,6 +80,27 @@ export const voices = [
   { key: "shimmer", label: "Shimmer" },
 ];
 
+export const UserSVG = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+    >
+      <path
+        d="M7.99984 1.33331C6.34298 1.33331 4.99984 2.67646 4.99984 4.33331C4.99984 5.99017 6.34298 7.33331 7.99984 7.33331C9.65669 7.33331 10.9998 5.99017 10.9998 4.33331C10.9998 2.67646 9.65669 1.33331 7.99984 1.33331Z"
+        fill="#737E88"
+      />
+      <path
+        d="M8.00034 7.99998C4.82849 7.99998 2.61144 10.3474 2.3366 13.2709L2.26807 14H13.7326L13.6641 13.2709C13.3892 10.3474 11.1722 7.99998 8.00034 7.99998Z"
+        fill="#737E88"
+      />
+    </svg>
+  );
+};
+
 interface SummaryType {
   title: string;
   content: string;
@@ -93,7 +122,7 @@ const SummaryWrapper = ({
   link,
 }: any) => {
   const { theme } = useTheme();
-
+  const router = useRouter();
   const { keyword, setKeyword, setSortBy } = useSearch();
   const [expand, setExpand] = useState(false);
   const [currentSummary, setCurrentSummary] = useState<SummaryType>();
@@ -237,7 +266,7 @@ const SummaryWrapper = ({
 
       <div className="flex flex-col md:flex-row justify-between mt-4 gap-4">
         <div className="flex flex-row justify-center items-center gap-10 w-full">
-          <div className={`my-4 w-1/2`}>
+          <div className={`w-1/2`}>
             <span
               className={`font-bold text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
             >
@@ -256,12 +285,17 @@ const SummaryWrapper = ({
                       <Chip
                         // className={`${theme === "dark" ? "secondary" : "primary"}`}
                         variant="dot"
-                        className={`cursor-pointer hover:scale-105 ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
+                        startContent={
+                          <span className="bg-[#2E3E4E] ml-1 rounded-full">
+                            <FaUser color="#737E88" className="m-1" />
+                          </span>
+                        }
+                        className={`cursor-pointer hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
                       >
-                        {author.split("(")[0]}
+                        <span className="m-1">{author.split("(")[0]}</span>
                       </Chip>
                     </Tooltip>
-                  ),
+                  )
               )}
               {summary.metadata.authors?.length > 3 && (
                 <Button
@@ -271,7 +305,7 @@ const SummaryWrapper = ({
                   onPress={() => setExpand(!expand)}
                   className={`w-full h-auto md:w-auto ${theme === "dark" ? "bg-slate-700 text-white" : "bg-gray-300 text-black"}`}
                 >
-                  {`${expand ? "Show Less " : "Load More "}`}
+                  {`${expand ? "Show Less " : "Read More "}`}
                 </Button>
               )}
             </div>
@@ -284,30 +318,43 @@ const SummaryWrapper = ({
             </span>
             {summary.metadata.paper_link ? (
               <div>
-                <Link
+                {/* <Link
                   className={`mb-4 block hover:underline truncate w-fit ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
-                  href={summary.metadata.paper_link}
+                  href={}
                   style={{ maxWidth: "-webkit-fill-available" }}
                   rel="noopener noreferrer"
                   target="_blank"
+                > */}
+                <Chip
+                  // className={`${theme === "dark" ? "secondary" : "primary"}`}
+                  variant="dot"
+                  onClick={() => router.push(summary.metadata.paper_link)}
+                  startContent={
+                    <span className="bg-[#2E3E4E] ml-1 rounded-full">
+                      <FaLink color="#737E88" className="m-1" />
+                    </span>
+                  }
+                  className={`cursor-pointer hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
                 >
-                  <Chip
-                    startContent={<FaLink className="ml-2" />}
-                    variant="dot"
-                  >
-                    {summary.metadata.paper_link}
-                  </Chip>
-                </Link>
+                  <span className="m-1">{summary.metadata.paper_link}</span>
+                </Chip>
+                {/* </Link> */}
               </div>
             ) : (
-              <Link
-                href="#"
-                className={`mb-4 block hover:underline truncate w-fit ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
-              >
-                <Chip startContent={<FaLink className="ml-2" />} variant="dot">
-                  Unknown
+              <div>
+                <Chip
+                  // className={`${theme === "dark" ? "secondary" : "primary"}`}
+                  variant="dot"
+                  startContent={
+                    <span className="bg-[#2E3E4E] ml-1 rounded-full">
+                      <FaLink color="#737E88" className="m-1" />
+                    </span>
+                  }
+                  className={`cursor-pointer hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
+                >
+                  <span className="m-1">{`Unknown`}</span>
                 </Chip>
-              </Link>
+              </div>
             )}
           </div>
         </div>
@@ -368,7 +415,7 @@ const SummaryWrapper = ({
                   width="45"
                 />
               }
-              className="w-full"
+              className="w-full bg-[#2E3E4E]"
               title={
                 <div className="flex flex-row justify-between w-full items-center">
                   <strong className="text-lg">{level.title}</strong>
@@ -384,11 +431,12 @@ const SummaryWrapper = ({
                     >
                       <Button
                         isIconOnly
+                        variant="bordered"
                         onPress={async (e) => {
                           setCurrentSummary(level);
                           onOpen();
                         }}
-                        className="hover:bg-transparent hover:border-2 hover:text-pink-600"
+                        className="hover:bg-transparent hover:border-2 hover:text-pink-600 border-[#52677D]"
                       >
                         {/* <FaPlay /> */}
                         <RiVoiceAiLine
@@ -508,7 +556,7 @@ const SummaryWrapper = ({
                           {label}
                         </Chip>
                       );
-                    },
+                    }
                   )
                 : "Unknown"}
             </div>
@@ -526,7 +574,7 @@ const SummaryWrapper = ({
           {Object.entries(
             summary.technical_assessment
               ? summary.technical_assessment
-              : summary.summary.technical_assessment,
+              : summary.summary.technical_assessment
           ).map(([key, value]: any) => (
             <Chip
               key={key}

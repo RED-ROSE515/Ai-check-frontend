@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useTransition, useEffect, useState } from "react";
 import { ShinyButton } from "./ui/shiny-button";
 import { TextAnimate } from "./ui/text-animate";
 import { useTheme } from "next-themes";
@@ -7,9 +7,12 @@ import { DotPattern } from "./magicui/dot-pattern";
 import { cn } from "@/lib/utils";
 import StatisticCard from "./StatisticCard";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
+import { useRouter } from "next/navigation";
 const LandingPage = () => {
   const { theme } = useTheme();
   const { isMobile } = useDeviceCheck();
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   return (
     <div
       className="w-full relative pt-4 md:pb-20"
@@ -25,7 +28,7 @@ const LandingPage = () => {
           cy={1}
           cr={1}
           className={cn(
-            `${isMobile ? "hidden" : "[mask-image:radial-gradient(900px_circle_at_left,white,transparent)]"} `,
+            `${isMobile ? "hidden" : "[mask-image:radial-gradient(900px_circle_at_left,white,transparent)]"} `
           )}
         />
         <DotPattern
@@ -35,39 +38,35 @@ const LandingPage = () => {
           cy={1}
           cr={1}
           className={cn(
-            `${isMobile ? "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]" : "[mask-image:radial-gradient(900px_circle_at_right,white,transparent)]"} `,
+            `${isMobile ? "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]" : "[mask-image:radial-gradient(900px_circle_at_right,white,transparent)]"} `
           )}
         />
       </div>
       <div className="w-full flex flex-col justify-center items-center">
         <div className="flex flex-row justify-center">
-          <TextAnimate
-            // animation="blurIn"
-            by="character"
-            as="h1"
-            className="pt-[60px] text-2xl font-bold md:text-6xl md:font-semibold text-center max-w-[75%] md:max-w-[55%]"
-          >
+          <strong className="pt-[60px] text-2xl font-bold md:text-6xl md:font-semibold text-center max-w-[75%] md:max-w-[55%]">
             Find Errors in Research Papers Effortlessly
-          </TextAnimate>
+          </strong>
         </div>
         <div className="flex flex-row justify-center mt-4">
-          <TextAnimate
-            animation="blurIn"
-            by="character"
-            as="h1"
-            className="text-sm  md:text-lg md:font-semibold text-center max-w-[70%] md:max-w-[55%]"
-          >
+          <strong className="text-sm  md:text-lg md:font-semibold text-center max-w-[70%] md:max-w-[55%]">
             Uncover hidden flaws, inconsistencies, and methodological issues
             with our AI-powered Decentralized Science (DeSci) platform, backed
             by blockchain.
-          </TextAnimate>
+          </strong>
         </div>
         <div className="flex flex-row justify-center mt-6 gap-2 md:gap-8 items-center">
           <ShimmerButton
             shimmerSize="0.2em"
+            isLoading={isPending}
             background={`${theme === "dark" ? "#EE43DE" : "#EE43DE"}`}
             shimmerColor={`${theme === "dark" ? "#FFF" : "#FFF"}`}
             className={`shadow-2xl h-[46px]`}
+            onClick={() =>
+              startTransition(() => {
+                router.push("/check");
+              })
+            }
           >
             <strong
               className={`whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight ${theme === "dark" ? "text-white" : "text-white"}`}
@@ -78,8 +77,14 @@ const LandingPage = () => {
           <ShimmerButton
             className={`shadow-2xl h-[46px]`}
             shimmerSize="0.2em"
+            isLoading={isPending}
             background={`${theme === "dark" ? "#FFFFFF" : "#FFFFFF"}`}
             shimmerColor={`${theme === "dark" ? "#000" : "#000"}`}
+            onClick={() =>
+              startTransition(() => {
+                router.push("/check");
+              })
+            }
           >
             <strong
               className={`whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight text-black`}

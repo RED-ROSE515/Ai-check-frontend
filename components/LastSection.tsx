@@ -2,6 +2,7 @@ import React from "react";
 import { useTheme } from "next-themes";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { ShinyButton } from "./ui/shiny-button";
+import { useRouter } from "next/navigation";
 export const LineSVG = ({ className }: any) => {
   return (
     <svg
@@ -40,6 +41,7 @@ export const FlowerSVG = ({ className }: any) => {
 const LastSection = () => {
   const { theme } = useTheme();
   const { isMobile } = useDeviceCheck();
+  const router = useRouter();
   return (
     <div className="flex flex-col justify-center bg-[#6365F1] rounded-xl relative gap-2 md:gap-6">
       <div className="flex flex-row justify-center mt-4">
@@ -61,6 +63,7 @@ const LastSection = () => {
         <div className="w-full md:w-1/2 p-4 flex flex-col md:flex-row justify-center gap-1 md:gap-4 items-center mb-8 px-8 md:px-0">
           <ShinyButton
             className={`w-full ${theme === "dark" ? "bg-white" : "bg-black"}`}
+            onClick={() => router.push("/check")}
           >
             <strong
               className={`${theme === "dark" ? "text-black" : "text-white"} font-bold`}

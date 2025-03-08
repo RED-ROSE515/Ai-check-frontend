@@ -18,7 +18,7 @@ const SpecialSummary = ({ summary }: any) => {
     <div className="mt-2 w-full p-0">
       <Card
         // borderWidth={3}
-        className="relative flex w-full flex-col items-start justify-start overflow-hidden rounded-lg border md:shadow-xl p-6"
+        className="relative flex w-full flex-col items-start justify-start overflow-hidden rounded-lg border md:shadow-xl p-6 bg-[#1E2A36]"
         // color={["#36FF78", "#A07CFE", "#FE8FB5", "#FFBE7B", "#FFEC99"]}
       >
         <span

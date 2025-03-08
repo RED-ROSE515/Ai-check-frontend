@@ -56,7 +56,7 @@ const UserCard = ({
   const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
   const fetchUserDetail = async () => {
     const response = await api.get(
-      `/user/profile?user_id=${userData.user_name}`,
+      `/user/profile?user_id=${userData.user_name}`
     );
     setUserDetail(response.data);
   };
@@ -160,7 +160,7 @@ const UserCard = ({
                       onPress={() =>
                         window.open(
                           `${NOBLEBLOCKS_DOMAIN}/@${userData.user_name}`,
-                          "_blank",
+                          "_blank"
                         )
                       }
                     >
@@ -238,7 +238,7 @@ const UserCard = ({
                     <div className="w-full flex flex-col gap-2 bg-[#2E3E4E]">
                       <Button
                         startContent={<MdOutlineContentCopy size={24} />}
-                        className="w-full"
+                        className="w-full hover:[#3E5061]"
                         variant="light"
                         onPress={() => {
                           navigator.clipboard.writeText(link);
