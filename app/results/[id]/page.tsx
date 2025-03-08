@@ -137,7 +137,7 @@ const ResultPage = ({ params }: any) => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
-        `${API_BASE_URL}/post/pagination?post_type=6&start=0&limit=5`
+        `${API_BASE_URL}/post/pagination?post_type=6&start=0&limit=4`
       );
       setRecentPapers(response.data.data);
     };
@@ -147,7 +147,7 @@ const ResultPage = ({ params }: any) => {
 
   return (
     <>
-      <div className="flex flex-row justify-center mt-16">
+      <div className="flex flex-row justify-center mt-16 bg-black">
         <SignInDialog
           isOpen={showSignIn}
           onClose={() => setShowSignIn(false)}
@@ -258,8 +258,8 @@ const ResultPage = ({ params }: any) => {
                 />
               </div>
             </div>
-            <div className="ml-4 hidden md:flex flex-col gap-2 w-full overflow-hidden">
-              <span className="font-bold text-lg mb-2 truncate">
+            <div className="ml-4 hidden md:flex flex-col gap-2 w-full h-fit overflow-hidden card rounded-xl bg-[#1f2a37] p-2">
+              <span className="text-md mb-2 truncate ml-2">
                 Recently Checked Papers
               </span>
               {recentPapers.map((paper: any, index: number) => {
@@ -272,7 +272,7 @@ const ResultPage = ({ params }: any) => {
                     <Card
                       isHoverable
                       shadow="sm"
-                      className="cursor-pointer w-full"
+                      className="cursor-pointer w-full bg-[#273340]"
                     >
                       <CardBody>
                         <div className="flex flex-row justify-start items-center w-full max-w-full">

@@ -251,7 +251,7 @@ export const Navbar = () => {
                       startContent={<ImProfile className={iconClasses} />}
                       onPress={() =>
                         window.open(
-                          `${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`,
+                          `${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`
                         )
                       }
                     >
@@ -316,7 +316,7 @@ export const Navbar = () => {
                       startContent={<MdLogin className={iconClasses} />}
                       onPress={() => {
                         navigateTo(
-                          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login_with_nobleblocks?app_name=NerdBunny&redirect_url=${DOMAIN + "/login_with_nobleblocks"}`,
+                          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login_with_nobleblocks?app_name=NerdBunny&redirect_url=${DOMAIN + "/login_with_nobleblocks"}`
                         );
                       }}
                     >

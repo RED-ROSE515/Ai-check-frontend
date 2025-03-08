@@ -111,7 +111,7 @@ const SearchBar = () => {
         aria-label="Search by keyword."
         classNames={{
           base: "min-w-[100%]",
-          listboxWrapper: "max-h-[320px] bg-[#2E3D4C]",
+          listboxWrapper: "max-h-[320px]",
           selectorButton: "text-default-500",
         }}
         items={data}

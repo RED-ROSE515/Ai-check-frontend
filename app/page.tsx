@@ -141,7 +141,7 @@ export default function Home() {
   return (
     <section className="w-full">
       <LandingPage />
-      <div className="flex flex-col md:flex-row items-start justify-center gap-4">
+      <div className="flex flex-col md:flex-row items-start justify-center gap-4 bg-black">
         {User && (
           <div className="w-full md:w-1/6">
             <LeftSider onUpload={() => triggerUploadRef.current?.()} />
