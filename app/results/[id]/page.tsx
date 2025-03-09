@@ -1,9 +1,19 @@
 "use client";
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect, use, useCallback } from "react";
 import Head from "next/head";
 import { useTheme } from "next-themes";
 import axios from "axios";
-import { Button, Card, CardBody, Avatar, Link } from "@heroui/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  Avatar,
+  Link,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+} from "@heroui/react";
 import api from "@/utils/api";
 import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
 import _ from "lodash";
@@ -17,6 +27,8 @@ import { useToast } from "@/hooks/use-toast";
 import SignInDialog from "@/components/SignInDialog";
 import { usePostActions } from "@/hooks/usePostActions";
 import Loader from "@/components/Loader";
+import { IoIosWarning } from "react-icons/io";
+import { useRouter } from "next/navigation";
 
 const ResultPage = ({ params }: any) => {
   const resolvedParams = use(params);
@@ -28,7 +40,6 @@ const ResultPage = ({ params }: any) => {
     "Check out this AI error detection result: "
   );
   const [pageUrl, setPageUrl] = useState(`${API_BASE_URL}results/${id}`);
-  const pageImage = "https:/nobleblocks.com/nerdbunny.png";
   const { theme } = useTheme();
   const [analysisResult, setAnalysisResult] = useState("");
   const [summary, setSummary] = useState<any>();
@@ -42,9 +53,12 @@ const ResultPage = ({ params }: any) => {
   const [comments, setComments] = useState<any>([]);
   const [link, setLink] = useState("");
   const [recentPapers, setRecentPapers] = useState<any>([]);
+  const [errorModal, setErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
 
+  const router = useRouter();
   const showSignInModal = async (action: string) => {
     toast({
       title: "Info",
@@ -56,48 +70,54 @@ const ResultPage = ({ params }: any) => {
   const { handleReport } = usePostActions({
     showSignInModal,
   });
-  const getResultById = async (paperId: number) => {
-    try {
-      setAnalysisResult("");
-      setSummaryLoading(true);
-      const response = await api.get(`/post/${paperId}`);
-      setResult(response.data);
-      setAuthor(response.data.user);
-      setSummary({
-        ...JSON.parse(response.data.description),
-        post_id: response.data.id,
-        post_title: response.data.title,
-        attached_links: response.data.attached_links,
-      });
-      const total_result = JSON.parse(response.data.ai_error_json);
-      setAnalysisResult(total_result.paperAnalysis.analysis);
-      setCostData({
-        input_tokens: total_result.input_tokens,
-        output_tokens: total_result.output_tokens,
-        total_cost: total_result.total_cost,
-      });
-      setPostDate(response.data.updated_at);
-      setTotalSummary(total_result.paperAnalysis.summary);
-      const resp = await api.get(
-        `/post/comments?parent_is_post=true&parent_id=${response.data.id}&start=0&limit=1000`
-      );
-      setComments(resp.data);
-      setLink("/results/" + response.data.id);
-      setSummaryLoading(false);
-      setPageTitle(`AI Error Detector Result: ${response.data.title}`);
-      setpageDescription(
-        `Check out this AI error detection result: ${summary.child + summary.college + summary.phd}`
-      );
-      setPageUrl(`${API_BASE_URL}results/${id}`);
-      // const result = await res.json();
-      const result = { data: "KKK", title: id, description: "Description" };
-      return result;
-    } catch (error) {
-      // Handle network or other errors
-      // console.error("Error fetching result:", error);
-      return null;
-    }
-  };
+  const getResultById = useCallback(
+    async (paperId: number) => {
+      try {
+        setAnalysisResult("");
+        setSummaryLoading(true);
+        const response = await api.get(`/post/${paperId}`);
+        setResult(response.data);
+        setAuthor(response.data.user);
+        setSummary({
+          ...JSON.parse(response.data.description),
+          post_id: response.data.id,
+          post_title: response.data.title,
+          attached_links: response.data.attached_links,
+        });
+        const total_result = JSON.parse(response.data.ai_error_json);
+        setAnalysisResult(total_result.paperAnalysis.analysis);
+        setCostData({
+          input_tokens: total_result.input_tokens,
+          output_tokens: total_result.output_tokens,
+          total_cost: total_result.total_cost,
+        });
+        setPostDate(response.data.updated_at);
+        setTotalSummary(total_result.paperAnalysis.summary);
+        const resp = await api.get(
+          `/post/comments?parent_is_post=true&parent_id=${response.data.id}&start=0&limit=1000`
+        );
+        setComments(resp.data);
+        setLink("/results/" + response.data.id);
+        setSummaryLoading(false);
+        setPageTitle(`AI Error Detector Result: ${response.data.title}`);
+        setpageDescription(
+          `Check out this AI error detection result: ${summary.child + summary.college + summary.phd}`
+        );
+        setPageUrl(`${API_BASE_URL}results/${id}`);
+        // const result = await res.json();
+        const result = { data: "KKK", title: id, description: "Description" };
+        return result;
+      } catch (error: any) {
+        if (error.response?.status === 500) {
+          setErrorMessage(error.response.data.message || "An error occurred");
+          setErrorModal(true);
+          setSummaryLoading(false);
+        }
+        return null;
+      }
+    },
+    [setErrorModal]
+  );
 
   const like = async (post_id: string, liked_me: boolean) => {
     try {
@@ -143,156 +163,183 @@ const ResultPage = ({ params }: any) => {
     };
     getResultById(id);
     fetchData();
-  }, [id]);
+  }, [id, getResultById]);
 
   return (
     <>
-      <div className="flex flex-row justify-center mt-16 bg-black">
-        <SignInDialog
-          isOpen={showSignIn}
-          onClose={() => setShowSignIn(false)}
-        />
-        {summary && (
-          <div className="w-full md:w-[1100px] flex flex-row">
-            <div
-              className={`card w-full md:w-3/4 mb-8 flex flex-col items-center justify-center gap-4`}
-            >
+      {!errorMessage && (
+        <div className="flex flex-row justify-center mt-16 bg-black">
+          <SignInDialog
+            isOpen={showSignIn}
+            onClose={() => setShowSignIn(false)}
+          />
+          {summary && (
+            <div className="w-full md:w-[1100px] flex flex-row">
               <div
-                className={`rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+                className={`card w-full md:w-3/4 mb-8 flex flex-col items-center justify-center gap-4`}
               >
-                <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
-                  {!summary ? (
-                    <Loader />
-                  ) : (
-                    <SummaryWrapper
-                      summary={summary}
-                      isResult={true}
-                      totalData={result}
-                      link={DOMAIN + "/results/" + summary.post_id}
-                      showSignInModal={showSignInModal}
-                      reportPost={reportPost}
-                      userData={{ ...author }}
-                      postDate={postDate}
-                      input_tokens={costdata.input_tokens}
-                      output_tokens={costdata.output_tokens}
-                      total_cost={costdata.total_cost}
-                    />
-                  )}
-                </div>
-              </div>
-              <div
-                className={`rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
-              >
-                {analysisResult && <SpecialSummary summary={totalSummary} />}
-              </div>
-              <div
-                className={`rounded w-full border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
-              >
-                {analysisResult && (
-                  <div className="mb-0 sm:mb-2 w-full">
-                    <div
-                      className={
-                        "flex flex-col items-center justify-center rounded-md p-0 md:flex-row"
-                      }
-                    >
-                      <AnalysisResult
-                        results={analysisResult}
-                        total_summary={totalSummary}
+                <div
+                  className={`rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+                >
+                  <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
+                    {!summary ? (
+                      <Loader />
+                    ) : (
+                      <SummaryWrapper
+                        summary={summary}
+                        isResult={true}
+                        totalData={result}
+                        link={DOMAIN + "/results/" + summary.post_id}
+                        showSignInModal={showSignInModal}
+                        reportPost={reportPost}
+                        userData={{ ...author }}
+                        postDate={postDate}
+                        input_tokens={costdata.input_tokens}
+                        output_tokens={costdata.output_tokens}
+                        total_cost={costdata.total_cost}
                       />
-                    </div>
-                    <div className="flex items-center justify-start gap-4 w-full px-4 py-2 mt-6">
-                      <Button
-                        variant="ghost"
-                        className="flex items-center gap-2"
-                        color={result?.liked_me ? "warning" : "default"}
-                        // isDisabled={!isAuthenticated}
-                        onPress={() =>
-                          isAuthenticated
-                            ? like(result.id, result.liked_me)
-                            : showSignInModal(
-                                "You need to sign in to continue."
-                              )
+                    )}
+                  </div>
+                </div>
+                <div
+                  className={`rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+                >
+                  {analysisResult && <SpecialSummary summary={totalSummary} />}
+                </div>
+                <div
+                  className={`rounded w-full border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+                >
+                  {analysisResult && (
+                    <div className="mb-0 sm:mb-2 w-full">
+                      <div
+                        className={
+                          "flex flex-col items-center justify-center rounded-md p-0 md:flex-row"
                         }
                       >
-                        <TbThumbUp size={24} />
-                        <span>{result.count_like || 0}</span>
-                      </Button>
+                        <AnalysisResult
+                          results={analysisResult}
+                          total_summary={totalSummary}
+                        />
+                      </div>
+                      <div className="flex items-center justify-start gap-4 w-full px-4 py-2 mt-6">
+                        <Button
+                          variant="ghost"
+                          className="flex items-center gap-2"
+                          color={result?.liked_me ? "warning" : "default"}
+                          // isDisabled={!isAuthenticated}
+                          onPress={() =>
+                            isAuthenticated
+                              ? like(result.id, result.liked_me)
+                              : showSignInModal(
+                                  "You need to sign in to continue."
+                                )
+                          }
+                        >
+                          <TbThumbUp size={24} />
+                          <span>{result.count_like || 0}</span>
+                        </Button>
 
-                      <Button
-                        variant="ghost"
-                        className="flex items-center gap-2"
-                        // isDisabled={!isAuthenticated}
-                        onPress={() => console.log("Comments clicked")}
-                      >
-                        <TbMessage size={24} />
-                        <span>{result.count_comment || 0}</span>
-                      </Button>
+                        <Button
+                          variant="ghost"
+                          className="flex items-center gap-2"
+                          // isDisabled={!isAuthenticated}
+                          onPress={() => console.log("Comments clicked")}
+                        >
+                          <TbMessage size={24} />
+                          <span>{result.count_comment || 0}</span>
+                        </Button>
 
-                      <Button
-                        variant="ghost"
-                        className="flex items-center gap-2"
-                        isDisabled={!isAuthenticated}
-                        onPress={() => console.log("Views clicked")}
-                      >
-                        <TbEye size={24} />
-                        <span>{result.count_view || 0}</span>
-                      </Button>
-                      <ShareButtons
-                        url={DOMAIN + link}
-                        title={summary.post_title}
-                      />
+                        <Button
+                          variant="ghost"
+                          className="flex items-center gap-2"
+                          isDisabled={!isAuthenticated}
+                          onPress={() => console.log("Views clicked")}
+                        >
+                          <TbEye size={24} />
+                          <span>{result.count_view || 0}</span>
+                        </Button>
+                        <ShareButtons
+                          url={DOMAIN + link}
+                          title={summary.post_title}
+                        />
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
 
-              <div
-                className={`w-full rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
-              >
-                <Comments
-                  comments={comments}
-                  setComments={(data: any) => setComments(data)}
-                  postId={summary.post_id}
-                  onCommentAdded={refreshComments}
-                  showSignInModal={showSignInModal}
-                />
+                <div
+                  className={`w-full rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+                >
+                  <Comments
+                    comments={comments}
+                    setComments={(data: any) => setComments(data)}
+                    postId={summary.post_id}
+                    onCommentAdded={refreshComments}
+                    showSignInModal={showSignInModal}
+                  />
+                </div>
+              </div>
+              <div className="ml-4 hidden md:flex flex-col gap-2 w-full h-fit overflow-hidden card rounded-xl bg-[#1f2a37] p-2">
+                <span className="text-md mb-2 truncate ml-2">
+                  Recently Checked Papers
+                </span>
+                {recentPapers.map((paper: any, index: number) => {
+                  return (
+                    <Link
+                      key={index}
+                      className="w-full"
+                      href={"/results/" + paper.id}
+                    >
+                      <Card
+                        isHoverable
+                        shadow="sm"
+                        className="cursor-pointer w-full bg-[#273340]"
+                      >
+                        <CardBody>
+                          <div className="flex flex-row justify-start items-center w-full max-w-full">
+                            <Avatar
+                              isBordered
+                              radius="full"
+                              size="sm"
+                              src={paper.user.avatar}
+                            />
+                            <p className="ml-2 truncate w-full">
+                              {paper.title}
+                            </p>
+                          </div>
+                        </CardBody>
+                      </Card>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
-            <div className="ml-4 hidden md:flex flex-col gap-2 w-full h-fit overflow-hidden card rounded-xl bg-[#1f2a37] p-2">
-              <span className="text-md mb-2 truncate ml-2">
-                Recently Checked Papers
+          )}
+        </div>
+      )}
+      <Modal
+        isOpen={errorModal}
+        onClose={() => {
+          setErrorModal(false);
+          router.push(DOMAIN + "");
+        }}
+      >
+        <ModalContent>
+          <ModalHeader>Error</ModalHeader>
+          <ModalBody>
+            <div>
+              <span className="flex flex-row justify-center items-center">
+                <IoIosWarning size={64} className="bg-warning rounded-lg" />
               </span>
-              {recentPapers.map((paper: any, index: number) => {
-                return (
-                  <Link
-                    key={index}
-                    className="w-full"
-                    href={"/results/" + paper.id}
-                  >
-                    <Card
-                      isHoverable
-                      shadow="sm"
-                      className="cursor-pointer w-full bg-[#273340]"
-                    >
-                      <CardBody>
-                        <div className="flex flex-row justify-start items-center w-full max-w-full">
-                          <Avatar
-                            isBordered
-                            radius="full"
-                            size="sm"
-                            src={paper.user.avatar}
-                          />
-                          <p className="ml-2 truncate w-full">{paper.title}</p>
-                        </div>
-                      </CardBody>
-                    </Card>
-                  </Link>
-                );
-              })}
+              <span className="w-full flex flex-row justify-center">
+                <strong className="text-xl text-center mt-2">
+                  {errorMessage}
+                </strong>
+              </span>
             </div>
-          </div>
-        )}
-      </div>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
       <div className="fixed bottom-12 right-5">
         {/* <Badge
           color="warning"

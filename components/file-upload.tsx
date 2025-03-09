@@ -188,7 +188,6 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
     const formData = new FormData();
 
     formData.append("file", file);
-    formData.append("title", file.name);
 
     try {
       toast({
