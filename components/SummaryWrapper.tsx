@@ -43,6 +43,8 @@ import {
   FaPlus,
   FaUser,
 } from "react-icons/fa";
+import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
+
 import { SiSharp } from "react-icons/si";
 import { useRouter } from "next/navigation";
 const getColorForScore = (score: number) => {
@@ -206,17 +208,17 @@ const SummaryWrapper = ({
       style={
         theme === "dark"
           ? { backgroundColor: "#1E2A36" }
-          : { backgroundColor: "#EEEEEEF0" }
+          : { backgroundColor: "#F7F7F7" }
       }
     >
       <div className="w-full flex flex-col justify-center text-center font-bold text-2xl gap-5">
         {isResult ? (
-          <span className="text-md md:text-3xl flex-1 items-centerpx-2">
+          <span className="text-md md:text-2xl flex-1 items-centerpx-2">
             {summary.metadata.title}
           </span>
         ) : (
           <Link href={link}>
-            <span className="text-md md:text-3xl px-2">
+            <span className="text-md md:text-2xl px-2">
               {summary.metadata.title}
             </span>
           </Link>
@@ -230,6 +232,9 @@ const SummaryWrapper = ({
           totalData={totalData}
           className="max-w-fit"
         />
+        <Divider
+          className={`${theme === "dark" ? "bg-[#2E3E4E]" : "bg-[#E2E2E2]"}`}
+        />
         {input_tokens && output_tokens && total_cost && (
           <div className="w-full md:w-auto">
             <Card
@@ -238,18 +243,16 @@ const SummaryWrapper = ({
               <p>{`IN: ${commify(input_tokens)}`}</p>
               <p>|</p>
               <p>{`OUT: ${commify(output_tokens)}`}</p>
-              <p>|</p>
-              <p>{`$ ${total_cost}`}</p>
             </Card>
           </div>
         )}
       </div>
 
-      <div className="flex flex-col md:flex-row justify-between mt-5">
-        <div className="flex flex-col md:flex-row justify-center items-center gap-10 w-full">
-          <div className="w-full md:w-1/2">
+      <div className="flex flex-col md:flex-row justify-between">
+        <div className="flex flex-col md:flex-row justify-center items-start gap-10 w-full">
+          <div className="w-full md:w-2/3">
             <span
-              className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
+              className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-[#828489]"}`}
             >
               Authors:
             </span>
@@ -267,11 +270,13 @@ const SummaryWrapper = ({
                         // className={`${theme === "dark" ? "secondary" : "primary"}`}
                         variant="dot"
                         startContent={
-                          <span className="bg-[#2E3E4E] ml-1 rounded-full">
+                          <span
+                            className={`${theme === "dark" ? "bg-[#2E3E4E]" : "bg-[#FFF]"} ml-1 rounded-full`}
+                          >
                             <FaUser color="#737E88" className="m-1" />
                           </span>
                         }
-                        className={`cursor-pointer hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
+                        className={`cursor-pointer hover:scale-105 border-none ${theme === "dark" ? "hover:bg-gray-600 bg-[#273340]" : "hover:bg-gray-300 bg-[#EAEAEA]"}`}
                       >
                         <span className="m-1">{author.split("(")[0]}</span>
                       </Chip>
@@ -289,16 +294,16 @@ const SummaryWrapper = ({
                     )
                   }
                   onClick={() => setExpand(!expand)}
-                  className={`cursor-pointer hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
+                  className={`cursor-pointer hover:scale-105 border-none  ${theme === "dark" ? "hover:bg-gray-600 bg-[#273340] text-[#8696AF]" : "hover:bg-gray-300 bg-[#EAEAEA] text-[#828489]"}`}
                 >
                   {`${expand ? "Show Less " : "Load More "}`}
                 </Chip>
               )}
             </div>
           </div>
-          <div className="w-full md:w-1/2">
+          <div className="w-full md:w-1/3">
             <span
-              className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
+              className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-[#828489]"}`}
             >
               Paper Link :
             </span>
@@ -308,11 +313,13 @@ const SummaryWrapper = ({
                   variant="dot"
                   onClick={() => router.push(summary.metadata.paper_link)}
                   startContent={
-                    <span className="bg-[#2E3E4E] ml-1 rounded-full">
+                    <span
+                      className={`${theme === "dark" ? "bg-[#2E3E4E]" : "bg-[#FFF]"} ml-1 rounded-full`}
+                    >
                       <FaLink color="#737E88" className="m-1" />
                     </span>
                   }
-                  className={`cursor-pointer min-w-full max-w-full truncate hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
+                  className={`cursor-pointer min-w-[100px] max-w-full truncate hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600 bg-[#273340]" : "hover:bg-gray-300 bg-[#EAEAEA]"}`}
                 >
                   <span className="m-1 truncate">
                     {summary.metadata.paper_link}
@@ -395,10 +402,15 @@ const SummaryWrapper = ({
                   width="30"
                 />
               }
-              className="w-full bg-[#2E3E4E] "
+              indicator={({ isOpen }) =>
+                isOpen ? <IoIosArrowForward /> : <IoIosArrowDown />
+              }
+              className={`w-full ${theme === "dark" ? "bg-[#2E3E4E]" : "bg-[#FFF]"} md:min-h-[68px] items-center`}
               title={
                 <div className="flex flex-row justify-between w-full items-center">
-                  <span className="text-lg">{level.title}</span>
+                  <span className="text-lg" style={{ fontWeight: "500" }}>
+                    {level.title}
+                  </span>
                   {link && (
                     <Tooltip
                       content={
@@ -416,7 +428,7 @@ const SummaryWrapper = ({
                           setCurrentSummary(level);
                           onOpen();
                         }}
-                        className="hover:bg-transparent hover:border-2 hover:text-pink-600 border-[#52677D]"
+                        className={`hover:bg-transparent border-1 border-[#DEE5EB] w-[38px] h-[30px] hover:text-pink-600  ${index === 0 && "bg-[#EE43DE] border-none"}`}
                       >
                         {/* <FaPlay /> */}
                         <RiVoiceAiLine
@@ -479,17 +491,17 @@ const SummaryWrapper = ({
 
       <div>
         <span
-          className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
+          className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-[#828489]"}`}
         >
           Publication Info:
         </span>
         <div className="flex flex-wrap gap-2 mb:gap-10 mb-2">
           <Typography
-            className={`flex flex-row justify-center items-center gap-1 ${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
+            className={`flex flex-row justify-center items-center gap-1 ${theme === "dark" ? `text-gray-100` : "text-[#252629]"}`}
             variant="body1"
           >
             <span
-              className={`${theme === "dark" ? "text-[#495D72]" : "text-slate-700"} mr-1`}
+              className={`${theme === "dark" ? "text-[#495D72]" : "text-[#828489]"} mr-1`}
             >
               <FaClock />
             </span>
@@ -497,17 +509,17 @@ const SummaryWrapper = ({
             {summary.metadata.publication_info.date || "Unknown"}
           </Typography>
           <Typography
-            className={`flex flex-row justify-center items-start mb:items-center ml-8 gap-1 ${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
+            className={`flex flex-row justify-center items-start mb:items-center ml-8 gap-1 ${theme === "dark" ? `text-gray-100` : "text-[#252629]"}`}
             variant="body1"
           >
-            <div className="flex flex-row justify-center items-center">
+            <span className="flex flex-row justify-center items-center">
               <span
-                className={`${theme === "dark" ? "text-[#495D72]" : "text-slate-700"} mr-1`}
+                className={`${theme === "dark" ? "text-[#495D72]" : "text-[#828489]"} mr-1`}
               >
                 <FaGlobe />
               </span>
               <span>Source: </span>
-            </div>
+            </span>
             <span>
               {summary.metadata?.publication_info?.journal || "Unknown"}
             </span>
@@ -520,7 +532,7 @@ const SummaryWrapper = ({
       >
         <div className="flex flex-col justify-start gap-2">
           <span
-            className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
+            className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-[#828489]"}`}
           >
             Keywords:
           </span>
@@ -528,7 +540,7 @@ const SummaryWrapper = ({
             {summary.metadata.publication_info.keywords
               ? summary.metadata.publication_info.keywords.map(
                   (label: string, index: number) =>
-                    (index < 3 || keywordExpand) && (
+                    (index < 2 || keywordExpand) && (
                       <Chip
                         variant="dot"
                         key={index}
@@ -555,7 +567,7 @@ const SummaryWrapper = ({
                   )
                 }
                 onClick={() => setKeywordExpand(!keywordExpand)}
-                className={`cursor-pointer hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
+                className={`cursor-pointer hover:scale-105 border-none  ${theme === "dark" ? "hover:bg-gray-600 bg-[#273340] text-[#8696AF]" : "hover:bg-gray-300 bg-[#EAEAEA] text-[#828489]"}`}
               >
                 {`${keywordExpand ? "Show Less " : "Load More "}`}
               </Chip>
@@ -566,7 +578,7 @@ const SummaryWrapper = ({
 
       <div>
         <span
-          className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
+          className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-[#828489]"}`}
         >
           Technical Assessment:
         </span>

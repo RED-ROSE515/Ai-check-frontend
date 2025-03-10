@@ -17,7 +17,7 @@ const LandingPage = () => {
     <div
       className="w-full relative pt-4 md:pb-20"
       style={{
-        background: `${theme === "dark" ? "linear-gradient(0deg, #06070C 0%, #1E2A36 100%)" : "linear-gradient(0deg, #FFFFFF 0%, #C8AAFF 100%)"}`,
+        background: `${theme === "dark" ? "linear-gradient(0deg, #06070C 0%, #1E2A36 100%)" : "linear-gradient(0deg, #FFFFFF 0%, #F7F7F7 100%)"}`,
       }}
     >
       <div className="absolute flex size-full w-full h-full items-center justify-center overflow-hidden">
@@ -44,16 +44,16 @@ const LandingPage = () => {
       </div>
       <div className="w-full flex flex-col justify-center items-center">
         <div className="flex flex-row justify-center">
-          <strong className="pt-[60px] text-2xl font-bold md:text-6xl md:font-semibold text-center max-w-[75%] md:max-w-[55%]">
+          <span className="pt-[60px] text-2xl md:text-6xl md:font-semibold text-center max-w-[75%] md:max-w-[55%]">
             Find Errors in Research Papers Effortlessly
-          </strong>
+          </span>
         </div>
         <div className="flex flex-row justify-center mt-4">
-          <strong className="text-sm  md:text-lg md:font-semibold text-center max-w-[70%] md:max-w-[55%]">
+          <span className="text-sm  md:text-lg md:font-semibold text-center max-w-[70%] md:max-w-[55%]">
             Uncover hidden flaws, inconsistencies, and methodological issues
             with our AI-powered Decentralized Science (DeSci) platform, backed
             by blockchain.
-          </strong>
+          </span>
         </div>
         <div className="flex flex-row justify-center mt-6 gap-2 md:gap-8 items-center">
           <Button
@@ -66,12 +66,11 @@ const LandingPage = () => {
               })
             }
           >
-            <strong
-              className={`${sen.className} whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight ${theme === "dark" ? "text-white" : "text-white"}`}
-              style={{ fontFamily: "Suisse Int'l" }}
+            <span
+              className={`${sen.className} whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight ${theme === "dark" ? "text-white" : "text-black"}`}
             >
               {"Start Free Trial"}
-            </strong>
+            </span>
           </Button>
           <Button
             isLoading={isPending}
@@ -83,11 +82,11 @@ const LandingPage = () => {
               })
             }
           >
-            <strong
-              className={`${sen.className} whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight text-black`}
+            <span
+              className={`${sen.className} whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight ${theme === "dark" ? "text-black" : "text-white"}`}
             >
               {"Try for FREE!"}
-            </strong>
+            </span>
           </Button>
         </div>
       </div>

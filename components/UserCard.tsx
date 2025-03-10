@@ -62,6 +62,10 @@ const UserCard = ({
     setUserDetail(response.data);
   };
   const follow = async () => {
+    if (!isAuthenticated) {
+      showSignInModal("You need to sign in to continue.");
+      return;
+    }
     if (!userDetail) return;
     const success = await handleFollow(userDetail.id, userDetail?.is_following);
     if (success) {
@@ -204,7 +208,10 @@ const UserCard = ({
           </Popover>
           <div className="flex justify-between items-center w-full">
             <div className="flex flex-col gap-[1px]">
-              <span className="font-bold text-[16px] leading-[16px]">
+              <span
+                className="text-[16px] leading-[16px]"
+                style={{ fontWeight: 500 }}
+              >
                 {userData.first_name}
               </span>
               <span className="text-[14px] font-normal text-gray-500 leading-[20px]">
@@ -214,6 +221,7 @@ const UserCard = ({
             <div className="flex flex-row justify-center items-center">
               <AnimatedSubscribeButton
                 subscribeStatus={userDetail?.is_following}
+                disabled={!isAuthenticated}
                 onClick={() => follow()}
               >
                 <span className="group inline-flex items-center text-sm">
@@ -221,7 +229,7 @@ const UserCard = ({
                   {/* <ChevronRightIcon className="ml-1 size-4 transition-transform duration-300 group-hover:translate-x-1" /> */}
                 </span>
                 <span className="group inline-flex items-center text-sm">
-                  <CheckIcon className="mr-2 size-4" />
+                  <CheckIcon className="bg-white rounded-full text-[#118E40] mr-2 size-4" />
                   Followed
                 </span>
               </AnimatedSubscribeButton>

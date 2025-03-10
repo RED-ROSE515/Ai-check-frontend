@@ -141,7 +141,9 @@ export default function Home() {
   return (
     <section className="w-full">
       <LandingPage />
-      <div className="flex flex-col md:flex-row items-start justify-center gap-4 bg-black">
+      <div
+        className={`flex flex-col md:flex-row items-start justify-center gap-4 ${theme === "dark" ? "bg-black" : "bg-white"}`}
+      >
         {User && (
           <div className="w-full md:w-1/6">
             <LeftSider onUpload={() => triggerUploadRef.current?.()} />
@@ -208,7 +210,7 @@ export default function Home() {
                     return (
                       <div
                         key={index}
-                        className={`card flex flex-col items-center justify-center rounded-2xl shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+                        className={`card flex flex-col items-center justify-center rounded-2xl shadow-md w-full ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
                       >
                         <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
                           {result?.description &&

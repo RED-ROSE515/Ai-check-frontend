@@ -6,6 +6,7 @@ import api from "@/utils/api";
 import { useSearch } from "@/contexts/SearchContext";
 import { usePagination } from "@/contexts/PaginationContext";
 import { useDebouncedCallback } from "use-debounce";
+import { useTheme } from "next-themes";
 
 const SearchIcon = ({
   size = 24,
@@ -70,6 +71,7 @@ const SearchBar = () => {
   const [cache, setCache] = useState<{ [key: string]: any[] }>({});
   const { setKeyword, keyword } = useSearch();
   const { setPage } = usePagination();
+  const { theme } = useTheme();
   const router = useRouter();
   const getHashtags = async (newValue: string) => {
     const response = await api.get(`papers/keywords?q=${newValue}`);
@@ -110,7 +112,7 @@ const SearchBar = () => {
         className="w-full"
         aria-label="Search by keyword."
         classNames={{
-          base: "min-w-[100%]",
+          base: "min-w-[45vw] h-[36px]",
           listboxWrapper: "max-h-[320px]",
           selectorButton: "text-default-500",
         }}
@@ -118,7 +120,7 @@ const SearchBar = () => {
         inputProps={{
           classNames: {
             input: "ml-1",
-            inputWrapper: "h-[48px]",
+            inputWrapper: `border-none h-[36px] ${theme === "dark" ? "bg-[#2E3D4C] text-[#798FA6]" : "bg-[#EBEBEB] text-[#828489]"}`,
           },
         }}
         selectedKey={searchValue}

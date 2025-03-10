@@ -185,3 +185,28 @@ export const SearchIcon = (props: IconSvgProps) => (
     />
   </svg>
 );
+
+export const StatisticsIcon = ({
+  size = 24,
+  width,
+  height,
+  color,
+  ...props
+}: IconSvgProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 20 20"
+    fill="none"
+    width={size || width}
+    height={size || height}
+    {...props}
+  >
+    <path
+      d="M7.50016 9.16667V13.3333M11.6668 4.16667V13.3333M15.8335 10.8333V13.3333M3.3335 3.33333V15.8333C3.3335 16.2936 3.70659 16.6667 4.16683 16.6667H17.5002"
+      stroke={color}
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);

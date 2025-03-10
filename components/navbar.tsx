@@ -7,17 +7,7 @@ import _ from "lodash";
 import {
   Link,
   Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
   User,
-  Listbox,
-  ListboxItem,
-  ListboxSection,
   Image as HeroImage,
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -35,18 +25,16 @@ import LogoLight from "../public/LogoLime.png";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
-import { CircularProgressBar } from "./CircularProgressBar";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { ImProfile } from "react-icons/im";
 import { MdLogin, MdLogout, MdCheck, MdInfo } from "react-icons/md";
 import { LuSpeech } from "react-icons/lu";
-import { MdOutlineAnalytics } from "react-icons/md";
 import { LuChartColumn } from "react-icons/lu";
 import SearchBar from "./SearchBar";
 import { useSearch } from "@/contexts/SearchContext";
 import { usePagination } from "@/contexts/PaginationContext";
-import { DotPattern } from "./magicui/dot-pattern";
 import { cn } from "@/lib/utils";
+import { StatisticsIcon } from "./icons";
 
 export const ListboxWrapper = ({ children }: any) => (
   <div className="w-full max-w-[260px] border-small px-1 py-2 rounded-small border-default-200 dark:border-default-100">
@@ -54,6 +42,62 @@ export const ListboxWrapper = ({ children }: any) => (
   </div>
 );
 
+export const ResearchAuditSVG = ({ className, color }: any) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      width="18"
+      height="19"
+      viewBox="0 0 18 19"
+      fill="none"
+    >
+      <g clip-path="url(#clip0_2600_46157)">
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M2.25 2H15V10.1016C13.2791 9.10689 11.0403 9.3457 9.56802 10.818C7.8701 12.5159 7.81267 15.2331 9.39573 17H2.25V2ZM5.25 5H12V6.5H5.25V5ZM5.25 8H9V9.5H5.25V8ZM5.25 11H7.5V12.5H5.25V11Z"
+          fill={color}
+        />
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M14.8713 11.8787C13.6997 10.7071 11.8003 10.7071 10.6287 11.8787C9.45711 13.0502 9.45711 14.9497 10.6287 16.1213C11.6171 17.1098 13.1237 17.2643 14.2742 16.5848L15.75 18.0607L16.8107 17L15.3348 15.5242C16.0143 14.3737 15.8598 12.8671 14.8713 11.8787ZM11.6893 12.9393C12.2751 12.3535 13.2249 12.3535 13.8107 12.9393C14.3964 13.5251 14.3964 14.4749 13.8107 15.0607C13.2249 15.6464 12.2751 15.6464 11.6893 15.0607C11.1036 14.4749 11.1036 13.5251 11.6893 12.9393Z"
+          fill={color}
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_2600_46157">
+          <rect
+            width="18"
+            height="18"
+            fill="white"
+            transform="translate(0 0.5)"
+          />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+};
+
+export const SpeechBookSVG = ({ className, color }: any) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      width="18"
+      height="19"
+      viewBox="0 0 18 19"
+      fill="none"
+    >
+      <path
+        d="M12 9.5V3.5H2.25V13.625C2.25 14.6605 3.08947 15.5 4.125 15.5H13.875M12 9.5V13.625C12 14.6605 12.8395 15.5 13.875 15.5M12 9.5H15.75V13.625C15.75 14.6605 14.9105 15.5 13.875 15.5M4.5 12.5H9.75M5.25 6.5H9V9.5H5.25V6.5Z"
+        stroke={color}
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+};
 export const Navbar = () => {
   const { theme } = useTheme();
   const { setPage } = usePagination();
@@ -76,15 +120,14 @@ export const Navbar = () => {
   const navigateTo = (link: string) => {
     window.location.href = link;
   };
-  const iconClasses =
-    "text-xl text-default-500 pointer-events-none flex-shrink-0";
+  const iconClasses = `text-xl text-default-500 pointer-events-none flex-shrink-0 ${theme === "dark" ? "text-[#92A8BF]" : "text-[#828489]"}`;
   return (
     <div className="flex items-center justify-center flex-row w-full relative">
       <HeroUINavbar
         maxWidth="full"
         position="sticky"
         style={{
-          background: `${theme === "dark" ? "linear-gradient(0deg, #1E2A36 0%, #1E2A36 100%)" : "linear-gradient(0deg, #C8AAFF 0%, #C8AAFF 100%)"}`,
+          background: `${theme === "dark" ? "linear-gradient(0deg, #1E2A36 0%, #1E2A36 100%)" : "linear-gradient(0deg, #F7F7F7  0%, #F7F7F7 100%)"}`,
         }}
         // shouldHideOnScroll
         className="flex flex-row justify-between w-full bg-transparent h-[78px]"
@@ -100,8 +143,7 @@ export const Navbar = () => {
                     setKeyword("");
                     setPage(1);
                   }}
-                  src={LogoLight}
-                  className="h-[37px] w-[209px]" // Responsive image size
+                  src={theme === "dark" ? LogoLight : LogoDark}
                 />
               </Link>
             </NavbarBrand>
@@ -115,7 +157,9 @@ export const Navbar = () => {
         <NavbarContent className="flex w-full basis-full" justify="end">
           <NavbarItem className="flex items-center gap-[6px]">
             {/* <CircularProgressBar className="ml-2 md:ml-4 h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" /> */}
-            <ThemeSwitch />
+            <ThemeSwitch
+              className={`${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+            />
             <Button
               isIconOnly
               variant="light"
@@ -125,16 +169,19 @@ export const Navbar = () => {
                   router.push("/statistics");
                 })
               }
-              className="w-[36px] h-[36px] min-w-[36px] min-h-[36px] rounded-[50%] bg-[#ffffff40] flex items-center justify-center opacity-[0.5]"
+              className={`w-[36px] h-[36px] min-w-[36px] min-h-[36px] rounded-[50%] flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
             >
-              <LuChartColumn size={20} />
+              <StatisticsIcon
+                size={20}
+                color={`${theme === "dark" ? "#798FA6" : "#828489"}`}
+              />
             </Button>
 
             <Dropdown
               placement="bottom-end"
               classNames={{
                 base: "before:bg-default-200", // change arrow background
-                content: "py-1 px-1 border border-default-200 ",
+                content: `py-1 px-1 border border-default-200 ${theme === "dark" ? "bg-[#2E3D4C]" : ""}`,
               }}
             >
               <DropdownTrigger>
@@ -169,62 +216,89 @@ export const Navbar = () => {
               </DropdownTrigger>
               <DropdownMenu
                 aria-label="Dropdown menu with description"
-                variant="faded"
-                className="w-[300px]"
+                variant="light"
+                className="w-[340px]"
               >
                 <DropdownSection title="">
                   <DropdownItem key="avatar">
-                    <div className="flex gap-3">
-                      <HeroImage
-                        isBlurred
-                        isZoomed
-                        alt="User Avatar"
-                        radius="full"
-                        className="object-cover"
-                        shadow="lg"
-                        style={
-                          isMobile
-                            ? { height: "40px", width: "40px" }
-                            : { height: "60px", width: "60px" }
-                        }
-                        src={
-                          isAuthenticated
-                            ? user?.detail.avatar
-                            : "https://avatars.githubusercontent.com/u/146516559?s=400&u=8a2fcef9b9079ab60f01db2868d1b1893856a2c3&v=4"
-                        }
-                      />
-                      <div className="flex flex-col items-start justify-center">
-                        <h4 className="text-large font-bold leading-none text-default-600">
-                          {_.truncate(user?.detail.first_name, {
-                            length: 15,
-                            omission: "...",
-                          })}
-                        </h4>
-                        <Link
-                          isExternal
-                          href={`${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`}
-                          size="sm"
-                          isDisabled={!isAuthenticated}
-                        >
-                          <h5 className="text-medium tracking-tight text-blue-700">
-                            @
-                            {isAuthenticated ? user?.detail.user_name : "guest"}
-                          </h5>
-                        </Link>
+                    <div className="flex justify-between gap-3">
+                      <div className="flex flex-row justify-start gap-4 items-center">
+                        <HeroImage
+                          isBlurred
+                          isZoomed
+                          alt="User Avatar"
+                          radius="full"
+                          className="object-cover"
+                          shadow="lg"
+                          style={
+                            isMobile
+                              ? { height: "30px", width: "30px" }
+                              : { height: "50px", width: "50px" }
+                          }
+                          src={
+                            isAuthenticated
+                              ? user?.detail.avatar
+                              : "https://avatars.githubusercontent.com/u/146516559?s=400&u=8a2fcef9b9079ab60f01db2868d1b1893856a2c3&v=4"
+                          }
+                        />
+                        <div className="flex flex-col items-start justify-center">
+                          <h4 className="text-large font-bold leading-none text-default-600">
+                            {_.truncate(user?.detail.first_name, {
+                              length: 15,
+                              omission: "...",
+                            })}
+                          </h4>
+                          <Link
+                            isExternal
+                            href={`${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`}
+                            size="sm"
+                            isDisabled={!isAuthenticated}
+                          >
+                            <h5
+                              className={`text-medium tracking-tight ${theme === "dark" ? "text-[#798FA6]" : "text-[#828489]"}`}
+                            >
+                              @
+                              {isAuthenticated
+                                ? user?.detail.user_name
+                                : "guest"}
+                            </h5>
+                          </Link>
+                        </div>
                       </div>
+                      {isAuthenticated && (
+                        <Button
+                          className={`${theme === "dark" ? "bg-[#526477] text-[#C9D8E7" : "bg-[#FFF] text-[#252629]"} rounded-full`}
+                          variant="bordered"
+                          onPress={() =>
+                            window.open(
+                              `${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`
+                            )
+                          }
+                        >
+                          View Profile
+                        </Button>
+                      )}
                     </div>
                   </DropdownItem>
                 </DropdownSection>
                 {isAuthenticated ? (
                   <DropdownSection
-                    title="User Actions"
+                    title=""
+                    classNames={{
+                      base: "border-none",
+                      heading: "max-h-[320px]",
+                    }}
                     className="border-2 rounded-md border-default-200 p-2 w-full"
                   >
                     <DropdownItem
                       key="Research Audit"
                       //shortcut="⌘C"
-                      className="py-3"
-                      startContent={<MdCheck className={iconClasses} />}
+                      startContent={
+                        <ResearchAuditSVG
+                          className={iconClasses}
+                          color={theme === "dark" ? "#92A8BF" : "#828489"}
+                        />
+                      }
                       onPress={() => {
                         setOpen(false);
                         navigateTo("/check");
@@ -235,8 +309,12 @@ export const Navbar = () => {
                     <DropdownItem
                       key="speeches"
                       //shortcut="⌘S"
-                      className="py-3"
-                      startContent={<LuSpeech className={iconClasses} />}
+                      startContent={
+                        <SpeechBookSVG
+                          className={iconClasses}
+                          color={theme === "dark" ? "#92A8BF" : "#828489"}
+                        />
+                      }
                       onPress={() => {
                         setOpen(false);
                         navigateTo("/speeches");
@@ -245,22 +323,8 @@ export const Navbar = () => {
                       Speech Book
                     </DropdownItem>
                     <DropdownItem
-                      key="profile"
-                      //shortcut="⌘P"
-                      className="py-3"
-                      startContent={<ImProfile className={iconClasses} />}
-                      onPress={() =>
-                        window.open(
-                          `${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`
-                        )
-                      }
-                    >
-                      View Profile
-                    </DropdownItem>
-                    <DropdownItem
                       key="about"
                       //shortcut="⌘A"
-                      className="py-3"
                       startContent={<MdInfo className={iconClasses} />}
                       onPress={() => {
                         setOpen(false);
@@ -272,7 +336,6 @@ export const Navbar = () => {
                     <DropdownItem
                       key="logout"
                       //shortcut="⌘Q"
-                      className="text-danger py-3"
                       color="danger"
                       startContent={<MdLogout className={iconClasses} />}
                       onPress={() => {
@@ -284,11 +347,10 @@ export const Navbar = () => {
                     </DropdownItem>
                   </DropdownSection>
                 ) : (
-                  <DropdownSection title="Guest Actions">
+                  <DropdownSection>
                     <DropdownItem
                       key="Research Audit"
                       //shortcut="⌘C"
-                      className="py-3"
                       startContent={<MdCheck className={iconClasses} />}
                       onPress={() => {
                         setOpen(false);
@@ -300,7 +362,6 @@ export const Navbar = () => {
                     <DropdownItem
                       key="about"
                       //shortcut="⌘A"
-                      className="py-3"
                       startContent={<MdInfo className={iconClasses} />}
                       onPress={() => {
                         setOpen(false);
@@ -312,7 +373,6 @@ export const Navbar = () => {
                     <DropdownItem
                       key="login"
                       //shortcut="⌘L"
-                      className="py-3"
                       startContent={<MdLogin className={iconClasses} />}
                       onPress={() => {
                         navigateTo(

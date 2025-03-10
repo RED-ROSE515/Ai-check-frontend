@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, use, useCallback } from "react";
-import Head from "next/head";
 import { useTheme } from "next-themes";
 import axios from "axios";
 import {
@@ -168,7 +167,9 @@ const ResultPage = ({ params }: any) => {
   return (
     <>
       {!errorMessage && (
-        <div className="flex flex-row justify-center mt-16 bg-black">
+        <div
+          className={`flex flex-row justify-center mt-16 ${theme === "dark" ? "bg-black" : "bg-white"}`}
+        >
           <SignInDialog
             isOpen={showSignIn}
             onClose={() => setShowSignIn(false)}
@@ -179,7 +180,7 @@ const ResultPage = ({ params }: any) => {
                 className={`card w-full md:w-3/4 mb-8 flex flex-col items-center justify-center gap-4`}
               >
                 <div
-                  className={`rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+                  className={`rounded border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
                 >
                   <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
                     {!summary ? (
@@ -202,12 +203,12 @@ const ResultPage = ({ params }: any) => {
                   </div>
                 </div>
                 <div
-                  className={`rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+                  className={`rounded border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
                 >
                   {analysisResult && <SpecialSummary summary={totalSummary} />}
                 </div>
                 <div
-                  className={`rounded w-full border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+                  className={`rounded w-full border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
                 >
                   {analysisResult && (
                     <div className="mb-0 sm:mb-2 w-full">
@@ -268,7 +269,7 @@ const ResultPage = ({ params }: any) => {
                 </div>
 
                 <div
-                  className={`w-full rounded border-2 shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+                  className={`w-full rounded border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
                 >
                   <Comments
                     comments={comments}
@@ -279,7 +280,9 @@ const ResultPage = ({ params }: any) => {
                   />
                 </div>
               </div>
-              <div className="ml-4 hidden md:flex flex-col gap-2 w-full h-fit overflow-hidden card rounded-xl bg-[#1f2a37] p-2">
+              <div
+                className={`ml-4 hidden md:flex flex-col gap-2 w-full h-fit overflow-hidden card rounded-xl p-2 ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
+              >
                 <span className="text-md mb-2 truncate ml-2">
                   Recently Checked Papers
                 </span>
@@ -293,7 +296,7 @@ const ResultPage = ({ params }: any) => {
                       <Card
                         isHoverable
                         shadow="sm"
-                        className="cursor-pointer w-full bg-[#273340]"
+                        className={`cursor-pointer w-full ${theme === "dark" ? "bg-[#273340]" : "bg-[#FFF]"}`}
                       >
                         <CardBody>
                           <div className="flex flex-row justify-start items-center w-full max-w-full">
