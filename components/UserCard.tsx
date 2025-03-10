@@ -20,6 +20,7 @@ import { MdReport, MdOutlineContentCopy } from "react-icons/md";
 import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
 import { useUserActions } from "@/hooks/useUserActions";
 import { CheckIcon, ChevronRightIcon } from "lucide-react";
+import { UserDetail } from "@/types/user";
 
 import api from "@/utils/api";
 import _ from "lodash";
@@ -44,7 +45,7 @@ const UserCard = ({
 }: any) => {
   const formattedDate = `Published on: ` + formatTimestamp(postDate);
   const { isMobile } = useDeviceCheck();
-  const [userDetail, setUserDetail] = useState<any>();
+  const [userDetail, setUserDetail] = useState<UserDetail>();
   const { isLoading, handleFollow } = useUserActions({
     showSignInModal,
   });
@@ -61,6 +62,7 @@ const UserCard = ({
     setUserDetail(response.data);
   };
   const follow = async () => {
+    if (!userDetail) return;
     const success = await handleFollow(userDetail.id, userDetail?.is_following);
     if (success) {
       await fetchUserDetail();
@@ -70,6 +72,9 @@ const UserCard = ({
   useEffect(() => {
     fetchUserDetail();
   }, []);
+
+  if (!userDetail) return null;
+
   return (
     <Card
       // isBlurred
@@ -207,7 +212,10 @@ const UserCard = ({
               </span>
             </div>
             <div className="flex flex-row justify-center items-center">
-              <AnimatedSubscribeButton>
+              <AnimatedSubscribeButton
+                subscribeStatus={userDetail?.is_following}
+                onClick={() => follow()}
+              >
                 <span className="group inline-flex items-center text-sm">
                   Follow
                   {/* <ChevronRightIcon className="ml-1 size-4 transition-transform duration-300 group-hover:translate-x-1" /> */}

@@ -102,6 +102,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const [visibility, setVisibility] = useState(["everyone"]);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [s3_link, setS3Link] = useState("");
+  const [loading, setLoading] = useState(false);
   const { handleAnalyze } = useAnalyze();
   const { toast } = useToast();
   const { theme } = useTheme();
@@ -188,7 +189,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
     const formData = new FormData();
 
     formData.append("file", file);
-
+    setLoading(true);
     try {
       toast({
         description: `Uploading file: ${_.truncate(file.name, {
@@ -228,6 +229,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
       });
       await sleep(3000);
       setS3Link(response.data.attached_link);
+      setLoading(false);
       // AnalyzePaper(response.data.attached_link);
       // getPdfList();
     } catch (error) {
@@ -380,16 +382,17 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
               users={users}
               disabled={visibility[0] !== "specific_users"}
             />
-            <ShinyButton
+            <Button
+              isLoading={loading}
               className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-              onClick={() => handleAnalyze(s3_link, visibility[0], users)}
+              onPress={() => handleAnalyze(s3_link, visibility[0], users)}
             >
-              <strong
+              <span
                 className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
               >
                 Analyze for Errors
-              </strong>
-            </ShinyButton>
+              </span>
+            </Button>
           </div>
         </div>
       )}

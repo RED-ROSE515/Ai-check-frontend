@@ -104,6 +104,14 @@
   font-family: fantasy;
 }
 
+@font-face {
+  font-family: "Suisse";
+  src: url("../public/suisse-intl-regular.ttf") format("truetype"); /* Adjust the path and format as needed */
+}
+
+.font-suisse {
+  font-family: "Suisse", sans-serif;
+}
 .ribbon {
   width: 150px;
   height: 150px;

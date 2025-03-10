@@ -4,18 +4,20 @@ import { DotPattern } from "./magicui/dot-pattern";
 import { cn } from "@/lib/utils";
 import { Button } from "@heroui/react";
 import StatisticCard from "./StatisticCard";
-import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { useRouter } from "next/navigation";
+import { Sen } from "next/font/google";
+export const sen = Sen({ subsets: ["latin"] });
+
 const LandingPage = () => {
   const { theme } = useTheme();
-  const { isMobile } = useDeviceCheck();
   const [isPending, startTransition] = useTransition();
+
   const router = useRouter();
   return (
     <div
       className="w-full relative pt-4 md:pb-20"
       style={{
-        background: `${theme === "dark" ? "linear-gradient(0deg, #09090B 0%, #1E2A36 100%)" : "linear-gradient(0deg, #FFFFFF 0%, #C8AAFF 100%)"}`,
+        background: `${theme === "dark" ? "linear-gradient(0deg, #06070C 0%, #1E2A36 100%)" : "linear-gradient(0deg, #FFFFFF 0%, #C8AAFF 100%)"}`,
       }}
     >
       <div className="absolute flex size-full w-full h-full items-center justify-center overflow-hidden">
@@ -26,7 +28,7 @@ const LandingPage = () => {
           cy={1}
           cr={1}
           className={cn(
-            `${isMobile ? "hidden" : "[mask-image:radial-gradient(900px_circle_at_left,white,transparent)]"} `
+            `${"[mask-image:radial-gradient(1500px_circle_at_left,white,transparent)]"} `
           )}
         />
         <DotPattern
@@ -36,7 +38,7 @@ const LandingPage = () => {
           cy={1}
           cr={1}
           className={cn(
-            `${isMobile ? "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]" : "[mask-image:radial-gradient(900px_circle_at_right,white,transparent)]"} `
+            `${"[mask-image:radial-gradient(1500px_circle_at_right,white,transparent)]"} `
           )}
         />
       </div>
@@ -65,7 +67,8 @@ const LandingPage = () => {
             }
           >
             <strong
-              className={`whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight ${theme === "dark" ? "text-white" : "text-white"}`}
+              className={`${sen.className} whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight ${theme === "dark" ? "text-white" : "text-white"}`}
+              style={{ fontFamily: "Suisse Int'l" }}
             >
               {"Start Free Trial"}
             </strong>
@@ -81,9 +84,9 @@ const LandingPage = () => {
             }
           >
             <strong
-              className={`whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight text-black`}
+              className={`${sen.className} whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight text-black`}
             >
-              {"Try For FREE!"}
+              {"Try for FREE!"}
             </strong>
           </Button>
         </div>

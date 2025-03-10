@@ -3,6 +3,10 @@ import { useTheme } from "next-themes";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { ShinyButton } from "./ui/shiny-button";
 import { useRouter } from "next/navigation";
+import { Sen } from "next/font/google";
+import { Button } from "@heroui/react";
+export const sen = Sen({ subsets: ["latin"] });
+
 export const LineSVG = ({ className }: any) => {
   return (
     <svg
@@ -43,7 +47,7 @@ const LastSection = () => {
   const { isMobile } = useDeviceCheck();
   const router = useRouter();
   return (
-    <div className="flex flex-col justify-center bg-[#6365F1] rounded-xl relative gap-2 md:gap-6">
+    <div className="flex flex-col justify-center bg-[#6365F1] rounded-xl relative gap-2 md:gap-6 mb-4">
       <div className="flex flex-row justify-center mt-4">
         <h1 className="font-bold text-lg md:text-4xl max-w-[50%] text-center">
           Make Research Better – One Error at a Time
@@ -51,7 +55,7 @@ const LastSection = () => {
       </div>
       {!isMobile && <LineSVG className="z-0 absolute left-0 top-[66px]" />}
       {!isMobile && <FlowerSVG className="z-0 absolute right-0 bottom-0" />}
-      <div className="flex flex-col w-full items-center">
+      <div className={`flex flex-col w-full items-center ${sen.className} `}>
         <span className="text-center">
           Try NerdBunny AI Error Detection for Free
         </span>
@@ -60,26 +64,26 @@ const LastSection = () => {
         </span>
       </div>
       <div className="w-full justify-center flex flex-row">
-        <div className="w-full md:w-1/2 p-4 flex flex-col md:flex-row justify-center gap-1 md:gap-4 items-center mb-8 px-8 md:px-0">
-          <ShinyButton
+        <div className="w-full md:w-1/3 p-4 flex flex-col md:flex-row justify-center gap-1 md:gap-4 items-center mb-8 px-8 md:px-0">
+          <Button
             className={`w-full ${theme === "dark" ? "bg-white" : "bg-black"}`}
-            onClick={() => router.push("/check")}
+            onPress={() => router.push("/check")}
           >
-            <strong
-              className={`${theme === "dark" ? "text-black" : "text-white"} font-bold`}
+            <span
+              className={`${theme === "dark" ? "text-black" : "text-white"} font-semibold`}
             >
               {"Start Free Analysis"}
-            </strong>
-          </ShinyButton>
-          <ShinyButton
+            </span>
+          </Button>
+          <Button
             className={`w-full ${theme === "dark" ? "bg-white" : "bg-black"}`}
           >
-            <strong
-              className={`${theme === "dark" ? "text-black" : "text-white"} font-bold`}
+            <span
+              className={`${theme === "dark" ? "text-black" : "text-white"} font-semibold`}
             >
               {"About Our Technology"}
-            </strong>
-          </ShinyButton>
+            </span>
+          </Button>
         </div>
       </div>
     </div>

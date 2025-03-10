@@ -104,7 +104,7 @@ export function DotPattern({
         delay: Math.random() * 5,
         duration: Math.random() * 3 + 2,
       };
-    },
+    }
   );
 
   return (
@@ -113,7 +113,7 @@ export function DotPattern({
       aria-hidden="true"
       className={cn(
         "pointer-events-none absolute inset-0 h-full w-full",
-        className,
+        className
       )}
       {...props}
     >
@@ -130,7 +130,7 @@ export function DotPattern({
           cy={dot.y}
           r={cr}
           fill={glow ? `url(#${id}-gradient)` : "currentColor"}
-          className="text-neutral-400/80"
+          className="text-[#FFFFFF0A]"
           initial={glow ? { opacity: 0.4, scale: 1 } : {}}
           animate={
             glow

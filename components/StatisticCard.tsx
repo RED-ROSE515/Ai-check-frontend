@@ -183,11 +183,14 @@ const StatisticCard = () => {
           opts={{
             align: "start",
           }}
-          className="w-full max-w-[55vw]"
+          className="w-full max-w-[75vw] md:max-w-[55vw]"
         >
           <CarouselContent>
             {issues.map((issue, index) => (
-              <CarouselItem key={index} className="md:basis-1/3 lg:basis-1/4">
+              <CarouselItem
+                key={index}
+                className="basis-1/2 md:basis-1/3 lg:basis-1/4"
+              >
                 <Card
                   key={index + 1}
                   isHoverable
@@ -202,11 +205,13 @@ const StatisticCard = () => {
                   <CardBody
                     className={`w-full rounded-full ${theme === "dark" ? `bg-slate-700 ${issue.whiteback}` : `bg-gray-200 ${issue.back}`} ${issue.type === sortBy ? `border-2 ${theme === "dark" ? "border-[#C8E600]" : "border-[#EE43DE]"} rounded-full` : ``}`}
                   >
-                    <div className="flex flex-row justify-between items-center font-bold text-md">
+                    <div className="flex flex-row justify-between items-center text-sm md:text-md">
                       <span>{issue.title}</span>
                       <span>|</span>
                       <Chip size="sm" variant="light">
-                        <span className="text-lg">{issue.counts}</span>
+                        <span className="text-sm md:text-lg">
+                          {issue.counts}
+                        </span>
                       </Chip>
                     </div>
                   </CardBody>

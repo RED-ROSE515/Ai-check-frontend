@@ -125,6 +125,7 @@ const SummaryWrapper = ({
   const router = useRouter();
   const { keyword, setKeyword, setSortBy } = useSearch();
   const [expand, setExpand] = useState(false);
+  const [keywordExpand, setKeywordExpand] = useState(false);
   const [currentSummary, setCurrentSummary] = useState<SummaryType>();
   const { setSpeechUrl, setShowSpeech, setSpeechId, setSpeechTitle } =
     useSpeech();
@@ -201,36 +202,16 @@ const SummaryWrapper = ({
 
   return (
     <div
-      className="flex w-full flex-col rounded-lg p-4 md:px-4"
+      className="flex w-full flex-col rounded-lg p-4 md:px-4 gap-5"
       style={
         theme === "dark"
           ? { backgroundColor: "#1E2A36" }
           : { backgroundColor: "#EEEEEEF0" }
       }
     >
-      <div className="w-full flex flex-col justify-center text-center font-bold text-2xl gap-4">
-        {/* <span className="text-md md:text-2xl font-bold text-center md:min-w-fit md:flex hidden">
-          {`AI Error Detection Report for`}
-          <Tooltip
-            content={
-              <div className="flex flex-col cursor-pointer" onClick={() => {}}>
-                <strong className="text-md font-bold text-center">
-                  This AI-generated report analyzes the paper’s structure,
-                  methodology, and technical accuracy.
-                  <Link className="ml-4 text-blue-700"> Learn more.</Link>
-                </strong>
-              </div>
-            }
-            placement="top"
-            className="max-w-[300px] min-h-[75px]"
-            closeDelay={1000}
-          >
-            <span className="">ℹ️</span>
-          </Tooltip>
-          {` : `}
-        </span> */}
+      <div className="w-full flex flex-col justify-center text-center font-bold text-2xl gap-5">
         {isResult ? (
-          <span className="text-md md:text-3xl flex-1 items-center gap-1 px-2">
+          <span className="text-md md:text-3xl flex-1 items-centerpx-2">
             {summary.metadata.title}
           </span>
         ) : (
@@ -264,15 +245,15 @@ const SummaryWrapper = ({
         )}
       </div>
 
-      <div className="flex flex-col md:flex-row justify-between mt-4 gap-4">
-        <div className="flex flex-row justify-center items-center gap-10 w-full">
-          <div className={`w-1/2`}>
+      <div className="flex flex-col md:flex-row justify-between mt-5">
+        <div className="flex flex-col md:flex-row justify-center items-center gap-10 w-full">
+          <div className="w-full md:w-1/2">
             <span
-              className={`font-bold text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
+              className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
             >
               Authors:
             </span>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 mt-2">
               {summary.metadata.authors?.map(
                 (author: string, index: number) =>
                   (index < 3 || expand) && (
@@ -298,35 +279,32 @@ const SummaryWrapper = ({
                   )
               )}
               {summary.metadata.authors?.length > 3 && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  endContent={expand ? <FaMinus /> : <FaPlus />}
-                  onPress={() => setExpand(!expand)}
-                  className={`w-full h-auto md:w-auto ${theme === "dark" ? "bg-slate-700 text-white" : "bg-gray-300 text-black"}`}
+                <Chip
+                  variant="bordered"
+                  endContent={
+                    expand ? (
+                      <FaMinus className="mx-1" />
+                    ) : (
+                      <FaPlus className="mx-1" />
+                    )
+                  }
+                  onClick={() => setExpand(!expand)}
+                  className={`cursor-pointer hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
                 >
-                  {`${expand ? "Show Less " : "Read More "}`}
-                </Button>
+                  {`${expand ? "Show Less " : "Load More "}`}
+                </Chip>
               )}
             </div>
           </div>
-          <div className="w-1/2">
+          <div className="w-full md:w-1/2">
             <span
-              className={`font-bold text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
+              className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
             >
               Paper Link :
             </span>
             {summary.metadata.paper_link ? (
-              <div>
-                {/* <Link
-                  className={`mb-4 block hover:underline truncate w-fit ${theme === "dark" ? `text-blue-200` : "text-blue-600"}`}
-                  href={}
-                  style={{ maxWidth: "-webkit-fill-available" }}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                > */}
+              <div className="mt-2">
                 <Chip
-                  // className={`${theme === "dark" ? "secondary" : "primary"}`}
                   variant="dot"
                   onClick={() => router.push(summary.metadata.paper_link)}
                   startContent={
@@ -334,14 +312,16 @@ const SummaryWrapper = ({
                       <FaLink color="#737E88" className="m-1" />
                     </span>
                   }
-                  className={`cursor-pointer hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
+                  className={`cursor-pointer min-w-full max-w-full truncate hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
                 >
-                  <span className="m-1">{summary.metadata.paper_link}</span>
+                  <span className="m-1 truncate">
+                    {summary.metadata.paper_link}
+                  </span>
                 </Chip>
                 {/* </Link> */}
               </div>
             ) : (
-              <div>
+              <div className="mt-2 ">
                 <Chip
                   // className={`${theme === "dark" ? "secondary" : "primary"}`}
                   variant="dot"
@@ -359,9 +339,9 @@ const SummaryWrapper = ({
           </div>
         </div>
       </div>
-      <div className="mt-4 gap-1 w-full" style={{ marginLeft: "-0.5rem" }}>
+      <div className="gap-1 w-full" style={{ marginLeft: "-0.5rem" }}>
         <Accordion
-          className="w-full"
+          className="w-full "
           motionProps={{
             variants: {
               enter: {
@@ -410,15 +390,15 @@ const SummaryWrapper = ({
                   priority
                   alt="NERDBUNNY LOGO"
                   className="rounded-lg"
-                  height="45"
+                  height="30"
                   src={level.image}
-                  width="45"
+                  width="30"
                 />
               }
-              className="w-full bg-[#2E3E4E]"
+              className="w-full bg-[#2E3E4E] "
               title={
                 <div className="flex flex-row justify-between w-full items-center">
-                  <strong className="text-lg">{level.title}</strong>
+                  <span className="text-lg">{level.title}</span>
                   {link && (
                     <Tooltip
                       content={
@@ -497,13 +477,13 @@ const SummaryWrapper = ({
         </Accordion>
       </div>
 
-      <div className="mt-4">
+      <div>
         <span
-          className={`font-bold text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
+          className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
         >
-          Information:
+          Publication Info:
         </span>
-        <div className="flex flex-wrap gap-10 mb-2">
+        <div className="flex flex-wrap gap-2 mb:gap-10 mb-2">
           <Typography
             className={`flex flex-row justify-center items-center gap-1 ${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
             variant="body1"
@@ -517,60 +497,80 @@ const SummaryWrapper = ({
             {summary.metadata.publication_info.date || "Unknown"}
           </Typography>
           <Typography
-            className={`flex flex-row justify-center items-center ml-8 gap-1 ${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
+            className={`flex flex-row justify-center items-start mb:items-center ml-8 gap-1 ${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
             variant="body1"
           >
-            <span
-              className={`${theme === "dark" ? "text-[#495D72]" : "text-slate-700"} mr-1`}
-            >
-              <FaGlobe />
+            <div className="flex flex-row justify-center items-center">
+              <span
+                className={`${theme === "dark" ? "text-[#495D72]" : "text-slate-700"} mr-1`}
+              >
+                <FaGlobe />
+              </span>
+              <span>Source: </span>
+            </div>
+            <span>
+              {summary.metadata?.publication_info?.journal || "Unknown"}
             </span>
-            <strong>Source: </strong>
-            {summary.metadata?.publication_info?.journal || "Unknown"}
           </Typography>
         </div>
-        <div
-          className={`w-full ${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
-        >
-          <div className="flex flex-col justify-start gap-2">
-            <span
-              className={`font-bold text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
-            >
-              Keywords:
-            </span>
-            <div className="flex flex-wrap justify-start gap-2">
-              {summary.metadata.publication_info.keywords
-                ? summary.metadata.publication_info.keywords.map(
-                    (label: string, index: number) => {
-                      return (
-                        <Chip
-                          variant="dot"
-                          key={index}
-                          onClick={() => {
-                            setKeyword(label === keyword ? "" : label);
-                            setSortBy("");
-                          }}
-                          startContent={<SiSharp className="ml-1" />}
-                          className={`cursor-pointer hover:scale-105 ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"} ${label === keyword ? `${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}` : ""}`}
-                        >
-                          {label}
-                        </Chip>
-                      );
-                    }
+      </div>
+
+      <div
+        className={`w-full ${theme === "dark" ? `text-gray-100` : "text-slate-600"}`}
+      >
+        <div className="flex flex-col justify-start gap-2">
+          <span
+            className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
+          >
+            Keywords:
+          </span>
+          <div className="flex flex-wrap justify-start gap-2">
+            {summary.metadata.publication_info.keywords
+              ? summary.metadata.publication_info.keywords.map(
+                  (label: string, index: number) =>
+                    (index < 3 || keywordExpand) && (
+                      <Chip
+                        variant="dot"
+                        key={index}
+                        onClick={() => {
+                          setKeyword(label === keyword ? "" : label);
+                          setSortBy("");
+                        }}
+                        startContent={<SiSharp className="ml-1" />}
+                        className={`cursor-pointer hover:scale-105 ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"} ${label === keyword ? `${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}` : ""}`}
+                      >
+                        {label}
+                      </Chip>
+                    )
+                )
+              : "Unknown"}
+            {summary.metadata.publication_info.keywords?.length > 3 && (
+              <Chip
+                variant="bordered"
+                endContent={
+                  keywordExpand ? (
+                    <FaMinus className="mx-1" />
+                  ) : (
+                    <FaPlus className="mx-1" />
                   )
-                : "Unknown"}
-            </div>
+                }
+                onClick={() => setKeywordExpand(!keywordExpand)}
+                className={`cursor-pointer hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
+              >
+                {`${keywordExpand ? "Show Less " : "Load More "}`}
+              </Chip>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="mt-4">
+      <div>
         <span
-          className={`font-bold text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
+          className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-slate-700"}`}
         >
           Technical Assessment:
         </span>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mt-2">
           {Object.entries(
             summary.technical_assessment
               ? summary.technical_assessment

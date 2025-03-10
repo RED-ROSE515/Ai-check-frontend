@@ -97,7 +97,7 @@ export const AnalyzeProvider = ({
       setIsChecking(true);
       setSummaryLoading(true);
       const new_shower_ids = shower_ids.map((id) => id.value);
-
+      alert(s3_url);
       const response = await api.post(`post/create`, {
         post_type: 6,
         attached_links: [s3_url],
@@ -150,14 +150,14 @@ export const AnalyzeProvider = ({
         currentProgress += 0.1;
         setProgress(Math.min(currentProgress, 99));
 
-        if (currentProgress === 25) {
+        if (currentProgress.toFixed(1) === "25.0") {
           toast({
             title: "Processing at 25%",
             description: "Analyzing text and structure of paper.",
             duration: 5000,
           });
         }
-        if (currentProgress === 50) {
+        if (currentProgress.toFixed(1) === "50.0") {
           toast({
             title: "Processing at 50%",
             description:
@@ -165,7 +165,7 @@ export const AnalyzeProvider = ({
             duration: 5000,
           });
         }
-        if (currentProgress === 75) {
+        if (currentProgress.toFixed(1) === "75.0") {
           toast({
             title: "Processing at 75%",
             description:
@@ -178,7 +178,7 @@ export const AnalyzeProvider = ({
       // Status check interval
       const statusInterval = setInterval(checkStatus, 10000); // Check status every 5 seconds
 
-      // Cleanup intervals after 5 minutes (300000ms) if not completed
+      // Cleanup intervals after 10 minutes (600000ms) if not completed
       setTimeout(() => {
         clearInterval(progressInterval);
         clearInterval(statusInterval);

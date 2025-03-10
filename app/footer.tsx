@@ -114,7 +114,7 @@ const Footer = () => {
     return null;
   }
   return (
-    <div className="w-full flex flex-col justify-center items-center h-[114px]">
+    <div className="w-full flex flex-col justify-center items-center py-5">
       <div className="w-full sticky">
         <AnimatePresence>
           {showSpeech && speechUrl && (
@@ -130,13 +130,18 @@ const Footer = () => {
           )}
         </AnimatePresence>
       </div>
-      <div className="flex justify-between items-center w-[80%] gap-6">
-        <div className="flex flex-row justify-center gap-3">
+      <div className="flex flex-row justify-center gap-3 md:hidden mb-6 ">
+        <TelegramSvg theme={theme} />
+        <TwitterSvg theme={theme} />
+        <TiktokSvg theme={theme} />
+      </div>
+      <div className="flex w-full md:flex-row flex-col-reverse justify-between items-center md:w-[80%] gap-6">
+        <div className="md:flex flex-row justify-center gap-3 hidden">
           <TelegramSvg theme={theme} />
           <TwitterSvg theme={theme} />
           <TiktokSvg theme={theme} />
         </div>
-        <div className="flex items-center gap-[36px]">
+        <div className="flex items-center gap-1 md:gap-[36px] text-[12px] md:text-sm">
           <a href="#" className="text-[#697078]">
             About Us
           </a>

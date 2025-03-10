@@ -23,7 +23,7 @@ export function CircularProgressBar({ ...props }) {
   }, []);
 
   return (
-    <div className="fixed bottom-1/2 right-5 z-50">
+    <div className="fixed bottom-1/2 right-3 z-50">
       {isChecking && (
         <Card className="p-1">
           <AnimatedCircularProgressBar
