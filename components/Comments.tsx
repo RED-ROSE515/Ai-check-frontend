@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Button, Card, Textarea, Image, CardBody } from "@heroui/react";
 import { useAuth } from "@/contexts/AuthContext";
-import { formatTimestamp } from "./UserCard";
+
 import { useToast } from "@/hooks/use-toast";
 import { MdReport } from "react-icons/md";
 import api from "@/utils/api";
+import { formatTimestamp } from "@/utils/date";
 interface User {
   id: string;
   noble_id: string;
@@ -97,6 +98,7 @@ const Comments = ({
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
 
+  const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
   const like = async (comment_id: string, liked_me: boolean) => {
     try {
       if (!isAuthenticated) {
@@ -138,7 +140,9 @@ const Comments = ({
         {comments.map((comment) => (
           <Card
             key={comment.id}
-            onPress={() => like(comment.id, comment.liked_me)}
+            onPress={() =>
+              window.open(`${NOBLEBLOCKS_DOMAIN}/@${comment.user.user_name}`)
+            }
             isPressable
             className={`p-4 rounded-lg w-full  ${
               theme === "dark" ? "bg-gray-800" : "bg-gray-100"

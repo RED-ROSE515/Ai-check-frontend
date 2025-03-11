@@ -334,8 +334,8 @@ export default function AudioPlayer({ id }: any) {
     fetchSpeech();
   }, []);
   return (
-    <div className="w-full flex flex-row justify-center h-full gap-4">
-      <div className="w-full md:w-2/3 items-center flex flex-row justify-center ">
+    <div className="w-full flex flex-col md:flex-row justify-start md:justify-center h-full gap-4">
+      <div className="w-full md:w-2/3 items-center flex flex-row justify-center h-full">
         <Card
           isBlurred
           className={`${theme === "dark" ? "bg-[#050506]" : "bg-[#F6F6F6]"} w-full h-full p-1`}
@@ -451,7 +451,7 @@ export default function AudioPlayer({ id }: any) {
           </CardBody>
         </Card>
       </div>
-      <div className="w-1/4 h-full">
+      <div className="w-full md:w-1/4 h-full">
         <Card
           isBlurred
           className={`h-full ${theme === "dark" ? "bg-[#050506]" : "bg-[#F6F6F6]"} w-full h-full p-1`}

@@ -29,7 +29,7 @@ const SpeechesPage = () => {
   }, []);
   return (
     <div className="w-full justify-center flex flex-row">
-      <div className="md:w-4/5 w-full">
+      <div className="md:w-4/5 w-full p-4">
         {loading ? <Loader /> : <AduioList speeches={speeches} />}
       </div>
     </div>

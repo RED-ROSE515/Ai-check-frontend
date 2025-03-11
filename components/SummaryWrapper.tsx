@@ -213,7 +213,7 @@ const SummaryWrapper = ({
     >
       <div className="w-full flex flex-col justify-center text-center font-bold text-2xl gap-5">
         {isResult ? (
-          <span className="text-md md:text-2xl flex-1 items-centerpx-2">
+          <span className="text-md md:text-2xl flex-1 items-center px-2">
             {summary.metadata.title}
           </span>
         ) : (
@@ -309,22 +309,24 @@ const SummaryWrapper = ({
             </span>
             {summary.metadata.paper_link ? (
               <div className="mt-2">
-                <Chip
-                  variant="dot"
-                  onClick={() => router.push(summary.metadata.paper_link)}
-                  startContent={
-                    <span
-                      className={`${theme === "dark" ? "bg-[#2E3E4E]" : "bg-[#FFF]"} ml-1 rounded-full`}
-                    >
-                      <FaLink color="#737E88" className="m-1" />
+                <Tooltip content={summary.metadata.paper_link}>
+                  <Chip
+                    variant="dot"
+                    onClick={() => router.push(summary.metadata.paper_link)}
+                    startContent={
+                      <span
+                        className={`${theme === "dark" ? "bg-[#2E3E4E]" : "bg-[#FFF]"} ml-1 rounded-full`}
+                      >
+                        <FaLink color="#737E88" className="m-1" />
+                      </span>
+                    }
+                    className={`cursor-pointer min-w-[100px] max-w-full truncate hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600 bg-[#273340]" : "hover:bg-gray-300 bg-[#EAEAEA]"}`}
+                  >
+                    <span className="m-1 truncate w-full">
+                      {summary.metadata.paper_link}
                     </span>
-                  }
-                  className={`cursor-pointer min-w-[100px] max-w-full truncate hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600 bg-[#273340]" : "hover:bg-gray-300 bg-[#EAEAEA]"}`}
-                >
-                  <span className="m-1 truncate">
-                    {summary.metadata.paper_link}
-                  </span>
-                </Chip>
+                  </Chip>
+                </Tooltip>
                 {/* </Link> */}
               </div>
             ) : (
@@ -346,9 +348,9 @@ const SummaryWrapper = ({
           </div>
         </div>
       </div>
-      <div className="gap-1 w-full" style={{ marginLeft: "-0.5rem" }}>
+      <div className="w-full">
         <Accordion
-          className="w-full "
+          className="w-full px-0"
           motionProps={{
             variants: {
               enter: {
@@ -387,11 +389,13 @@ const SummaryWrapper = ({
               },
             },
           }}
+          // itemClasses={{ base: "px-0" }}
           variant="splitted"
         >
           {summaryLevels.map((level, index) => (
             <AccordionItem
               key={index}
+              textValue={level.title}
               startContent={
                 <Image
                   priority

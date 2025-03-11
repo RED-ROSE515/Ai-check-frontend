@@ -28,11 +28,21 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
   const getBorderColorClass = (severity: string) => {
     switch (severity.toLowerCase()) {
       case "low":
-        return "border-lime-500";
+        return "border-[#00A13A]";
       case "medium":
-        return "border-amber-500";
+        return "border-[#E2B53F]";
       case "high":
-        return "border-red-500"; // Default border color
+        return "border-[#B13C3E]"; // Default border color
+    }
+  };
+  const getBackgroundColorClass = (severity: string) => {
+    switch (severity.toLowerCase()) {
+      case "low":
+        return theme === "dark" ? "bg-[#152D25]" : "bg-[#F0F6F0]";
+      case "medium":
+        return theme === "dark" ? "bg-[#2D2D25]" : "bg-[#F9F6F0]";
+      case "high":
+        return theme === "dark" ? "bg-[#28252D]" : "bg-[#F9F0F0]"; // Default border color
     }
   };
 
@@ -58,7 +68,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({ error, className }) => {
             key={index}
             className={`overflow-hidden relative flex w-full items-start justify-between gap-2 rounded border-1 p-2 ${theme === "dark" ? "text-gray-300" : "text-slate-700"} ${getBorderColorClass(
               finding.severity
-            )}`}
+            )} ${getBackgroundColorClass(finding.severity)}`}
           >
             <div
               className={`ribbon ribbon-top-right sm:hidden`}

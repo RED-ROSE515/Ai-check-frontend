@@ -25,15 +25,7 @@ import { UserDetail } from "@/types/user";
 import api from "@/utils/api";
 import _ from "lodash";
 import { AnimatedSubscribeButton } from "./magicui/animated-subscribe-button";
-
-export const formatTimestamp = (date: string | Date) => {
-  const parsedDate = new Date(date);
-  const isRecent = differenceInDays(new Date(), parsedDate) < 1;
-
-  if (isRecent)
-    return formatDistance(parsedDate, new Date(), { addSuffix: true });
-  return format(parsedDate, "MMM dd, yyyy • HH:mm 'UTC'");
-};
+import { formatTimestamp } from "@/utils/date";
 
 const UserCard = ({
   userData,
@@ -44,7 +36,7 @@ const UserCard = ({
   reportPost,
   showFollow,
 }: any) => {
-  const formattedDate = `Published on: ` + formatTimestamp(postDate);
+  const formattedDate = `Audited on: ` + formatTimestamp(postDate);
   const { isMobile } = useDeviceCheck();
   const [userDetail, setUserDetail] = useState<UserDetail>();
   const { isLoading, handleFollow } = useUserActions({

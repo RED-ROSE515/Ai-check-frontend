@@ -69,9 +69,11 @@ const NerdbunnyReason = () => {
                 Discover hidden flaws and inconsistencies in published papers.
               </span>
             </div>
+          </div>
+          <div className="flex flex-row justify-center">
             <Button
               isLoading={isPending}
-              className={`shadow-2xl h-[36px] ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#EE43DE]"}`}
+              className={`shadow-2xl h-[46px] ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#EE43DE]"}`}
               radius="full"
               onPress={() =>
                 startTransition(() => {

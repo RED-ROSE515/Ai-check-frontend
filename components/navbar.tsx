@@ -116,7 +116,7 @@ export const Navbar = () => {
   const navigateTo = (link: string) => {
     window.location.href = link;
   };
-  const iconClasses = `text-xl text-default-500 pointer-events-none flex-shrink-0 ${theme === "dark" ? "text-[#92A8BF]" : "text-[#828489]"}`;
+  const iconClasses = `text-xl pointer-events-none flex-shrink-0 ${theme === "dark" ? "text-[#92A8BF]" : "text-[#828489]"}`;
   return (
     <div className="flex items-center justify-center flex-row w-full relative">
       <HeroUINavbar
@@ -190,24 +190,25 @@ export const Navbar = () => {
                   }}
                   onClick={() => setOpen(true)}
                   className="cursor-pointer"
-                  description={
-                    <Link
-                      isExternal
-                      href={`${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`}
-                      size="sm"
-                      isDisabled={!isAuthenticated}
-                      className="text-[13px] opacity-[.6]"
-                    >
-                      @
-                      {isAuthenticated
-                        ? _.truncate(user?.detail.user_name, {
-                            length: 10,
-                            omission: "...",
-                          })
-                        : `guest`}
-                    </Link>
-                  }
-                  name={isAuthenticated ? user?.detail.first_name : "Guest"}
+                  // description={
+                  //   <Link
+                  //     isExternal
+                  //     href={`${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`}
+                  //     size="sm"
+                  //     isDisabled={!isAuthenticated}
+                  //     className="text-[13px] opacity-[.6]"
+                  //   >
+                  //     @
+                  //     {isAuthenticated
+                  //       ? _.truncate(user?.detail.user_name, {
+                  //           length: 10,
+                  //           omission: "...",
+                  //         })
+                  //       : `guest`}
+                  //   </Link>
+                  // }
+                  // name={isAuthenticated ? user?.detail.first_name : "Guest"}
+                  name=""
                 />
               </DropdownTrigger>
               <DropdownMenu
@@ -266,12 +267,10 @@ export const Navbar = () => {
                           className={`${theme === "dark" ? "bg-[#526477] text-[#C9D8E7" : "bg-[#FFF] text-[#252629]"} rounded-full`}
                           variant="bordered"
                           onPress={() =>
-                            window.open(
-                              `${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`
-                            )
+                            window.open(`${NOBLEBLOCKS_DOMAIN}/settings`)
                           }
                         >
-                          View Profile
+                          Manage Profile
                         </Button>
                       )}
                     </div>

@@ -155,7 +155,7 @@ const Statistics = () => {
     <Loader />
   ) : (
     <div className="w-full flex flex-row justify-center">
-      <div className="w-full bg-statistics md:w-5/6">
+      <div className={`w-full bg-statistics md:w-5/6 rounded-xl`}>
         <div className="flex flex-col justify-start items-start gap-4 px-6 py-6">
           <h1 className="text-3xl font-bold">
             Spot and Correct Research Errors
@@ -174,7 +174,7 @@ const Statistics = () => {
             <strong
               className={`${theme === "dark" ? "text-black" : "text-white"} font-bold`}
             >
-              {"Research Audit"}
+              {"Try for FREE!"}
             </strong>
           </ShinyButton>
           <div className="mt-4">
@@ -254,12 +254,14 @@ const Statistics = () => {
                     >
                       <CardBody>
                         <div className="flex flex-row justify-start items-center w-full max-w-full">
-                          <Avatar
-                            isBordered
-                            radius="sm"
-                            size="sm"
-                            src={paper.user.avatar}
-                          />
+                          <div>
+                            <Avatar
+                              isBordered
+                              radius="sm"
+                              size="sm"
+                              src={paper.user.avatar}
+                            />
+                          </div>
                           <p className="ml-3 truncate w-full">{paper.title}</p>
                         </div>
                       </CardBody>
@@ -299,12 +301,14 @@ const Statistics = () => {
                     >
                       <CardBody>
                         <div className="flex flex-row justify-start items-center w-full max-w-full">
-                          <Avatar
-                            isBordered
-                            radius="full"
-                            size="sm"
-                            src={comment.user.avatar}
-                          />
+                          <div>
+                            <Avatar
+                              isBordered
+                              radius="full"
+                              size="sm"
+                              src={comment.user.avatar}
+                            />
+                          </div>
                           <p className="ml-3 truncate w-full">
                             {comment.description}
                           </p>

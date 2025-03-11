@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Divider } from "@mui/material";
-import { Tabs, Tab, Chip } from "@heroui/react";
+import { Tabs, Tab, Chip, Divider } from "@heroui/react";
 import { useTheme } from "next-themes";
 import { MagicCard } from "./ui/magic-card";
 import ErrorCard from "./ErrorCard";
@@ -53,7 +52,8 @@ const AnalysisResult = ({ results, total_summary }: any) => {
       <div className="flex w-full flex-col gap-4 rounded-lg md:flex-row ">
         <div className="w-full">
           <MagicCard
-            className="${className} md:shadow-x overflow-hidden relative my-1 sm:my-4 flex w-full cursor-pointer flex-col items-stretch justify-center border-2 bg-background p-6 shadow-2xl"
+            background={theme === "dark" ? "bg-[#1E2A36]" : "bg-[#F7F7F7]"}
+            className={`md:shadow-x overflow-hidden relative my-1 sm:my-4 flex w-full cursor-pointer flex-col items-stretch justify-center border-2 bg-background p-6 shadow-2xl`}
             gradientColor={theme === "dark" ? "#262626" : "#D9D9D955"}
           >
             {results.map((result: any, index: number) => (
@@ -75,6 +75,7 @@ const AnalysisResult = ({ results, total_summary }: any) => {
                     />
                   )
                 )}
+                {index !== 0 && <Divider />}
               </div>
             ))}
           </MagicCard>

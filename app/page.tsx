@@ -156,9 +156,6 @@ export default function Home() {
         />
 
         <div className="mt-4 w-full md:w-[1100px] items-center flex flex-col justify-center">
-          <div className="flex md:hidden flex-row justify-center mb-4">
-            <SearchBar />
-          </div>
           <SignInDialog
             isOpen={showSignIn}
             onClose={() => setShowSignIn(false)}
@@ -281,7 +278,7 @@ export default function Home() {
                             // summary={result.summary.child}
                           />
                         </div>
-                        <div className="flex flex-row justify-center w-full">
+                        <div className="flex flex-row justify-center w-full mb-3">
                           <ShinyButton
                             className={`mr-2 mb-2 ${theme === "dark" ? "bg-[#C8E600]" : "bg-[#EE43DE]"}`}
                             onClick={() =>
@@ -295,21 +292,6 @@ export default function Home() {
                             </strong>
                           </ShinyButton>
                         </div>
-                        {/* <div className="mb-0 sm:mb-2 w-full">
-                      <SpecialSummary summary={result.paperAnalysis.summary} />
-                      <div
-                        className={
-                          "flex flex-col items-center justify-center rounded-md p-0 md:flex-row"
-                        }
-                      >
-                        {result.paperAnalysis?.analysis && (
-                          <AnalysisResult
-                            results={result.paperAnalysis.analysis}
-                            total_summary={result.paperAnalysis.summary}
-                          />
-                        )}
-                      </div>
-                    </div> */}
                       </div>
                     );
                   })}

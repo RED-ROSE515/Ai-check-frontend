@@ -15,7 +15,7 @@ const SpecialSummary = ({ summary }: any) => {
   const { theme } = useTheme();
 
   return (
-    <div className="mt-2 w-full p-0">
+    <div className="w-full p-0">
       <Card
         // borderWidth={3}
         className={`relative flex w-full flex-col items-start justify-start overflow-hidden rounded-lg border md:shadow-xl p-6 ${theme === "dark" ? "bg-[#1E2A36]" : "bg-[#F7F7F7]"} `}
@@ -45,7 +45,7 @@ const SpecialSummary = ({ summary }: any) => {
         </span>
         {summary.improvement_priority?.map(
           (priority: string, index: number) => (
-            <p
+            <span
               key={index}
               className={`flex flex-row justify-start items-center gap-2 text-sm sm:text-medium font-semibold ${theme === "dark" ? `text-[#AAB5C7]` : "text-slate-700"}`}
             >
@@ -53,7 +53,7 @@ const SpecialSummary = ({ summary }: any) => {
                 className={`${theme === "dark" ? "text-white" : "text-black"}`}
               />
               <p>{priority}</p>
-            </p>
+            </span>
           )
         )}
 

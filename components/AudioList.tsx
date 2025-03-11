@@ -11,23 +11,15 @@ import {
   ChipProps,
   Avatar,
 } from "@heroui/react";
-import speechIcon from "@/public/speech.png";
+import { formatDistance, format, differenceInDays } from "date-fns";
 import { useRouter } from "next/navigation";
 import { RiMic2AiLine } from "react-icons/ri";
+import useDeviceCheck from "@/hooks/useDeviceCheck";
+import { formatTimestamp } from "@/utils/date";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
-
-export const columns = [
-  { name: "", uid: "speech" },
-  { name: "PAPER", uid: "paper" },
-  { name: "SPEECH TYPE", uid: "speech_type" },
-  { name: "PERSON", uid: "voice_type" },
-  { name: "STATUS", uid: "status" },
-  { name: "DATE", uid: "created_at" },
-  { name: "ACTIONS", uid: "actions" },
-];
 
 export const EyeIcon = (props: IconSvgProps) => {
   return (
@@ -152,6 +144,7 @@ export const EditIcon = (props: IconSvgProps) => {
 
 export default function AduioList({ speeches }: any) {
   const router = useRouter();
+  const { isMobile } = useDeviceCheck();
   type Speech = (typeof speeches)[0];
   const renderCell = React.useCallback(
     (speech: Speech, columnKey: React.Key) => {
@@ -162,9 +155,9 @@ export default function AduioList({ speeches }: any) {
           return <RiMic2AiLine size={18} />;
         case "paper":
           return (
-            <div className="flex flex-col">
+            <div className={`flex flex-col`}>
               <p
-                className="text-bold text-sm capitalize text-default-400 cursor-pointer"
+                className={`text-bold text-sm capitalize text-default-400 truncate cursor-pointer ${isMobile ? "max-w-[100px]" : "max-w-[250px]"}`}
                 onClick={() => router.push("/speeches/" + speech.id)}
               >
                 {speech.post_title}
@@ -212,7 +205,7 @@ export default function AduioList({ speeches }: any) {
               size="sm"
               variant="flat"
             >
-              {cellValue}
+              {formatTimestamp(cellValue)}
             </Chip>
           );
         case "actions":
@@ -242,11 +235,27 @@ export default function AduioList({ speeches }: any) {
           return cellValue;
       }
     },
-    []
+    [isMobile]
   );
 
+  const columns = isMobile
+    ? [
+        { name: "", uid: "speech" },
+        { name: "PAPER", uid: "paper" },
+        { name: "DATE", uid: "created_at" },
+      ]
+    : [
+        { name: "", uid: "speech" },
+        { name: "PAPER", uid: "paper" },
+        { name: "SPEECH TYPE", uid: "speech_type" },
+        { name: "PERSON", uid: "voice_type" },
+        { name: "STATUS", uid: "status" },
+        { name: "DATE", uid: "created_at" },
+        { name: "ACTIONS", uid: "actions" },
+      ];
+
   return (
-    <Table aria-label="Example table with custom cells">
+    <Table aria-label="Example table with custom cells" className="w-full">
       <TableHeader columns={columns}>
         {(column) => (
           <TableColumn key={column.uid} align="start">

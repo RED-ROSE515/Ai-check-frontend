@@ -58,7 +58,7 @@ const LandingPage = () => {
         <div className="flex flex-row justify-center mt-6 gap-2 md:gap-8 items-center">
           <Button
             isLoading={isPending}
-            className={`shadow-2xl w-full h-[46px] ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#EE43DE]"}`}
+            className={`shadow-2xl w-[200px] h-[46px] ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#EE43DE]"}`}
             radius="full"
             onPress={() =>
               startTransition(() => {
@@ -67,7 +67,7 @@ const LandingPage = () => {
             }
           >
             <span
-              className={`${sen.className} whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight ${theme === "dark" ? "text-white" : "text-white"}`}
+              className={`${sen.className} whitespace-pre-wrap text-center text-lg font-medium leading-none tracking-tight ${theme === "dark" ? "text-white" : "text-white"}`}
             >
               {"Try for FREE!"}
             </span>

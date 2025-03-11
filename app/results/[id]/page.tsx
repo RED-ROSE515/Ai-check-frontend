@@ -34,15 +34,13 @@ const ResultPage = ({ params }: any) => {
   const { id } = resolvedParams as any;
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
-  const [pageTitle, setPageTitle] = useState("AI Error Detector Result: ");
-  const [pageDescription, setpageDescription] = useState(
-    "Check out this AI error detection result: "
-  );
+
   const [pageUrl, setPageUrl] = useState(`${API_BASE_URL}results/${id}`);
   const { theme } = useTheme();
   const [analysisResult, setAnalysisResult] = useState("");
   const [summary, setSummary] = useState<any>();
   const [summaryLoading, setSummaryLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const [costdata, setCostData] = useState<any>({});
   const [totalSummary, setTotalSummary] = useState("");
   const [author, setAuthor] = useState<any>();
@@ -98,10 +96,6 @@ const ResultPage = ({ params }: any) => {
         setComments(resp.data);
         setLink("/results/" + response.data.id);
         setSummaryLoading(false);
-        setPageTitle(`AI Error Detector Result: ${response.data.title}`);
-        setpageDescription(
-          `Check out this AI error detection result: ${summary.child + summary.college + summary.phd}`
-        );
         setPageUrl(`${API_BASE_URL}results/${id}`);
         // const result = await res.json();
         const result = { data: "KKK", title: id, description: "Description" };
@@ -164,23 +158,33 @@ const ResultPage = ({ params }: any) => {
     fetchData();
   }, [id, getResultById]);
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
+
   return (
-    <>
+    <div
+      className={`${theme === "dark" ? "bg-black" : "bg-white"} pt-0 md:pt-6 lg:pt-16`}
+    >
       {!errorMessage && (
         <div
-          className={`flex flex-row justify-center mt-16 ${theme === "dark" ? "bg-black" : "bg-white"}`}
+          className={`flex flex-row justify-center px-2 md:px-0 ${theme === "dark" ? "bg-black" : "bg-white"}`}
         >
           <SignInDialog
             isOpen={showSignIn}
             onClose={() => setShowSignIn(false)}
           />
           {summary && (
-            <div className="w-full md:w-[1100px] flex flex-row">
+            <div className="w-full md:w-[1100px] flex flex-col xl:flex-row justify-center items-center xl:items-start">
               <div
                 className={`card w-full md:w-3/4 mb-8 flex flex-col items-center justify-center gap-4`}
               >
                 <div
-                  className={`rounded border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
+                  className={`w-full rounded-xl border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
                 >
                   <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
                     {!summary ? (
@@ -203,12 +207,12 @@ const ResultPage = ({ params }: any) => {
                   </div>
                 </div>
                 <div
-                  className={`rounded border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
+                  className={`rounded-xl border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
                 >
                   {analysisResult && <SpecialSummary summary={totalSummary} />}
                 </div>
                 <div
-                  className={`rounded w-full border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
+                  className={`rounded-xl w-full border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
                 >
                   {analysisResult && (
                     <div className="mb-0 sm:mb-2 w-full">
@@ -269,7 +273,7 @@ const ResultPage = ({ params }: any) => {
                 </div>
 
                 <div
-                  className={`w-full rounded border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
+                  className={`w-full rounded-xl border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#EEEEEEF0]"}`}
                 >
                   <Comments
                     comments={comments}
@@ -300,12 +304,14 @@ const ResultPage = ({ params }: any) => {
                       >
                         <CardBody>
                           <div className="flex flex-row justify-start items-center w-full max-w-full">
-                            <Avatar
-                              isBordered
-                              radius="full"
-                              size="sm"
-                              src={paper.user.avatar}
-                            />
+                            <div>
+                              <Avatar
+                                isBordered
+                                radius="full"
+                                size="sm"
+                                src={paper.user.avatar}
+                              />
+                            </div>
                             <p className="ml-2 truncate w-full">
                               {paper.title}
                             </p>
@@ -363,7 +369,7 @@ const ResultPage = ({ params }: any) => {
         </Button>
         {/* </Badge> */}
       </div>
-    </>
+    </div>
   );
 };
 

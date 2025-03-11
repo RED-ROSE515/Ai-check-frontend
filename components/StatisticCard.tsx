@@ -187,7 +187,10 @@ const StatisticCard = () => {
         >
           <CarouselContent>
             {issues.map((issue, index) => (
-              <CarouselItem key={index} className="md:basis-1/3 lg:basis-1/4">
+              <CarouselItem
+                key={index}
+                className="md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+              >
                 <Card
                   key={index + 1}
                   isHoverable
@@ -200,7 +203,7 @@ const StatisticCard = () => {
                   className={`w-full rounded-full`}
                 >
                   <CardBody
-                    className={`w-full rounded-full ${theme === "dark" ? `bg-slate-700 ${issue.whiteback}` : `bg-gray-200 ${issue.back}`} ${issue.type === sortBy ? `border-2 ${theme === "dark" ? "border-[#C8E600]" : "border-[#EE43DE]"} rounded-full` : ``}`}
+                    className={`w-full rounded-full ${theme === "dark" ? `bg-slate-700 ${issue.whiteback}` : `bg-gray-200 ${issue.back}`} ${issue.type === sortBy ? `border-2 ${theme === "dark" ? "border-[#C8E600]" : "border-[#24016A]"} rounded-full` : ``}`}
                   >
                     <div className="flex flex-row justify-center gap-3 items-center text-sm md:text-md">
                       <span className="text-lg md:text-lg font-semibold">

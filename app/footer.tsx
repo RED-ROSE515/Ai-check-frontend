@@ -12,6 +12,7 @@ import { IoNewspaper } from "react-icons/io5";
 import { GoCommentDiscussion } from "react-icons/go";
 import { ImProfile } from "react-icons/im";
 import { MdLogin } from "react-icons/md";
+
 export const TwitterSvg = ({ theme }: any) => {
   return (
     <Link isExternal href="https://x.com/nerdbunnyai">
@@ -188,11 +189,13 @@ export const VideoIcon = ({ props }: any) => {
 
 const Footer = () => {
   const { theme } = useTheme();
+
   const { page, totalPage, setPage } = usePagination();
   const { speechUrl, showSpeech } = useSpeech();
   const [isMounted, setIsMounted] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
+  const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
   const pathname = usePathname();
   useEffect(() => {
     setIsMounted(true);
@@ -223,16 +226,17 @@ const Footer = () => {
           aria-label="Options"
           classNames={{
             tabList:
-              "gap-6 w-full relative rounded-none p-0 border-t border-divider",
+              "gap-4 w-full relative rounded-none p-0 border-t border-divider",
             cursor: "w-full bg-[#22d3ee]",
             tab: "max-w-fit px-0 h-12",
             tabContent: "group-data-[selected=true]:text-[#06b6d4]",
           }}
+          selectedKey={pathname}
           color="primary"
           variant="underlined"
         >
           <Tab
-            key="papers"
+            key="/"
             href="/"
             title={
               <div className="flex items-center space-x-1">
@@ -243,7 +247,7 @@ const Footer = () => {
           />
           {isAuthenticated && (
             <Tab
-              key="speech"
+              key="/speeches"
               href="/speeches"
               title={
                 <div className="flex items-center ">
@@ -276,6 +280,7 @@ const Footer = () => {
           ) : (
             <Tab
               key="profile"
+              href={`${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`}
               title={
                 <div className="flex items-center space-x-1">
                   <ImProfile size={24} />
