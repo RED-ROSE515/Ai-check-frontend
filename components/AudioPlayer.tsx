@@ -1,6 +1,15 @@
 "use client";
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { Card, CardBody, Image, Button, Slider } from "@heroui/react";
+import {
+  Card,
+  CardBody,
+  Button,
+  Slider,
+  CardHeader,
+  Tooltip,
+} from "@heroui/react";
+import ReactMarkdown from "react-markdown";
+import Image from "next/image";
 import { TiArrowBack } from "react-icons/ti";
 import { useWavesurfer } from "@wavesurfer/react";
 import { useSpeech } from "@/contexts/SpeechContext";
@@ -8,6 +17,11 @@ import { useTheme } from "next-themes";
 import { useTransition } from "react";
 import api from "@/utils/api";
 import ShareButtons from "./ShareButtons";
+import UserCard from "./UserCard";
+import childImage from "../public/NerdBunnyUI/child.png";
+import collegeImage from "../public/NerdBunnyUI/college.png";
+import phDImage from "../public/NerdBunnyUI/PhD.png";
+import errorImage from "../public/NerdBunnyUI/Error.png";
 
 export const HeartIcon = ({
   size = 24,
@@ -192,13 +206,19 @@ export default function AudioPlayer({ id }: any) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [title, setTitle] = useState("");
+  const [postDate, setPostDate] = useState("");
   const [time, setTime] = useState("0:00");
   const [duration, setDuration] = useState("0:00");
   const { theme } = useTheme();
   const [isPending, startTransition] = useTransition();
-  const { setSpeechUrl, setShowSpeech, speechUrl } = useSpeech();
-
+  const { setSpeechUrl, setShowSpeech, speechUrl, speechType, setSpeechType } =
+    useSpeech();
+  const [result, setResult] = useState<any>();
+  const [summary, setSummary] = useState<any>();
+  const [author, setAuthor] = useState<any>();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
+  const [summaryLevel, setSummaryLevel] = useState<any>();
+
   // Ensure that the container is correctly passed as a RefObject
   const { wavesurfer } = useWavesurfer({
     container: containerRef, // Pass the ref object itself, not its current property
@@ -246,19 +266,79 @@ export default function AudioPlayer({ id }: any) {
   const fetchSpeech = async () => {
     const response = await api.get(`speech?speech_id=${id}`);
     setTitle(response.data.post_title);
+    setSpeechType(response.data.speech_type);
     setSpeechUrl(response.data.audio_url);
+    await getResultById(response.data.post_id, response.data.speech_type);
+  };
+
+  const getResultById = async (paperId: number, speech_type: string) => {
+    try {
+      const response = await api.get(`/post/${paperId}`);
+      setResult(response.data);
+      setAuthor(response.data.user);
+      const summaryData = {
+        ...JSON.parse(response.data.description),
+        post_id: response.data.id,
+        post_title: response.data.title,
+        attached_links: response.data.attached_links,
+      };
+      setSummary(summaryData);
+      setPostDate(response.data.updated_at);
+      switch (speech_type) {
+        case "ChildSummary":
+          setSummaryLevel({
+            title: "Child Summary",
+            content: summaryData?.summary?.child,
+            value: "ChildSummary",
+            audio_url: "",
+            image: childImage,
+          });
+          break;
+        case "CollegeSummary":
+          setSummaryLevel({
+            title: "College Summary",
+            content: summaryData?.summary?.college,
+            value: "CollegeSummary",
+            audio_url: "",
+            image: collegeImage,
+          });
+          break;
+        case "PhDSummary":
+          setSummaryLevel({
+            title: "PhD Summary",
+            content: summaryData?.summary?.phd,
+            value: "PhDSummary",
+            audio_url: "",
+            image: phDImage,
+          });
+          break;
+        case "ErrorSummary":
+          setSummaryLevel({
+            title: "Error Summary",
+            content: summaryData?.summary?.error,
+            value: "ErrorSummary",
+            audio_url: "",
+            image: errorImage,
+          });
+          break;
+      }
+      // const result = await res.json();
+      const result = { data: "KKK", title: id, description: "Description" };
+      return result;
+    } catch (error: any) {
+      return null;
+    }
   };
 
   useEffect(() => {
     fetchSpeech();
   }, []);
-
   return (
-    <div className="w-full flex flex-row justify-center h-full">
-      <div className="w-full md:w-2/3 items-center flex flex-row justify-center">
+    <div className="w-full flex flex-row justify-center h-full gap-4">
+      <div className="w-full md:w-2/3 items-center flex flex-row justify-center ">
         <Card
           isBlurred
-          className={`${theme === "dark" ? "bg-[#050506]" : "bg-[#F6F6F6]"} w-full h-full p-3`}
+          className={`${theme === "dark" ? "bg-[#050506]" : "bg-[#F6F6F6]"} w-full h-full p-1`}
           shadow="lg"
         >
           <CardBody>
@@ -286,7 +366,7 @@ export default function AudioPlayer({ id }: any) {
             </div>
             <div className="w-full h-full flex flex-col-reverse justity-end">
               <div
-                className={`flex flex-col w-full justify-end rounded-xl shadow-xl p-4 border-1 ${theme === "dark" ? "bg-black" : ""}`}
+                className={`flex flex-col w-full justify-end rounded-xl shadow-md p-4 border-1 ${theme === "dark" ? "bg-black" : ""}`}
               >
                 <div className="flex flex-row justify-between items-start w-full">
                   <div className="flex flex-col gap-0 w-[90%]">
@@ -368,6 +448,92 @@ export default function AudioPlayer({ id }: any) {
                 </div>
               </div>
             </div>
+          </CardBody>
+        </Card>
+      </div>
+      <div className="w-1/4 h-full">
+        <Card
+          isBlurred
+          className={`h-full ${theme === "dark" ? "bg-[#050506]" : "bg-[#F6F6F6]"} w-full h-full p-1`}
+          shadow="lg"
+        >
+          <CardHeader>
+            <div className="w-full">
+              <p className="text-small text-foreground/80">Narrations</p>
+              <Tooltip content={title}>
+                <h1 className="text-large font-medium mt-2 truncate">
+                  {title}
+                </h1>
+              </Tooltip>
+              {result && (
+                <UserCard
+                  userData={{ ...author }}
+                  postDate={postDate}
+                  link={DOMAIN + "/results/" + summary?.post_id}
+                  totalData={result}
+                  showFollow={false}
+                  className="max-w-fit"
+                />
+              )}
+            </div>
+          </CardHeader>
+          <CardBody className="h-full">
+            {summaryLevel && (
+              <div className={`w-full md:min-h-[68px] items-center p-4 h-full`}>
+                <div className="w-full flex flex-row justify-start gap-4 items-center">
+                  <Image
+                    alt="NERDBUNNY LOGO"
+                    className="rounded-lg"
+                    height="30"
+                    src={summaryLevel.image}
+                    width="30"
+                  />
+                  <span>{summaryLevel.title}</span>
+                </div>
+                {summaryLevel.value === "ErrorSummary" ? (
+                  <div>
+                    <ReactMarkdown
+                      components={{
+                        h3: ({ children }) => (
+                          <h3 className="mb-2 mt-6 text-xl font-bold">
+                            {children}
+                          </h3>
+                        ),
+                        h4: ({ children }) => (
+                          <h4 className="mb-2 mt-4 text-lg font-semibold">
+                            {children}
+                          </h4>
+                        ),
+                        p: ({ children }) => <p className="mb-4">{children}</p>,
+                        ul: ({ children }) => (
+                          <ul className="mb-4 ml-6 list-disc">{children}</ul>
+                        ),
+                        li: ({ children }) => (
+                          <li className="mb-2">{children}</li>
+                        ),
+                        strong: ({ children }) => (
+                          <strong className="font-bold">{children}</strong>
+                        ),
+                        em: ({ children }) => (
+                          <em className="italic">{children}</em>
+                        ),
+                        hr: () => <hr className="my-6 border-gray-200" />,
+                      }}
+                    >
+                      {summaryLevel.content}
+                    </ReactMarkdown>
+                  </div>
+                ) : (
+                  <div>
+                    <p
+                      className={`text-sm ${theme === "dark" ? "text-gray-200" : "text-slate-800"}`}
+                    >
+                      {summaryLevel.content}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </CardBody>
         </Card>
       </div>

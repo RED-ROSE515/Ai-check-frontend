@@ -26,14 +26,10 @@ import { ThemeSwitch } from "@/components/theme-switch";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
-import { ImProfile } from "react-icons/im";
 import { MdLogin, MdLogout, MdCheck, MdInfo } from "react-icons/md";
-import { LuSpeech } from "react-icons/lu";
-import { LuChartColumn } from "react-icons/lu";
 import SearchBar from "./SearchBar";
 import { useSearch } from "@/contexts/SearchContext";
 import { usePagination } from "@/contexts/PaginationContext";
-import { cn } from "@/lib/utils";
 import { StatisticsIcon } from "./icons";
 
 export const ListboxWrapper = ({ children }: any) => (
@@ -133,9 +129,9 @@ export const Navbar = () => {
         className="flex flex-row justify-between w-full bg-transparent h-[78px]"
       >
         <NavbarContent className="flex w-full flex-grow-0 basis-full overflow-y-hidden">
-          <NavbarItem className="flex md:gap-2 md:w-1/3">
+          <NavbarItem className="flex md:gap-2 w-full md:w-2/3">
             <NavbarBrand>
-              <Link href="/" className="w-[210px]">
+              <Link href="/" className="w-full">
                 <Image
                   alt="Logo"
                   onClick={() => {
@@ -149,8 +145,8 @@ export const Navbar = () => {
             </NavbarBrand>
           </NavbarItem>
         </NavbarContent>
-        <NavbarContent className="flex w-full ">
-          <NavbarItem className="w-full items-center gap-2 hidden md:flex justify-center">
+        <NavbarContent className="hidden md:flex w-full ">
+          <NavbarItem className="w-full items-center gap-2  md:flex justify-center">
             <SearchBar />
           </NavbarItem>
         </NavbarContent>

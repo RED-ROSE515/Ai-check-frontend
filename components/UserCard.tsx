@@ -19,7 +19,7 @@ import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { MdReport, MdOutlineContentCopy } from "react-icons/md";
 import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
 import { useUserActions } from "@/hooks/useUserActions";
-import { CheckIcon, ChevronRightIcon } from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import { UserDetail } from "@/types/user";
 
 import api from "@/utils/api";
@@ -42,6 +42,7 @@ const UserCard = ({
   showSignInModal,
   totalData,
   reportPost,
+  showFollow,
 }: any) => {
   const formattedDate = `Published on: ` + formatTimestamp(postDate);
   const { isMobile } = useDeviceCheck();
@@ -218,67 +219,70 @@ const UserCard = ({
                 {formattedDate}
               </span>
             </div>
-            <div className="flex flex-row justify-center items-center">
-              <AnimatedSubscribeButton
-                subscribeStatus={userDetail?.is_following}
-                disabled={!isAuthenticated}
-                onClick={() => follow()}
-              >
-                <span className="group inline-flex items-center text-sm">
-                  Follow
-                  {/* <ChevronRightIcon className="ml-1 size-4 transition-transform duration-300 group-hover:translate-x-1" /> */}
-                </span>
-                <span className="group inline-flex items-center text-sm">
-                  <CheckIcon className="bg-white rounded-full text-[#118E40] mr-2 size-4" />
-                  Followed
-                </span>
-              </AnimatedSubscribeButton>
-              <Popover
-                offset={10}
-                placement="bottom-end"
-                backdrop="transparent"
-              >
-                <PopoverTrigger>
-                  <Button
-                    isIconOnly
-                    className="text-default-900/60 data-[hover]:bg-foreground/10"
-                    radius="full"
-                    variant="light"
-                    onPress={() => console.log(userData)}
-                  >
-                    <PiDotsThreeOutlineVerticalFill size={17} />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[150px] bg-[#2E3E4E] border-2 border-[#4B5C6E]">
-                  {() => (
-                    <div className="w-full flex flex-col gap-2 bg-[#2E3E4E]">
-                      <Button
-                        startContent={<MdOutlineContentCopy size={24} />}
-                        className="w-full hover:[#3E5061]"
-                        variant="light"
-                        onPress={() => {
-                          navigator.clipboard.writeText(link);
-                          toast({
-                            title: "Success",
-                            description: "Successfully Copied the link!",
-                          });
-                        }}
-                      >
-                        Share
-                      </Button>
-                      <Button
-                        variant="light"
-                        className="w-full"
-                        startContent={<MdReport size={24} />}
-                        onPress={reportPost}
-                      >
-                        {totalData.reported_me ? "UnReport" : "Report"}
-                      </Button>
-                    </div>
-                  )}
-                </PopoverContent>
-              </Popover>
-            </div>
+            {showFollow && (
+              <div className="flex flex-row justify-center items-center">
+                <AnimatedSubscribeButton
+                  subscribeStatus={userDetail?.is_following}
+                  disabled={!isAuthenticated}
+                  onClick={() => follow()}
+                >
+                  <span className="group inline-flex items-center text-sm">
+                    Follow
+                    {/* <ChevronRightIcon className="ml-1 size-4 transition-transform duration-300 group-hover:translate-x-1" /> */}
+                  </span>
+                  <span className="group inline-flex items-center text-sm">
+                    <CheckIcon className="bg-white rounded-full text-[#118E40] mr-2 size-4" />
+                    Followed
+                  </span>
+                </AnimatedSubscribeButton>
+
+                <Popover
+                  offset={10}
+                  placement="bottom-end"
+                  backdrop="transparent"
+                >
+                  <PopoverTrigger>
+                    <Button
+                      isIconOnly
+                      className="text-default-900/60 data-[hover]:bg-foreground/10"
+                      radius="full"
+                      variant="light"
+                      onPress={() => console.log(userData)}
+                    >
+                      <PiDotsThreeOutlineVerticalFill size={17} />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[150px] bg-[#2E3E4E] border-2 border-[#4B5C6E]">
+                    {() => (
+                      <div className="w-full flex flex-col gap-2 bg-[#2E3E4E]">
+                        <Button
+                          startContent={<MdOutlineContentCopy size={24} />}
+                          className="w-full hover:[#3E5061]"
+                          variant="light"
+                          onPress={() => {
+                            navigator.clipboard.writeText(link);
+                            toast({
+                              title: "Success",
+                              description: "Successfully Copied the link!",
+                            });
+                          }}
+                        >
+                          Share
+                        </Button>
+                        <Button
+                          variant="light"
+                          className="w-full"
+                          startContent={<MdReport size={24} />}
+                          onPress={reportPost}
+                        >
+                          {totalData.reported_me ? "UnReport" : "Report"}
+                        </Button>
+                      </div>
+                    )}
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
           </div>
         </div>
       </CardBody>

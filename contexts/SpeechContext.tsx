@@ -6,7 +6,9 @@ interface SpeechContextType {
   showSpeech: boolean;
   speechId: string;
   speechTitle: string;
+  speechType: string;
   setSpeechUrl: (url: string) => void;
+  setSpeechType: (type: string) => void;
   setShowSpeech: (show: boolean) => void;
   setSpeechId: (id: string) => void;
   setSpeechTitle: (title: string) => void;
@@ -17,7 +19,9 @@ const SpeechContext = createContext<SpeechContextType>({
   showSpeech: false,
   speechId: "",
   speechTitle: "",
+  speechType: "",
   setSpeechUrl: () => {},
+  setSpeechType: () => {},
   setShowSpeech: () => {},
   setSpeechId: () => {},
   setSpeechTitle: () => {},
@@ -25,6 +29,7 @@ const SpeechContext = createContext<SpeechContextType>({
 
 export const SpeechProvider = ({ children }: { children: React.ReactNode }) => {
   const [speechUrl, setSpeechUrl] = useState("");
+  const [speechType, setSpeechType] = useState("");
   const [showSpeech, setShowSpeech] = useState(false);
   const [speechId, setSpeechId] = useState("");
   const [speechTitle, setSpeechTitle] = useState("");
@@ -35,8 +40,10 @@ export const SpeechProvider = ({ children }: { children: React.ReactNode }) => {
         showSpeech,
         speechId,
         speechTitle,
+        speechType,
         setSpeechUrl,
         setShowSpeech,
+        setSpeechType,
         setSpeechId,
         setSpeechTitle,
       }}

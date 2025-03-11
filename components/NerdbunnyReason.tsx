@@ -69,26 +69,24 @@ const NerdbunnyReason = () => {
                 Discover hidden flaws and inconsistencies in published papers.
               </span>
             </div>
-          </div>
-        </div>
-        <div className="w-full flex flex-row justify-center items-center">
-          <Button
-            isLoading={isPending}
-            className={`shadow-2xl h-[46px] ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#C8E600]"}`}
-            radius="full"
-            onPress={() =>
-              startTransition(() => {
-                router.push("/check");
-              })
-            }
-          >
-            <strong
-              className={`text-[16px] flex flex-row justify-center items-center whitespace-pre-wrap text-center font-medium leading-none tracking-tight text-white`}
+            <Button
+              isLoading={isPending}
+              className={`shadow-2xl h-[36px] ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#EE43DE]"}`}
+              radius="full"
+              onPress={() =>
+                startTransition(() => {
+                  router.push("/check");
+                })
+              }
             >
-              {"Try it Now - It's Free"}
-              <RightArrow />
-            </strong>
-          </Button>
+              <strong
+                className={`text-[16px] flex flex-row justify-center items-center whitespace-pre-wrap text-center font-medium leading-none tracking-tight text-white`}
+              >
+                {"Try it Now - It's Free"}
+                <RightArrow />
+              </strong>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

@@ -44,7 +44,7 @@ const LandingPage = () => {
       </div>
       <div className="w-full flex flex-col justify-center items-center">
         <div className="flex flex-row justify-center">
-          <span className="pt-[60px] text-2xl md:text-6xl md:font-semibold text-center max-w-[75%] md:max-w-[55%]">
+          <span className="md:pt-[60px] text-2xl md:text-6xl md:font-semibold text-center max-w-[75%] md:max-w-[55%]">
             Find Errors in Research Papers Effortlessly
           </span>
         </div>
@@ -58,7 +58,7 @@ const LandingPage = () => {
         <div className="flex flex-row justify-center mt-6 gap-2 md:gap-8 items-center">
           <Button
             isLoading={isPending}
-            className={`shadow-2xl h-[46px] ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#C8E600]"}`}
+            className={`shadow-2xl w-full h-[46px] ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#EE43DE]"}`}
             radius="full"
             onPress={() =>
               startTransition(() => {
@@ -67,23 +67,7 @@ const LandingPage = () => {
             }
           >
             <span
-              className={`${sen.className} whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight ${theme === "dark" ? "text-white" : "text-black"}`}
-            >
-              {"Start Free Trial"}
-            </span>
-          </Button>
-          <Button
-            isLoading={isPending}
-            className={`shadow-2xl h-[46px] ${theme === "dark" ? "bg-[#FFF]" : "bg-[#000]"}`}
-            radius="full"
-            onPress={() =>
-              startTransition(() => {
-                router.push("/check");
-              })
-            }
-          >
-            <span
-              className={`${sen.className} whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight ${theme === "dark" ? "text-black" : "text-white"}`}
+              className={`${sen.className} whitespace-pre-wrap text-center text-xs md:text-lg font-medium leading-none tracking-tight ${theme === "dark" ? "text-white" : "text-white"}`}
             >
               {"Try for FREE!"}
             </span>

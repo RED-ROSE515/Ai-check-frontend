@@ -14,7 +14,7 @@ export default function App({ params }: any) {
     return null;
   }
   return (
-    <div className="w-full flex flex-row justify-center h-full">
+    <div className="w-full flex flex-row justify-center py-4 h-full">
       <AudioPlayer id={id} />
     </div>
   );

@@ -138,7 +138,7 @@ const ResearchSection = () => {
       <div className="flex flex-row justify-between items-center">
         <div className="w-full text-center">
           <span
-            className={`text-lg md:text-xl ${theme === "dark" ? "text-[#9C9C9C]" : "text-slate-700"}`}
+            className={`text-lg md:font-semibold md:text-xl ${theme === "dark" ? "text-[#9C9C9C]" : "text-slate-700"}`}
           >
             Why Choose NerdBunny?
           </span>
@@ -192,7 +192,7 @@ const ResearchSection = () => {
       <div className="w-full flex flex-row justify-center items-center">
         <Button
           isLoading={isPending}
-          className={`shadow-2xl h-[46px] ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#C8E600]"}`}
+          className={`shadow-2xl h-[46px] ${theme === "dark" ? "bg-[#EE43DE]" : "bg-[#EE43DE]"}`}
           radius="full"
           onPress={() =>
             startTransition(() => {
