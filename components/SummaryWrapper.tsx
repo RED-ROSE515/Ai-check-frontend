@@ -236,14 +236,16 @@ const SummaryWrapper = ({
           className={`${theme === "dark" ? "bg-[#2E3E4E]" : "bg-[#E2E2E2]"}`}
         />
         {input_tokens && output_tokens && total_cost && (
-          <div className="w-full md:w-auto">
-            <Card
-              className={`text-sm md:text-lg w-full items-center space-x-4 p-2 md:p-4 flex flex-row justify-center  ${theme === "dark" ? "bg-[#242F3C]" : "bg-gray-200"}`}
-            >
-              <p>{`IN: ${commify(input_tokens)}`}</p>
-              <p>|</p>
-              <p>{`OUT: ${commify(output_tokens)}`}</p>
-            </Card>
+          <div className="flex flex-row justify-center">
+            <div className="w-full md:w-fit">
+              <Card
+                className={`text-sm md:text-md w-full items-center space-x-4 p-2 md:p-4 flex flex-row justify-center  ${theme === "dark" ? "bg-[#242F3C]" : "bg-gray-200"}`}
+              >
+                <p>{`IN: ${commify(input_tokens)}`}</p>
+                <p>|</p>
+                <p>{`OUT: ${commify(output_tokens)}`}</p>
+              </Card>
+            </div>
           </div>
         )}
       </div>

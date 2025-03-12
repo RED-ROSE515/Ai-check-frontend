@@ -43,31 +43,9 @@ const SearchIcon = ({
     </svg>
   );
 };
-const hashtags = [
-  {
-    id: "2fea340d-e2d9-48b3-98b7-c2ae177ed389",
-    hashtag_name: "breakdown voltage",
-  },
-  {
-    id: "28a333df-a325-4d84-be7c-81a628d48fe5",
-    hashtag_name: "edge termination",
-  },
-  {
-    id: "ce6c167e-46fb-4fbe-b36d-e7474cbf84ba",
-    hashtag_name: "JTE",
-  },
-  {
-    id: "2a834594-9f63-4f3c-8100-69cb33b291d5",
-    hashtag_name: "OBIC",
-  },
-  {
-    id: "484ccfc7-7c28-4e1a-8a5a-3aeb1c186bcc",
-    hashtag_name: "Adsorption–desorption isotherms",
-  },
-];
 const SearchBar = () => {
   const [searchValue, setSearchValue] = useState<any>();
-  const [data, setData] = useState<any[]>(hashtags);
+  const [data, setData] = useState<any[]>([]);
   const [cache, setCache] = useState<{ [key: string]: any[] }>({});
   const { setKeyword, keyword } = useSearch();
   const { setPage } = usePagination();
@@ -103,7 +81,6 @@ const SearchBar = () => {
 
   useEffect(() => {
     handleInputChange("");
-    getHashtags("");
   }, []);
 
   return (

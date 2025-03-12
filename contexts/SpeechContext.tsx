@@ -1,13 +1,28 @@
 "use client";
 import React, { createContext, useContext, useState } from "react";
 
+export interface Speech {
+  id: string;
+  post_id: string;
+  post_title: string;
+  user_id: string;
+  speech_type: string;
+  voice_type: string;
+  audio_url: string;
+  cost: number;
+  status: number;
+  created_at: string;
+}
+
 interface SpeechContextType {
   speechUrl: string;
   showSpeech: boolean;
   speechId: string;
   speechTitle: string;
   speechType: string;
+  speeches: Speech[];
   setSpeechUrl: (url: string) => void;
+  setSpeeches: (value: Speech[]) => void;
   setSpeechType: (type: string) => void;
   setShowSpeech: (show: boolean) => void;
   setSpeechId: (id: string) => void;
@@ -20,6 +35,8 @@ const SpeechContext = createContext<SpeechContextType>({
   speechId: "",
   speechTitle: "",
   speechType: "",
+  speeches: [],
+  setSpeeches: () => {},
   setSpeechUrl: () => {},
   setSpeechType: () => {},
   setShowSpeech: () => {},
@@ -28,6 +45,7 @@ const SpeechContext = createContext<SpeechContextType>({
 });
 
 export const SpeechProvider = ({ children }: { children: React.ReactNode }) => {
+  const [speeches, setSpeeches] = useState<Speech[]>([]);
   const [speechUrl, setSpeechUrl] = useState("");
   const [speechType, setSpeechType] = useState("");
   const [showSpeech, setShowSpeech] = useState(false);
@@ -41,7 +59,9 @@ export const SpeechProvider = ({ children }: { children: React.ReactNode }) => {
         speechId,
         speechTitle,
         speechType,
+        speeches,
         setSpeechUrl,
+        setSpeeches,
         setShowSpeech,
         setSpeechType,
         setSpeechId,

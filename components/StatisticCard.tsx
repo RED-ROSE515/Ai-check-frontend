@@ -205,7 +205,7 @@ const StatisticCard = () => {
                   <CardBody
                     className={`w-full rounded-full ${theme === "dark" ? `bg-slate-700 ${issue.whiteback}` : `bg-gray-200 ${issue.back}`} ${issue.type === sortBy ? `border-2 ${theme === "dark" ? "border-[#C8E600]" : "border-[#24016A]"} rounded-full` : ``}`}
                   >
-                    <div className="flex flex-row justify-center gap-3 items-center text-sm md:text-md">
+                    <div className="flex flex-row justify-center gap-2 items-center text-sm md:text-md">
                       <span className="text-lg md:text-lg font-semibold">
                         {issue.title}
                       </span>

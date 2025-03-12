@@ -59,12 +59,13 @@ const AnalysisResult = ({ results, total_summary }: any) => {
             {results.map((result: any, index: number) => (
               <div key={index}>
                 {currentTab === 0 ? (
-                  <div>
+                  <div className="mb-2">
                     <ErrorCard
                       key={index}
                       className="mb-2 sm:mb-4"
                       error={result}
                     />
+                    {index < results.length - 1 && <Divider />}
                   </div>
                 ) : (
                   currentTab - 1 === index && (
@@ -75,7 +76,6 @@ const AnalysisResult = ({ results, total_summary }: any) => {
                     />
                   )
                 )}
-                {index !== 0 && <Divider />}
               </div>
             ))}
           </MagicCard>

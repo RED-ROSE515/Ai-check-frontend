@@ -65,7 +65,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex w-full flex-col items-center justify-center">
+    <div className="flex w-full flex-col items-center justify-center h-[80vh]">
       <SignInDialog isOpen={showSignIn} onClose={() => setShowSignIn(false)} />
       {isLoading ? (
         <Spinner className="my-4" color="primary" />
@@ -204,10 +204,14 @@ export default function App() {
           <div className="w-5/6">
             <div className="my-4 w-full">
               {hasAccepted ? (
-                <FileUpload
-                  getPdfList={() => {}}
-                  onTriggerRef={triggerUploadRef}
-                />
+                isChecking ? (
+                  <Loader />
+                ) : (
+                  <FileUpload
+                    getPdfList={() => {}}
+                    onTriggerRef={triggerUploadRef}
+                  />
+                )
               ) : (
                 !showDisclaimer && (
                   <div className="text-center p-4 border rounded">
@@ -224,7 +228,6 @@ export default function App() {
                 )
               )}
             </div>
-            {isChecking && <Loader />}
           </div>
         </>
       )}

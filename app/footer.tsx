@@ -9,9 +9,9 @@ import { useSpeech } from "@/contexts/SpeechContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { IoNewspaper } from "react-icons/io5";
-import { GoCommentDiscussion } from "react-icons/go";
 import { ImProfile } from "react-icons/im";
 import { MdLogin } from "react-icons/md";
+import { AiOutlineAudit } from "react-icons/ai";
 
 export const TwitterSvg = ({ theme }: any) => {
   return (
@@ -239,7 +239,7 @@ const Footer = () => {
             key="/"
             href="/"
             title={
-              <div className="flex items-center space-x-1">
+              <div className="flex items-center space-x-2">
                 <IoNewspaper size={24} />
                 <span>Papers</span>
               </div>
@@ -258,11 +258,12 @@ const Footer = () => {
             />
           )}
           <Tab
-            key="comment"
+            key="/check"
+            href="/check"
             title={
-              <div className="flex items-center space-x-1">
-                <GoCommentDiscussion size={24} />
-                <span>Comments</span>
+              <div className="flex items-center space-x-2">
+                <AiOutlineAudit size={24} />
+                <span>Audit</span>
               </div>
             }
           />
@@ -271,7 +272,7 @@ const Footer = () => {
               key="login"
               href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login_with_nobleblocks?app_name=NerdBunny&redirect_url=${DOMAIN + "/login_with_nobleblocks"}`}
               title={
-                <div className="flex items-center space-x-1">
+                <div className="flex items-center space-x-2">
                   <MdLogin size={24} />
                   <span>Login</span>
                 </div>
@@ -282,7 +283,7 @@ const Footer = () => {
               key="profile"
               href={`${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`}
               title={
-                <div className="flex items-center space-x-1">
+                <div className="flex items-center space-x-2">
                   <ImProfile size={24} />
                   <span>Profile</span>
                 </div>

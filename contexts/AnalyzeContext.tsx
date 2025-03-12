@@ -97,7 +97,6 @@ export const AnalyzeProvider = ({
       setIsChecking(true);
       setSummaryLoading(true);
       const new_shower_ids = shower_ids.map((id) => id.value);
-      alert(s3_url);
       const response = await api.post(`post/create`, {
         post_type: 6,
         attached_links: [s3_url],
@@ -173,7 +172,7 @@ export const AnalyzeProvider = ({
             duration: 5000,
           });
         }
-      }, 500); // Update progress every 3 seconds
+      }, 300); // Update progress every 3 seconds
 
       // Status check interval
       const statusInterval = setInterval(checkStatus, 10000); // Check status every 5 seconds

@@ -4,9 +4,10 @@ import {
   Card,
   CardBody,
   Button,
-  Slider,
+  Image as HeroImage,
   CardHeader,
   Tooltip,
+  Chip,
 } from "@heroui/react";
 import ReactMarkdown from "react-markdown";
 import Image from "next/image";
@@ -22,6 +23,10 @@ import childImage from "../public/NerdBunnyUI/child.png";
 import collegeImage from "../public/NerdBunnyUI/college.png";
 import phDImage from "../public/NerdBunnyUI/PhD.png";
 import errorImage from "../public/NerdBunnyUI/Error.png";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { ShineBorder } from "./ui/shine-border";
+import { IoMdArrowBack } from "react-icons/io";
 
 export const HeartIcon = ({
   size = 24,
@@ -146,6 +151,58 @@ export const PreviousIcon = ({ size = 24, width, height, ...props }: any) => {
   );
 };
 
+export const ForwardIcon = ({ size = 24, width, height, ...props }: any) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height={size || height}
+      viewBox="0 0 24 24"
+      width={size || width}
+      {...props}
+      fill="none"
+    >
+      <path
+        d="M10.2866 15.75V8.41846H8.55176C7.97705 8.77832 7.36475 9.17041 6.80078 9.56787V11.1309C7.32715 10.7656 7.97168 10.3521 8.45508 10.0352H8.53027V15.75H10.2866Z"
+        fill="currentColor"
+      />
+      <path
+        d="M11.5596 13.6982C11.5864 14.896 12.564 15.8843 14.3257 15.8843C16.0391 15.8843 17.2637 14.8745 17.2637 13.2256C17.2637 11.7109 16.1196 10.814 14.8521 10.814C13.9551 10.814 13.4448 11.2061 13.2837 11.4424H13.2139L13.3643 9.8042H16.7373V8.41309H11.9678L11.6562 12.7583H13.23C13.3643 12.4736 13.7295 12.1084 14.3525 12.1084C15.04 12.1084 15.5449 12.5972 15.5449 13.3115C15.5449 14.0581 14.9756 14.52 14.3525 14.52C13.708 14.52 13.2461 14.187 13.1709 13.6982H11.5596Z"
+        fill="currentColor"
+      />
+      <path
+        d="M11 4.06189V5.99999L15 3L11 0V2.04938C5.94668 2.5511 2 6.81465 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 9.23885 20.8796 6.73748 19.0711 4.92893L17.6569 6.34315C19.1057 7.79195 20 9.79058 20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12C4 7.92038 7.05369 4.55399 11 4.06189Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+};
+
+export const RewindIcon = ({ size = 24, width, height, ...props }: any) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height={size || height}
+      viewBox="0 0 24 24"
+      width={size || width}
+      {...props}
+      fill="none"
+    >
+      <path
+        d="M13 4.06189V5.99999L9 3L13 0V2.04938C18.0533 2.5511 22 6.81465 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 9.23885 3.12038 6.73748 4.92893 4.92893L6.34315 6.34315C4.89434 7.79195 4 9.79058 4 12C4 16.4183 7.58172 20 12 20C16.4183 20 20 16.4183 20 12C20 7.92038 16.9463 4.55399 13 4.06189Z"
+        fill="currentColor"
+      />
+      <path
+        d="M11.5596 13.6982C11.5864 14.896 12.564 15.8843 14.3257 15.8843C16.0391 15.8843 17.2637 14.8745 17.2637 13.2256C17.2637 11.7109 16.1196 10.814 14.8521 10.814C13.9551 10.814 13.4448 11.2061 13.2837 11.4424H13.2139L13.3643 9.8042H16.7373V8.41309H11.9678L11.6562 12.7583H13.23C13.3643 12.4736 13.7295 12.1084 14.3525 12.1084C15.04 12.1084 15.5449 12.5972 15.5449 13.3115C15.5449 14.0581 14.9756 14.52 14.3525 14.52C13.708 14.52 13.2461 14.187 13.1709 13.6982H11.5596Z"
+        fill="currentColor"
+      />
+      <path
+        d="M10.2866 15.75V8.41846H8.55176C7.97705 8.77832 7.36475 9.17041 6.80078 9.56787V11.1309C7.20866 10.8478 7.6875 10.5358 8.10733 10.2622C8.22929 10.1827 8.34626 10.1065 8.45508 10.0352H8.53027V15.75H10.2866Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+};
+
 export const RepeatOneIcon = ({ size = 24, width, height, ...props }: any) => {
   return (
     <svg
@@ -205,20 +262,30 @@ export const ShuffleIcon = ({ size = 24, width, height, ...props }: any) => {
 export default function AudioPlayer({ id }: any) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const { isAuthenticated, user } = useAuth();
+  const pathName = usePathname();
   const [title, setTitle] = useState("");
+  const [speechIndex, setSpeechIndex] = useState(0);
+  const [postId, setPostId] = useState("");
   const [postDate, setPostDate] = useState("");
   const [time, setTime] = useState("0:00");
   const [duration, setDuration] = useState("0:00");
   const { theme } = useTheme();
   const [isPending, startTransition] = useTransition();
-  const { setSpeechUrl, setShowSpeech, speechUrl, speechType, setSpeechType } =
-    useSpeech();
+  const {
+    setSpeechUrl,
+    setShowSpeech,
+    speechUrl,
+    speeches,
+    setSpeechType,
+    setSpeeches,
+  } = useSpeech();
   const [result, setResult] = useState<any>();
   const [summary, setSummary] = useState<any>();
   const [author, setAuthor] = useState<any>();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const [summaryLevel, setSummaryLevel] = useState<any>();
-
+  const router = useRouter();
   // Ensure that the container is correctly passed as a RefObject
   const { wavesurfer } = useWavesurfer({
     container: containerRef, // Pass the ref object itself, not its current property
@@ -246,6 +313,14 @@ export default function AudioPlayer({ id }: any) {
       wavesurfer.setTime(wavesurfer.getDuration());
     }
   }, [wavesurfer]);
+  const skip = useCallback(
+    (length: number) => {
+      if (wavesurfer) {
+        wavesurfer.skip(length);
+      }
+    },
+    [wavesurfer]
+  );
   useEffect(() => {
     if (!wavesurfer) return;
 
@@ -263,9 +338,15 @@ export default function AudioPlayer({ id }: any) {
     return () => subscriptions.forEach((unsub) => unsub());
   }, [wavesurfer]);
 
+  const fetchSpeeches = async () => {
+    const response = await api.get("/user/speeches?start=0&limit=10");
+    setSpeeches(response.data.data);
+  };
+
   const fetchSpeech = async () => {
     const response = await api.get(`speech?speech_id=${id}`);
     setTitle(response.data.post_title);
+    setPostId(response.data.post_id);
     setSpeechType(response.data.speech_type);
     setSpeechUrl(response.data.audio_url);
     await getResultById(response.data.post_id, response.data.speech_type);
@@ -331,19 +412,132 @@ export default function AudioPlayer({ id }: any) {
   };
 
   useEffect(() => {
+    const index = speeches.findIndex(
+      (speech) => pathName === "/speeches/" + speech.id
+    );
+    setSpeechIndex(index);
+  }, [pathName]);
+  useEffect(() => {
+    fetchSpeeches();
     fetchSpeech();
   }, []);
   return (
-    <div className="w-full flex flex-col md:flex-row justify-start md:justify-center h-full gap-4">
-      <div className="w-full md:w-2/3 items-center flex flex-row justify-center h-full">
+    <div className="w-full flex flex-col md:flex-row justify-start md:justify-center h-full gap-4 p-4">
+      <div className="w-full md:w-1/4 h-full">
         <Card
           isBlurred
-          className={`${theme === "dark" ? "bg-[#050506]" : "bg-[#F6F6F6]"} w-full h-full p-1`}
+          className={`h-full ${theme === "dark" ? "bg-[#050506] border-1 border-[#3C6B99]" : "bg-[#F6F6F6]"} w-full h-full`}
+          shadow="lg"
+        >
+          <CardHeader>
+            <div className="w-full">
+              <p className="text-small text-foreground/80">
+                Results Audit Playlist
+              </p>
+            </div>
+          </CardHeader>
+          <CardBody className="h-full w-full flex flex-col justify-start items-start gap-2">
+            <div
+              className={`h-fit w-full flex flex-col justify-start items-start gap-2 p-2 rounded-lg border-2 ${theme === "dark" ? "border-[#3C6B99]" : ""}`}
+            >
+              {speeches.map((speech, index) => {
+                return (
+                  index < 8 && (
+                    <Card className={`p-1 w-full `}>
+                      {pathName === "/speeches/" + speech.id && (
+                        <ShineBorder
+                          shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                          borderWidth={2.5}
+                        />
+                      )}
+                      <div className="w-full flex flex-row justify-between gap-2 h-full">
+                        <div className="w-full max-w-fit flex flex-row justify-center items-center">
+                          <HeroImage
+                            isBlurred
+                            isZoomed
+                            alt="User Avatar"
+                            radius="sm"
+                            className="object-cover"
+                            shadow="lg"
+                            style={{ height: "45px", width: "45px" }}
+                            src={
+                              isAuthenticated
+                                ? user?.detail.avatar
+                                : "https://avatars.githubusercontent.com/u/146516559?s=400&u=8a2fcef9b9079ab60f01db2868d1b1893856a2c3&v=4"
+                            }
+                          />
+                        </div>
+                        <div className="truncate">
+                          <div>
+                            <Tooltip content={speech.post_title}>
+                              <h1
+                                className="text-sm font-medium cursor-pointer"
+                                onClick={() =>
+                                  router.push(
+                                    DOMAIN + "/results/" + speech.post_id
+                                  )
+                                }
+                              >
+                                {speech.post_title}
+                              </h1>
+                            </Tooltip>
+                            <div className="w-full flex flex-row gap-2 items-center">
+                              <Image
+                                alt="NERDBUNNY LOGO"
+                                className="rounded-lg"
+                                height="20"
+                                src={
+                                  speech.speech_type === "ChildSummary"
+                                    ? childImage
+                                    : speech.speech_type === "CollegeSummary"
+                                      ? collegeImage
+                                      : speech.speech_type === "PhDSummary"
+                                        ? phDImage
+                                        : errorImage
+                                }
+                                width="20"
+                              />
+                              <Chip color="success" size="sm" variant="flat">
+                                <p>{speech.speech_type}</p>
+                              </Chip>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="w-full max-w-fit flex flex-col justify-center items-center">
+                          <Button
+                            onPress={() =>
+                              router.push(DOMAIN + "/speeches/" + speech.id)
+                            }
+                            isIconOnly
+                            className="w-auto h-auto data-[hover]:bg-foreground/10"
+                            radius="full"
+                            variant="light"
+                          >
+                            {pathName === "/speeches/" + speech.id &&
+                            isPlaying ? (
+                              <PauseCircleIcon size={45} />
+                            ) : (
+                              <PlayCircleIcon size={45} />
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  )
+                );
+              })}
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+      <div className="w-full md:w-1/2 items-center flex flex-row justify-center h-full">
+        <Card
+          isBlurred
+          className={`${theme === "dark" ? "bg-[#050506] border-1 border-[#3C6B99]" : "bg-[#F6F6F6]"} w-full h-full p-1`}
           shadow="lg"
         >
           <CardBody>
             <Button
-              isIconOnly
               variant="light"
               isLoading={isPending}
               onPress={() => {
@@ -353,7 +547,8 @@ export default function AudioPlayer({ id }: any) {
               }}
               className="absolute left-0 top-0"
             >
-              <TiArrowBack size={32} />
+              <IoMdArrowBack size={20} />
+              <span>Back</span>
             </Button>
             <div className="w-full flex flex-row justify-center items-center">
               <video
@@ -361,7 +556,7 @@ export default function AudioPlayer({ id }: any) {
                 loop
                 muted
                 src={`${theme === "dark" ? "/audio-bg2-dark.mp4" : "/audio-bg2-white.mp4"}`}
-                className="w-full md:w-[33%] -z-10 opacity-50"
+                className="w-full md:w-[50%] -z-10 opacity-50"
               />
             </div>
             <div className="w-full h-full flex flex-col-reverse justity-end">
@@ -371,7 +566,10 @@ export default function AudioPlayer({ id }: any) {
                 <div className="flex flex-row justify-between items-start w-full">
                   <div className="flex flex-col gap-0 w-[90%]">
                     <p className="text-small text-foreground/80">Narrations</p>
-                    <h1 className="text-large font-medium mt-2 truncate">
+                    <h1
+                      className="text-large font-medium mt-2 truncate cursor-pointer"
+                      onClick={() => router.push(DOMAIN + "/results/" + postId)}
+                    >
                       {title}
                     </h1>
                   </div>
@@ -407,12 +605,27 @@ export default function AudioPlayer({ id }: any) {
                   </Button>
                   <Button
                     isIconOnly
-                    isDisabled
+                    isDisabled={speechIndex === 0}
+                    className="data-[hover]:bg-foreground/10"
+                    radius="full"
+                    variant="light"
+                    onPress={() => {
+                      const newSpeechIndex = speechIndex - 1;
+                      setSpeechIndex(newSpeechIndex);
+                      const newSpeech = speeches[newSpeechIndex];
+                      router.push(DOMAIN + "/speeches/" + newSpeech.id);
+                    }}
+                  >
+                    <PreviousIcon />
+                  </Button>
+                  <Button
+                    isIconOnly
+                    onPress={() => skip(-15)}
                     className="data-[hover]:bg-foreground/10"
                     radius="full"
                     variant="light"
                   >
-                    <PreviousIcon />
+                    <RewindIcon />
                   </Button>
                   <Button
                     onPress={togglePlay}
@@ -429,7 +642,22 @@ export default function AudioPlayer({ id }: any) {
                   </Button>
                   <Button
                     isIconOnly
-                    isDisabled
+                    onPress={() => skip(15)}
+                    className="data-[hover]:bg-foreground/10"
+                    radius="full"
+                    variant="light"
+                  >
+                    <ForwardIcon />
+                  </Button>
+                  <Button
+                    isIconOnly
+                    isDisabled={speechIndex === 7}
+                    onPress={() => {
+                      const newSpeechIndex = speechIndex + 1;
+                      setSpeechIndex(newSpeechIndex);
+                      const newSpeech = speeches[newSpeechIndex];
+                      router.push(DOMAIN + "/speeches/" + newSpeech.id);
+                    }}
                     className="data-[hover]:bg-foreground/10"
                     radius="full"
                     variant="light"
@@ -454,14 +682,17 @@ export default function AudioPlayer({ id }: any) {
       <div className="w-full md:w-1/4 h-full">
         <Card
           isBlurred
-          className={`h-full ${theme === "dark" ? "bg-[#050506]" : "bg-[#F6F6F6]"} w-full h-full p-1`}
+          className={`h-full ${theme === "dark" ? "bg-[#050506] border-1 border-[#3C6B99]" : "bg-[#F6F6F6]"} w-full h-full p-1`}
           shadow="lg"
         >
           <CardHeader>
             <div className="w-full">
               <p className="text-small text-foreground/80">Narrations</p>
               <Tooltip content={title}>
-                <h1 className="text-large font-medium mt-2 truncate">
+                <h1
+                  className="text-large font-medium mt-2 truncate cursor-pointer"
+                  onClick={() => router.push(DOMAIN + "/results/" + postId)}
+                >
                   {title}
                 </h1>
               </Tooltip>

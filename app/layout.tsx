@@ -58,9 +58,12 @@ export default function RootLayout({
                           >
                             {children}
                             <CircularProgressBar className="h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" />
+                            <footer className="hidden w-full md:flex items-center justify-center">
+                              <Footer />
+                            </footer>
                           </main>
                           <Toaster />
-                          <footer className="w-full flex items-center justify-center">
+                          <footer className="w-full flex md:hidden items-center justify-center">
                             <Footer />
                           </footer>
                         </div>

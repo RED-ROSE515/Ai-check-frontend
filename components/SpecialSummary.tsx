@@ -1,6 +1,5 @@
 import { useTheme } from "next-themes";
 import { Card } from "@heroui/react";
-import ShineBorder from "./ui/shine-border";
 import { FaCheck, FaCheckCircle } from "react-icons/fa";
 
 interface SpecialSummaryProps {
@@ -27,15 +26,18 @@ const SpecialSummary = ({ summary }: any) => {
           Major Concerns
         </span>
         {summary.major_concerns?.map((concern: string, index: number) => (
-          <span
+          <div
             key={index}
-            className={`flex flex-row justify-start items-center gap-2 text-sm sm:text-medium ${theme === "dark" ? `text-[#AAB5C7]` : "text-slate-700"}`}
+            className={`flex flex-row justify-start items-start gap-2 text-sm sm:text-medium ${theme === "dark" ? `text-[#AAB5C7]` : "text-slate-700"}`}
           >
-            <FaCheckCircle
-              className={`${theme === "dark" ? "text-white" : "text-black"}`}
-            />
+            <div className="mt-1">
+              <FaCheckCircle
+                size={16}
+                className={`${theme === "dark" ? "text-white" : "text-black"}`}
+              />
+            </div>
             <p>{concern}</p>
-          </span>
+          </div>
         ))}
 
         <span
@@ -45,15 +47,18 @@ const SpecialSummary = ({ summary }: any) => {
         </span>
         {summary.improvement_priority?.map(
           (priority: string, index: number) => (
-            <span
+            <div
               key={index}
-              className={`flex flex-row justify-start items-center gap-2 text-sm sm:text-medium font-semibold ${theme === "dark" ? `text-[#AAB5C7]` : "text-slate-700"}`}
+              className={`flex flex-row justify-start items-start gap-2 text-sm sm:text-medium font-semibold ${theme === "dark" ? `text-[#AAB5C7]` : "text-slate-700"}`}
             >
-              <FaCheckCircle
-                className={`${theme === "dark" ? "text-white" : "text-black"}`}
-              />
+              <div className="mt-1">
+                <FaCheckCircle
+                  size={16}
+                  className={`${theme === "dark" ? "text-white" : "text-black"}`}
+                />
+              </div>
               <p>{priority}</p>
-            </span>
+            </div>
           )
         )}
 

@@ -10,7 +10,7 @@ import {
   Video,
   X,
 } from "lucide-react";
-import { Button, Select, SelectItem } from "@heroui/react";
+import { Button, Select, SelectItem, Input as HeroInput } from "@heroui/react";
 import { useRef, useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import _ from "lodash";
@@ -268,11 +268,32 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
 
   return (
     <div>
-      <div>
+      <div className="mb-2 flex flex-row justify-center gap-2">
+        <HeroInput
+          className="w-full"
+          label="Paper URL : "
+          variant="bordered"
+          labelPlacement="outside-left"
+          placeholder="https://arxiv.org/abs/..."
+          classNames={{ mainWrapper: "w-full" }}
+        />
+        <Button
+          isLoading={loading}
+          className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+          // onPress={() => handleAnalyze(s3_link, visibility[0], users)}
+        >
+          <span
+            className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+          >
+            Analyze for Errors
+          </span>
+        </Button>
+      </div>
+      <div className="">
         <label
           {...getRootProps()}
           htmlFor="dropzone-file"
-          className={`relative flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#C8E600]  ${theme === "dark" ? " bg-slate-700 py-6 hover:bg-slate-800" : " bg-gray-50 py-6 hover:bg-gray-100"}`}
+          className={`relative h-[350px] flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed   ${theme === "dark" ? " bg-[#090C0F] border-[#293847] py-6 hover:bg-[#081524] hover:border-[#3C6B99]" : " bg-gray-50 py-6 hover:bg-gray-100"}`}
         >
           <div className="text-center">
             <div className="mx-auto max-w-min rounded-md border p-2">

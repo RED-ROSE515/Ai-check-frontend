@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { RiMic2AiLine } from "react-icons/ri";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { formatTimestamp } from "@/utils/date";
+import { useSpeech } from "@/contexts/SpeechContext";
 
 export type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
@@ -142,9 +143,10 @@ export const EditIcon = (props: IconSvgProps) => {
   );
 };
 
-export default function AduioList({ speeches }: any) {
+export default function AduioList() {
   const router = useRouter();
   const { isMobile } = useDeviceCheck();
+  const { speeches } = useSpeech();
   type Speech = (typeof speeches)[0];
   const renderCell = React.useCallback(
     (speech: Speech, columnKey: React.Key) => {
@@ -205,7 +207,7 @@ export default function AduioList({ speeches }: any) {
               size="sm"
               variant="flat"
             >
-              {formatTimestamp(cellValue)}
+              {formatTimestamp(String(cellValue))}
             </Chip>
           );
         case "actions":

@@ -15,7 +15,7 @@ const LandingPage = () => {
   const router = useRouter();
   return (
     <div
-      className="w-full relative pt-4 md:pb-20"
+      className="w-full relative pt-4 pb-4 md:pb-20"
       style={{
         background: `${theme === "dark" ? "linear-gradient(0deg, #06070C 0%, #1E2A36 100%)" : "linear-gradient(0deg, #FFFFFF 0%, #F7F7F7 100%)"}`,
       }}
