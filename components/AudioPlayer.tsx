@@ -409,7 +409,7 @@ export default function AudioPlayer({ id }: any) {
     fetchSpeech();
   }, []);
   return (
-    <div className="w-full flex flex-col md:flex-row justify-start md:justify-center h-full gap-4 p-4">
+    <div className="w-full flex flex-col md:flex-row justify-start md:justify-center h-full gap-4 p-1 md:p-4">
       <div className="w-full md:w-1/2 items-center flex flex-row justify-center h-full">
         <Card
           isBlurred
