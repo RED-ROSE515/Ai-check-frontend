@@ -102,6 +102,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const [visibility, setVisibility] = useState(["everyone"]);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [s3_link, setS3Link] = useState("");
+  const [paper_url, setPaperUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const { handleAnalyze } = useAnalyze();
   const { toast } = useToast();
@@ -268,27 +269,6 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
 
   return (
     <div>
-      <div className="mb-2 flex flex-row justify-center gap-2">
-        <HeroInput
-          className="w-full"
-          label="Paper URL : "
-          variant="bordered"
-          labelPlacement="outside-left"
-          placeholder="https://arxiv.org/abs/..."
-          classNames={{ mainWrapper: "w-full" }}
-        />
-        <Button
-          isLoading={loading}
-          className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-          // onPress={() => handleAnalyze(s3_link, visibility[0], users)}
-        >
-          <span
-            className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
-          >
-            Analyze for Errors
-          </span>
-        </Button>
-      </div>
       <div className="">
         <label
           {...getRootProps()}
@@ -315,7 +295,30 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
           type="file"
         />
       </div>
-
+      <div className="mt-2 flex flex-row justify-center gap-2">
+        <HeroInput
+          className="w-full"
+          label="Paper URL : "
+          variant="bordered"
+          value={paper_url}
+          onValueChange={(val) => setPaperUrl(val)}
+          labelPlacement="outside-left"
+          placeholder="https://arxiv.org/abs/..."
+          classNames={{ mainWrapper: "w-full" }}
+        />
+        <Button
+          isLoading={loading}
+          isDisabled={!paper_url}
+          className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+          // onPress={() => handleAnalyze(s3_link, visibility[0], users)}
+        >
+          <span
+            className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+          >
+            Analyze for Errors
+          </span>
+        </Button>
+      </div>
       {currentFile && (
         <div>
           <p className="my-2 mt-6 text-sm font-medium text-muted-foreground">

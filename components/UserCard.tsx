@@ -11,6 +11,7 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
+  Skeleton,
 } from "@heroui/react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -38,8 +39,9 @@ const UserCard = ({
 }: any) => {
   const formattedDate = `Audited on: ` + formatTimestamp(postDate);
   const { isMobile } = useDeviceCheck();
+  const [loading, setLoading] = useState(false);
   const [userDetail, setUserDetail] = useState<UserDetail>();
-  const { isLoading, handleFollow } = useUserActions({
+  const { handleFollow } = useUserActions({
     showSignInModal,
   });
 
@@ -49,10 +51,12 @@ const UserCard = ({
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
   const fetchUserDetail = async () => {
+    setLoading(true);
     const response = await api.get(
       `/user/profile?user_id=${userData.user_name}`
     );
     setUserDetail(response.data);
+    setLoading(false);
   };
   const follow = async () => {
     if (!isAuthenticated) {
@@ -70,9 +74,23 @@ const UserCard = ({
     fetchUserDetail();
   }, []);
 
-  if (!userDetail) return null;
+  // if (!userDetail) return null;
 
-  return (
+  return loading ? (
+    <Card className="h-[61px] w-full space-y-5 p-4" radius="lg">
+      <div className="space-y-3">
+        <Skeleton className="w-3/5 rounded-lg">
+          <div className="h-3 w-3/5 rounded-lg bg-default-200" />
+        </Skeleton>
+        <Skeleton className="w-4/5 rounded-lg">
+          <div className="h-3 w-4/5 rounded-lg bg-default-200" />
+        </Skeleton>
+        <Skeleton className="w-2/5 rounded-lg">
+          <div className="h-3 w-2/5 rounded-lg bg-default-300" />
+        </Skeleton>
+      </div>
+    </Card>
+  ) : (
     <Card
       // isBlurred
       className="border-none bg-transparent"

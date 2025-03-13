@@ -315,7 +315,7 @@ export const Navbar = () => {
                         navigateTo("/speeches");
                       }}
                     >
-                      Speech Book
+                      Past Recordings
                     </DropdownItem>
                     <DropdownItem
                       key="about"

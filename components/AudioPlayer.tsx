@@ -1,32 +1,20 @@
 "use client";
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import {
-  Card,
-  CardBody,
-  Button,
-  Image as HeroImage,
-  CardHeader,
-  Tooltip,
-  Chip,
-} from "@heroui/react";
-import ReactMarkdown from "react-markdown";
-import Image from "next/image";
-import { TiArrowBack } from "react-icons/ti";
+import { Card, CardBody, Button } from "@heroui/react";
 import { useWavesurfer } from "@wavesurfer/react";
 import { useSpeech } from "@/contexts/SpeechContext";
 import { useTheme } from "next-themes";
 import { useTransition } from "react";
 import api from "@/utils/api";
 import ShareButtons from "./ShareButtons";
-import UserCard from "./UserCard";
 import childImage from "../public/NerdBunnyUI/child.png";
 import collegeImage from "../public/NerdBunnyUI/college.png";
 import phDImage from "../public/NerdBunnyUI/PhD.png";
 import errorImage from "../public/NerdBunnyUI/Error.png";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
-import { ShineBorder } from "./ui/shine-border";
 import { IoMdArrowBack } from "react-icons/io";
+import AudioPlayerList from "./AudioPlayerList";
 
 export const HeartIcon = ({
   size = 24,
@@ -262,7 +250,6 @@ export const ShuffleIcon = ({ size = 24, width, height, ...props }: any) => {
 export default function AudioPlayer({ id }: any) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const { isAuthenticated, user } = useAuth();
   const pathName = usePathname();
   const [title, setTitle] = useState("");
   const [speechIndex, setSpeechIndex] = useState(0);
@@ -423,113 +410,6 @@ export default function AudioPlayer({ id }: any) {
   }, []);
   return (
     <div className="w-full flex flex-col md:flex-row justify-start md:justify-center h-full gap-4 p-4">
-      <div className="w-full md:w-1/4 h-full">
-        <Card
-          isBlurred
-          className={`h-full ${theme === "dark" ? "bg-[#050506] border-1 border-[#3C6B99]" : "bg-[#F6F6F6]"} w-full h-full`}
-          shadow="lg"
-        >
-          <CardHeader>
-            <div className="w-full">
-              <p className="text-small text-foreground/80">
-                Results Audit Playlist
-              </p>
-            </div>
-          </CardHeader>
-          <CardBody className="h-full w-full flex flex-col justify-start items-start gap-2">
-            <div
-              className={`h-fit w-full flex flex-col justify-start items-start gap-2 p-2 rounded-lg border-2 ${theme === "dark" ? "border-[#3C6B99]" : ""}`}
-            >
-              {speeches.map((speech, index) => {
-                return (
-                  index < 8 && (
-                    <Card className={`p-1 w-full `}>
-                      {pathName === "/speeches/" + speech.id && (
-                        <ShineBorder
-                          shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-                          borderWidth={2.5}
-                        />
-                      )}
-                      <div className="w-full flex flex-row justify-between gap-2 h-full">
-                        <div className="w-full max-w-fit flex flex-row justify-center items-center">
-                          <HeroImage
-                            isBlurred
-                            isZoomed
-                            alt="User Avatar"
-                            radius="sm"
-                            className="object-cover"
-                            shadow="lg"
-                            style={{ height: "45px", width: "45px" }}
-                            src={
-                              isAuthenticated
-                                ? user?.detail.avatar
-                                : "https://avatars.githubusercontent.com/u/146516559?s=400&u=8a2fcef9b9079ab60f01db2868d1b1893856a2c3&v=4"
-                            }
-                          />
-                        </div>
-                        <div className="truncate">
-                          <div>
-                            <Tooltip content={speech.post_title}>
-                              <h1
-                                className="text-sm font-medium cursor-pointer"
-                                onClick={() =>
-                                  router.push(
-                                    DOMAIN + "/results/" + speech.post_id
-                                  )
-                                }
-                              >
-                                {speech.post_title}
-                              </h1>
-                            </Tooltip>
-                            <div className="w-full flex flex-row gap-2 items-center">
-                              <Image
-                                alt="NERDBUNNY LOGO"
-                                className="rounded-lg"
-                                height="20"
-                                src={
-                                  speech.speech_type === "ChildSummary"
-                                    ? childImage
-                                    : speech.speech_type === "CollegeSummary"
-                                      ? collegeImage
-                                      : speech.speech_type === "PhDSummary"
-                                        ? phDImage
-                                        : errorImage
-                                }
-                                width="20"
-                              />
-                              <Chip color="success" size="sm" variant="flat">
-                                <p>{speech.speech_type}</p>
-                              </Chip>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="w-full max-w-fit flex flex-col justify-center items-center">
-                          <Button
-                            onPress={() =>
-                              router.push(DOMAIN + "/speeches/" + speech.id)
-                            }
-                            isIconOnly
-                            className="w-auto h-auto data-[hover]:bg-foreground/10"
-                            radius="full"
-                            variant="light"
-                          >
-                            {pathName === "/speeches/" + speech.id &&
-                            isPlaying ? (
-                              <PauseCircleIcon size={45} />
-                            ) : (
-                              <PlayCircleIcon size={45} />
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-                    </Card>
-                  )
-                );
-              })}
-            </div>
-          </CardBody>
-        </Card>
-      </div>
       <div className="w-full md:w-1/2 items-center flex flex-row justify-center h-full">
         <Card
           isBlurred
@@ -679,94 +559,8 @@ export default function AudioPlayer({ id }: any) {
           </CardBody>
         </Card>
       </div>
-      <div className="w-full md:w-1/4 h-full">
-        <Card
-          isBlurred
-          className={`h-full ${theme === "dark" ? "bg-[#050506] border-1 border-[#3C6B99]" : "bg-[#F6F6F6]"} w-full h-full p-1`}
-          shadow="lg"
-        >
-          <CardHeader>
-            <div className="w-full">
-              <p className="text-small text-foreground/80">Narrations</p>
-              <Tooltip content={title}>
-                <h1
-                  className="text-large font-medium mt-2 truncate cursor-pointer"
-                  onClick={() => router.push(DOMAIN + "/results/" + postId)}
-                >
-                  {title}
-                </h1>
-              </Tooltip>
-              {result && (
-                <UserCard
-                  userData={{ ...author }}
-                  postDate={postDate}
-                  link={DOMAIN + "/results/" + summary?.post_id}
-                  totalData={result}
-                  showFollow={false}
-                  className="max-w-fit"
-                />
-              )}
-            </div>
-          </CardHeader>
-          <CardBody className="h-full">
-            {summaryLevel && (
-              <div className={`w-full md:min-h-[68px] items-center p-4 h-full`}>
-                <div className="w-full flex flex-row justify-start gap-4 items-center">
-                  <Image
-                    alt="NERDBUNNY LOGO"
-                    className="rounded-lg"
-                    height="30"
-                    src={summaryLevel.image}
-                    width="30"
-                  />
-                  <span>{summaryLevel.title}</span>
-                </div>
-                {summaryLevel.value === "ErrorSummary" ? (
-                  <div>
-                    <ReactMarkdown
-                      components={{
-                        h3: ({ children }) => (
-                          <h3 className="mb-2 mt-6 text-xl font-bold">
-                            {children}
-                          </h3>
-                        ),
-                        h4: ({ children }) => (
-                          <h4 className="mb-2 mt-4 text-lg font-semibold">
-                            {children}
-                          </h4>
-                        ),
-                        p: ({ children }) => <p className="mb-4">{children}</p>,
-                        ul: ({ children }) => (
-                          <ul className="mb-4 ml-6 list-disc">{children}</ul>
-                        ),
-                        li: ({ children }) => (
-                          <li className="mb-2">{children}</li>
-                        ),
-                        strong: ({ children }) => (
-                          <strong className="font-bold">{children}</strong>
-                        ),
-                        em: ({ children }) => (
-                          <em className="italic">{children}</em>
-                        ),
-                        hr: () => <hr className="my-6 border-gray-200" />,
-                      }}
-                    >
-                      {summaryLevel.content}
-                    </ReactMarkdown>
-                  </div>
-                ) : (
-                  <div>
-                    <p
-                      className={`text-sm ${theme === "dark" ? "text-gray-200" : "text-slate-800"}`}
-                    >
-                      {summaryLevel.content}
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-          </CardBody>
-        </Card>
+      <div className="w-full md:w-1/3 h-full">
+        <AudioPlayerList />
       </div>
     </div>
   );

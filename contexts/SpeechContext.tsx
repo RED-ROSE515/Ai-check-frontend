@@ -36,6 +36,7 @@ const SpeechContext = createContext<SpeechContextType>({
   speechTitle: "",
   speechType: "",
   speeches: [],
+
   setSpeeches: () => {},
   setSpeechUrl: () => {},
   setSpeechType: () => {},
@@ -51,6 +52,7 @@ export const SpeechProvider = ({ children }: { children: React.ReactNode }) => {
   const [showSpeech, setShowSpeech] = useState(false);
   const [speechId, setSpeechId] = useState("");
   const [speechTitle, setSpeechTitle] = useState("");
+  const [listenedSpeeches, setListenedSpeeches] = useState([]);
   return (
     <SpeechContext.Provider
       value={{
