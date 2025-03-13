@@ -38,7 +38,7 @@ export default function AudioPlayerList({}) {
       <CardHeader>
         <div className="w-full">
           <p className="text-small text-foreground/80">
-            Results Audit Playlist
+            Audited Results Playlist
           </p>
         </div>
       </CardHeader>

@@ -310,7 +310,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
           isLoading={loading}
           isDisabled={!paper_url}
           className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-          // onPress={() => handleAnalyze(s3_link, visibility[0], users)}
+          onPress={() => handleAnalyze(paper_url, visibility[0], users)}
         >
           <span
             className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
