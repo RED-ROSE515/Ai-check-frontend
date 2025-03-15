@@ -45,7 +45,7 @@ const LoginWithNobleblocksPage = () => {
   }, []);
 
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full flex justify-center h-[80vh]">
       {loading ? (
         <Loader className="mt-4" />
       ) : (

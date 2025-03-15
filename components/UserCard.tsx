@@ -220,7 +220,7 @@ const UserCard = ({
           <div className="flex justify-between items-center w-full">
             <div className="flex flex-col gap-[1px]">
               <span
-                className="text-[16px] leading-[16px]"
+                className="text-[16px] leading-[16px] max-w-[99%] truncate"
                 style={{ fontWeight: 500 }}
               >
                 {userData.first_name}

@@ -266,6 +266,7 @@ export default function AudioPlayer({ id }: any) {
     speeches,
     setSpeechType,
     setSpeeches,
+    speechType,
   } = useSpeech();
   const [result, setResult] = useState<any>();
   const [summary, setSummary] = useState<any>();
@@ -436,16 +437,18 @@ export default function AudioPlayer({ id }: any) {
                 loop
                 muted
                 src={`${theme === "dark" ? "/audio-bg2-dark.mp4" : "/audio-bg2-white.mp4"}`}
-                className="w-full md:w-[50%] -z-10 opacity-50"
+                className="w-full md:w-[40%] -z-10 opacity-50"
               />
             </div>
             <div className="w-full h-full flex flex-col-reverse justity-end">
               <div
-                className={`flex flex-col w-full justify-end rounded-xl shadow-md p-4 border-1 ${theme === "dark" ? "bg-black" : ""}`}
+                className={`flex flex-col w-full justify-end rounded-xl shadow-md p-3 border-1 ${theme === "dark" ? "bg-black" : ""}`}
               >
                 <div className="flex flex-row justify-between items-start w-full">
                   <div className="flex flex-col gap-0 w-[90%]">
-                    <p className="text-small text-foreground/80">Narrations</p>
+                    <p className="text-small text-foreground/80">
+                      {speechType}
+                    </p>
                     <h1
                       className="text-large font-medium mt-2 truncate cursor-pointer"
                       onClick={() => router.push(DOMAIN + "/results/" + postId)}

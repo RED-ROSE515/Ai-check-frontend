@@ -17,7 +17,7 @@ export default function App({ params }: any) {
   }
   return (
     <div
-      className={`w-full flex flex-row justify-center p-4 md:h-full ${theme === "dark" ? "bg-[#1E2A36]" : "bg-[#FFF]"}`}
+      className={`w-full flex flex-row justify-center p-4 md:h-[80vh] ${theme === "dark" ? "bg-[#1E2A36]" : "bg-[#FFF]"}`}
     >
       <AudioPlayer id={id} />
     </div>
