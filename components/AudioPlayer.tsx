@@ -15,6 +15,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { IoMdArrowBack } from "react-icons/io";
 import AudioPlayerList from "./AudioPlayerList";
+import AudioPostDetail from "./AudioPostDetail";
 
 export const HeartIcon = ({
   size = 24,
@@ -329,9 +330,18 @@ export default function AudioPlayer({ id }: any) {
   const fetchSpeeches = async () => {
     const response = await api.get("/user/speeches?start=0&limit=10");
     setSpeeches(response.data.data);
+    if (!id) {
+      const speechData = response.data.data[0];
+      setTitle(speechData.post_title);
+      setPostId(speechData.post_id);
+      setSpeechType(speechData.speech_type);
+      setSpeechUrl(speechData.audio_url);
+      await getResultById(speechData.post_id, speechData.speech_type);
+    }
   };
 
   const fetchSpeech = async () => {
+    if (!id) return;
     const response = await api.get(`speech?speech_id=${id}`);
     setTitle(response.data.post_title);
     setPostId(response.data.post_id);
@@ -340,7 +350,7 @@ export default function AudioPlayer({ id }: any) {
     await getResultById(response.data.post_id, response.data.speech_type);
   };
 
-  const getResultById = async (paperId: number, speech_type: string) => {
+  const getResultById = async (paperId: string, speech_type: string) => {
     try {
       const response = await api.get(`/post/${paperId}`);
       setResult(response.data);
@@ -411,6 +421,9 @@ export default function AudioPlayer({ id }: any) {
   }, []);
   return (
     <div className="w-full flex flex-col md:flex-row justify-start md:justify-center h-full gap-4 p-1 md:p-4">
+      <div className="w-full md:w-1/4 h-full">
+        <AudioPlayerList />
+      </div>
       <div className="w-full md:w-1/2 items-center flex flex-row justify-center h-full">
         <Card
           isBlurred
@@ -562,8 +575,8 @@ export default function AudioPlayer({ id }: any) {
           </CardBody>
         </Card>
       </div>
-      <div className="w-full md:w-1/3 h-full">
-        <AudioPlayerList />
+      <div className="w-full md:w-1/4 h-full">
+        <AudioPostDetail />
       </div>
     </div>
   );

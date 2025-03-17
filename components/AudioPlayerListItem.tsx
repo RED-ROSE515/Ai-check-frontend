@@ -15,6 +15,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { TextAnimate } from "./ui/text-animate";
 import { PlayCircleIcon } from "./AudioPlayer";
 import { ShineBorder } from "./ui/shine-border";
+import { useSpeech } from "@/contexts/SpeechContext";
 
 export default function AudioPlayerListItem({
   id,
@@ -29,6 +30,7 @@ export default function AudioPlayerListItem({
   const [result, setResult] = useState<any>();
   const [summary, setSummary] = useState<any>();
   const [author, setAuthor] = useState<any>();
+  const { setCurrentPostId, setCurrentSummaryType } = useSpeech();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const [summaryLevel, setSummaryLevel] = useState<any>();
   const [isAuditPending, startAuditTransition] = useTransition();
@@ -103,11 +105,11 @@ export default function AudioPlayerListItem({
   return (
     <div className="w-full flex flex-col md:flex-row justify-start md:justify-center h-full">
       <div className="w-full h-full">
-        {summaryLevel ? (
+        {postDate ? (
           <Card
             isBlurred
             isPressable
-            onPress={() => setShow(!show)}
+            onPress={() => setCurrentPostId(summary?.post_id)}
             className={`${show ? "h-full" : "h-[115px]"} ${theme === "dark" ? "bg-[#050506] border-1 border-slate-700" : "bg-[#F6F6F6]"} w-full`}
             shadow="lg"
           >
@@ -131,7 +133,7 @@ export default function AudioPlayerListItem({
                     showFollow={false}
                     className="max-w-fit"
                   />
-                  <div>
+                  {/* <div>
                     <Button
                       onPress={() =>
                         startSpeechTransition(() => {
@@ -146,11 +148,11 @@ export default function AudioPlayerListItem({
                     >
                       <PlayCircleIcon size={54} />
                     </Button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </CardHeader>
-            {show && (
+            {/* {show && (
               <CardBody className="h-full transition-all duration-300 ease-in-out animate-in slide-in-from-bottom">
                 {summaryLevel && (
                   <div
@@ -231,7 +233,7 @@ export default function AudioPlayerListItem({
                   </div>
                 )}
               </CardBody>
-            )}
+            )} */}
           </Card>
         ) : (
           <Card className="h-[115px] w-full space-y-5 p-4" radius="lg">

@@ -21,12 +21,18 @@ interface SpeechContextType {
   speechTitle: string;
   speechType: string;
   speeches: Speech[];
+  currentPostId: string;
+  currentSummaryType: string;
+  currentVoice: string;
   setSpeechUrl: (url: string) => void;
   setSpeeches: (value: Speech[]) => void;
   setSpeechType: (type: string) => void;
   setShowSpeech: (show: boolean) => void;
   setSpeechId: (id: string) => void;
   setSpeechTitle: (title: string) => void;
+  setCurrentPostId: (id: string) => void;
+  setCurrentSummaryType: (type: string) => void;
+  setCurrentVoice: (voice: string) => void;
 }
 
 const SpeechContext = createContext<SpeechContextType>({
@@ -36,17 +42,25 @@ const SpeechContext = createContext<SpeechContextType>({
   speechTitle: "",
   speechType: "",
   speeches: [],
-
+  currentPostId: "",
+  currentSummaryType: "",
+  currentVoice: "",
   setSpeeches: () => {},
   setSpeechUrl: () => {},
   setSpeechType: () => {},
   setShowSpeech: () => {},
   setSpeechId: () => {},
   setSpeechTitle: () => {},
+  setCurrentPostId: () => {},
+  setCurrentSummaryType: () => {},
+  setCurrentVoice: () => {},
 });
 
 export const SpeechProvider = ({ children }: { children: React.ReactNode }) => {
   const [speeches, setSpeeches] = useState<Speech[]>([]);
+  const [currentPostId, setCurrentPostId] = useState("");
+  const [currentSummaryType, setCurrentSummaryType] = useState("");
+  const [currentVoice, setCurrentVoice] = useState("");
   const [speechUrl, setSpeechUrl] = useState("");
   const [speechType, setSpeechType] = useState("");
   const [showSpeech, setShowSpeech] = useState(false);
@@ -62,12 +76,18 @@ export const SpeechProvider = ({ children }: { children: React.ReactNode }) => {
         speechTitle,
         speechType,
         speeches,
+        currentPostId,
+        currentSummaryType,
+        currentVoice,
         setSpeechUrl,
         setSpeeches,
         setShowSpeech,
         setSpeechType,
         setSpeechId,
         setSpeechTitle,
+        setCurrentPostId,
+        setCurrentSummaryType,
+        setCurrentVoice,
       }}
     >
       {children}
