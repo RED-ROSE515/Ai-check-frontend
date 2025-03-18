@@ -81,16 +81,35 @@ export const SpeechBookSVG = ({ className, color }: any) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
       className={className}
-      width="18"
-      height="19"
-      viewBox="0 0 18 19"
+      width="20"
+      height="20"
       fill="none"
     >
-      <path
-        d="M12 9.5V3.5H2.25V13.625C2.25 14.6605 3.08947 15.5 4.125 15.5H13.875M12 9.5V13.625C12 14.6605 12.8395 15.5 13.875 15.5M12 9.5H15.75V13.625C15.75 14.6605 14.9105 15.5 13.875 15.5M4.5 12.5H9.75M5.25 6.5H9V9.5H5.25V6.5Z"
+      <rect
+        x="2"
+        y="2"
+        width="16"
+        height="20"
+        rx="2"
         stroke={color}
-        strokeWidth="1.5"
+        strokeWidth="2"
+      />
+      <path d="M7 8L14 12L7 16L7 8Z" fill={color} />
+      <path
+        d="M20 4L20 20"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M22 4L22 20"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

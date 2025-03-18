@@ -23,8 +23,8 @@ export function CircularProgressBar({ ...props }) {
   }, []);
 
   return (
-    <div className="fixed bottom-1/2 right-3 z-50">
-      {isChecking && (
+    isChecking && (
+      <div className="fixed bottom-1/2 right-3 z-50">
         <Card className="p-1">
           <AnimatedCircularProgressBar
             {...props}
@@ -40,7 +40,7 @@ export function CircularProgressBar({ ...props }) {
             gaugeSecondaryColor="rgba(0, 0, 0, 0.1)"
           />
         </Card>
-      )}
-    </div>
+      </div>
+    )
   );
 }

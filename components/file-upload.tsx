@@ -295,29 +295,35 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
           type="file"
         />
       </div>
-      <div className="mt-2 flex flex-row justify-center gap-2">
-        <HeroInput
-          className="w-full"
-          label="Paper URL : "
-          variant="bordered"
-          value={paper_url}
-          onValueChange={(val) => setPaperUrl(val)}
-          labelPlacement="outside-left"
-          placeholder="https://arxiv.org/abs/..."
-          classNames={{ mainWrapper: "w-full" }}
-        />
-        <Button
-          isLoading={loading}
-          isDisabled={!paper_url}
-          className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-          onPress={() => handleAnalyze(paper_url, visibility[0], users)}
-        >
-          <span
-            className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+      <div className="flex flex-col gap-1">
+        <div className="mt-2 flex flex-row justify-center gap-2">
+          <HeroInput
+            className="w-full"
+            label="Paper URL : "
+            variant="bordered"
+            value={paper_url}
+            onValueChange={(val) => setPaperUrl(val)}
+            labelPlacement="outside-left"
+            placeholder="https://arxiv.org/abs/..."
+            classNames={{ mainWrapper: "w-full" }}
+          />
+          <Button
+            isLoading={loading}
+            isDisabled={!paper_url}
+            className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+            onPress={() => handleAnalyze(paper_url, visibility[0], users)}
           >
-            Analyze for Errors
-          </span>
-        </Button>
+            <span
+              className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+            >
+              Analyze for Errors
+            </span>
+          </Button>
+        </div>
+        <span className="text-xs ml-2 text-gray-500">
+          Note: Currently only supporting papers from: arxiv, biorxiv, medrxiv,
+          and openalex
+        </span>
       </div>
       {currentFile && (
         <div>

@@ -1,27 +1,32 @@
 "use client";
-import React, { useTransition } from "react";
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Chip,
-  Image as HeroImage,
-  Button,
-} from "@heroui/react";
+import React, { useState } from "react";
+import { Card, CardBody, CardHeader } from "@heroui/react";
 
 import { useTheme } from "next-themes";
 import { useSpeech } from "@/contexts/SpeechContext";
-import { useAuth } from "@/contexts/AuthContext";
-import { usePathname } from "next/navigation";
 import AudioPlayerListItem from "./AudioPlayerListItem";
 
-// const [playlistPending, startPlaylistTransition] = useTransition();
 export default function AudioPlayerList({}) {
-  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
-  const { isAuthenticated, user } = useAuth();
   const { theme } = useTheme();
-  const pathName = usePathname();
   const { speeches } = useSpeech();
+  const [showIndex, setShowIndex] = useState<number>(0);
+  const renderSkeletons = () => {
+    return Array(6)
+      .fill(0)
+      .map((_, index) => (
+        <div
+          key={index}
+          className="w-full h-[80px] bg-default-100 animate-pulse rounded-lg flex items-center p-4 gap-4"
+        >
+          <div className="w-12 h-12 rounded-full bg-default-200"></div>
+          <div className="flex-1 space-y-2">
+            <div className="h-4 bg-default-200 rounded w-3/4"></div>
+            <div className="h-3 bg-default-200 rounded w-1/2"></div>
+          </div>
+        </div>
+      ));
+  };
+
   return (
     <Card
       isBlurred
@@ -39,19 +44,20 @@ export default function AudioPlayerList({}) {
         <div
           className={`h-fit w-full flex flex-col justify-start items-start gap-2 p-2 rounded-lg`}
         >
-          {speeches.map((speech, index) => {
-            return (
-              index < 6 && (
-                <AudioPlayerListItem
-                  key={index}
-                  speech_id={speech.id}
-                  className="w-full"
-                  id={speech.post_id}
-                  speech_type={speech.speech_type}
-                />
-              )
-            );
-          })}
+          {speeches
+            ? speeches.map((speech, index) => {
+                return (
+                  <AudioPlayerListItem
+                    key={index}
+                    index={index}
+                    className="w-full"
+                    id={speech.id}
+                    showIndex={showIndex}
+                    setShowIndex={setShowIndex}
+                  />
+                );
+              })
+            : renderSkeletons()}
         </div>
       </CardBody>
     </Card>

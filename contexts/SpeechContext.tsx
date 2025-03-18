@@ -24,6 +24,10 @@ interface SpeechContextType {
   currentPostId: string;
   currentSummaryType: string;
   currentVoice: string;
+  listenedSpeeches: string[];
+  isPlaying: boolean;
+  percentage: number;
+  speechList: any;
   setSpeechUrl: (url: string) => void;
   setSpeeches: (value: Speech[]) => void;
   setSpeechType: (type: string) => void;
@@ -33,6 +37,10 @@ interface SpeechContextType {
   setCurrentPostId: (id: string) => void;
   setCurrentSummaryType: (type: string) => void;
   setCurrentVoice: (voice: string) => void;
+  setListenedSpeeches: (speeches: string[]) => void;
+  setIsPlaying: (isPlaying: boolean) => void;
+  setPercentage: (percentage: number) => void;
+  setSpeechList: (list: any) => void;
 }
 
 const SpeechContext = createContext<SpeechContextType>({
@@ -42,9 +50,15 @@ const SpeechContext = createContext<SpeechContextType>({
   speechTitle: "",
   speechType: "",
   speeches: [],
+  speechList: [],
   currentPostId: "",
   currentSummaryType: "",
   currentVoice: "",
+  listenedSpeeches: [],
+  isPlaying: false,
+  percentage: 0,
+  setSpeechList: () => {},
+  setPercentage: () => {},
   setSpeeches: () => {},
   setSpeechUrl: () => {},
   setSpeechType: () => {},
@@ -54,6 +68,8 @@ const SpeechContext = createContext<SpeechContextType>({
   setCurrentPostId: () => {},
   setCurrentSummaryType: () => {},
   setCurrentVoice: () => {},
+  setListenedSpeeches: () => {},
+  setIsPlaying: () => {},
 });
 
 export const SpeechProvider = ({ children }: { children: React.ReactNode }) => {
@@ -65,8 +81,11 @@ export const SpeechProvider = ({ children }: { children: React.ReactNode }) => {
   const [speechType, setSpeechType] = useState("");
   const [showSpeech, setShowSpeech] = useState(false);
   const [speechId, setSpeechId] = useState("");
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [percentage, setPercentage] = useState<number>(0);
   const [speechTitle, setSpeechTitle] = useState("");
-  const [listenedSpeeches, setListenedSpeeches] = useState([]);
+  const [listenedSpeeches, setListenedSpeeches] = useState<string[]>([]);
+  const [speechList, setSpeechList] = useState<any>([]);
   return (
     <SpeechContext.Provider
       value={{
@@ -79,6 +98,11 @@ export const SpeechProvider = ({ children }: { children: React.ReactNode }) => {
         currentPostId,
         currentSummaryType,
         currentVoice,
+        listenedSpeeches,
+        isPlaying,
+        percentage,
+        speechList,
+        setPercentage,
         setSpeechUrl,
         setSpeeches,
         setShowSpeech,
@@ -88,6 +112,9 @@ export const SpeechProvider = ({ children }: { children: React.ReactNode }) => {
         setCurrentPostId,
         setCurrentSummaryType,
         setCurrentVoice,
+        setListenedSpeeches,
+        setIsPlaying,
+        setSpeechList,
       }}
     >
       {children}

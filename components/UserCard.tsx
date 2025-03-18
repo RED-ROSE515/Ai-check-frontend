@@ -93,11 +93,11 @@ const UserCard = ({
   ) : (
     <Card
       // isBlurred
-      className="border-none bg-transparent"
+      className="border-none bg-transparent w-full"
       // className="border-none bg-background/60 dark:bg-default-100/50 mb-4 "
       shadow="none"
     >
-      <CardBody>
+      <CardBody className="w-full overflow-hidden">
         <div className="flex flex-row w-full justify-start gap-3">
           <Popover
             showArrow
@@ -218,14 +218,14 @@ const UserCard = ({
             </PopoverContent>
           </Popover>
           <div className="flex justify-between items-center w-full">
-            <div className="flex flex-col gap-[1px]">
+            <div className="flex flex-col gap-[1px] w-[85%]">
               <span
                 className="text-[16px] leading-[16px] max-w-[99%] truncate"
                 style={{ fontWeight: 500 }}
               >
                 {userData.first_name}
               </span>
-              <span className="text-[14px] font-normal text-gray-500 leading-[20px]">
+              <span className="text-[14px] font-normal text-gray-500 leading-[20px] truncate max-w-[99%]">
                 {formattedDate}
               </span>
             </div>
@@ -257,7 +257,6 @@ const UserCard = ({
                       className="text-default-900/60 data-[hover]:bg-foreground/10"
                       radius="full"
                       variant="light"
-                      onPress={() => console.log(userData)}
                     >
                       <PiDotsThreeOutlineVerticalFill size={17} />
                     </Button>
