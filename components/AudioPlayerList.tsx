@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/react";
 
 import { useTheme } from "next-themes";
@@ -8,8 +8,14 @@ import AudioPlayerListItem from "./AudioPlayerListItem";
 
 export default function AudioPlayerList({ className }: { className?: string }) {
   const { theme } = useTheme();
-  const { speeches, speechTitle } = useSpeech();
+  const { speeches, currentPostId } = useSpeech();
   const [showIndex, setShowIndex] = useState<number>(0);
+  useEffect(() => {
+    if (currentPostId) {
+      const index = speeches.findIndex((speech) => speech.id === currentPostId);
+      setShowIndex(index);
+    }
+  }, [currentPostId]);
   const renderSkeletons = () => {
     return Array(6)
       .fill(0)

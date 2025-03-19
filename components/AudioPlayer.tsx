@@ -118,8 +118,43 @@ export default function AudioPlayer({ id }: any) {
     },
     [wavesurfer]
   );
+  const prevSpeech = () => {
+    if (speechIndex > 0) {
+      let newSpeechIndex = speechIndex - 1;
+      let newSpeech = speechList[newSpeechIndex];
+
+      while (!newSpeech?.speech_url && newSpeechIndex > 0) {
+        newSpeechIndex--;
+        newSpeech = speechList[newSpeechIndex];
+      }
+
+      if (newSpeech?.speech_url) {
+        setSpeechUrl(newSpeech.speech_url);
+        setSpeechType(newSpeech.speech_type);
+      }
+    }
+  };
+  const nextSpeech = () => {
+    if (speechIndex < speechList.length - 1) {
+      let newSpeechIndex = speechIndex + 1;
+      let newSpeech = speechList[newSpeechIndex];
+
+      while (!newSpeech?.speech_url && newSpeechIndex < speechList.length - 1) {
+        newSpeechIndex++;
+        newSpeech = speechList[newSpeechIndex];
+      }
+
+      if (newSpeech?.speech_url) {
+        setSpeechUrl(newSpeech.speech_url);
+        setSpeechType(newSpeech.speech_type);
+      }
+    }
+  };
+
   useEffect(() => {
+    console.log("isPlaying 1 -> ", isPlaying);
     if (percentage === 100) {
+      console.log("isPlaying -> ", isPlaying);
       setTime("0:00");
       isPlaying ? wavesurfer?.play() : wavesurfer?.pause();
     }
@@ -142,18 +177,13 @@ export default function AudioPlayer({ id }: any) {
           currentPostId + " - " + speechType,
         ];
         setListenedSpeeches(newListenedSpeeches);
+        nextSpeech();
       }),
     ];
 
     // Cleanup function to unsubscribe from events
     return () => subscriptions.forEach((unsub) => unsub());
   }, [wavesurfer]);
-
-  useEffect(() => {
-    const currentPostIndex = speeches.findIndex(
-      (speech) => speech.post_id === currentPostId
-    );
-  }, []);
 
   const fetchSpeeches = async () => {
     const response = await api.get(
@@ -200,6 +230,7 @@ export default function AudioPlayer({ id }: any) {
     fetchSpeeches();
     fetchSpeech();
   }, []);
+
   return (
     <div className="w-full flex flex-col-reverse md:flex-row justify-start md:justify-center h-full gap-4 p-1 md:p-4">
       <div className="w-full md:w-[50%] items-center flex flex-row justify-center h-full">
@@ -358,14 +389,7 @@ export default function AudioPlayer({ id }: any) {
                     className="data-[hover]:bg-foreground/10"
                     radius="full"
                     variant="light"
-                    onPress={() => {
-                      if (speechIndex > 0) {
-                        const newSpeechIndex = speechIndex - 1;
-                        const newSpeech = speechList[newSpeechIndex];
-                        setSpeechUrl(newSpeech?.speech_url);
-                        setSpeechType(newSpeech?.speech_type);
-                      }
-                    }}
+                    onPress={prevSpeech}
                   >
                     <PreviousIcon />
                   </Button>
@@ -402,18 +426,7 @@ export default function AudioPlayer({ id }: any) {
                   </Button>
                   <Button
                     isIconOnly
-                    isDisabled={speechIndex === 7}
-                    onPress={() => {
-                      if (speechIndex < speechList.length - 1) {
-                        const newSpeechIndex = speechIndex + 1;
-                        const newSpeech = speechList[newSpeechIndex];
-                        if (newSpeech?.speech_url) {
-                          setSpeechUrl(newSpeech?.speech_url);
-                          setSpeechType(newSpeech?.speech_type);
-                        } else {
-                        }
-                      }
-                    }}
+                    onPress={nextSpeech}
                     className="data-[hover]:bg-foreground/10"
                     radius="full"
                     variant="light"
