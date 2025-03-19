@@ -8,7 +8,7 @@ import AudioPlayerListItem from "./AudioPlayerListItem";
 
 export default function AudioPlayerList({ className }: { className?: string }) {
   const { theme } = useTheme();
-  const { speeches } = useSpeech();
+  const { speeches, speechTitle } = useSpeech();
   const [showIndex, setShowIndex] = useState<number>(0);
   const renderSkeletons = () => {
     return Array(6)

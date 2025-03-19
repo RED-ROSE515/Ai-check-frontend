@@ -27,6 +27,7 @@ import api from "@/utils/api";
 import _ from "lodash";
 import { AnimatedSubscribeButton } from "./magicui/animated-subscribe-button";
 import { formatTimestamp } from "@/utils/date";
+import useGetData from "@/app/service/get-data";
 
 const UserCard = ({
   userData,
@@ -40,7 +41,6 @@ const UserCard = ({
   const formattedDate = `Audited on: ` + formatTimestamp(postDate);
   const { isMobile } = useDeviceCheck();
   const [loading, setLoading] = useState(false);
-  const [userDetail, setUserDetail] = useState<UserDetail>();
   const { handleFollow } = useUserActions({
     showSignInModal,
   });
@@ -50,14 +50,10 @@ const UserCard = ({
   const { isAuthenticated } = useAuth();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
-  const fetchUserDetail = async () => {
-    setLoading(true);
-    const response = await api.get(
-      `/user/profile?user_id=${userData.user_name}`
-    );
-    setUserDetail(response.data);
-    setLoading(false);
-  };
+  const { data: userDetail, isLoading: userDetailLoading } = useGetData(
+    `user/profile?user_id=${userData.user_name}`
+  );
+
   const follow = async () => {
     if (!isAuthenticated) {
       showSignInModal("You need to sign in to continue.");
@@ -65,18 +61,14 @@ const UserCard = ({
     }
     if (!userDetail) return;
     const success = await handleFollow(userDetail.id, userDetail?.is_following);
-    if (success) {
-      await fetchUserDetail();
-    }
+    // if (success) {
+    //   await fetchUserDetail();
+    // }
   };
-
-  useEffect(() => {
-    fetchUserDetail();
-  }, []);
 
   // if (!userDetail) return null;
 
-  return loading ? (
+  return userDetailLoading ? (
     <Card className="h-[61px] w-full space-y-5 p-4" radius="lg">
       <div className="space-y-3">
         <Skeleton className="w-3/5 rounded-lg">

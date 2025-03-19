@@ -24,7 +24,7 @@ import ShareButtons from "./ShareButtons";
 import { usePathname, useRouter } from "next/navigation";
 import { IoMdArrowBack } from "react-icons/io";
 import AudioPlayerList from "./AudioPlayerList";
-import AudioPostDetail from "./AudioPostDetail";
+
 import {
   PlayCircleIcon,
   PauseCircleIcon,
@@ -39,6 +39,11 @@ import { voices } from "./SummaryWrapper";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { GiHamburgerMenu } from "react-icons/gi";
 
+const NewAudioPlayerList = React.memo(
+  ({ className }: { className?: string }) => {
+    return <AudioPlayerList className={className} />;
+  }
+);
 export default function AudioPlayer({ id }: any) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pathName = usePathname();
@@ -75,6 +80,7 @@ export default function AudioPlayer({ id }: any) {
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const router = useRouter();
   // Ensure that the container is correctly passed as a RefObject
+
   const { wavesurfer } = useWavesurfer({
     container: containerRef, // Pass the ref object itself, not its current property
     waveColor: theme === "dark" ? "#4F4A85" : "#A7A9AB",
@@ -448,15 +454,15 @@ export default function AudioPlayer({ id }: any) {
         <DrawerContent>
           {() => (
             <>
-              <DrawerBody className="pl-3 pr-8 py-2">
-                <AudioPlayerList className="w-full h-full mr-2" />
+              <DrawerBody className="px-0 py-2">
+                <NewAudioPlayerList className="w-full h-full mr-2" />
               </DrawerBody>
             </>
           )}
         </DrawerContent>
       </Drawer>
       <div className="hidden md:block w-[35%] h-full">
-        <AudioPlayerList />
+        <NewAudioPlayerList />
       </div>
     </div>
   );

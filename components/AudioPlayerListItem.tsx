@@ -1,14 +1,12 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardBody, CardHeader, Skeleton } from "@heroui/react";
 
 import { useTheme } from "next-themes";
-import api from "@/utils/api";
 import UserCard from "./UserCard";
-import { usePathname } from "next/navigation";
-import { ShineBorder } from "./ui/shine-border";
 import { useSpeech } from "@/contexts/SpeechContext";
 import AudioPostDetail from "./AudioPostDetail";
+import useGetItem from "@/app/service/get-items";
 
 export default function AudioPlayerListItem({
   id,
@@ -20,38 +18,28 @@ export default function AudioPlayerListItem({
   const [title, setTitle] = useState("");
   const [postDate, setPostDate] = useState("");
   const { theme } = useTheme();
-  const pathName = usePathname();
   const [result, setResult] = useState<any>();
   const [summary, setSummary] = useState<any>();
   const [author, setAuthor] = useState<any>();
   const { setCurrentPostId, setSpeechId, setSpeechTitle } = useSpeech();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
 
-  const getResultById = useMemo(
-    () => async (paperId: number) => {
-      try {
-        const response = await api.get(`/post/${paperId}`);
-        setAuthor(response.data.user);
-        setResult(response.data);
-        const summaryData = {
-          ...JSON.parse(response.data.description),
-          post_id: response.data.id,
-          post_title: response.data.title,
-          attached_links: response.data.attached_links,
-        };
-        setTitle(response.data.title);
-        setSummary(summaryData);
-        setPostDate(response.data.updated_at);
-      } catch (error: any) {
-        return null;
-      }
-    },
-    [id] // Add id as dependency since it's used in the return value
-  );
-
+  const { data, error, isLoading } = useGetItem(id);
   useEffect(() => {
-    getResultById(id);
-  }, [getResultById, id]);
+    if (data) {
+      setAuthor(data.user);
+      setResult(data);
+      const summaryData = {
+        ...JSON.parse(data.description),
+        post_id: data.id,
+        post_title: data.title,
+        attached_links: data.attached_links,
+      };
+      setSummary(summaryData);
+      setPostDate(data.updated_at);
+      setTitle(data.title);
+    }
+  }, [data]);
 
   return (
     <div className="w-full flex flex-col md:flex-row justify-start md:justify-center h-full">

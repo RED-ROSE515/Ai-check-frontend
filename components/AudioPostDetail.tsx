@@ -28,6 +28,7 @@ import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import { ShineBorder } from "./ui/shine-border";
 import { AuroraText } from "@/src/components/magicui/aurora-text";
 import { AnimatedGradientText } from "./ui/animated-gradient-text";
+import useGetData from "@/app/service/get-data";
 
 export default function AudioPostDetail({}) {
   const { theme } = useTheme();
@@ -44,57 +45,43 @@ export default function AudioPostDetail({}) {
     setPercentage,
   } = useSpeech();
   const [auditDetailPending, startAuditDetailTransition] = useTransition();
-  const [post, setPost] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
   const [summaryData, setSummaryData] = useState<any>({});
-  const [speechData, setSpeechData] = useState<any>(null);
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
-  const { toast } = useToast();
+  const { data: postData, isLoading: postLoading } = useGetData(
+    `post/${currentPostId}`
+  );
+  const { data: speechData, isLoading: speechLoading } = useGetData(
+    `post/speech?post_id=${currentPostId}`
+  );
+  useEffect(() => {
+    if (postData) {
+      setSummaryData({ ...JSON.parse(postData.description) });
+    }
+  }, [postData]);
 
   useEffect(() => {
-    const fetchPost = async () => {
-      setLoading(true);
-      if (!currentPostId) return;
-      try {
-        const postResponse = await api.get(`/post/${currentPostId}`);
-        setPost(postResponse.data);
-        setSummaryData({ ...JSON.parse(postResponse.data.description) });
-
-        const speechResponse = await api.get(
-          `/post/speech?post_id=${currentPostId}`
-        );
-        setSpeechData(speechResponse.data);
-        const initialSpeech = speechResponse.data[0];
-        setSpeechType(initialSpeech.speech_type);
-        setSpeechUrl(initialSpeech.audio_url);
-        setIsPlaying(false);
-        const speechTypes = [
-          "ChildSummary",
-          "CollegeSummary",
-          "PhDSummary",
-          "ErrorSummary",
-        ];
-        const speechList = speechTypes.map((type) => {
-          return {
-            speech_url: speechResponse.data?.find(
-              (speech: any) => speech.speech_type === type
-            )?.audio_url,
-            speech_type: type,
-          };
-        });
-        setSpeechList(speechList);
-        console.log(speechList);
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to fetch post details",
-          variant: "destructive",
-        });
-      }
-      setLoading(false);
-    };
-    fetchPost();
-  }, [currentPostId, toast]);
+    if (speechData) {
+      const initialSpeech = speechData[0];
+      setSpeechType(initialSpeech.speech_type);
+      setSpeechUrl(initialSpeech.audio_url);
+      setIsPlaying(false);
+      const speechTypes = [
+        "ChildSummary",
+        "CollegeSummary",
+        "PhDSummary",
+        "ErrorSummary",
+      ];
+      const speechList = speechTypes.map((type) => {
+        return {
+          speech_url: speechData?.find(
+            (speech: any) => speech.speech_type === type
+          )?.audio_url,
+          speech_type: type,
+        };
+      });
+      setSpeechList(speechList);
+    }
+  }, [speechData]);
 
   const summaryTypes = [
     {
@@ -168,7 +155,7 @@ export default function AudioPostDetail({}) {
         </div>
       </CardHeader>
       <CardBody className="h-full w-full flex flex-col justify-start items-start overflow-auto">
-        {loading ? (
+        {postLoading || speechLoading ? (
           <div className="w-full">
             <div className="p-4 rounded-lg border border-default-200 flex flex-col gap-2">
               <div className="flex flex-row gap-2">
