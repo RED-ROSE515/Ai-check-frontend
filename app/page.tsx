@@ -19,24 +19,23 @@ import { usePagination } from "@/contexts/PaginationContext";
 import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
 import { PostCommentBox } from "@/components/Comments";
 import { useToast } from "@/hooks/use-toast";
-import { Chip } from "@heroui/react";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import ShareButtons from "@/components/ShareButtons";
 import { useAuth } from "@/contexts/AuthContext";
 import SignInDialog from "@/components/SignInDialog";
 import { usePostActions } from "@/hooks/usePostActions";
 import Loader from "@/components/Loader";
-import { sleep } from "@/components/file-upload";
-import { ImSearch } from "react-icons/im";
 import { useRouter } from "next/navigation";
 import type { Metadata } from "next";
-import SearchBar from "@/components/SearchBar";
 import { useSearch } from "@/contexts/SearchContext"; // Add this import
 import LandingPage from "@/components/LandingPage";
 import WorkFlow from "@/components/WorkFlow";
 import NerdbunnyReason from "@/components/NerdbunnyReason";
 import ResearchSection from "@/components/ResearchSection";
 import LastSection from "@/components/LastSection";
+import { AnimatePresence, motion } from "framer-motion";
+import { useSpeech } from "@/contexts/SpeechContext";
+import SpeechPlayer from "@/components/SpeechPlayer";
 
 const metadata: Metadata = {
   title: "AI-Powered Research Paper Error Detection",
@@ -66,7 +65,7 @@ export default function Home() {
   const [postId, setPostId] = useState("");
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
-
+  const { speechUrl, showSpeech } = useSpeech();
   const { theme } = useTheme();
   const triggerUploadRef: TriggerRefType = useRef(null);
   const User = false;
@@ -141,6 +140,21 @@ export default function Home() {
   return (
     <section className="w-full">
       <LandingPage />
+      <div className="w-full absolute bottom-0 z-10">
+        <AnimatePresence>
+          {showSpeech && speechUrl && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="w-full sm:px-12 mb-4 overflow-hidden"
+            >
+              <SpeechPlayer audio_url={speechUrl} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
       <div
         className={`flex flex-col md:flex-row items-start justify-center gap-4 ${theme === "dark" ? "bg-black" : "bg-white"}`}
       >

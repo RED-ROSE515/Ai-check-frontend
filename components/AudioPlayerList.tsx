@@ -6,7 +6,7 @@ import { useTheme } from "next-themes";
 import { useSpeech } from "@/contexts/SpeechContext";
 import AudioPlayerListItem from "./AudioPlayerListItem";
 
-export default function AudioPlayerList({}) {
+export default function AudioPlayerList({ className }: { className?: string }) {
   const { theme } = useTheme();
   const { speeches } = useSpeech();
   const [showIndex, setShowIndex] = useState<number>(0);
@@ -30,7 +30,7 @@ export default function AudioPlayerList({}) {
   return (
     <Card
       isBlurred
-      className={`h-full ${theme === "dark" ? "bg-[#050506] border-1 border-[#3C6B99]" : "bg-[#F6F6F6]"} w-full h-full`}
+      className={`h-full ${theme === "dark" ? "bg-[#050506] border-1 border-[#3C6B99]" : "bg-[#F6F6F6]"} w-full h-full ${className}`}
       shadow="lg"
     >
       <CardHeader>

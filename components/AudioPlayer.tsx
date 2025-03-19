@@ -8,6 +8,12 @@ import {
   Select,
   Progress,
   Skeleton,
+  DrawerFooter,
+  DrawerContent,
+  Drawer,
+  DrawerBody,
+  DrawerHeader,
+  useDisclosure,
 } from "@heroui/react";
 import { useWavesurfer } from "@wavesurfer/react";
 import { useSpeech } from "@/contexts/SpeechContext";
@@ -31,6 +37,8 @@ import {
 } from "@/components/icons";
 import { voices } from "./SummaryWrapper";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
+import { GiHamburgerMenu } from "react-icons/gi";
+
 export default function AudioPlayer({ id }: any) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const pathName = usePathname();
@@ -42,7 +50,7 @@ export default function AudioPlayer({ id }: any) {
   const [duration, setDuration] = useState("0:00");
   const { theme } = useTheme();
   const [isPending, startTransition] = useTransition();
-
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
     percentage,
     setPercentage,
@@ -179,14 +187,14 @@ export default function AudioPlayer({ id }: any) {
     fetchSpeech();
   }, []);
   return (
-    <div className="w-full flex flex-col md:flex-row justify-start md:justify-center h-full gap-4 p-1 md:p-4">
+    <div className="w-full flex flex-col-reverse md:flex-row justify-start md:justify-center h-full gap-4 p-1 md:p-4">
       <div className="w-full md:w-[50%] items-center flex flex-row justify-center h-full">
         <Card
           isBlurred
           className={`${theme === "dark" ? "bg-[#050506] border-1 border-[#3C6B99]" : "bg-[#F6F6F6]"} w-full h-full p-1`}
           shadow="lg"
         >
-          <CardBody>
+          <CardBody className="p-1">
             <Button
               variant="light"
               isLoading={isPending}
@@ -195,12 +203,12 @@ export default function AudioPlayer({ id }: any) {
                   history.back();
                 });
               }}
-              className="absolute left-0 top-0"
+              className="hidden md:flex absolute left-0 top-0"
             >
               <IoMdArrowBack size={20} />
               <span>Back</span>
             </Button>
-            <div className="absolute right-3 top-0">
+            <div className="hidden md:flex absolute right-3 top-0">
               <ShareButtons
                 url={DOMAIN + "/speeches/" + id}
                 title={title}
@@ -208,6 +216,30 @@ export default function AudioPlayer({ id }: any) {
                 // summary={result.summary.child}
               />
             </div>
+            <div className="flex md:hidden flex-row justify-between items-center">
+              <Button
+                variant="light"
+                className="px-0"
+                isLoading={isPending}
+                onPress={() => {
+                  startTransition(() => {
+                    history.back();
+                  });
+                }}
+              >
+                <IoMdArrowBack size={20} />
+                <span>Back</span>
+              </Button>
+              <div>
+                <ShareButtons
+                  url={DOMAIN + "/speeches/" + id}
+                  title={title}
+                  useIcon={false}
+                  // summary={result.summary.child}
+                />
+              </div>
+            </div>
+
             <div className="w-full flex flex-row justify-center items-center">
               <video
                 autoPlay
@@ -222,12 +254,13 @@ export default function AudioPlayer({ id }: any) {
                 className={`flex flex-col w-full justify-end rounded-xl shadow-md p-3 border-1 ${theme === "dark" ? "bg-black" : ""}`}
               >
                 <div className="flex flex-row justify-between items-start w-full">
-                  <div className="flex flex-col gap-0 w-full">
-                    <div className="flex flex-row justify-between items-center w-full">
-                      <p className="text-small text-foreground/80">
-                        {speechType}
-                      </p>
-                      {/* <Select
+                  {speechType && speechTitle ? (
+                    <div className="flex flex-col gap-0 w-full h-[60px]">
+                      <div className="flex flex-row justify-between items-center w-full">
+                        <p className="text-small text-foreground/80">
+                          {speechType}
+                        </p>
+                        {/* <Select
                         className="w-1/2 md:w-1/3"
                         defaultSelectedKeys={["alloy"]}
                         size="sm"
@@ -246,14 +279,26 @@ export default function AudioPlayer({ id }: any) {
                           </SelectItem>
                         ))}
                       </Select> */}
+                      </div>
+                      <h1
+                        className="text-large font-medium mt-2 truncate cursor-pointer"
+                        onClick={() =>
+                          router.push(DOMAIN + "/results/" + postId)
+                        }
+                      >
+                        {speechTitle}
+                      </h1>
                     </div>
-                    <h1
-                      className="text-large font-medium mt-2 truncate cursor-pointer"
-                      onClick={() => router.push(DOMAIN + "/results/" + postId)}
-                    >
-                      {speechTitle}
-                    </h1>
-                  </div>
+                  ) : (
+                    <div className="h-[60px] w-full space-y-2 p-2">
+                      <Skeleton className="w-full rounded-lg">
+                        <div className="h-[15px] rounded-md bg-default-300" />
+                      </Skeleton>
+                      <Skeleton className="w-full rounded-sm">
+                        <div className="h-[35px] rounded-md bg-default-300" />
+                      </Skeleton>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-col mt-3 gap-1 w-full">
@@ -367,18 +412,52 @@ export default function AudioPlayer({ id }: any) {
                   >
                     <ShuffleIcon className="text-foreground/80" />
                   </Button>
+                  <Button
+                    isIconOnly
+                    className="block md:hidden data-[hover]:bg-foreground/10 absolute right-5"
+                    radius="full"
+                    variant="light"
+                    onPress={onOpen}
+                  >
+                    <GiHamburgerMenu size={20} />
+                  </Button>
                 </div>
               </div>
             </div>
           </CardBody>
         </Card>
       </div>
-      <div className="w-full md:w-[35%] h-full">
+      <Drawer
+        isOpen={isOpen}
+        backdrop="blur"
+        size="full"
+        motionProps={{
+          variants: {
+            enter: {
+              opacity: 1,
+              x: 0,
+            },
+            exit: {
+              x: 100,
+              opacity: 0,
+            },
+          },
+        }}
+        onOpenChange={onOpenChange}
+      >
+        <DrawerContent>
+          {() => (
+            <>
+              <DrawerBody className="pl-3 pr-8 py-2">
+                <AudioPlayerList className="w-full h-full mr-2" />
+              </DrawerBody>
+            </>
+          )}
+        </DrawerContent>
+      </Drawer>
+      <div className="hidden md:block w-[35%] h-full">
         <AudioPlayerList />
       </div>
-      {/* <div className="w-full md:w-[30%] h-full">
-        <AudioPostDetail />
-      </div> */}
     </div>
   );
 }

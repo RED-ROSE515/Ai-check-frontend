@@ -4,9 +4,6 @@ import { Link, Pagination, Tabs, Tab, Chip } from "@heroui/react";
 import { usePagination } from "@/contexts/PaginationContext";
 import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
-import SpeechPlayer from "@/components/SpeechPlayer";
-import { useSpeech } from "@/contexts/SpeechContext";
-import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { IoNewspaper } from "react-icons/io5";
 import { ImProfile } from "react-icons/im";
@@ -191,7 +188,7 @@ const Footer = () => {
   const { theme } = useTheme();
 
   const { page, totalPage, setPage } = usePagination();
-  const { speechUrl, showSpeech } = useSpeech();
+
   const [isMounted, setIsMounted] = useState(false);
   const { isAuthenticated, user } = useAuth();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
@@ -206,21 +203,6 @@ const Footer = () => {
   }
   return (
     <div className="w-full flex flex-col justify-center items-center py-5">
-      <div className="w-full sticky">
-        <AnimatePresence>
-          {showSpeech && speechUrl && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="w-full sm:px-12 mb-4 overflow-hidden"
-            >
-              <SpeechPlayer audio_url={speechUrl} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
       <div className="flex md:hidden w-full flex-col justify-center items-center">
         <Tabs
           aria-label="Options"
