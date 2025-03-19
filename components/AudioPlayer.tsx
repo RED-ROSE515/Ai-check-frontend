@@ -38,6 +38,8 @@ import {
 import { voices } from "./SummaryWrapper";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { FaCross } from "react-icons/fa";
+import { FaX } from "react-icons/fa6";
 
 const NewAudioPlayerList = React.memo(
   ({ className }: { className?: string }) => {
@@ -146,6 +148,12 @@ export default function AudioPlayer({ id }: any) {
     // Cleanup function to unsubscribe from events
     return () => subscriptions.forEach((unsub) => unsub());
   }, [wavesurfer]);
+
+  useEffect(() => {
+    const currentPostIndex = speeches.findIndex(
+      (speech) => speech.post_id === currentPostId
+    );
+  }, []);
 
   const fetchSpeeches = async () => {
     const response = await api.get(
@@ -338,7 +346,7 @@ export default function AudioPlayer({ id }: any) {
                   <Button
                     isIconOnly
                     isDisabled
-                    className="data-[hover]:bg-foreground/10"
+                    className="hidden md:flex data-[hover]:bg-foreground/10"
                     radius="full"
                     variant="light"
                   >
@@ -399,8 +407,11 @@ export default function AudioPlayer({ id }: any) {
                       if (speechIndex < speechList.length - 1) {
                         const newSpeechIndex = speechIndex + 1;
                         const newSpeech = speechList[newSpeechIndex];
-                        setSpeechUrl(newSpeech?.speech_url);
-                        setSpeechType(newSpeech?.speech_type);
+                        if (newSpeech?.speech_url) {
+                          setSpeechUrl(newSpeech?.speech_url);
+                          setSpeechType(newSpeech?.speech_type);
+                        } else {
+                        }
                       }
                     }}
                     className="data-[hover]:bg-foreground/10"
@@ -412,7 +423,7 @@ export default function AudioPlayer({ id }: any) {
                   <Button
                     isIconOnly
                     isDisabled
-                    className="data-[hover]:bg-foreground/10"
+                    className="hidden md:flex data-[hover]:bg-foreground/10"
                     radius="full"
                     variant="light"
                   >
@@ -437,6 +448,7 @@ export default function AudioPlayer({ id }: any) {
         isOpen={isOpen}
         backdrop="blur"
         size="full"
+        hideCloseButton
         motionProps={{
           variants: {
             enter: {
@@ -452,8 +464,16 @@ export default function AudioPlayer({ id }: any) {
         onOpenChange={onOpenChange}
       >
         <DrawerContent>
-          {() => (
+          {(onClose) => (
             <>
+              <Button
+                isIconOnly
+                variant="light"
+                onPress={onClose}
+                className="absolute right-0 z-10 top-2"
+              >
+                <FaX />
+              </Button>
               <DrawerBody className="px-0 py-2">
                 <NewAudioPlayerList className="w-full h-full mr-2" />
               </DrawerBody>
