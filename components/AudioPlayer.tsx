@@ -40,6 +40,7 @@ import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaCross } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
+import { Particles } from "@/src/components/magicui/particles";
 
 const NewAudioPlayerList = React.memo(
   ({ className }: { className?: string }) => {
@@ -55,9 +56,10 @@ export default function AudioPlayer({ id }: any) {
   const { isMobile } = useDeviceCheck();
   const [time, setTime] = useState("0:00");
   const [duration, setDuration] = useState("0:00");
-  const { theme } = useTheme();
+  const { theme, resolvedTheme } = useTheme();
   const [isPending, startTransition] = useTransition();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [color, setColor] = useState("#ffffff");
   const {
     percentage,
     setPercentage,
@@ -80,6 +82,7 @@ export default function AudioPlayer({ id }: any) {
     speechId,
   } = useSpeech();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
+  const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
   const router = useRouter();
   // Ensure that the container is correctly passed as a RefObject
 
@@ -118,6 +121,9 @@ export default function AudioPlayer({ id }: any) {
     },
     [wavesurfer]
   );
+  useEffect(() => {
+    setColor(resolvedTheme === "dark" ? "#ffffff" : "#000000");
+  }, [resolvedTheme]);
   const prevSpeech = () => {
     if (speechIndex > 0) {
       let newSpeechIndex = speechIndex - 1;
@@ -152,9 +158,7 @@ export default function AudioPlayer({ id }: any) {
   };
 
   useEffect(() => {
-    console.log("isPlaying 1 -> ", isPlaying);
     if (percentage === 100) {
-      console.log("isPlaying -> ", isPlaying);
       setTime("0:00");
       isPlaying ? wavesurfer?.play() : wavesurfer?.pause();
     }
@@ -226,9 +230,26 @@ export default function AudioPlayer({ id }: any) {
       speechList.findIndex((speech: any) => speech?.speech_url === speechUrl)
     );
   }, [speechUrl]);
+
   useEffect(() => {
     fetchSpeeches();
     fetchSpeech();
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      console.log(window.scrollY);
+      if (
+        window.innerHeight + window.scrollY >=
+          document.documentElement.scrollHeight - 10 &&
+        isMobile
+      ) {
+        onOpen();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -285,16 +306,30 @@ export default function AudioPlayer({ id }: any) {
               </div>
             </div>
 
-            <div className="w-full flex flex-row justify-center items-center">
-              <video
+            <div className="w-full flex flex-col overflow-hidden justify-center items-center mt-0 md:mt-6 h-full min-h-[200px]">
+              <span>Sponsored by</span>
+              <div
+                className="card-3d cursor-pointer"
+                onClick={() => router.push(NOBLEBLOCKS_DOMAIN!)}
+              >
+                <div></div>
+              </div>
+              <Particles
+                className="absolute inset-0 z-0"
+                quantity={100}
+                ease={80}
+                color={color}
+                refresh
+              />
+              {/* <video
                 autoPlay
                 loop
                 muted
                 src={`${theme === "dark" ? "/audio-bg2-dark.mp4" : "/audio-bg2-white.mp4"}`}
                 className="w-full md:w-[40%] -z-10 opacity-50"
-              />
+              /> */}
             </div>
-            <div className="w-full h-full flex flex-col-reverse justity-end">
+            <div className="w-full h-full flex flex-col-reverse justity-end z-10">
               <div
                 className={`flex flex-col w-full justify-end rounded-xl shadow-md p-3 border-1 ${theme === "dark" ? "bg-black" : ""}`}
               >
@@ -303,7 +338,13 @@ export default function AudioPlayer({ id }: any) {
                     <div className="flex flex-col gap-0 w-full h-[60px]">
                       <div className="flex flex-row justify-between items-center w-full">
                         <p className="text-small text-foreground/80">
-                          {speechType}
+                          {speechType.split("Summary")[0] + " " + "Summary"}
+                        </p>
+                        <p
+                          className="text-small text-foreground/80 cursor-pointer"
+                          onClick={onOpen}
+                        >
+                          View Playlist
                         </p>
                         {/* <Select
                         className="w-1/2 md:w-1/3"
@@ -327,9 +368,7 @@ export default function AudioPlayer({ id }: any) {
                       </div>
                       <h1
                         className="text-large font-medium mt-2 truncate cursor-pointer"
-                        onClick={() =>
-                          router.push(DOMAIN + "/results/" + postId)
-                        }
+                        onClick={onOpen}
                       >
                         {speechTitle}
                       </h1>
@@ -347,8 +386,6 @@ export default function AudioPlayer({ id }: any) {
                 </div>
 
                 <div className="flex flex-col mt-3 gap-1 w-full">
-                  {/* {percentage < 100 ? ( */}
-                  {/* <Skeleton className="h-[40px] w-full rounded-lg" /> */}
                   <Progress
                     aria-label="Downloading..."
                     classNames={{
@@ -370,6 +407,13 @@ export default function AudioPlayer({ id }: any) {
                   <div className="flex justify-between">
                     <p className="text-small">{time}</p>
                     <p className="text-small text-foreground/50">{duration}</p>
+                  </div>
+                  <div className="fle justify-start items-start">
+                    <p className="text-xs">
+                      This voice narration has been sponsored by NobleBlocks,
+                      your decentralized publishing platform, rewarding those
+                      who truly deserve it.
+                    </p>
                   </div>
                 </div>
 
@@ -444,7 +488,7 @@ export default function AudioPlayer({ id }: any) {
                   </Button>
                   <Button
                     isIconOnly
-                    className="block md:hidden data-[hover]:bg-foreground/10 absolute right-5"
+                    className="block md:hidden data-[hover]:bg-foreground/10 absolute right-1"
                     radius="full"
                     variant="light"
                     onPress={onOpen}

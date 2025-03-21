@@ -61,10 +61,12 @@ export default function AudioPostDetail({}) {
 
   useEffect(() => {
     if (speechData) {
-      const initialSpeech = speechData[0];
-      setSpeechType(initialSpeech.speech_type);
-      setSpeechUrl(initialSpeech.audio_url);
-      setIsPlaying(false);
+      if (!speechUrl) {
+        const initialSpeech = speechData[0];
+        setSpeechType(initialSpeech.speech_type);
+        setSpeechUrl(initialSpeech.audio_url);
+        setIsPlaying(false);
+      }
       const speechTypes = [
         "ChildSummary",
         "CollegeSummary",

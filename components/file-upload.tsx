@@ -10,7 +10,14 @@ import {
   Video,
   X,
 } from "lucide-react";
-import { Button, Select, SelectItem, Input as HeroInput } from "@heroui/react";
+import {
+  Button,
+  Select,
+  SelectItem,
+  Input as HeroInput,
+  Tabs,
+  Tab,
+} from "@heroui/react";
 import { useRef, useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import _ from "lodash";
@@ -21,9 +28,7 @@ import { Progress } from "./ui/progress";
 import { useTheme } from "next-themes";
 import UserSearchBar from "./UserSearch";
 import { useAnalyze } from "@/contexts/AnalyzeContext";
-import { ShinyButton } from "./ui/shiny-button";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import { FaFile, FaLink } from "react-icons/fa";
 
 interface FileUploadProgress {
   progress: number;
@@ -269,62 +274,149 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
 
   return (
     <div>
-      <div className="">
-        <label
-          {...getRootProps()}
-          htmlFor="dropzone-file"
-          className={`relative h-[350px] flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed   ${theme === "dark" ? " bg-[#090C0F] border-[#293847] py-6 hover:bg-[#081524] hover:border-[#3C6B99]" : " bg-gray-50 py-6 hover:bg-gray-100"}`}
-        >
-          <div className="text-center">
-            <div className="mx-auto max-w-min rounded-md border p-2">
-              <UploadCloud size={20} />
+      <Tabs aria-label="Options" color="primary" variant="bordered">
+        <Tab
+          key="file"
+          title={
+            <div className="flex items-center space-x-2">
+              <FaFile />
+              <span>File</span>
             </div>
-            <p className="mt-2 text-sm text-gray-600">
-              <span className="font-semibold">Drop a file or Browse</span>
-            </p>
-            <p className="text-xs text-gray-500">
-              Click to upload a file &#40;file should be under 25 MB&#41;
-            </p>
-          </div>
-        </label>
-        <Input
-          {...getInputProps()}
-          className="hidden"
-          ref={fileInputRef}
-          id="dropzone-file"
-          type="file"
-        />
-      </div>
-      <div className="flex flex-col gap-1">
-        <div className="mt-2 flex flex-row justify-center gap-2">
-          <HeroInput
-            className="w-full"
-            label="Paper URL : "
-            variant="bordered"
-            value={paper_url}
-            onValueChange={(val) => setPaperUrl(val)}
-            labelPlacement="outside-left"
-            placeholder="https://arxiv.org/abs/..."
-            classNames={{ mainWrapper: "w-full" }}
-          />
-          <Button
-            isLoading={loading}
-            isDisabled={!paper_url}
-            className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-            onPress={() => handleAnalyze(paper_url, visibility[0], users)}
-          >
-            <span
-              className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+          }
+        >
+          <div className="">
+            <label
+              {...getRootProps()}
+              htmlFor="dropzone-file"
+              className={`relative h-[350px] flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed   ${theme === "dark" ? " bg-[#090C0F] border-[#293847] py-6 hover:bg-[#081524] hover:border-[#3C6B99]" : " bg-gray-50 py-6 hover:bg-gray-100"}`}
             >
-              Analyze for Errors
+              <div className="text-center">
+                <div className="mx-auto max-w-min rounded-md border p-2">
+                  <UploadCloud size={20} />
+                </div>
+                <p className="mt-2 text-sm text-gray-600">
+                  <span className="font-semibold">Drop a file or Browse</span>
+                </p>
+                <p className="text-xs text-gray-500">
+                  Click to upload a file &#40;file should be under 25 MB&#41;
+                </p>
+              </div>
+            </label>
+            <Input
+              {...getInputProps()}
+              className="hidden"
+              ref={fileInputRef}
+              id="dropzone-file"
+              type="file"
+            />
+            {uploadedFile && (
+              <div>
+                <div>
+                  <p className="my-2 mt-6 text-sm font-medium text-muted-foreground">
+                    Uploaded File
+                  </p>
+                  <div className="group flex justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0">
+                    <div className="flex flex-1 items-center p-2">
+                      <div className="text-white">
+                        {getFileIconAndColor(uploadedFile).icon}
+                      </div>
+                      <div className="ml-2 w-full space-y-1">
+                        <div className="flex justify-between text-sm">
+                          <p className="text-muted-foreground">
+                            {uploadedFile.name.slice(0, 25)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      className="hidden items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
+                      onClick={removeFile}
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+                </div>
+                <div className="flex md:flex-row flex-col justify-center w-full gap-5 mt-4">
+                  <div className="w-full md:w-[20%]">
+                    <Select
+                      isRequired
+                      variant="faded"
+                      className="max-w-xs"
+                      defaultSelectedKeys={["everyone"]}
+                      placeholder="Select visibility."
+                      selectedKeys={new Set(visibility)}
+                      onSelectionChange={(keys) =>
+                        setVisibility([...keys] as string[])
+                      }
+                    >
+                      {options.map((option) => (
+                        <SelectItem key={option.key}>{option.label}</SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+                  <UserSearchBar
+                    setUsers={setUsers}
+                    users={users}
+                    disabled={visibility[0] !== "specific_users"}
+                  />
+                  <Button
+                    isLoading={loading}
+                    className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+                    onPress={() => handleAnalyze(s3_link, visibility[0], users)}
+                  >
+                    <span
+                      className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+                    >
+                      Analyze for Errors
+                    </span>
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </Tab>
+        <Tab
+          key="url"
+          title={
+            <div className="flex items-center space-x-2">
+              <FaLink />
+              <span>URL</span>
+            </div>
+          }
+        >
+          <div className="flex flex-col gap-1">
+            <div className="mt-2 flex flex-row justify-center gap-2">
+              <HeroInput
+                className="w-full"
+                label="Paper URL : "
+                variant="bordered"
+                value={paper_url}
+                onValueChange={(val) => setPaperUrl(val)}
+                labelPlacement="outside-left"
+                placeholder="https://arxiv.org/abs/..."
+                classNames={{ mainWrapper: "w-full" }}
+              />
+              <Button
+                isLoading={loading}
+                isDisabled={!paper_url}
+                className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+                onPress={() => handleAnalyze(paper_url, visibility[0], users)}
+              >
+                <span
+                  className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+                >
+                  Analyze for Errors
+                </span>
+              </Button>
+            </div>
+            <span className="text-xs ml-2 text-gray-500">
+              Note: Currently only supporting papers from: arxiv, biorxiv,
+              medrxiv, and openalex
             </span>
-          </Button>
-        </div>
-        <span className="text-xs ml-2 text-gray-500">
-          Note: Currently only supporting papers from: arxiv, biorxiv, medrxiv,
-          and openalex
-        </span>
-      </div>
+          </div>
+        </Tab>
+      </Tabs>
+
       {currentFile && (
         <div>
           <p className="my-2 mt-6 text-sm font-medium text-muted-foreground">
@@ -358,71 +450,6 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
             >
               <X size={20} />
             </button>
-          </div>
-        </div>
-      )}
-
-      {uploadedFile && (
-        <div>
-          <div>
-            <p className="my-2 mt-6 text-sm font-medium text-muted-foreground">
-              Uploaded File
-            </p>
-            <div className="group flex justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0">
-              <div className="flex flex-1 items-center p-2">
-                <div className="text-white">
-                  {getFileIconAndColor(uploadedFile).icon}
-                </div>
-                <div className="ml-2 w-full space-y-1">
-                  <div className="flex justify-between text-sm">
-                    <p className="text-muted-foreground">
-                      {uploadedFile.name.slice(0, 25)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <button
-                className="hidden items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
-                onClick={removeFile}
-              >
-                <X size={20} />
-              </button>
-            </div>
-          </div>
-          <div className="flex md:flex-row flex-col justify-center w-full gap-5 mt-4">
-            <div className="w-full md:w-[20%]">
-              <Select
-                isRequired
-                variant="faded"
-                className="max-w-xs"
-                defaultSelectedKeys={["everyone"]}
-                placeholder="Select visibility."
-                selectedKeys={new Set(visibility)}
-                onSelectionChange={(keys) =>
-                  setVisibility([...keys] as string[])
-                }
-              >
-                {options.map((option) => (
-                  <SelectItem key={option.key}>{option.label}</SelectItem>
-                ))}
-              </Select>
-            </div>
-            <UserSearchBar
-              setUsers={setUsers}
-              users={users}
-              disabled={visibility[0] !== "specific_users"}
-            />
-            <Button
-              isLoading={loading}
-              className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-              onPress={() => handleAnalyze(s3_link, visibility[0], users)}
-            >
-              <span
-                className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
-              >
-                Analyze for Errors
-              </span>
-            </Button>
           </div>
         </div>
       )}

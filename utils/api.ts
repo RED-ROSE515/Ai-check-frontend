@@ -1,5 +1,4 @@
 import axios from "axios";
-import { navigateToSignin } from "./navigation";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const api = axios.create({
@@ -22,7 +21,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401 && localStorage.getItem("user")) {
       localStorage.removeItem("user");
-      navigateToSignin();
+      // navigateToSignin();
     }
     return Promise.reject(error);
   }

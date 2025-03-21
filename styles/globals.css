@@ -222,3 +222,68 @@
   line-height: 72px;
   letter-spacing: -1.44px;
 }
+
+@keyframes autoRun3d {
+  from {
+    transform: perspective(400px) rotateY(-360deg);
+  }
+  to {
+    transform: perspective(400px) rotateY(0deg);
+  }
+}
+
+@keyframes animateBrightness {
+  10% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(0.5);
+  }
+  90% {
+    filter: brightness(1);
+  }
+}
+
+.card-3d {
+  position: relative;
+  width: 400px;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: perspective(800px);
+  animation: autoRun3d 20s linear infinite;
+  will-change: transform;
+}
+
+.card-3d div {
+  position: relative;
+  width: 385px;
+  height: 65px;
+  background-size: contain;
+  background-repeat: none;
+  border-radius: 0.5rem;
+  background-repeat: no-repeat;
+  top: 50%;
+  left: 50%;
+  transform-origin: center center;
+  animation: animateBrightness 20s linear infinite;
+  transition-duration: 200ms;
+  will-change: transform, filter;
+  transform: translate(-50%, -50%) rotateY(0deg) translateZ(0px);
+  animation-delay: -0s;
+}
+
+.card-3d div {
+  background-image: url("../public/NOBLEBLOCKS-dark.png");
+}
+
+.dark .card-3d div {
+  background-image: url("../public/NOBLEBLOCKS-white.png");
+}
+
+.card-3d:hover {
+  animation-play-state: paused !important;
+}
+
+.card-3d:hover div {
+  animation-play-state: paused !important;
+}

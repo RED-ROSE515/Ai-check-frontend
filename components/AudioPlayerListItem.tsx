@@ -52,7 +52,7 @@ export default function AudioPlayerListItem({
               setCurrentPostId(summary?.post_id);
               setSpeechTitle(title);
               setSpeechId(speech_id);
-              setShowIndex(index);
+              setShowIndex(index === showIndex ? -1 : index);
             }}
             className={`${showIndex === index ? "h-full" : "h-[115px]"} ${theme === "dark" ? "bg-[#050506] border-1 border-slate-700" : "bg-[#F6F6F6]"} w-full`}
             shadow="lg"

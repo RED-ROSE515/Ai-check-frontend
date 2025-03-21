@@ -13,21 +13,19 @@ import {
   PopoverContent,
   Skeleton,
 } from "@heroui/react";
+import _ from "lodash";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { formatDistance, format, differenceInDays } from "date-fns";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { MdReport, MdOutlineContentCopy } from "react-icons/md";
 import { PiDotsThreeOutlineVerticalFill } from "react-icons/pi";
 import { useUserActions } from "@/hooks/useUserActions";
 import { CheckIcon } from "lucide-react";
-import { UserDetail } from "@/types/user";
-
-import api from "@/utils/api";
-import _ from "lodash";
 import { AnimatedSubscribeButton } from "./magicui/animated-subscribe-button";
 import { formatTimestamp } from "@/utils/date";
 import useGetData from "@/app/service/get-data";
+import { commify } from "@/utils/number_utils";
+import { useTheme } from "next-themes";
 
 const UserCard = ({
   userData,
@@ -36,11 +34,13 @@ const UserCard = ({
   showSignInModal,
   totalData,
   reportPost,
-  showFollow,
+  showFollow = true,
+  input_tokens,
+  output_tokens,
 }: any) => {
   const formattedDate = `Audited on: ` + formatTimestamp(postDate);
   const { isMobile } = useDeviceCheck();
-  const [loading, setLoading] = useState(false);
+  const { theme } = useTheme();
   const { handleFollow } = useUserActions({
     showSignInModal,
   });
@@ -278,6 +278,17 @@ const UserCard = ({
                         >
                           {totalData.reported_me ? "UnReport" : "Report"}
                         </Button>
+                        {input_tokens && output_tokens ? (
+                          <Card
+                            className={`text-sm md:text-md w-full items-center space-x-4 p-2 md:p-4 flex flex-row justify-center  ${theme === "dark" ? "bg-[#242F3C]" : "bg-gray-200"}`}
+                          >
+                            <p>{`IN: ${commify(input_tokens)}`}</p>
+                            <p>|</p>
+                            <p>{`OUT: ${commify(output_tokens)}`}</p>
+                          </Card>
+                        ) : (
+                          <div />
+                        )}
                       </div>
                     )}
                   </PopoverContent>

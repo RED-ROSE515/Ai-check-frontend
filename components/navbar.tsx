@@ -174,33 +174,28 @@ export const Navbar = () => {
         <NavbarContent className="flex w-full basis-full" justify="end">
           <NavbarItem className="flex items-center gap-[6px]">
             {/* <CircularProgressBar className="ml-2 md:ml-4 h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" /> */}
-
-            <Tooltip content="Theme">
-              <ThemeSwitch
-                className={`${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
-              />
-            </Tooltip>
-            <Tooltip content="Statistics">
+            {isMobile ? (
+              <Tooltip content="Past Recordings">
+                <Button
+                  isIconOnly
+                  variant="light"
+                  isLoading={isSpeechPending}
+                  onPress={() =>
+                    startSpeechTransition(() => {
+                      router.push("/speeches");
+                    })
+                  }
+                  className={`w-[36px] h-[36px] min-w-[36px] min-h-[36px] rounded-[50%] flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+                >
+                  <SpeechBookSVG
+                    size={20}
+                    className={iconClasses}
+                    color={theme === "dark" ? "#798FA6" : "#828489"}
+                  />
+                </Button>
+              </Tooltip>
+            ) : (
               <Button
-                isIconOnly
-                variant="light"
-                isLoading={isPending}
-                onPress={() =>
-                  startTransition(() => {
-                    router.push("/statistics");
-                  })
-                }
-                className={`w-[36px] h-[36px] min-w-[36px] min-h-[36px] rounded-[50%] flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
-              >
-                <StatisticsIcon
-                  size={20}
-                  color={`${theme === "dark" ? "#798FA6" : "#828489"}`}
-                />
-              </Button>
-            </Tooltip>
-            <Tooltip content="Past Recordings">
-              <Button
-                isIconOnly
                 variant="light"
                 isLoading={isSpeechPending}
                 onPress={() =>
@@ -208,15 +203,51 @@ export const Navbar = () => {
                     router.push("/speeches");
                   })
                 }
-                className={`w-[36px] h-[36px] min-w-[36px] min-h-[36px] rounded-[50%] flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+                className={`flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
               >
-                <SpeechBookSVG
-                  size={20}
-                  className={iconClasses}
-                  color={theme === "dark" ? "#798FA6" : "#828489"}
-                />
+                Past Recordings
               </Button>
+            )}
+
+            {isMobile ? (
+              <Tooltip content="Statistics">
+                <Button
+                  isIconOnly
+                  variant="light"
+                  isLoading={isPending}
+                  onPress={() =>
+                    startTransition(() => {
+                      router.push("/statistics");
+                    })
+                  }
+                  className={`w-[36px] h-[36px] min-w-[36px] min-h-[36px] rounded-[50%] flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+                >
+                  <StatisticsIcon
+                    size={20}
+                    color={`${theme === "dark" ? "#798FA6" : "#828489"}`}
+                  />
+                </Button>
+              </Tooltip>
+            ) : (
+              <Button
+                variant="light"
+                isLoading={isPending}
+                onPress={() =>
+                  startTransition(() => {
+                    router.push("/statistics");
+                  })
+                }
+                className={`flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+              >
+                Statistics
+              </Button>
+            )}
+            <Tooltip content="Theme">
+              <ThemeSwitch
+                className={`${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+              />
             </Tooltip>
+
             <Dropdown
               placement="bottom-end"
               classNames={{

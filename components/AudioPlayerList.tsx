@@ -1,14 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Card, CardBody, CardHeader } from "@heroui/react";
+import { Card, CardBody, CardHeader, Button } from "@heroui/react";
 
 import { useTheme } from "next-themes";
 import { useSpeech } from "@/contexts/SpeechContext";
 import AudioPlayerListItem from "./AudioPlayerListItem";
+import api from "@/utils/api";
+import Loader from "./Loader";
 
 export default function AudioPlayerList({ className }: { className?: string }) {
   const { theme } = useTheme();
-  const { speeches, currentPostId } = useSpeech();
+  const { speeches, currentPostId, setSpeeches } = useSpeech();
+  const [loading, setLoading] = useState(false);
   const [showIndex, setShowIndex] = useState<number>(0);
   useEffect(() => {
     if (currentPostId) {
@@ -32,7 +35,15 @@ export default function AudioPlayerList({ className }: { className?: string }) {
         </div>
       ));
   };
-
+  const fetchSpeeches = async () => {
+    setLoading(true);
+    const response = await api.get(
+      `/post/pagination?start=${speeches.length}&limit=10&has_speech=true`
+    );
+    const newSpeeches = [...speeches, ...response.data.data];
+    setSpeeches(newSpeeches);
+    setLoading(false);
+  };
   return (
     <Card
       isBlurred
@@ -48,7 +59,7 @@ export default function AudioPlayerList({ className }: { className?: string }) {
       </CardHeader>
       <CardBody className="h-full w-full flex flex-col justify-start items-start gap-2">
         <div
-          className={`h-fit w-full flex flex-col justify-start items-start gap-2 p-2 rounded-lg`}
+          className={`h-fit w-full flex flex-col justify-center items-center gap-2 p-2 rounded-lg`}
         >
           {speeches
             ? speeches.map((speech, index) => {
@@ -64,6 +75,15 @@ export default function AudioPlayerList({ className }: { className?: string }) {
                 );
               })
             : renderSkeletons()}
+          {speeches.length > 0 && !loading ? (
+            <div className="flex flex-row justify-center items-center">
+              <Button variant="bordered" onPress={fetchSpeeches}>
+                Load More...
+              </Button>
+            </div>
+          ) : (
+            <Loader className="mt-6" />
+          )}
         </div>
       </CardBody>
     </Card>

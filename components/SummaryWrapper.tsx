@@ -229,13 +229,15 @@ const SummaryWrapper = ({
           link={link}
           reportPost={reportPost}
           showSignInModal={showSignInModal}
+          input_tokens={input_tokens}
+          output_tokens={output_tokens}
           totalData={totalData}
           className="max-w-fit"
         />
         <Divider
           className={`${theme === "dark" ? "bg-[#2E3E4E]" : "bg-[#E2E2E2]"}`}
         />
-        {input_tokens && output_tokens && total_cost && (
+        {/* {input_tokens && output_tokens && total_cost && (
           <div className="flex flex-row justify-center">
             <div className="w-full md:w-fit">
               <Card
@@ -247,7 +249,7 @@ const SummaryWrapper = ({
               </Card>
             </div>
           </div>
-        )}
+        )} */}
       </div>
 
       <div className="flex flex-col md:flex-row justify-between">
