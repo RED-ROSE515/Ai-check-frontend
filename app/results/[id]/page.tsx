@@ -168,7 +168,7 @@ const ResultPage = ({ params }: any) => {
 
   return (
     <div
-      className={`${theme === "dark" ? "bg-black" : "bg-white"} pt-0 md:pt-6 lg:pt-16`}
+      className={`${theme === "dark" ? "bg-black" : "bg-white"} pt-2 md:pt-6 lg:pt-16`}
     >
       {!errorMessage && (
         <div
@@ -349,7 +349,7 @@ const ResultPage = ({ params }: any) => {
           </ModalBody>
         </ModalContent>
       </Modal>
-      <div className="fixed bottom-12 right-5">
+      <div className="fixed bottom-12 right-5 z-50">
         {/* <Badge
           color="warning"
           content={result?.count_comment || 0}

@@ -123,6 +123,7 @@ export const Navbar = () => {
   const [isOpen, setOpen] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const [isPending, startTransition] = useTransition();
+  const [isCheckPending, startCheckTransition] = useTransition();
   const [isSpeechPending, startSpeechTransition] = useTransition();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
@@ -174,6 +175,40 @@ export const Navbar = () => {
         <NavbarContent className="flex w-full basis-full" justify="end">
           <NavbarItem className="flex items-center gap-[6px]">
             {/* <CircularProgressBar className="ml-2 md:ml-4 h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" /> */}
+            {isMobile ? (
+              <Tooltip content="Research Audit">
+                <Button
+                  isIconOnly
+                  variant="light"
+                  isLoading={isCheckPending}
+                  onPress={() =>
+                    startCheckTransition(() => {
+                      router.push("/check");
+                    })
+                  }
+                  className={`w-[36px] h-[36px] min-w-[36px] min-h-[36px] rounded-[50%] flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+                >
+                  <ResearchAuditSVG
+                    className={iconClasses}
+                    color={theme === "dark" ? "#92A8BF" : "#828489"}
+                  />
+                </Button>
+              </Tooltip>
+            ) : (
+              <Button
+                variant="light"
+                isLoading={isCheckPending}
+                onPress={() =>
+                  startCheckTransition(() => {
+                    router.push("/check");
+                  })
+                }
+                className={`flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+              >
+                Research Audit
+              </Button>
+            )}
+
             {isMobile ? (
               <Tooltip content="Past Recordings">
                 <Button

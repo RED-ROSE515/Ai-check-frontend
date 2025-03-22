@@ -10,12 +10,19 @@ import Loader from "./Loader";
 
 export default function AudioPlayerList({ className }: { className?: string }) {
   const { theme } = useTheme();
-  const { speeches, currentPostId, setSpeeches } = useSpeech();
+  const {
+    speechPosts,
+    currentPostId,
+    setSpeechPosts,
+    showIndex,
+    setShowIndex,
+  } = useSpeech();
   const [loading, setLoading] = useState(false);
-  const [showIndex, setShowIndex] = useState<number>(0);
   useEffect(() => {
     if (currentPostId) {
-      const index = speeches.findIndex((speech) => speech.id === currentPostId);
+      const index = speechPosts.findIndex(
+        (speechPost) => speechPost.id === currentPostId
+      );
       setShowIndex(index);
     }
   }, [currentPostId]);
@@ -38,10 +45,10 @@ export default function AudioPlayerList({ className }: { className?: string }) {
   const fetchSpeeches = async () => {
     setLoading(true);
     const response = await api.get(
-      `/post/pagination?start=${speeches.length}&limit=10&has_speech=true`
+      `/post/pagination?start=${speechPosts.length}&limit=10&has_speech=true`
     );
-    const newSpeeches = [...speeches, ...response.data.data];
-    setSpeeches(newSpeeches);
+    const newSpeeches = [...speechPosts, ...response.data.data];
+    setSpeechPosts(newSpeeches);
     setLoading(false);
   };
   return (
@@ -61,21 +68,21 @@ export default function AudioPlayerList({ className }: { className?: string }) {
         <div
           className={`h-fit w-full flex flex-col justify-center items-center gap-2 p-2 rounded-lg`}
         >
-          {speeches
-            ? speeches.map((speech, index) => {
+          {speechPosts
+            ? speechPosts.map((speechPost, index) => {
                 return (
                   <AudioPlayerListItem
                     key={index}
                     index={index}
                     className="w-full"
-                    id={speech.id}
+                    id={speechPost.id}
                     showIndex={showIndex}
                     setShowIndex={setShowIndex}
                   />
                 );
               })
             : renderSkeletons()}
-          {speeches.length > 0 && !loading ? (
+          {speechPosts.length > 0 && !loading ? (
             <div className="flex flex-row justify-center items-center">
               <Button variant="bordered" onPress={fetchSpeeches}>
                 Load More...

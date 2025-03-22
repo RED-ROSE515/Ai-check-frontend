@@ -41,6 +41,8 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { FaCross } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { Particles } from "@/src/components/magicui/particles";
+import useGetItem from "@/app/service/get-items";
+import useGetData from "@/app/service/get-data";
 
 const NewAudioPlayerList = React.memo(
   ({ className }: { className?: string }) => {
@@ -60,6 +62,7 @@ export default function AudioPlayer({ id }: any) {
   const [isPending, startTransition] = useTransition();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [color, setColor] = useState("#ffffff");
+  const [postIndex, setPostIndex] = useState<number>(0);
   const {
     percentage,
     setPercentage,
@@ -69,23 +72,29 @@ export default function AudioPlayer({ id }: any) {
     setSpeechUrl,
     setShowSpeech,
     speechUrl,
-    speeches,
+    speechPosts,
     speechTitle,
+    showIndex,
     listenedSpeeches,
     setListenedSpeeches,
     setSpeechType,
-    setSpeeches,
+    setSpeechPosts,
     speechType,
     currentPostId,
     setCurrentPostId,
     setSpeechTitle,
     speechId,
+    setShowIndex,
   } = useSpeech();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
   const router = useRouter();
+  const [auditDetailPending, startAuditDetailTransition] = useTransition();
+  const [newPost, setNewPost] = useState<any>();
   // Ensure that the container is correctly passed as a RefObject
-
+  const { data: speechData, isLoading: speechLoading } = useGetData(
+    `post/speech?post_id=${newPost?.id}`
+  );
   const { wavesurfer } = useWavesurfer({
     container: containerRef, // Pass the ref object itself, not its current property
     waveColor: theme === "dark" ? "#4F4A85" : "#A7A9AB",
@@ -124,43 +133,40 @@ export default function AudioPlayer({ id }: any) {
   useEffect(() => {
     setColor(resolvedTheme === "dark" ? "#ffffff" : "#000000");
   }, [resolvedTheme]);
+
+  useEffect(() => {
+    const index = speechPosts.findIndex(
+      (speechPost) => speechPost.id === currentPostId
+    );
+    setPostIndex(index);
+  }, [currentPostId]);
+  useEffect(() => {
+    if (speechData) {
+      const initialSpeech = speechData[0];
+      setSpeechType(initialSpeech.speech_type);
+      setSpeechUrl(initialSpeech.audio_url);
+      setSpeechTitle(initialSpeech.post_title);
+      setCurrentPostId(initialSpeech.post_id);
+    }
+  }, [speechData]);
+
   const prevSpeech = () => {
-    if (speechIndex > 0) {
-      let newSpeechIndex = speechIndex - 1;
-      let newSpeech = speechList[newSpeechIndex];
-
-      while (!newSpeech?.speech_url && newSpeechIndex > 0) {
-        newSpeechIndex--;
-        newSpeech = speechList[newSpeechIndex];
-      }
-
-      if (newSpeech?.speech_url) {
-        setSpeechUrl(newSpeech.speech_url);
-        setSpeechType(newSpeech.speech_type);
-      }
+    if (postIndex > 0) {
+      setNewPost(speechPosts[postIndex - 1]);
+      setShowIndex(postIndex - 1);
     }
   };
   const nextSpeech = () => {
-    if (speechIndex < speechList.length - 1) {
-      let newSpeechIndex = speechIndex + 1;
-      let newSpeech = speechList[newSpeechIndex];
-
-      while (!newSpeech?.speech_url && newSpeechIndex < speechList.length - 1) {
-        newSpeechIndex++;
-        newSpeech = speechList[newSpeechIndex];
-      }
-
-      if (newSpeech?.speech_url) {
-        setSpeechUrl(newSpeech.speech_url);
-        setSpeechType(newSpeech.speech_type);
-      }
+    if (postIndex < speechPosts.length - 1) {
+      setNewPost(speechPosts[postIndex + 1]);
+      setShowIndex(postIndex + 1);
     }
   };
 
   useEffect(() => {
     if (percentage === 100) {
       setTime("0:00");
-      isPlaying ? wavesurfer?.play() : wavesurfer?.pause();
+      if (isPlaying) wavesurfer?.play();
     }
   }, [isPlaying, wavesurfer, percentage]);
   useEffect(() => {
@@ -193,7 +199,7 @@ export default function AudioPlayer({ id }: any) {
     const response = await api.get(
       "/post/pagination?start=0&limit=10&has_speech=true"
     );
-    setSpeeches(response.data.data);
+    setSpeechPosts(response.data.data);
     if (!id) {
       const speechData = response.data.data[0];
       setTitle(speechData.title);
@@ -212,11 +218,12 @@ export default function AudioPlayer({ id }: any) {
     setSpeechType(response.data.speech_type);
     setSpeechUrl(response.data.audio_url);
     wavesurfer?.load(response.data.audio_url);
+    setIsPlaying(true);
   };
 
   useEffect(() => {
-    const index = speeches.findIndex(
-      (speech) => pathName === "/speeches/" + speech.id
+    const index = speechPosts.findIndex(
+      (speechPost) => pathName === "/speeches/" + speechPost.id
     );
     setSpeechIndex(index);
   }, [pathName]);
@@ -238,14 +245,11 @@ export default function AudioPlayer({ id }: any) {
 
   useEffect(() => {
     const handleScroll = () => {
-      console.log(window.scrollY);
       if (
-        window.innerHeight + window.scrollY >=
-          document.documentElement.scrollHeight - 10 &&
-        isMobile
-      ) {
+        window.innerHeight + window.scrollY ==
+        document.documentElement.scrollHeight
+      )
         onOpen();
-      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -335,17 +339,12 @@ export default function AudioPlayer({ id }: any) {
               >
                 <div className="flex flex-row justify-between items-start w-full">
                   {speechType && speechTitle ? (
-                    <div className="flex flex-col gap-0 w-full h-[60px]">
+                    <div className="flex flex-col gap-0 w-full h-[65px]">
                       <div className="flex flex-row justify-between items-center w-full">
                         <p className="text-small text-foreground/80">
                           {speechType.split("Summary")[0] + " " + "Summary"}
                         </p>
-                        <p
-                          className="text-small text-foreground/80 cursor-pointer"
-                          onClick={onOpen}
-                        >
-                          View Playlist
-                        </p>
+
                         {/* <Select
                         className="w-1/2 md:w-1/3"
                         defaultSelectedKeys={["alloy"]}
@@ -374,9 +373,9 @@ export default function AudioPlayer({ id }: any) {
                       </h1>
                     </div>
                   ) : (
-                    <div className="h-[60px] w-full space-y-2 p-2">
+                    <div className="h-[66px] w-full space-y-2 p-2">
                       <Skeleton className="w-full rounded-lg">
-                        <div className="h-[15px] rounded-md bg-default-300" />
+                        <div className="h-[20px] rounded-md bg-default-300" />
                       </Skeleton>
                       <Skeleton className="w-full rounded-sm">
                         <div className="h-[35px] rounded-md bg-default-300" />
@@ -408,12 +407,32 @@ export default function AudioPlayer({ id }: any) {
                     <p className="text-small">{time}</p>
                     <p className="text-small text-foreground/50">{duration}</p>
                   </div>
-                  <div className="fle justify-start items-start">
-                    <p className="text-xs">
-                      This voice narration has been sponsored by NobleBlocks,
-                      your decentralized publishing platform, rewarding those
-                      who truly deserve it.
-                    </p>
+                  <div className="flex flex-row justify-between items-center">
+                    <Button
+                      className="px-1 py-0"
+                      variant="bordered"
+                      size="sm"
+                      isLoading={auditDetailPending}
+                      onPress={() =>
+                        startAuditDetailTransition(() =>
+                          router.push(DOMAIN + "/results/" + currentPostId)
+                        )
+                      }
+                    >
+                      <p className="text-small text-foreground/80">
+                        View Full Audit Report
+                      </p>
+                    </Button>
+                    <Button
+                      className="px-1 py-0"
+                      variant="bordered"
+                      size="sm"
+                      onPress={onOpen}
+                    >
+                      <p className="text-small text-foreground/80">
+                        View Playlist
+                      </p>
+                    </Button>
                   </div>
                 </div>
 
@@ -429,7 +448,7 @@ export default function AudioPlayer({ id }: any) {
                   </Button>
                   <Button
                     isIconOnly
-                    isDisabled={speechIndex === 0}
+                    isDisabled={showIndex === 0}
                     className="data-[hover]:bg-foreground/10"
                     radius="full"
                     variant="light"
@@ -470,6 +489,7 @@ export default function AudioPlayer({ id }: any) {
                   </Button>
                   <Button
                     isIconOnly
+                    isDisabled={postIndex === speechPosts.length - 1}
                     onPress={nextSpeech}
                     className="data-[hover]:bg-foreground/10"
                     radius="full"

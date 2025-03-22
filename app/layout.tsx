@@ -52,10 +52,7 @@ export default function RootLayout({
                       <SearchProvider>
                         <div className="relative flex flex-col w-full overflow-x-hidden">
                           <Navbar />
-                          <main
-                            className="w-screen overflow-x-hidden flex-grow"
-                            id="main"
-                          >
+                          <main className="w-screen flex-grow" id="main">
                             {children}
                             <CircularProgressBar className="h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" />
                             <footer className="hidden w-full md:flex items-center justify-center">

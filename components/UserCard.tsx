@@ -209,15 +209,15 @@ const UserCard = ({
               </Card>
             </PopoverContent>
           </Popover>
-          <div className="flex justify-between items-center w-full">
-            <div className="flex flex-col gap-[1px] w-[85%]">
+          <div className="flex justify-between items-center flex-grow w-0">
+            <div className="flex flex-col gap-[1px] flex-grow w-0">
               <span
                 className="text-[16px] leading-[16px] max-w-[99%] truncate"
                 style={{ fontWeight: 500 }}
               >
                 {userData.first_name}
               </span>
-              <span className="text-[14px] font-normal text-gray-500 leading-[20px] truncate max-w-[99%]">
+              <span className="text-[14px] font-normal text-gray-500 leading-[20px] truncate ">
                 {formattedDate}
               </span>
             </div>

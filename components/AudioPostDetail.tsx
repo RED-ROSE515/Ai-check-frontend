@@ -4,7 +4,6 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Image as HeroImage,
   Button,
   Skeleton,
   Accordion,
@@ -19,14 +18,10 @@ import errorImage from "../public/NerdBunnyUI/Error.png";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useSpeech } from "@/contexts/SpeechContext";
-import { usePathname, useRouter } from "next/navigation";
-import { useToast } from "@/hooks/use-toast";
-import api from "@/utils/api";
+import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
-import { ShineBorder } from "./ui/shine-border";
-import { AuroraText } from "@/src/components/magicui/aurora-text";
 import { AnimatedGradientText } from "./ui/animated-gradient-text";
 import useGetData from "@/app/service/get-data";
 
@@ -61,12 +56,11 @@ export default function AudioPostDetail({}) {
 
   useEffect(() => {
     if (speechData) {
-      if (!speechUrl) {
-        const initialSpeech = speechData[0];
-        setSpeechType(initialSpeech.speech_type);
-        setSpeechUrl(initialSpeech.audio_url);
-        setIsPlaying(false);
-      }
+      if (speechUrl) setIsPlaying(true);
+      const initialSpeech = speechData[0];
+      setSpeechType(initialSpeech.speech_type);
+      setSpeechUrl(initialSpeech.audio_url);
+      // }
       const speechTypes = [
         "ChildSummary",
         "CollegeSummary",
@@ -152,7 +146,7 @@ export default function AudioPostDetail({}) {
               )
             }
           >
-            View Audit Result
+            View Full Audit Report
           </Button>
         </div>
       </CardHeader>

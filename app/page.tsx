@@ -140,7 +140,7 @@ export default function Home() {
   return (
     <section className="w-full">
       <LandingPage />
-      <div className="w-full absolute bottom-0 z-10">
+      <div className="w-full fixed bottom-0 z-10">
         <AnimatePresence>
           {showSpeech && speechUrl && (
             <motion.div
@@ -287,7 +287,7 @@ export default function Home() {
                             <span>{result.count_view || 0}</span>
                           </Button>
                           <ShareButtons
-                            url={API_BASE_URL + "/results/" + result.id}
+                            url={DOMAIN + "/results/" + result.id}
                             title={result.title}
                             // summary={result.summary.child}
                           />
