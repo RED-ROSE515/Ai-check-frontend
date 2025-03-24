@@ -226,8 +226,9 @@ export default function AudioPlayer({ id }: any) {
   useEffect(() => {
     const handleScroll = () => {
       if (
+        isMobile &&
         window.innerHeight + window.scrollY ==
-        document.documentElement.scrollHeight
+          document.documentElement.scrollHeight
       )
         onOpen();
     };
