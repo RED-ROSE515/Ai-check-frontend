@@ -65,7 +65,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex w-full flex-col items-center justify-start h-[80vh]">
+    <div className="flex w-full flex-col items-center justify-start h-[80vh] overflow-y-auto max-h-[80vh]">
       <SignInDialog isOpen={showSignIn} onClose={() => setShowSignIn(false)} />
       {isLoading ? (
         <Spinner className="my-4" color="primary" />

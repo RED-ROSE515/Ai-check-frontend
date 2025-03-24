@@ -285,6 +285,14 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
           }
         >
           <div className="">
+            <p className="text-lg font-semibold">Analyze a Research Paper</p>
+            <p className="text-sm mb-2">
+              Submit research papers that matter to you—whether they’re trending
+              in your field, influencing public conversations, or raising
+              important questions.NerdBunny helps uncover inconsistencies,
+              flawed reasoning, or methodological issues and publishes the
+              results for open community review.
+            </p>
             <label
               {...getRootProps()}
               htmlFor="dropzone-file"
@@ -301,16 +309,6 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                   Click to upload a file &#40;file should be under 25 MB&#41;
                 </p>
                 <br />
-                <p className="text-xs text-gray-500">
-                  Submit research papers that matter to you—whether they’re
-                  trending in your field, influencing public conversations, or
-                  raising important questions.
-                </p>
-                <p className="text-xs text-gray-500">
-                  NerdBunny helps uncover inconsistencies, flawed reasoning, or
-                  methodological issues and publishes the results for open
-                  community review.
-                </p>
               </div>
             </label>
             <Input
@@ -396,6 +394,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
           }
         >
           <div className="flex flex-col gap-1">
+            <p className="font-semibold text-lg">Paste Paper URL</p>
             <div className="mt-2 flex flex-col md:flex-row justify-center gap-2">
               <HeroInput
                 className="w-full"
