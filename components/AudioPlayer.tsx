@@ -196,10 +196,10 @@ export default function AudioPlayer({ id }: any) {
     );
     setSpeechPosts(response.data.data);
     if (!id) {
-      const speechData = response.data.data[0];
-      setTitle(speechData.title);
-      setCurrentPostId(speechData.id);
-      setSpeechTitle(speechData.title);
+      const initialSpeechData = response.data.data[0];
+      setTitle(initialSpeechData.title);
+      setCurrentPostId(initialSpeechData.id);
+      setSpeechTitle(initialSpeechData.title);
     }
   };
 

@@ -101,6 +101,7 @@ export default function Home() {
       });
     }
   };
+
   const reportPost = async (id: string, reported_me: boolean) => {
     try {
       const res = await handleReport(id, reported_me);
@@ -119,6 +120,7 @@ export default function Home() {
       console.log(err);
     }
   };
+
   const showSignInModal = async (action: string) => {
     toast({
       title: "Info",

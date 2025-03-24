@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, capitalize } from "@mui/material";
 import ReactMarkdown from "react-markdown";
 import Image, { StaticImageData } from "next/image";
@@ -40,6 +40,8 @@ import {
   FaGlobe,
   FaLink,
   FaMinus,
+  FaPlay,
+  FaPlayCircle,
   FaPlus,
   FaUser,
 } from "react-icons/fa";
@@ -47,6 +49,7 @@ import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 
 import { SiSharp } from "react-icons/si";
 import { useRouter } from "next/navigation";
+import useGetData from "@/app/service/get-data";
 const getColorForScore = (score: number) => {
   switch (true) {
     case score >= 9:
@@ -107,7 +110,8 @@ interface SummaryType {
   title: string;
   content: string;
   value: string;
-  audio_url: string;
+  audio_url?: string;
+  speech_url?: string;
   image: StaticImageData;
 }
 const SummaryWrapper = ({
@@ -138,34 +142,57 @@ const SummaryWrapper = ({
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const { data: speechData, isLoading: speechLoading } = useGetData(
+    totalData?.id ? `post/speech?post_id=${totalData?.id}` : ""
+  );
   const summaryLevels = [
     {
       title: "Child Summary",
       content: summary.summary?.child,
       value: "ChildSummary",
-      audio_url: "",
       image: childImage,
+      speech_id: speechData?.find(
+        (speech: any) => speech.speech_type === "ChildSummary"
+      )?.id,
+      speech_url: speechData?.find(
+        (speech: any) => speech.speech_type === "ChildSummary"
+      )?.audio_url,
     },
     {
       title: "College Summary",
       content: summary.summary?.college,
       value: "CollegeSummary",
-      audio_url: "",
       image: collegeImage,
+      speech_id: speechData?.find(
+        (speech: any) => speech.speech_type === "CollegeSummary"
+      )?.id,
+      speech_url: speechData?.find(
+        (speech: any) => speech.speech_type === "CollegeSummary"
+      )?.audio_url,
     },
     {
       title: "PhD Summary",
       content: summary.summary?.phd,
       value: "PhDSummary",
-      audio_url: "",
       image: phDImage,
+      speech_id: speechData?.find(
+        (speech: any) => speech.speech_type === "PhDSummary"
+      )?.id,
+      speech_url: speechData?.find(
+        (speech: any) => speech.speech_type === "PhDSummary"
+      )?.audio_url,
     },
     {
       title: "Error Summary",
       content: summary.summary?.error,
       value: "ErrorSummary",
-      audio_url: "",
       image: errorImage,
+      speech_id: speechData?.find(
+        (speech: any) => speech.speech_type === "ErrorSummary"
+      )?.id,
+      speech_url: speechData?.find(
+        (speech: any) => speech.speech_type === "ErrorSummary"
+      )?.audio_url,
     },
   ];
   const generateSpeech = async () => {
@@ -202,6 +229,7 @@ const SummaryWrapper = ({
     }
   };
 
+  useEffect(() => {}, [speechData]);
   return (
     <div
       className="flex w-full flex-col rounded-lg p-4 md:px-4 gap-5"
@@ -429,21 +457,41 @@ const SummaryWrapper = ({
                       placement="top"
                       closeDelay={1000}
                     >
-                      <Button
-                        isIconOnly
-                        variant="bordered"
-                        onPress={async (e) => {
-                          setCurrentSummary(level);
-                          onOpen();
-                        }}
-                        className={`hover:bg-transparent border-1 border-[#DEE5EB] w-[38px] h-[30px] hover:text-pink-600  ${index === 0 && "bg-[#EE43DE] border-none"}`}
-                      >
-                        {/* <FaPlay /> */}
-                        <RiVoiceAiLine
-                          className="w-full p-2"
-                          style={{ height: "fit-content" }}
-                        />
-                      </Button>
+                      {level.speech_url ? (
+                        <Button
+                          isIconOnly
+                          variant="bordered"
+                          onPress={async (e) => {
+                            // alert(level.speech_url);
+                            setShowSpeech(false);
+                            setSpeechUrl(level.speech_url);
+                            setSpeechId(level.speech_id);
+                            setSpeechTitle(summary.metadata.title);
+                            setShowSpeech(true);
+                          }}
+                          className={`hover:bg-transparent w-[38px] h-[30px] hover:text-pink-600 border-none`}
+                        >
+                          <FaPlayCircle
+                            className="w-full p-2"
+                            style={{ height: "fit-content" }}
+                          />
+                        </Button>
+                      ) : (
+                        <Button
+                          isIconOnly
+                          variant="bordered"
+                          onPress={async (e) => {
+                            setCurrentSummary(level);
+                            onOpen();
+                          }}
+                          className={`hover:bg-transparent border-none border-[#DEE5EB] w-[38px] h-[30px] hover:text-pink-600  `}
+                        >
+                          <RiVoiceAiLine
+                            className="w-full p-2"
+                            style={{ height: "fit-content" }}
+                          />
+                        </Button>
+                      )}
                     </Tooltip>
                   )}
                 </div>

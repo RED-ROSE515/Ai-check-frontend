@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { Button, Card } from "@heroui/react";
+import { Button, Card, Progress } from "@heroui/react";
 import { FaPlay, FaPause, FaStop, FaExpandArrowsAlt } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 import { useWavesurfer } from "@wavesurfer/react";
@@ -18,7 +18,8 @@ const SpeechPlayer = ({ audio_url, height = 50, isSpeech = true }: any) => {
   const [time, setTime] = useState("0:00");
   const [duration, setDuration] = useState("0:00");
   const { theme } = useTheme();
-  const { setShowSpeech, speechId, speechTitle } = useSpeech();
+  const { setShowSpeech, speechId, speechTitle, setPercentage, percentage } =
+    useSpeech();
   const [isPending, startTransition] = useTransition();
   // Ensure that the container is correctly passed as a RefObject
   const { wavesurfer } = useWavesurfer({
@@ -53,11 +54,18 @@ const SpeechPlayer = ({ audio_url, height = 50, isSpeech = true }: any) => {
     }
   }, [wavesurfer]);
   useEffect(() => {
+    if (percentage === 100) {
+      setTime("0:00");
+      wavesurfer?.play();
+    }
+  }, [wavesurfer, percentage]);
+  useEffect(() => {
     if (!wavesurfer) return;
 
     const subscriptions = [
       wavesurfer.on("play", () => setIsPlaying(true)),
       wavesurfer.on("pause", () => setIsPlaying(false)),
+      wavesurfer.on("loading", (val) => setPercentage(val)),
       wavesurfer.on("decode", (duration) => setDuration(formatTime(duration))),
       wavesurfer.on("timeupdate", (currentTime) =>
         setTime(formatTime(currentTime))
@@ -79,7 +87,26 @@ const SpeechPlayer = ({ audio_url, height = 50, isSpeech = true }: any) => {
       >
         {isPlaying ? <FaPause /> : <FaPlay />}
       </Button>
-      <div style={{ flex: 1 }} className="px-10 relative">
+      <Progress
+        aria-label="Downloading..."
+        classNames={{
+          base: `w-full h-[50px] card rounded-md ${percentage < 100 ? "" : "hidden"}`,
+          track: "drop-shadow-md border border-default",
+          indicator: "bg-gradient-to-r from-[#4F4A85] to-[#1E1C32]",
+          label: "tracking-wider font-medium text-default-600",
+          value: "text-foreground/60",
+        }}
+        style={{ flex: 1 }}
+        showValueLabel={true}
+        className="px-10"
+        size="md"
+        label="Loading..."
+        value={percentage}
+      />
+      <div
+        style={{ flex: 1 }}
+        className={`px-10 relative ${percentage < 100 ? "hidden" : ""}`}
+      >
         <div ref={containerRef}>
           <span className="absolute top-4 left-1 text-sm font-semibold z-10">
             {time}
