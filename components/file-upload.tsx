@@ -300,6 +300,17 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                 <p className="text-xs text-gray-500">
                   Click to upload a file &#40;file should be under 25 MB&#41;
                 </p>
+                <br />
+                <p className="text-xs text-gray-500">
+                  Submit research papers that matter to you—whether they’re
+                  trending in your field, influencing public conversations, or
+                  raising important questions.
+                </p>
+                <p className="text-xs text-gray-500">
+                  NerdBunny helps uncover inconsistencies, flawed reasoning, or
+                  methodological issues and publishes the results for open
+                  community review.
+                </p>
               </div>
             </label>
             <Input
@@ -410,8 +421,8 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
               </Button>
             </div>
             <span className="text-xs ml-2 text-gray-500">
-              Note: Currently only supporting papers from: arxiv, biorxiv,
-              medrxiv, and openalex
+              Note: Currently supporting papers from: arXiv, bioRxiv, medRxiv,
+              and OpenAlex. More sources are coming soon.
             </span>
           </div>
         </Tab>

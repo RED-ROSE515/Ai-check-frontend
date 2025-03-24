@@ -17,6 +17,7 @@ export default function AudioPlayerList({ className }: { className?: string }) {
     showIndex,
     setShowIndex,
   } = useSpeech();
+  const [canLoad, setCanLoad] = useState(true);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (currentPostId) {
@@ -47,8 +48,11 @@ export default function AudioPlayerList({ className }: { className?: string }) {
     const response = await api.get(
       `/post/pagination?start=${speechPosts.length}&limit=10&has_speech=true`
     );
+    if (response.data.length === 0) setCanLoad(false);
+    else setCanLoad(true);
     const newSpeeches = [...speechPosts, ...response.data.data];
     setSpeechPosts(newSpeeches);
+
     setLoading(false);
   };
   return (
@@ -84,7 +88,11 @@ export default function AudioPlayerList({ className }: { className?: string }) {
             : renderSkeletons()}
           {speechPosts.length > 0 && !loading ? (
             <div className="flex flex-row justify-center items-center">
-              <Button variant="bordered" onPress={fetchSpeeches}>
+              <Button
+                variant="bordered"
+                onPress={fetchSpeeches}
+                isDisabled={!canLoad}
+              >
                 Load More...
               </Button>
             </div>

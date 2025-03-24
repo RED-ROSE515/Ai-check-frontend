@@ -73,6 +73,7 @@ export default function AudioPlayerListItem({
                   />
                 </div>
               </div>
+              {showIndex === index ? <div>{`->`}</div> : <div>{`-`}</div>}
             </CardHeader>
             {showIndex === index && (
               <CardBody className="h-full transition-all duration-300 ease-in-out animate-in slide-in-from-bottom">

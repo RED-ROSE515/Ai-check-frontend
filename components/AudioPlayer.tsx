@@ -38,10 +38,8 @@ import {
 import { voices } from "./SummaryWrapper";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { FaCross } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import { Particles } from "@/src/components/magicui/particles";
-import useGetItem from "@/app/service/get-items";
 import useGetData from "@/app/service/get-data";
 
 const NewAudioPlayerList = React.memo(
@@ -51,10 +49,7 @@ const NewAudioPlayerList = React.memo(
 );
 export default function AudioPlayer({ id }: any) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const pathName = usePathname();
   const [title, setTitle] = useState("");
-  const [speechIndex, setSpeechIndex] = useState(0);
-  const [postId, setPostId] = useState("");
   const { isMobile } = useDeviceCheck();
   const [time, setTime] = useState("0:00");
   const [duration, setDuration] = useState("0:00");
@@ -90,10 +85,10 @@ export default function AudioPlayer({ id }: any) {
   const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
   const router = useRouter();
   const [auditDetailPending, startAuditDetailTransition] = useTransition();
-  const [newPost, setNewPost] = useState<any>();
+  const [newPost, setNewPost] = useState<any>(speechPosts[0]);
   // Ensure that the container is correctly passed as a RefObject
   const { data: speechData, isLoading: speechLoading } = useGetData(
-    `post/speech?post_id=${newPost?.id}`
+    newPost?.id ? `post/speech?post_id=${newPost?.id}` : ""
   );
   const { wavesurfer } = useWavesurfer({
     container: containerRef, // Pass the ref object itself, not its current property
@@ -203,7 +198,6 @@ export default function AudioPlayer({ id }: any) {
     if (!id) {
       const speechData = response.data.data[0];
       setTitle(speechData.title);
-      setPostId(speechData.id);
       setCurrentPostId(speechData.id);
       setSpeechTitle(speechData.title);
     }
@@ -213,7 +207,6 @@ export default function AudioPlayer({ id }: any) {
     if (!id && !speechId) return;
     const response = await api.get(`speech?speech_id=${id || speechId}`);
     setTitle(response.data.post_title);
-    setPostId(response.data.post_id);
     setSpeechTitle(response.data.post_title);
     setSpeechType(response.data.speech_type);
     setSpeechUrl(response.data.audio_url);
@@ -222,21 +215,8 @@ export default function AudioPlayer({ id }: any) {
   };
 
   useEffect(() => {
-    const index = speechPosts.findIndex(
-      (speechPost) => pathName === "/speeches/" + speechPost.id
-    );
-    setSpeechIndex(index);
-  }, [pathName]);
-
-  useEffect(() => {
     if (speechId) fetchSpeech();
   }, [speechId]);
-
-  useEffect(() => {
-    setSpeechIndex(
-      speechList.findIndex((speech: any) => speech?.speech_url === speechUrl)
-    );
-  }, [speechUrl]);
 
   useEffect(() => {
     fetchSpeeches();
@@ -258,13 +238,13 @@ export default function AudioPlayer({ id }: any) {
 
   return (
     <div className="w-full flex flex-col-reverse md:flex-row justify-start md:justify-center h-full gap-4 p-1 md:p-4">
-      <div className="w-full md:w-[50%] items-center flex flex-row justify-center h-full">
+      <div className="w-full md:w-[50%] items-center flex flex-row justify-center h-full overflow-hidden">
         <Card
           isBlurred
-          className={`${theme === "dark" ? "bg-[#050506] border-1 border-[#3C6B99]" : "bg-[#F6F6F6]"} w-full h-full p-1`}
+          className={`overflow-hidden ${theme === "dark" ? "bg-[#050506] border-1 border-[#3C6B99]" : "bg-[#F6F6F6]"} w-full h-full p-1`}
           shadow="lg"
         >
-          <CardBody className="p-1">
+          <CardBody className="p-1 overflow-hidden">
             <Button
               variant="light"
               isLoading={isPending}
@@ -280,7 +260,7 @@ export default function AudioPlayer({ id }: any) {
             </Button>
             <div className="hidden md:flex absolute right-3 top-0">
               <ShareButtons
-                url={DOMAIN + "/speeches/" + id}
+                url={id ? DOMAIN + "/speeches/" + id : DOMAIN + "/speeches"}
                 title={title}
                 useIcon={false}
                 // summary={result.summary.child}
@@ -335,7 +315,7 @@ export default function AudioPlayer({ id }: any) {
             </div>
             <div className="w-full h-full flex flex-col-reverse justity-end z-10">
               <div
-                className={`flex flex-col w-full justify-end rounded-xl shadow-md p-3 border-1 ${theme === "dark" ? "bg-black" : ""}`}
+                className={`flex flex-col w-full justify-end rounded-xl shadow-md p-3 border-1 ${theme === "dark" ? "bg-black" : "bg-[#F5F5F5]"}`}
               >
                 <div className="flex flex-row justify-between items-start w-full">
                   {speechType && speechTitle ? (
@@ -412,6 +392,17 @@ export default function AudioPlayer({ id }: any) {
                       className="px-1 py-0"
                       variant="bordered"
                       size="sm"
+                      onPress={onOpen}
+                    >
+                      <p className="text-small text-foreground/80">
+                        View Playlist
+                      </p>
+                    </Button>
+
+                    <Button
+                      className="px-1 py-0"
+                      variant="bordered"
+                      size="sm"
                       isLoading={auditDetailPending}
                       onPress={() =>
                         startAuditDetailTransition(() =>
@@ -421,16 +412,6 @@ export default function AudioPlayer({ id }: any) {
                     >
                       <p className="text-small text-foreground/80">
                         View Full Audit Report
-                      </p>
-                    </Button>
-                    <Button
-                      className="px-1 py-0"
-                      variant="bordered"
-                      size="sm"
-                      onPress={onOpen}
-                    >
-                      <p className="text-small text-foreground/80">
-                        View Playlist
                       </p>
                     </Button>
                   </div>

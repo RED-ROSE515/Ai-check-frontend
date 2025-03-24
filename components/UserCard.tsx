@@ -253,9 +253,13 @@ const UserCard = ({
                       <PiDotsThreeOutlineVerticalFill size={17} />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[150px] bg-[#2E3E4E] border-2 border-[#4B5C6E]">
+                  <PopoverContent
+                    className={`min-w-[150px] border-2 ${theme === "dark" ? "bg-[#2E3E4E] border-[#4B5C6E]" : "bg-[#F7F7F7] border-[#A4A4A4]"}`}
+                  >
                     {() => (
-                      <div className="w-full flex flex-col gap-2 bg-[#2E3E4E]">
+                      <div
+                        className={`w-full flex flex-col gap-2 ${theme === "dark" ? "bg-[#2E3E4E]" : "bg-[#F7F7F7]"}`}
+                      >
                         <Button
                           startContent={<MdOutlineContentCopy size={24} />}
                           className="w-full hover:[#3E5061]"

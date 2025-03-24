@@ -44,15 +44,15 @@ const LandingPage = () => {
       </div>
       <div className="w-full flex flex-col justify-center items-center">
         <div className="flex flex-row justify-center">
-          <span className="md:pt-[60px] text-2xl md:text-6xl md:font-semibold text-center max-w-[75%] md:max-w-[55%]">
-            Find Errors in Research Papers Effortlessly
+          <span className="md:pt-[60px] text-2xl md:text-6xl md:font-semibold text-center max-w-[75%] md:max-w-[60%] text-balance">
+            Find inconsistencies in Research Papers Effortlessly
           </span>
         </div>
         <div className="flex flex-row justify-center mt-4">
           <span className="text-sm  md:text-lg md:font-semibold text-center max-w-[70%] md:max-w-[55%]">
-            Uncover hidden flaws, inconsistencies, and methodological issues
-            with our AI-powered Decentralized Science (DeSci) platform, backed
-            by blockchain.
+            Uncover hidden flaws, discrepancies, and methodological issues with
+            our AI-powered Decentralized Science (DeSci) platform, backed by
+            blockchain.
           </span>
         </div>
         <div className="flex flex-row justify-center mt-6 gap-2 md:gap-8 items-center">

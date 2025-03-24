@@ -183,7 +183,7 @@ const StatisticCard = () => {
           opts={{
             align: "start",
           }}
-          className="w-full max-w-[50vw] md:max-w-[55vw]"
+          className="w-full max-w-[50vw] md:max-w-[65vw]"
         >
           <CarouselContent>
             {issues.map((issue, index) => (
