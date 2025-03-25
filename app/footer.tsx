@@ -202,7 +202,7 @@ const Footer = () => {
     return null;
   }
   return (
-    <div className="w-full flex flex-col justify-center items-center py-5">
+    <div className="w-full flex flex-col justify-center items-center md:py-5">
       <div className="flex md:hidden w-full flex-col justify-center items-center">
         <Tabs
           aria-label="Options"

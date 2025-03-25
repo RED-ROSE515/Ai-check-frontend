@@ -28,7 +28,6 @@ import childImage from "../public/NerdBunnyUI/child.png";
 import collegeImage from "../public/NerdBunnyUI/college.png";
 import phDImage from "../public/NerdBunnyUI/PhD.png";
 import errorImage from "../public/NerdBunnyUI/Error.png";
-import { commify } from "@/utils/number_utils";
 import { RiVoiceAiLine } from "react-icons/ri";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import SpeechPlayer from "./SpeechPlayer";

@@ -125,7 +125,7 @@ const WorkFlow = () => {
             How It Works
           </span>
           <h1 className="font-bold text-lg md:text-4xl">
-            How NerdBunny AI Error Detection Works
+            How NerdBunny AI Discrepancies Detection Works
           </h1>
         </div>
       </div>

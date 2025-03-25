@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "AI Error Detector",
+  name: "AI Discrepancies Detector",
   description: "Check the Papers.",
   navItems: [
     {

@@ -29,7 +29,7 @@ const NerdbunnyReason = () => {
   return (
     <div className="mt-24 flex flex-col gap-[48px]">
       <h1 className="font-bold text-lg md:text-4xl text-center my-4">
-        Why You Need NerdBunny Ai Error Detection
+        Why You Need NerdBunny Ai Discrepancies Detection
       </h1>
       <div className="flex flex-col justify-center gap-[24px]">
         <div className="flex flex-col gap-[12px]">

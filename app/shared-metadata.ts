@@ -5,13 +5,13 @@ const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
 export const defaultMetadata: Metadata = {
   metadataBase: new URL(DOMAIN || "https://nerdbunny.com"),
   title: {
-    default: "NerdBunny - AI Error Detection for Research Papers",
+    default: "NerdBunny - AI Discrepancies Detection for Research Papers",
     template: "%s | NerdBunny",
   },
   description:
     "NerdBunny uses AI to detect errors in research papers, simplifying complex studies and adding a fun meme culture to science. 🧬🐇",
   keywords: [
-    "AI error detector",
+    "AI discrepancies detector",
     "research paper analysis",
     "academic writing",
     "paper review",
@@ -24,7 +24,7 @@ export const defaultMetadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "NerdBunny",
-    title: "NerdBunny - AI Error Detection for Research Papers",
+    title: "NerdBunny - AI Discrepancies Detection for Research Papers",
     description:
       "NerdBunny uses AI to detect errors in research papers, simplifying complex studies and adding a fun meme culture to science. 🧬🐇",
     images: [
@@ -32,13 +32,13 @@ export const defaultMetadata: Metadata = {
         url: Nerdbunny.src,
         width: 1200,
         height: 630,
-        alt: "NerdBunny AI Error Detector",
+        alt: "NerdBunny AI Discrepancies Detector",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "NerdBunny - AI Error Detection for Research Papers",
+    title: "NerdBunny - AI Discrepancies Detection for Research Papers",
     description:
       "NerdBunny uses AI to detect errors in research papers, simplifying complex studies and adding a fun meme culture to science. 🧬🐇",
     images: [Nerdbunny.src],

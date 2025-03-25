@@ -76,7 +76,8 @@ export default function App() {
               <Card className="max-w-3xl p-6 rounded-lg  pt-8 bg-[#1C243E]">
                 <div className="bg-[#0B1022] p-3 rounded-lg max-h-[80vh] overflow-y-auto">
                   <h2 className="text-2xl font-bold mb-4">
-                    Disclaimer & Upload Guidelines for AI Error Detection
+                    Disclaimer & Upload Guidelines for AI Discrepancies
+                    Detection
                   </h2>
                   <div className="prose max-w-none mb-6 space-y-4">
                     <p>

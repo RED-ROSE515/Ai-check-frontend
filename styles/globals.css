@@ -272,18 +272,20 @@
   /* animation-delay: -0s; */
 }
 
-.card-3d div {
-  background-image: url("../public/NOBLEBLOCKS-dark.png");
+.swiper {
+  width: 100% !important;
+  padding-top: 50px !important;
+  padding-bottom: 50px !important;
 }
 
-.dark .card-3d div {
-  background-image: url("../public/NOBLEBLOCKS-white.png");
+.swiper-slide {
+  background-position: center !important;
+  background-size: cover !important;
+  width: 300px !important;
+  display: flex !important;
 }
 
-.card-3d:hover {
-  animation-play-state: paused !important;
-}
-
-.card-3d:hover div {
-  animation-play-state: paused !important;
+.swiper-slide img {
+  display: block !important;
+  width: 100% !important;
 }

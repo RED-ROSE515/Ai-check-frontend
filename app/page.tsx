@@ -165,7 +165,9 @@ export default function Home() {
             <LeftSider onUpload={() => triggerUploadRef.current?.()} />
           </div>
         )}
-        <title>NerdBunny - AI Error Detection for Research Papers</title>
+        <title>
+          NerdBunny - AI Discrepancies Detection for Research Papers
+        </title>
         <meta
           name="description"
           content="NerdBunny is a DeSci AI agent that detects errors in research papers, makes complex studies easier to understand, and adds a fun meme culture to science. 🧬🐇"

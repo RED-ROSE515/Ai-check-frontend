@@ -50,7 +50,7 @@ export default function RootLayout({
                   <PaginationProvider>
                     <AuthProvider>
                       <SearchProvider>
-                        <div className="relative flex flex-col w-full overflow-x-hidden">
+                        <div className="relative flex flex-col w-full overflow-x-hidden h-screen md:h-full">
                           <Navbar />
                           <main className="w-screen flex-grow" id="main">
                             {children}

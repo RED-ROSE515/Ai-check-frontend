@@ -16,7 +16,7 @@ const SpeechesPage = () => {
   return (
     <div className="w-full justify-center flex flex-row">
       <div
-        className={`w-full flex flex-row justify-center p-4 md:h-[80vh] ${theme === "dark" ? "bg-[#1E2A36]" : "bg-[#FFF]"}`}
+        className={`w-full flex flex-row justify-center md:p-4 h-[80vh] ${theme === "dark" ? "bg-[#1E2A36]" : "bg-[#FFF]"}`}
       >
         <AudioPlayer id={null} />
       </div>

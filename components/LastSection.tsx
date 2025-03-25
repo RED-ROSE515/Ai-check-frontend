@@ -71,7 +71,7 @@ const LastSection = () => {
         className={`flex flex-col w-full items-center ${sen.className} text-[#BCBDFA]`}
       >
         <span className="text-center">
-          Try NerdBunny AI Error Detection for Free
+          Try NerdBunny AI Discrepancies Detection for Free
         </span>
         <span className="text-center">
           Enhance your research credibility and avoid costly mistakes.

@@ -4,15 +4,11 @@ import {
   Card,
   CardBody,
   Button,
-  SelectItem,
-  Select,
   Progress,
   Skeleton,
-  DrawerFooter,
   DrawerContent,
   Drawer,
   DrawerBody,
-  DrawerHeader,
   useDisclosure,
 } from "@heroui/react";
 import { useWavesurfer } from "@wavesurfer/react";
@@ -35,12 +31,12 @@ import {
   RepeatOneIcon,
   ShuffleIcon,
 } from "@/components/icons";
-import { voices } from "./SummaryWrapper";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaX } from "react-icons/fa6";
 import { Particles } from "@/src/components/magicui/particles";
 import useGetData from "@/app/service/get-data";
+import AdPlayer from "./AdPlayer";
 
 const NewAudioPlayerList = React.memo(
   ({ className }: { className?: string }) => {
@@ -238,11 +234,11 @@ export default function AudioPlayer({ id }: any) {
   }, []);
 
   return (
-    <div className="w-full flex flex-col-reverse md:flex-row justify-start md:justify-center h-full gap-4 p-1 md:p-4">
+    <div className="w-full flex flex-col-reverse md:flex-row justify-start md:justify-center h-full gap-4 p-0 md:p-4">
       <div className="w-full md:w-[50%] items-center flex flex-row justify-center h-full overflow-hidden">
         <Card
           isBlurred
-          className={`overflow-hidden ${theme === "dark" ? "bg-[#050506] border-1 border-[#3C6B99]" : "bg-[#F6F6F6]"} w-full h-full p-1`}
+          className={`overflow-hidden rounded-none md:rounded-lg ${theme === "dark" ? "bg-[#050506] md:border-1 border-[#3C6B99]" : "bg-[#F6F6F6]"} w-full h-full p-1`}
           shadow="lg"
         >
           <CardBody className="p-1 overflow-hidden">
@@ -293,12 +289,7 @@ export default function AudioPlayer({ id }: any) {
 
             <div className="w-full flex flex-col overflow-hidden justify-center items-center mt-0 md:mt-6 h-full min-h-[200px]">
               <span>Sponsored by</span>
-              <div
-                className="card-3d cursor-pointer"
-                onClick={() => router.push(NOBLEBLOCKS_DOMAIN!)}
-              >
-                <div></div>
-              </div>
+              <AdPlayer />
               <Particles
                 className="absolute inset-0 z-0"
                 quantity={100}
@@ -306,17 +297,10 @@ export default function AudioPlayer({ id }: any) {
                 color={color}
                 refresh
               />
-              {/* <video
-                autoPlay
-                loop
-                muted
-                src={`${theme === "dark" ? "/audio-bg2-dark.mp4" : "/audio-bg2-white.mp4"}`}
-                className="w-full md:w-[40%] -z-10 opacity-50"
-              /> */}
             </div>
             <div className="w-full h-full flex flex-col-reverse justity-end z-10">
               <div
-                className={`flex flex-col w-full justify-end rounded-xl shadow-md p-3 border-1 ${theme === "dark" ? "bg-black" : "bg-[#F5F5F5]"}`}
+                className={`flex flex-col w-full justify-end md:rounded-xl shadow-md p-1 md:p-3 md:border-1 ${theme === "dark" ? "bg-black" : "bg-[#F5F5F5]"}`}
               >
                 <div className="flex flex-row justify-between items-start w-full">
                   {speechType && speechTitle ? (
@@ -325,26 +309,6 @@ export default function AudioPlayer({ id }: any) {
                         <p className="text-small text-foreground/80">
                           {speechType.split("Summary")[0] + " " + "Summary"}
                         </p>
-
-                        {/* <Select
-                        className="w-1/2 md:w-1/3"
-                        defaultSelectedKeys={["alloy"]}
-                        size="sm"
-                        variant="bordered"
-                        radius="sm"
-                        labelPlacement="outside-left"
-                        label={isMobile ? "" : "Favorite Voice"}
-                        placeholder="Select a voice you want"
-                      >
-                        {voices.map((voice) => (
-                          <SelectItem
-                            onPress={() => setCurrentVoice(voice.key)}
-                            key={voice.key}
-                          >
-                            {voice.label}
-                          </SelectItem>
-                        ))}
-                      </Select> */}
                       </div>
                       <h1
                         className="text-large font-medium mt-2 truncate cursor-pointer"
