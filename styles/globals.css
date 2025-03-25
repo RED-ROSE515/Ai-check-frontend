@@ -274,7 +274,7 @@
 
 .swiper {
   width: 100% !important;
-  padding-top: 50px !important;
+  /* padding-top: 50px !important; */
   padding-bottom: 50px !important;
 }
 
@@ -288,4 +288,10 @@
 .swiper-slide img {
   display: block !important;
   width: 100% !important;
+}
+
+.swiper-pagination-bullet {
+  margin-top: 25px !important;
+  width: 15px !important;
+  height: 15px !important;
 }

@@ -13,7 +13,12 @@ import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 
 // import required modules
-import { Autoplay, EffectCoverflow, Pagination } from "swiper/modules";
+import {
+  Autoplay,
+  EffectCoverflow,
+  Pagination,
+  Mousewheel,
+} from "swiper/modules";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 
@@ -23,6 +28,14 @@ export default function AdPlayer() {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
+
+  const pagination = {
+    clickable: true,
+    renderBullet: function (index: number, className: string) {
+      return '<span class="' + className + '">' + "</span>";
+    },
+  };
+
   useEffect(() => {
     if (theme === "dark") {
       setAds([
@@ -61,6 +74,7 @@ export default function AdPlayer() {
           delay: 60000,
           disableOnInteraction: false,
         }}
+        mousewheel={true}
         centeredSlides={true}
         slidesPerView={"auto"}
         coverflowEffect={{
@@ -70,8 +84,8 @@ export default function AdPlayer() {
           modifier: 1,
           slideShadows: false,
         }}
-        pagination={true}
-        modules={[Autoplay, EffectCoverflow, Pagination]}
+        pagination={pagination}
+        modules={[Autoplay, EffectCoverflow, Pagination, Mousewheel]}
         className="mySwiper"
       >
         {ads.map((ad: any) => {
