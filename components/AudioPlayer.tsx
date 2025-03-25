@@ -229,6 +229,8 @@ export default function AudioPlayer({ id }: any) {
     if (!wavesurfer) return;
 
     const subscriptions = [
+      wavesurfer.on("play", () => setIsPlaying(true)),
+      wavesurfer.on("pause", () => setIsPlaying(false)),
       wavesurfer.on("loading", (val) => setPercentage(val)),
       wavesurfer.on("decode", (duration) => setDuration(formatTime(duration))),
       wavesurfer.on("timeupdate", (currentTime) =>
