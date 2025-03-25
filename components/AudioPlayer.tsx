@@ -97,7 +97,7 @@ export default function AudioPlayer({ id }: any) {
   const [auditDetailPending, startAuditDetailTransition] = useTransition();
   const [newPost, setNewPost] = useState<any>(speechPosts[0]);
   const { mutate: mutateSpeechData } = useGetData(
-    `post/speech?post_id=${currentPostId}`
+    currentPostId ? `post/speech?post_id=${currentPostId}` : ""
   );
   const {
     isOpen: isDrawerOpen,
@@ -118,6 +118,7 @@ export default function AudioPlayer({ id }: any) {
     autoCenter: true,
     height: 40,
     url: speechUrl,
+    autoplay: true,
   });
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -196,7 +197,6 @@ export default function AudioPlayer({ id }: any) {
       setSpeechUrl(response.data.audio_url);
       setSpeechId(response.data.id);
       await mutateSpeechData();
-      console.log(speechPosts);
     } catch (error) {
       toast({
         title: "Speech Generation",
@@ -229,13 +229,14 @@ export default function AudioPlayer({ id }: any) {
     if (!wavesurfer) return;
 
     const subscriptions = [
-      wavesurfer.on("play", () => setIsPlaying(true)),
-      wavesurfer.on("pause", () => setIsPlaying(false)),
       wavesurfer.on("loading", (val) => setPercentage(val)),
       wavesurfer.on("decode", (duration) => setDuration(formatTime(duration))),
       wavesurfer.on("timeupdate", (currentTime) =>
         setTime(formatTime(currentTime))
       ),
+      wavesurfer.on("ready", () => {
+        wavesurfer.play();
+      }),
       wavesurfer.on("finish", () => {
         setShowSpeech(false);
         const newListenedSpeeches = [
@@ -265,23 +266,31 @@ export default function AudioPlayer({ id }: any) {
   };
 
   const fetchSpeech = async () => {
-    if (!id && !speechId) return;
-    const response = await api.get(`speech?speech_id=${id || speechId}`);
+    if (!id) return;
+    const response = await api.get(`speech?speech_id=${id}`);
+    const post_id = response.data.post_id;
+
     setTitle(response.data.post_title);
     setSpeechTitle(response.data.post_title);
     setSpeechType(response.data.speech_type);
     setSpeechUrl(response.data.audio_url);
+    setCurrentPostId(post_id);
+    // if (post_id) {
+    //   const index = speechPosts.findIndex(
+    //     (speechPost) => speechPost.id === post_id
+    //   );
+    //   alert(index);
+    //   setShowIndex(index);
+    // }
     wavesurfer?.load(response.data.audio_url);
-    setIsPlaying(true);
   };
 
   useEffect(() => {
-    if (speechId) fetchSpeech();
-  }, [speechId]);
-
-  useEffect(() => {
-    fetchSpeeches();
-    fetchSpeech();
+    const init = async () => {
+      await fetchSpeeches();
+      await fetchSpeech();
+    };
+    init();
   }, []);
 
   useEffect(() => {

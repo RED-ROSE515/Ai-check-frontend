@@ -19,7 +19,6 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useSpeech } from "@/contexts/SpeechContext";
 import { useRouter } from "next/navigation";
-import ReactMarkdown from "react-markdown";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import { AnimatedGradientText } from "./ui/animated-gradient-text";
@@ -37,6 +36,7 @@ export default function AudioPostDetail({
   const {
     isPlaying,
     speechUrl,
+    percentage,
     currentPostId,
     listenedSpeeches,
     setSpeechList,
@@ -44,15 +44,16 @@ export default function AudioPostDetail({
     setSpeechType,
     setIsPlaying,
     setPercentage,
+    setSpeechId,
   } = useSpeech();
   const [auditDetailPending, startAuditDetailTransition] = useTransition();
   const [summaryData, setSummaryData] = useState<any>({});
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const { data: postData, isLoading: postLoading } = useGetData(
-    `post/${currentPostId}`
+    currentPostId ? `post/${currentPostId}` : ""
   );
   const { data: speechData, isLoading: speechLoading } = useGetData(
-    `post/speech?post_id=${currentPostId}`
+    currentPostId ? `post/speech?post_id=${currentPostId}` : ""
   );
   useEffect(() => {
     if (postData) {
@@ -62,10 +63,10 @@ export default function AudioPostDetail({
 
   useEffect(() => {
     if (speechData) {
-      if (speechUrl) setIsPlaying(true);
       const initialSpeech = speechData[0];
       setSpeechType(initialSpeech.speech_type);
       setSpeechUrl(initialSpeech.audio_url);
+      setSpeechId(initialSpeech.id);
       const speechTypes = [
         "ChildSummary",
         "CollegeSummary",
@@ -94,6 +95,9 @@ export default function AudioPostDetail({
       speech_url: speechData?.find(
         (speech: any) => speech.speech_type === "ChildSummary"
       )?.audio_url,
+      speech_id: speechData?.find(
+        (speech: any) => speech.speech_type === "ChildSummary"
+      )?.id,
     },
     {
       key: "college",
@@ -104,6 +108,9 @@ export default function AudioPostDetail({
       speech_url: speechData?.find(
         (speech: any) => speech.speech_type === "CollegeSummary"
       )?.audio_url,
+      speech_id: speechData?.find(
+        (speech: any) => speech.speech_type === "CollegeSummary"
+      )?.id,
     },
     {
       key: "phd",
@@ -114,6 +121,9 @@ export default function AudioPostDetail({
       speech_url: speechData?.find(
         (speech: any) => speech.speech_type === "PhDSummary"
       )?.audio_url,
+      speech_id: speechData?.find(
+        (speech: any) => speech.speech_type === "PhDSummary"
+      )?.id,
     },
     {
       key: "error",
@@ -124,6 +134,9 @@ export default function AudioPostDetail({
       speech_url: speechData?.find(
         (speech: any) => speech.speech_type === "ErrorSummary"
       )?.audio_url,
+      speech_id: speechData?.find(
+        (speech: any) => speech.speech_type === "ErrorSummary"
+      )?.id,
     },
   ];
 
@@ -287,7 +300,7 @@ export default function AudioPostDetail({
                               const prevSpeechUrl = speechUrl;
                               setSpeechType(summaryType.type);
                               setSpeechUrl(summaryType.speech_url);
-
+                              setSpeechId(summaryType.speech_id);
                               if (prevSpeechUrl !== summaryType.speech_url) {
                                 setPercentage(0);
                                 setIsPlaying(true);
