@@ -8,11 +8,14 @@ import { useSpeech } from "@/contexts/SpeechContext";
 import { useTheme } from "next-themes";
 import { useTransition } from "react";
 import ShareButtons from "./ShareButtons";
+import useDeviceCheck from "@/hooks/useDeviceCheck";
 
 const SpeechPlayer = ({ audio_url, height = 50, isSpeech = true }: any) => {
   // Corrected the type of useRef to match the expected type for the container
   const containerRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
+  const { isMobile } = useDeviceCheck();
+  const [size, setSize] = useState<string>("50px");
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const [isPlaying, setIsPlaying] = useState(false);
   const [time, setTime] = useState("0:00");
@@ -27,7 +30,7 @@ const SpeechPlayer = ({ audio_url, height = 50, isSpeech = true }: any) => {
     waveColor: theme === "dark" ? "#4F4A85" : "#A7A9AB",
     progressColor: theme === "dark" ? "#FF0068" : "#FFAA68",
     barWidth: 3,
-    height: height,
+    height: isMobile ? 30 : height,
     url: audio_url,
   });
   const formatTime = (seconds: number) => {
@@ -60,6 +63,9 @@ const SpeechPlayer = ({ audio_url, height = 50, isSpeech = true }: any) => {
     }
   }, [wavesurfer, percentage]);
   useEffect(() => {
+    setSize(isMobile ? "30px" : "50px");
+  }, [isMobile]);
+  useEffect(() => {
     if (!wavesurfer) return;
 
     const subscriptions = [
@@ -83,7 +89,8 @@ const SpeechPlayer = ({ audio_url, height = 50, isSpeech = true }: any) => {
         onPress={togglePlay}
         isIconOnly
         radius="sm"
-        style={{ width: "50px", height: "50px" }}
+        className="min-w-0"
+        style={{ width: size, height: size }}
       >
         {isPlaying ? <FaPause /> : <FaPlay />}
       </Button>
@@ -98,14 +105,14 @@ const SpeechPlayer = ({ audio_url, height = 50, isSpeech = true }: any) => {
         }}
         style={{ flex: 1 }}
         showValueLabel={true}
-        className="px-10"
+        className={`${isMobile ? "px-1" : "px-10"}`}
         size="md"
         label="Loading..."
         value={percentage}
       />
       <div
         style={{ flex: 1 }}
-        className={`px-10 relative ${percentage < 100 ? "hidden" : ""}`}
+        className={`${isMobile ? "px-1" : "px-10"} relative ${percentage < 100 ? "hidden" : ""}`}
       >
         <div ref={containerRef}>
           <span className="absolute top-4 left-1 text-sm font-semibold z-10">
@@ -120,7 +127,8 @@ const SpeechPlayer = ({ audio_url, height = 50, isSpeech = true }: any) => {
         onPress={stop}
         isIconOnly
         radius="sm"
-        style={{ width: "50px", height: "50px" }}
+        className="min-w-0"
+        style={{ width: size, height: size }}
       >
         <FaStop />
       </Button>
@@ -136,8 +144,8 @@ const SpeechPlayer = ({ audio_url, height = 50, isSpeech = true }: any) => {
           isLoading={isPending}
           isIconOnly
           radius="sm"
-          className="ml-2"
-          style={{ width: "50px", height: "50px" }}
+          className={`${isMobile ? "ml-1" : "ml-2"} min-w-0`}
+          style={{ width: size, height: size }}
         >
           <FaExpandArrowsAlt />
         </Button>
@@ -147,6 +155,8 @@ const SpeechPlayer = ({ audio_url, height = 50, isSpeech = true }: any) => {
           url={DOMAIN + "/speeches/" + speechId}
           title={speechTitle}
           isSpeech={true}
+          width={size}
+          height={size}
         />
       )}
       {isSpeech && (
@@ -155,10 +165,10 @@ const SpeechPlayer = ({ audio_url, height = 50, isSpeech = true }: any) => {
             pause();
             setShowSpeech(false);
           }}
-          className="ml-2"
+          className={`${isMobile ? "ml-1" : "ml-2"} min-w-0`}
           isIconOnly
           radius="sm"
-          style={{ width: "50px", height: "50px" }}
+          style={{ width: size, height: size }}
         >
           <ImCross />
         </Button>

@@ -49,7 +49,7 @@ export const ResearchAuditSVG = ({ className, color }: any) => {
       viewBox="0 0 18 19"
       fill="none"
     >
-      <g clip-path="url(#clip0_2600_46157)">
+      <g clipPath="url(#clip0_2600_46157)">
         <path
           fillRule="evenodd"
           clipRule="evenodd"

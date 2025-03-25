@@ -47,6 +47,8 @@ const ShareButtons = ({
   url,
   title,
   summary,
+  width = "50px",
+  height = "50px",
   useIcon = true,
   isSpeech = false,
 }: any) => {
@@ -56,13 +58,13 @@ const ShareButtons = ({
     <div>
       <Button
         isIconOnly
-        className="capitalize"
+        className="capitalize min-w-0"
         variant={useIcon ? (isSpeech ? "solid" : "ghost") : "light"}
         onPress={onOpen}
         radius="sm"
         style={
           isSpeech
-            ? { width: "50px", height: "50px", marginLeft: "0.5rem " }
+            ? { width: width, height: height, marginLeft: "0.5rem " }
             : {}
         }
       >
