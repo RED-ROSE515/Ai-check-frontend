@@ -28,6 +28,9 @@ import { usePostActions } from "@/hooks/usePostActions";
 import Loader from "@/components/Loader";
 import { IoIosWarning } from "react-icons/io";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+import { useSpeech } from "@/contexts/SpeechContext";
+import SpeechPlayer from "@/components/SpeechPlayer";
 
 const ResultPage = ({ params }: any) => {
   const resolvedParams = use(params);
@@ -37,6 +40,7 @@ const ResultPage = ({ params }: any) => {
 
   const [pageUrl, setPageUrl] = useState(`${API_BASE_URL}results/${id}`);
   const { theme } = useTheme();
+  const { showSpeech, speechUrl } = useSpeech();
   const [analysisResult, setAnalysisResult] = useState("");
   const [summary, setSummary] = useState<any>();
   const [summaryLoading, setSummaryLoading] = useState(false);
@@ -170,6 +174,21 @@ const ResultPage = ({ params }: any) => {
     <div
       className={`${theme === "dark" ? "bg-black" : "bg-white"} pt-2 md:pt-6 lg:pt-16`}
     >
+      <div className="w-full fixed bottom-0 z-10">
+        <AnimatePresence>
+          {showSpeech && speechUrl && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="w-full sm:px-12 mb-4 overflow-hidden"
+            >
+              <SpeechPlayer audio_url={speechUrl} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
       {!errorMessage && (
         <div
           className={`flex flex-row justify-center px-2 md:px-0 ${theme === "dark" ? "bg-black" : "bg-white"}`}

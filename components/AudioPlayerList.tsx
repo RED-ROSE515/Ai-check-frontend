@@ -8,7 +8,12 @@ import AudioPlayerListItem from "./AudioPlayerListItem";
 import api from "@/utils/api";
 import Loader from "./Loader";
 
-export default function AudioPlayerList({ className }: { className?: string }) {
+export default function AudioPlayerList({
+  className,
+  setCurrentSummary,
+  togglePlay,
+  onOpen,
+}: any) {
   const { theme } = useTheme();
   const {
     speechPosts,
@@ -79,6 +84,9 @@ export default function AudioPlayerList({ className }: { className?: string }) {
                     key={index}
                     index={index}
                     className="w-full"
+                    setCurrentSummary={setCurrentSummary}
+                    togglePlay={togglePlay}
+                    onOpen={onOpen}
                     id={speechPost.id}
                     showIndex={showIndex}
                     setShowIndex={setShowIndex}

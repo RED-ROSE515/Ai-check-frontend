@@ -49,6 +49,7 @@ import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import { SiSharp } from "react-icons/si";
 import { useRouter } from "next/navigation";
 import useGetData from "@/app/service/get-data";
+import ErrorContent from "./ErrorContent";
 const getColorForScore = (score: number) => {
   switch (true) {
     case score >= 9:
@@ -105,10 +106,11 @@ export const UserSVG = () => {
   );
 };
 
-interface SummaryType {
+export interface SummaryType {
   title: string;
   content: string;
   value: string;
+  type?: string;
   audio_url?: string;
   speech_url?: string;
   image: StaticImageData;
@@ -499,36 +501,7 @@ const SummaryWrapper = ({
             >
               {level.value === "ErrorSummary" ? (
                 <div key={index}>
-                  <ReactMarkdown
-                    components={{
-                      h3: ({ children }) => (
-                        <h3 className="mb-2 mt-6 text-xl font-bold">
-                          {children}
-                        </h3>
-                      ),
-                      h4: ({ children }) => (
-                        <h4 className="mb-2 mt-4 text-lg font-semibold">
-                          {children}
-                        </h4>
-                      ),
-                      p: ({ children }) => <p className="mb-4">{children}</p>,
-                      ul: ({ children }) => (
-                        <ul className="mb-4 ml-6 list-disc">{children}</ul>
-                      ),
-                      li: ({ children }) => (
-                        <li className="mb-2">{children}</li>
-                      ),
-                      strong: ({ children }) => (
-                        <strong className="font-bold">{children}</strong>
-                      ),
-                      em: ({ children }) => (
-                        <em className="italic">{children}</em>
-                      ),
-                      hr: () => <hr className="my-6 border-gray-200" />,
-                    }}
-                  >
-                    {level.content}
-                  </ReactMarkdown>
+                  <ErrorContent content={level.content} />
                 </div>
               ) : (
                 <div>
@@ -696,38 +669,7 @@ const SummaryWrapper = ({
                   </div>
                   <div className="mt-4">
                     {currentSummary?.value === "ErrorSummary" ? (
-                      <ReactMarkdown
-                        components={{
-                          h3: ({ children }) => (
-                            <h3 className="mb-2 mt-6 text-xl font-bold">
-                              {children}
-                            </h3>
-                          ),
-                          h4: ({ children }) => (
-                            <h4 className="mb-2 mt-4 text-lg font-semibold">
-                              {children}
-                            </h4>
-                          ),
-                          p: ({ children }) => (
-                            <p className="mb-4">{children}</p>
-                          ),
-                          ul: ({ children }) => (
-                            <ul className="mb-4 ml-6 list-disc">{children}</ul>
-                          ),
-                          li: ({ children }) => (
-                            <li className="mb-2">{children}</li>
-                          ),
-                          strong: ({ children }) => (
-                            <strong className="font-bold">{children}</strong>
-                          ),
-                          em: ({ children }) => (
-                            <em className="italic">{children}</em>
-                          ),
-                          hr: () => <hr className="my-6 border-gray-200" />,
-                        }}
-                      >
-                        {currentSummary?.content}
-                      </ReactMarkdown>
+                      <ErrorContent content={currentSummary?.content} />
                     ) : (
                       <span>{currentSummary?.content}</span>
                     )}

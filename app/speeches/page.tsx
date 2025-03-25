@@ -13,6 +13,7 @@ const SpeechesPage = () => {
   if (!isMounted) {
     return null;
   }
+
   return (
     <div className="w-full justify-center flex flex-row">
       <div

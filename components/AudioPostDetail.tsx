@@ -24,8 +24,14 @@ import { FaPlay, FaPause } from "react-icons/fa";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import { AnimatedGradientText } from "./ui/animated-gradient-text";
 import useGetData from "@/app/service/get-data";
+import { RiVoiceAiLine } from "react-icons/ri";
+import ErrorContent from "./ErrorContent";
 
-export default function AudioPostDetail({}) {
+export default function AudioPostDetail({
+  setCurrentSummary,
+  onOpen,
+  togglePlay,
+}: any) {
   const { theme } = useTheme();
   const router = useRouter();
   const {
@@ -60,7 +66,6 @@ export default function AudioPostDetail({}) {
       const initialSpeech = speechData[0];
       setSpeechType(initialSpeech.speech_type);
       setSpeechUrl(initialSpeech.audio_url);
-      // }
       const speechTypes = [
         "ChildSummary",
         "CollegeSummary",
@@ -264,22 +269,21 @@ export default function AudioPostDetail({}) {
                             : summaryType.title}
                         </span>
                       )}
-                      {summaryType.speech_url && (
-                        <Tooltip
-                          content={
-                            <strong className="text-md font-bold text-center">
-                              Voice Generator
-                            </strong>
-                          }
-                          placement="top"
-                          closeDelay={1000}
-                        >
+
+                      <Tooltip
+                        content={
+                          <strong className="text-md font-bold text-center">
+                            Voice Generator
+                          </strong>
+                        }
+                        placement="top"
+                        closeDelay={1000}
+                      >
+                        {summaryType.speech_url ? (
                           <Button
                             isIconOnly
                             variant="bordered"
                             onPress={() => {
-                              // setCurrentSummary(level);
-                              // onOpen();
                               const prevSpeechUrl = speechUrl;
                               setSpeechType(summaryType.type);
                               setSpeechUrl(summaryType.speech_url);
@@ -287,8 +291,10 @@ export default function AudioPostDetail({}) {
                               if (prevSpeechUrl !== summaryType.speech_url) {
                                 setPercentage(0);
                                 setIsPlaying(true);
+                                // togglePlay();
                               } else {
                                 setIsPlaying(!isPlaying);
+                                // togglePlay();
                               }
                             }}
                             className={`hover:bg-transparent hover:text-pink-600  ${currentPostId && listenedSpeeches.includes(currentPostId + " - " + summaryType.type) ? "text-gray-500" : ""}`}
@@ -306,50 +312,31 @@ export default function AudioPostDetail({}) {
                               />
                             )}
                           </Button>
-                        </Tooltip>
-                      )}
+                        ) : (
+                          <Button
+                            isIconOnly
+                            variant="bordered"
+                            onPress={async (e) => {
+                              setSpeechType(summaryType?.type);
+                              setCurrentSummary(summaryType);
+                              onOpen();
+                            }}
+                            className={`hover:bg-transparent  hover:text-pink-600  `}
+                          >
+                            <RiVoiceAiLine
+                              className="w-full p-2"
+                              style={{ height: "fit-content" }}
+                            />
+                          </Button>
+                        )}
+                      </Tooltip>
                     </div>
                   }
                   value={index.toString()}
                 >
                   {summaryType.key === "error" ? (
                     <div key={index}>
-                      <ReactMarkdown
-                        components={{
-                          h3: ({ children }) => (
-                            <h3 className="mb-2 mt-6 text-lg font-bold">
-                              {children}
-                            </h3>
-                          ),
-                          h4: ({ children }) => (
-                            <h4 className="mb-2 mt-4 text-md font-semibold">
-                              {children}
-                            </h4>
-                          ),
-                          p: ({ children }) => (
-                            <p className="mb-4 text-sm">{children}</p>
-                          ),
-                          ul: ({ children }) => (
-                            <ul className="mb-4 ml-6 list-disc text-sm">
-                              {children}
-                            </ul>
-                          ),
-                          li: ({ children }) => (
-                            <li className="mb-2 text-sm">{children}</li>
-                          ),
-                          strong: ({ children }) => (
-                            <strong className="font-bold text-sm">
-                              {children}
-                            </strong>
-                          ),
-                          em: ({ children }) => (
-                            <em className="italic text-sm">{children}</em>
-                          ),
-                          hr: () => <hr className="my-6 border-gray-200" />,
-                        }}
-                      >
-                        {summaryType.content}
-                      </ReactMarkdown>
+                      <ErrorContent content={summaryType.content} />
                     </div>
                   ) : (
                     <div>

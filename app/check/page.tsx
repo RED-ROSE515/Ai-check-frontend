@@ -207,7 +207,7 @@ export default function App() {
             </div>
           )}
 
-          <div className="w-5/6">
+          <div className="w-full px-2 md:px-0 md:w-5/6">
             <div className="my-4 w-full items-start">
               {hasAccepted ? (
                 isChecking ? (

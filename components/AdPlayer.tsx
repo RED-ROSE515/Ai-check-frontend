@@ -58,7 +58,7 @@ export default function AdPlayer() {
         grabCursor={true}
         loop={true}
         autoplay={{
-          delay: 2500,
+          delay: 60000,
           disableOnInteraction: false,
         }}
         centeredSlides={true}

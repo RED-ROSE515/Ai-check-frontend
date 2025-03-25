@@ -9,8 +9,13 @@ import {
   DrawerContent,
   Drawer,
   DrawerBody,
+  DrawerHeader,
+  DrawerFooter,
   useDisclosure,
+  Select,
+  SelectItem,
 } from "@heroui/react";
+import ReactMarkdown from "react-markdown";
 import { useWavesurfer } from "@wavesurfer/react";
 import { useSpeech } from "@/contexts/SpeechContext";
 import { useTheme } from "next-themes";
@@ -37,12 +42,13 @@ import { FaX } from "react-icons/fa6";
 import { Particles } from "@/src/components/magicui/particles";
 import useGetData from "@/app/service/get-data";
 import AdPlayer from "./AdPlayer";
+import { useAuth } from "@/contexts/AuthContext";
+import SpeechPlayer from "./SpeechPlayer";
+import { SummaryType, voices } from "./SummaryWrapper";
+import { useToast } from "@/hooks/use-toast";
+import SignInDialog from "./SignInDialog";
+import ErrorContent from "./ErrorContent";
 
-const NewAudioPlayerList = React.memo(
-  ({ className }: { className?: string }) => {
-    return <AudioPlayerList className={className} />;
-  }
-);
 export default function AudioPlayer({ id }: any) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [title, setTitle] = useState("");
@@ -53,6 +59,8 @@ export default function AudioPlayer({ id }: any) {
   const [isPending, startTransition] = useTransition();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [color, setColor] = useState("#ffffff");
+  const { isAuthenticated } = useAuth();
+  const [voice, setVoice] = useState("alloy");
   const [postIndex, setPostIndex] = useState<number>(0);
   const {
     percentage,
@@ -75,13 +83,28 @@ export default function AudioPlayer({ id }: any) {
     setCurrentPostId,
     setSpeechTitle,
     speechId,
+    setSpeechId,
     setShowIndex,
   } = useSpeech();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
+
+  const [showSignIn, setShowSignIn] = useState(false);
   const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
   const router = useRouter();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [currentSummary, setCurrentSummary] = useState<SummaryType>();
   const [auditDetailPending, startAuditDetailTransition] = useTransition();
   const [newPost, setNewPost] = useState<any>(speechPosts[0]);
+  const { mutate: mutateSpeechData } = useGetData(
+    `post/speech?post_id=${currentPostId}`
+  );
+  const {
+    isOpen: isDrawerOpen,
+    onOpen: onDrawerOpen,
+    onClose: onDrawerClose,
+    onOpenChange: onDrawerOpenChange,
+  } = useDisclosure();
   // Ensure that the container is correctly passed as a RefObject
   const { data: speechData, isLoading: speechLoading } = useGetData(
     newPost?.id ? `post/speech?post_id=${newPost?.id}` : ""
@@ -141,6 +164,47 @@ export default function AudioPlayer({ id }: any) {
     }
   }, [speechData]);
 
+  const showSignInModal = async (action: string) => {
+    toast({
+      title: "Info",
+      description: action,
+    });
+    setShowSignIn(true);
+  };
+
+  const generateSpeech = async () => {
+    try {
+      setLoading(true);
+      const response = await api.post(`post/generate_voice`, {
+        post_id: currentPostId,
+        speech_type: speechType,
+        voice_type: voice,
+      });
+      setLoading(false);
+      onDrawerClose();
+      toast({
+        title: "Speech Generation",
+        description: (
+          <div className="flex flex-col">
+            <span>Speech generated successfully! </span>
+            <span className="text-md font-bold text-pink-500">
+              Cost : ${response.data.cost.toFixed(6)}
+            </span>
+          </div>
+        ),
+      });
+      setSpeechUrl(response.data.audio_url);
+      setSpeechId(response.data.id);
+      await mutateSpeechData();
+      console.log(speechPosts);
+    } catch (error) {
+      toast({
+        title: "Speech Generation",
+        description: "Uh! Something went wrong!",
+      });
+    }
+  };
+
   const prevSpeech = () => {
     if (postIndex > 0) {
       setNewPost(speechPosts[postIndex - 1]);
@@ -158,6 +222,7 @@ export default function AudioPlayer({ id }: any) {
     if (percentage === 100) {
       setTime("0:00");
       if (isPlaying) wavesurfer?.play();
+      else wavesurfer?.pause();
     }
   }, [isPlaying, wavesurfer, percentage]);
   useEffect(() => {
@@ -236,6 +301,10 @@ export default function AudioPlayer({ id }: any) {
   return (
     <div className="w-full flex flex-col-reverse md:flex-row justify-start md:justify-center h-full gap-4 p-0 md:p-4">
       <div className="w-full md:w-[50%] items-center flex flex-row justify-center h-full overflow-hidden">
+        <SignInDialog
+          isOpen={showSignIn}
+          onClose={() => setShowSignIn(false)}
+        />
         <Card
           isBlurred
           className={`overflow-hidden rounded-none md:rounded-lg ${theme === "dark" ? "bg-[#050506] md:border-1 border-[#3C6B99]" : "bg-[#F6F6F6]"} w-full h-full p-1`}
@@ -257,7 +326,7 @@ export default function AudioPlayer({ id }: any) {
             </Button>
             <div className="hidden md:flex absolute right-3 top-0">
               <ShareButtons
-                url={id ? DOMAIN + "/speeches/" + id : DOMAIN + "/speeches"}
+                url={DOMAIN + "/speeches/" + speechId}
                 title={title}
                 useIcon={false}
                 // summary={result.summary.child}
@@ -279,7 +348,7 @@ export default function AudioPlayer({ id }: any) {
               </Button>
               <div>
                 <ShareButtons
-                  url={DOMAIN + "/speeches/" + id}
+                  url={DOMAIN + "/speeches/" + speechId}
                   title={title}
                   useIcon={false}
                   // summary={result.summary.child}
@@ -498,15 +567,90 @@ export default function AudioPlayer({ id }: any) {
                 <FaX />
               </Button>
               <DrawerBody className="px-0 py-2">
-                <NewAudioPlayerList className="w-full h-full mr-2" />
+                <AudioPlayerList
+                  className="w-full h-full mr-2"
+                  setCurrentSummary={setCurrentSummary}
+                  togglePlay={togglePlay}
+                  onOpen={onDrawerOpen}
+                />
               </DrawerBody>
             </>
           )}
         </DrawerContent>
       </Drawer>
+
       <div className="hidden md:block w-[35%] h-full">
-        <NewAudioPlayerList />
+        <AudioPlayerList
+          setCurrentSummary={setCurrentSummary}
+          togglePlay={togglePlay}
+          onOpen={onDrawerOpen}
+        />
       </div>
+      <Drawer
+        backdrop={isMobile ? "transparent" : "blur"}
+        isOpen={isDrawerOpen}
+        onOpenChange={onDrawerOpenChange}
+        size="3xl"
+      >
+        <DrawerContent>
+          {(onClose) => (
+            <>
+              <DrawerHeader className="flex flex-col gap-1 text-4xl">
+                Voice Generation
+              </DrawerHeader>
+              <DrawerBody>
+                <div className="flex flex-col gap-4 mt-8">
+                  <Select
+                    isRequired
+                    className="max-w-sm"
+                    defaultSelectedKeys={["alloy"]}
+                    label="Favorite Voice"
+                    placeholder="Select a voice you want"
+                  >
+                    {voices.map((voice) => (
+                      <SelectItem
+                        onPress={() => setVoice(voice.key)}
+                        key={voice.key}
+                      >
+                        {voice.label}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                  <div className="mt-4">
+                    <SpeechPlayer
+                      isSpeech={false}
+                      audio_url={`https://cdn.openai.com/API/docs/audio/${voice}.wav`}
+                    />
+                  </div>
+                  <div className="mt-4">
+                    {currentSummary?.type === "ErrorSummary" ? (
+                      <ErrorContent content={currentSummary?.content} />
+                    ) : (
+                      <span>{currentSummary?.content}</span>
+                    )}
+                  </div>
+                </div>
+              </DrawerBody>
+              <DrawerFooter>
+                <Button color="danger" variant="flat" onPress={onClose}>
+                  Close
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={() =>
+                    isAuthenticated
+                      ? generateSpeech()
+                      : showSignInModal("You need to sign in to continue.")
+                  }
+                  isLoading={loading}
+                >
+                  Generate
+                </Button>
+              </DrawerFooter>
+            </>
+          )}
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }

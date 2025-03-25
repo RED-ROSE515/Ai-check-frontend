@@ -274,7 +274,12 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
 
   return (
     <div>
-      <Tabs aria-label="Options" color="primary" variant="bordered">
+      <Tabs
+        aria-label="Options"
+        color="primary"
+        variant="bordered"
+        className="mt-8"
+      >
         <Tab
           key="file"
           title={

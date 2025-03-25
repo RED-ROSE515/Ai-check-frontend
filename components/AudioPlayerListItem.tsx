@@ -13,6 +13,9 @@ export default function AudioPlayerListItem({
   speech_id,
   showIndex,
   setShowIndex,
+  togglePlay,
+  setCurrentSummary,
+  onOpen,
   index,
 }: any) {
   const [title, setTitle] = useState("");
@@ -105,7 +108,11 @@ export default function AudioPlayerListItem({
             </CardHeader>
             {showIndex === index && (
               <CardBody className="h-full transition-all duration-300 ease-in-out animate-in slide-in-from-bottom">
-                <AudioPostDetail />
+                <AudioPostDetail
+                  setCurrentSummary={setCurrentSummary}
+                  togglePlay={togglePlay}
+                  onOpen={onOpen}
+                />
               </CardBody>
             )}
           </Card>
