@@ -40,20 +40,20 @@ export default function AdPlayer() {
     if (theme === "dark") {
       setAds([
         { image: LightNobleblocks, link: NOBLEBLOCKS_DOMAIN },
-        { image: LightNerdNuggets, link: NOBLEBLOCKS_DOMAIN },
+        { image: LightNerdNuggets, link: "https://nerdnuggets.org/" },
         { image: LightNobleblocks, link: NOBLEBLOCKS_DOMAIN },
-        { image: LightNerdNuggets, link: NOBLEBLOCKS_DOMAIN },
+        { image: LightNerdNuggets, link: "https://nerdnuggets.org/" },
         { image: LightNobleblocks, link: NOBLEBLOCKS_DOMAIN },
-        { image: LightNerdNuggets, link: NOBLEBLOCKS_DOMAIN },
+        { image: LightNerdNuggets, link: "https://nerdnuggets.org/" },
       ]);
     } else {
       setAds([
         { image: DarkNobleblocks, link: NOBLEBLOCKS_DOMAIN },
-        { image: DarkNerdNuggets, link: NOBLEBLOCKS_DOMAIN },
+        { image: DarkNerdNuggets, link: "https://nerdnuggets.org/" },
         { image: DarkNobleblocks, link: NOBLEBLOCKS_DOMAIN },
-        { image: DarkNerdNuggets, link: NOBLEBLOCKS_DOMAIN },
+        { image: DarkNerdNuggets, link: "https://nerdnuggets.org/" },
         { image: DarkNobleblocks, link: NOBLEBLOCKS_DOMAIN },
-        { image: DarkNerdNuggets, link: NOBLEBLOCKS_DOMAIN },
+        { image: DarkNerdNuggets, link: "https://nerdnuggets.org/" },
       ]);
     }
   }, [theme]);
