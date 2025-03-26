@@ -47,8 +47,7 @@ const UserCard = ({
 
   const [isHovered, setIsHovered] = useState(false);
   const { toast } = useToast();
-  const { isAuthenticated } = useAuth();
-  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
+  const { isAuthenticated, user } = useAuth();
   const NOBLEBLOCKS_DOMAIN = process.env.NEXT_PUBLIC_NOBLEBLOCKS_DOMAIN;
   const { data: userDetail, isLoading: userDetailLoading } = useGetData(
     `user/profile?user_id=${userData.user_name}`
@@ -66,8 +65,6 @@ const UserCard = ({
     // }
   };
 
-  // if (!userDetail) return null;
-
   return userDetailLoading ? (
     <Card className="h-[61px] w-full space-y-5 p-4" radius="lg">
       <div className="space-y-3">
@@ -83,12 +80,7 @@ const UserCard = ({
       </div>
     </Card>
   ) : (
-    <Card
-      // isBlurred
-      className="border-none bg-transparent w-full"
-      // className="border-none bg-background/60 dark:bg-default-100/50 mb-4 "
-      shadow="none"
-    >
+    <Card className="border-none bg-transparent w-full" shadow="none">
       <CardBody className="w-full overflow-hidden">
         <div className="flex flex-row w-full justify-start gap-3">
           <Popover
@@ -158,17 +150,11 @@ const UserCard = ({
                   </div>
                   {
                     <Button
-                      className={
-                        // userDetail?.is_following
-                        // ? "bg-transparent text-foreground border-default-200 ml-2"
-                        "ml-2"
-                      }
+                      className={"ml-2"}
                       color="primary"
                       radius="full"
                       size="sm"
-                      // variant={userDetail?.is_following ? "bordered" : "solid"}
                       variant={"bordered"}
-                      // onPress={() => follow()}
                       onPress={() =>
                         window.open(
                           `${NOBLEBLOCKS_DOMAIN}/@${userData.user_name}`,
@@ -176,7 +162,6 @@ const UserCard = ({
                         )
                       }
                     >
-                      {/* {userDetail?.is_following ? "Unfollow" : "Follow"} */}
                       View Profile
                     </Button>
                   }
@@ -225,12 +210,13 @@ const UserCard = ({
               <div className="flex flex-row justify-center items-center">
                 <AnimatedSubscribeButton
                   subscribeStatus={userDetail?.is_following}
-                  disabled={!isAuthenticated}
+                  disabled={
+                    !isAuthenticated || userDetail?.id === user.detail.id
+                  }
                   onClick={() => follow()}
                 >
                   <span className="group inline-flex items-center text-sm">
                     Follow
-                    {/* <ChevronRightIcon className="ml-1 size-4 transition-transform duration-300 group-hover:translate-x-1" /> */}
                   </span>
                   <span className="group inline-flex items-center text-sm">
                     <CheckIcon className="bg-white rounded-full text-[#118E40] mr-2 size-4" />

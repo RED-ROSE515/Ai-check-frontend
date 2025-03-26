@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import DarkNobleblocks from "../public/NOBLEBLOCKS-dark.png";
 import LightNobleblocks from "../public/NOBLEBLOCKS-light.png";
 import DarkNerdNuggets from "../public/NerdNuggets-darke.png";

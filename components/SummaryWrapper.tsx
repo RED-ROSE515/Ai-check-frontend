@@ -142,7 +142,6 @@ const SummaryWrapper = ({
   const { isMobile } = useDeviceCheck();
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const { data: speechData, isLoading: speechLoading } = useGetData(
     totalData?.id ? `post/speech?post_id=${totalData?.id}` : ""
   );
@@ -266,19 +265,6 @@ const SummaryWrapper = ({
         <Divider
           className={`${theme === "dark" ? "bg-[#2E3E4E]" : "bg-[#E2E2E2]"}`}
         />
-        {/* {input_tokens && output_tokens && total_cost && (
-          <div className="flex flex-row justify-center">
-            <div className="w-full md:w-fit">
-              <Card
-                className={`text-sm md:text-md w-full items-center space-x-4 p-2 md:p-4 flex flex-row justify-center  ${theme === "dark" ? "bg-[#242F3C]" : "bg-gray-200"}`}
-              >
-                <p>{`IN: ${commify(input_tokens)}`}</p>
-                <p>|</p>
-                <p>{`OUT: ${commify(output_tokens)}`}</p>
-              </Card>
-            </div>
-          </div>
-        )} */}
       </div>
 
       <div className="flex flex-col md:flex-row justify-between">
@@ -300,7 +286,6 @@ const SummaryWrapper = ({
                       className="max-w-[50vw]"
                     >
                       <Chip
-                        // className={`${theme === "dark" ? "secondary" : "primary"}`}
                         variant="dot"
                         startContent={
                           <span
@@ -360,7 +345,6 @@ const SummaryWrapper = ({
                     </span>
                   </Chip>
                 </Tooltip>
-                {/* </Link> */}
               </div>
             ) : (
               <div className="mt-2 ">
@@ -368,11 +352,13 @@ const SummaryWrapper = ({
                   // className={`${theme === "dark" ? "secondary" : "primary"}`}
                   variant="dot"
                   startContent={
-                    <span className="bg-[#2E3E4E] ml-1 rounded-full">
+                    <span
+                      className={`${theme === "dark" ? "bg-[#2E3E4E]" : "bg-[#FFF]"} ml-1 rounded-full`}
+                    >
                       <FaLink color="#737E88" className="m-1" />
                     </span>
                   }
-                  className={`cursor-pointer hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"}`}
+                  className={`cursor-pointer hover:scale-105 border-none bg-[#273340] ${theme === "dark" ? "hover:bg-gray-600 bg-[#273340]" : "hover:bg-gray-300 bg-[#EAEAEA]"}`}
                 >
                   <span className="m-1">{`Unknown`}</span>
                 </Chip>
