@@ -245,7 +245,7 @@ const Statistics = () => {
                   <Link
                     key={index}
                     className="w-full"
-                    href={"/results/" + paper.id}
+                    href={"/results/discrepancies/" + paper.id}
                   >
                     <Card
                       isHoverable
@@ -290,7 +290,7 @@ const Statistics = () => {
                   <Link
                     key={index}
                     className="w-full"
-                    href={"/results/" + comment.parent_id}
+                    href={"/results/discrepancies/" + comment.parent_id}
                   >
                     <Card
                       isHoverable

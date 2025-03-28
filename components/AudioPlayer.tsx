@@ -451,7 +451,9 @@ export default function AudioPlayer({ id }: any) {
                       isLoading={auditDetailPending}
                       onPress={() =>
                         startAuditDetailTransition(() =>
-                          router.push(DOMAIN + "/results/" + currentPostId)
+                          router.push(
+                            DOMAIN + "/results/discrepancies/" + currentPostId
+                          )
                         )
                       }
                     >

@@ -198,7 +198,7 @@ const SummaryWrapper = ({
   const generateSpeech = async () => {
     try {
       setLoading(true);
-      const paperId = link.split("results/")[1];
+      const paperId = link.split("results/discrepancies/")[1];
       const response = await api.post(`post/generate_voice`, {
         post_id: paperId,
         speech_type: currentSummary?.value,

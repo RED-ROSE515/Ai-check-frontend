@@ -69,7 +69,7 @@ export default function AudioPlayerListItem({
                   <UserCard
                     userData={{ ...author }}
                     postDate={postDate}
-                    link={DOMAIN + "/results/" + summary?.post_id}
+                    link={DOMAIN + "/results/discrepancies/" + summary?.post_id}
                     totalData={result}
                     showFollow={false}
                     className="max-w-fit mb-2"

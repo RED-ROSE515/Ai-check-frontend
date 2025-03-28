@@ -133,7 +133,10 @@ export const AnalyzeProvider = ({
               <ToastAction
                 altText="View Result"
                 onClick={() =>
-                  window.open("/results/" + response.data.id, "_blank")
+                  window.open(
+                    "/results/discrepancies/" + response.data.id,
+                    "_blank"
+                  )
                 }
               >
                 View

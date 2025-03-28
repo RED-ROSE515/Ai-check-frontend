@@ -281,8 +281,14 @@ const Footer = () => {
           <TiktokSvg theme={theme} />
         </div>
         <div className="flex items-center gap-1 md:gap-[36px] text-[12px] md:text-sm">
-          <a href="#" className="text-[#697078]">
+          <a href="about" className="text-[#697078]">
             About Us
+          </a>
+          <a
+            href="https://nerdbunny.gitbook.io/nerdbunny"
+            className="text-[#697078]"
+          >
+            Whitepaper
           </a>
           <a href="#" className="text-[#697078]">
             Contact

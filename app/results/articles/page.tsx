@@ -7,14 +7,13 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  Input,
 } from "@heroui/react";
-import { Link, Pagination } from "@heroui/react";
+import { Pagination } from "@heroui/react";
 import api from "@/utils/api";
 // import Pusher from "pusher-js";
 import { useTheme } from "next-themes";
-import LeftSider from "../components/LeftSider";
-import SummaryWrapper from "../components/SummaryWrapper";
+import LeftSider from "@/components/LeftSider";
+import SummaryWrapper from "@/components/SummaryWrapper";
 import { usePagination } from "@/contexts/PaginationContext";
 import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
 import { PostCommentBox } from "@/components/Comments";
@@ -141,7 +140,13 @@ export default function Home() {
   }
   return (
     <section className="w-full">
-      <LandingPage />
+      <div className="w-full flex flex-col justify-center items-center">
+        <div className="flex flex-row justify-center">
+          <span className="md:pt-[60px] text-2xl md:text-5xl md:font-semibold text-center max-w-[75%] md:max-w-[80%] text-balance">
+            Generate summaries and articles for Research Papers Effortlessly
+          </span>
+        </div>
+      </div>
       <div className="w-full fixed bottom-0 z-10">
         <AnimatePresence>
           {showSpeech && speechUrl && (
@@ -158,7 +163,7 @@ export default function Home() {
         </AnimatePresence>
       </div>
       <div
-        className={`flex flex-col md:flex-row items-start justify-center gap-4 ${theme === "dark" ? "bg-black" : "bg-white"}`}
+        className={`flex flex-col md:flex-row items-start justify-center mt-8 gap-4 ${theme === "dark" ? "bg-black" : "bg-white"}`}
       >
         {User && (
           <div className="w-full md:w-1/6">
@@ -214,9 +219,6 @@ export default function Home() {
               </ModalContent>
             </Modal>
             <div className="flex flex-col gap-[36px] mt-15">
-              <h1 className="text-md md:text-3xl text-center font-semibold md:font-bold">
-                See How NerdBunny is Improving Research Integrity
-              </h1>
               {loading ? (
                 <Loader />
               ) : totalResults.length > 0 ? (
@@ -335,12 +337,6 @@ export default function Home() {
                   onChange={(newPage) => setPage(newPage)}
                 />
               </div>
-            </div>
-            <div className="flex flex-col gap-[96px]">
-              <NerdbunnyReason />
-              <WorkFlow />
-              <ResearchSection />
-              <LastSection />
             </div>
           </div>
         </div>

@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const analysisData = response.data;
     const title = analysisData?.title || "Research Paper Analysis";
     const description = `NerdBunny AI analysis results for "${title}". View detected errors, improvements, and insights. 🧬🐇`;
-    const url = `${DOMAIN}/results/${resolvedParams.id}`;
+    const url = `${DOMAIN}/results/discrepancies/${resolvedParams.id}`;
     const poster = analysisData?.user?.first_name;
 
     return {
@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description:
         "View AI-powered analysis results for research papers. Detect errors, get improvements, and gain insights with NerdBunny. 🧬🐇",
       alternates: {
-        canonical: `https://nerdbunny.com/results/${resolvedParams.id}`,
+        canonical: `https://nerdbunny.com/results/discrepancies/${resolvedParams.id}`,
       },
     };
   }

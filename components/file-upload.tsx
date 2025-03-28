@@ -18,6 +18,9 @@ import {
   Tabs,
   Tab,
 } from "@heroui/react";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+
 import { useRef, useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import _ from "lodash";
@@ -29,6 +32,7 @@ import { useTheme } from "next-themes";
 import UserSearchBar from "./UserSearch";
 import { useAnalyze } from "@/contexts/AnalyzeContext";
 import { FaFile, FaLink } from "react-icons/fa";
+import { LuScrollText } from "react-icons/lu";
 
 interface FileUploadProgress {
   progress: number;
@@ -108,6 +112,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [s3_link, setS3Link] = useState("");
   const [paper_url, setPaperUrl] = useState("");
+  const [paper_value, setPaperValue] = useState("");
   const [loading, setLoading] = useState(false);
   const { handleAnalyze } = useAnalyze();
   const { toast } = useToast();
@@ -273,7 +278,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   }
 
   return (
-    <div>
+    <div className="">
       <Tabs
         aria-label="Options"
         color="primary"
@@ -373,17 +378,35 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                     users={users}
                     disabled={visibility[0] !== "specific_users"}
                   />
-                  <Button
-                    isLoading={loading}
-                    className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-                    onPress={() => handleAnalyze(s3_link, visibility[0], users)}
-                  >
-                    <span
-                      className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+
+                  <div className="flex flex-row justify-end gap-4">
+                    <Button
+                      isLoading={loading}
+                      className={`w-full md:w-[50%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+                      onPress={() =>
+                        handleAnalyze(s3_link, visibility[0], users)
+                      }
                     >
-                      Analyze for Errors
-                    </span>
-                  </Button>
+                      <span
+                        className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+                      >
+                        Analyze for Discrepancies
+                      </span>
+                    </Button>
+                    <Button
+                      isLoading={loading}
+                      className={`w-full md:w-[45%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+                      onPress={() =>
+                        handleAnalyze(paper_url, visibility[0], users)
+                      }
+                    >
+                      <span
+                        className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+                      >
+                        Analyze for Article
+                      </span>
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
@@ -400,7 +423,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
         >
           <div className="flex flex-col gap-1">
             <p className="font-semibold text-lg">Paste Paper URL</p>
-            <div className="mt-2 flex flex-col md:flex-row justify-center gap-2">
+            <div className="mt-2 flex flex-col justify-center gap-3">
               <HeroInput
                 className="w-full"
                 label="Paper URL : "
@@ -411,23 +434,85 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                 placeholder="https://arxiv.org/abs/..."
                 classNames={{ mainWrapper: "w-full" }}
               />
-              <Button
-                isLoading={loading}
-                isDisabled={!paper_url}
-                className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-                onPress={() => handleAnalyze(paper_url, visibility[0], users)}
-              >
-                <span
-                  className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+              <div className="flex flex-row justify-end gap-4">
+                <Button
+                  isLoading={loading}
+                  isDisabled={!paper_url}
+                  className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+                  onPress={() => handleAnalyze(paper_url, visibility[0], users)}
                 >
-                  Analyze for Errors
-                </span>
-              </Button>
+                  <span
+                    className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+                  >
+                    Analyze for Discrepancies
+                  </span>
+                </Button>
+                <Button
+                  isLoading={loading}
+                  isDisabled={!paper_url}
+                  className={`w-full md:w-[12%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+                  onPress={() => handleAnalyze(paper_url, visibility[0], users)}
+                >
+                  <span
+                    className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+                  >
+                    Analyze for Article
+                  </span>
+                </Button>
+              </div>
             </div>
             <span className="text-xs ml-2 text-gray-500">
               Note: Currently supporting papers from: arXiv, bioRxiv, medRxiv,
               and OpenAlex. More sources are coming soon.
             </span>
+          </div>
+        </Tab>
+        <Tab
+          key="text"
+          className=""
+          title={
+            <div className="flex items-center space-x-2">
+              <LuScrollText />
+              <span>Text</span>
+            </div>
+          }
+        >
+          <div className="flex flex-col justify-center gap-3">
+            <div className="grid w-full gap-1.5">
+              <Label htmlFor="paper">Paper Content</Label>
+              <Textarea
+                placeholder="Input the paper."
+                id="paper"
+                value={paper_value}
+                onChange={(e: any) => setPaperValue(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-row justify-end gap-4">
+              <Button
+                isLoading={loading}
+                isDisabled={!paper_value}
+                className={`w-full md:w-[18%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+                onPress={() => handleAnalyze(paper_url, visibility[0], users)}
+              >
+                <span
+                  className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+                >
+                  Analyze for Discrepancies
+                </span>
+              </Button>
+              <Button
+                isLoading={loading}
+                isDisabled={!paper_value}
+                className={`w-full md:w-[12%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+                onPress={() => handleAnalyze(paper_url, visibility[0], users)}
+              >
+                <span
+                  className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+                >
+                  Analyze for Article
+                </span>
+              </Button>
+            </div>
           </div>
         </Tab>
       </Tabs>

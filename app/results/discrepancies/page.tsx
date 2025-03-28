@@ -7,14 +7,13 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  Input,
 } from "@heroui/react";
-import { Link, Pagination } from "@heroui/react";
+import { Pagination } from "@heroui/react";
 import api from "@/utils/api";
 // import Pusher from "pusher-js";
 import { useTheme } from "next-themes";
-import LeftSider from "../components/LeftSider";
-import SummaryWrapper from "../components/SummaryWrapper";
+import LeftSider from "@/components/LeftSider";
+import SummaryWrapper from "@/components/SummaryWrapper";
 import { usePagination } from "@/contexts/PaginationContext";
 import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
 import { PostCommentBox } from "@/components/Comments";
@@ -214,9 +213,6 @@ export default function Home() {
               </ModalContent>
             </Modal>
             <div className="flex flex-col gap-[36px] mt-15">
-              <h1 className="text-md md:text-3xl text-center font-semibold md:font-bold">
-                See How NerdBunny is Improving Research Integrity
-              </h1>
               {loading ? (
                 <Loader />
               ) : totalResults.length > 0 ? (
@@ -335,12 +331,6 @@ export default function Home() {
                   onChange={(newPage) => setPage(newPage)}
                 />
               </div>
-            </div>
-            <div className="flex flex-col gap-[96px]">
-              <NerdbunnyReason />
-              <WorkFlow />
-              <ResearchSection />
-              <LastSection />
             </div>
           </div>
         </div>

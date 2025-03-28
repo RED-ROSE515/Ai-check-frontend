@@ -44,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
   //     description:
   //       "View AI-powered analysis results for research papers. Detect errors, get improvements, and gain insights with NerdBunny. 🧬🐇",
   //     alternates: {
-  //       canonical: `https://nerdbunny.com/results/${resolvedParams.id}`,
+  //       canonical: `https://nerdbunny.com/results/discrepancies/${resolvedParams.id}`,
   //     },
   //   };
   // }

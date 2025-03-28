@@ -38,7 +38,9 @@ const ResultPage = ({ params }: any) => {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
 
-  const [pageUrl, setPageUrl] = useState(`${API_BASE_URL}results/${id}`);
+  const [pageUrl, setPageUrl] = useState(
+    `${API_BASE_URL}results/discrepancies/${id}`
+  );
   const { theme } = useTheme();
   const { showSpeech, speechUrl } = useSpeech();
   const [analysisResult, setAnalysisResult] = useState("");
@@ -98,9 +100,9 @@ const ResultPage = ({ params }: any) => {
           `/post/comments?parent_is_post=true&parent_id=${response.data.id}&start=0&limit=1000`
         );
         setComments(resp.data);
-        setLink("/results/" + response.data.id);
+        setLink("/results/discrepancies/" + response.data.id);
         setSummaryLoading(false);
-        setPageUrl(`${API_BASE_URL}results/${id}`);
+        setPageUrl(`${API_BASE_URL}results/discrepancies/${id}`);
         // const result = await res.json();
         const result = { data: "KKK", title: id, description: "Description" };
         return result;
@@ -213,7 +215,9 @@ const ResultPage = ({ params }: any) => {
                         summary={summary}
                         isResult={true}
                         totalData={result}
-                        link={DOMAIN + "/results/" + summary.post_id}
+                        link={
+                          DOMAIN + "/results/discrepancies/" + summary.post_id
+                        }
                         showSignInModal={showSignInModal}
                         reportPost={reportPost}
                         userData={{ ...author }}
@@ -314,7 +318,7 @@ const ResultPage = ({ params }: any) => {
                     <Link
                       key={index}
                       className="w-full"
-                      href={"/results/" + paper.id}
+                      href={"/results/discrepancies/" + paper.id}
                     >
                       <Card
                         isHoverable

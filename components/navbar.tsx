@@ -28,6 +28,7 @@ import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
 import useDeviceCheck from "@/hooks/useDeviceCheck";
 import { MdLogin, MdLogout, MdCheck, MdInfo } from "react-icons/md";
+import { IoNewspaper } from "react-icons/io5";
 import SearchBar from "./SearchBar";
 import { useSearch } from "@/contexts/SearchContext";
 import { usePagination } from "@/contexts/PaginationContext";
@@ -439,6 +440,15 @@ export const Navbar = () => {
                       About
                     </DropdownItem>
                     <DropdownItem
+                      key="whitepaper"
+                      startContent={<IoNewspaper className={iconClasses} />}
+                      onPress={() => {
+                        navigateTo(`https://nerdbunny.gitbook.io/nerdbunny`);
+                      }}
+                    >
+                      WhitePaper
+                    </DropdownItem>
+                    <DropdownItem
                       key="logout"
                       //shortcut="⌘Q"
                       color="danger"
@@ -474,6 +484,15 @@ export const Navbar = () => {
                       }}
                     >
                       About
+                    </DropdownItem>
+                    <DropdownItem
+                      key="whitepaper"
+                      startContent={<IoNewspaper className={iconClasses} />}
+                      onPress={() => {
+                        navigateTo(`https://nerdbunny.gitbook.io/nerdbunny`);
+                      }}
+                    >
+                      WhitePaper
                     </DropdownItem>
                     <DropdownItem
                       key="login"
