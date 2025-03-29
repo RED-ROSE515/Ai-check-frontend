@@ -14,9 +14,20 @@ import {
   Button,
   Select,
   SelectItem,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
   Input as HeroInput,
+  useDisclosure,
   Tabs,
   Tab,
+  RadioGroup,
+  Radio,
+  CheckboxGroup,
+  Image,
+  Checkbox,
 } from "@heroui/react";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -30,9 +41,17 @@ import { Input } from "./ui/input";
 import { Progress } from "./ui/progress";
 import { useTheme } from "next-themes";
 import UserSearchBar from "./UserSearch";
+import APAImage from "@/public/citations/APA.png";
+import AIPImage from "@/public/citations/AIP.png";
+import ACSImage from "@/public/citations/ACS.png";
+import ChicagoImage from "@/public/citations/Chicago.png";
+import CSEImage from "@/public/citations/CSE.png";
+import IEEEImage from "@/public/citations/IEEE.png";
 import { useAnalyze } from "@/contexts/AnalyzeContext";
 import { FaFile, FaLink } from "react-icons/fa";
 import { LuScrollText } from "react-icons/lu";
+import { IoSettingsOutline } from "react-icons/io5";
+import { SiRoamresearch } from "react-icons/si";
 
 interface FileUploadProgress {
   progress: number;
@@ -103,6 +122,15 @@ export const ListboxWrapper = ({ children }: any) => (
   </div>
 );
 
+export const citations = [
+  { key: "apa", label: "APA", image: APAImage },
+  { key: "chicago", label: "Chicago", image: ChicagoImage },
+  { key: "cse", label: "CSE", image: CSEImage },
+  { key: "aip", label: "AIP", image: AIPImage },
+  { key: "acs", label: "ACS", image: ACSImage },
+  { key: "ieee", label: "IEEE", image: IEEEImage },
+];
+
 const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const [currentFile, setCurrentFile] = useState<FileUploadProgress | null>(
     null
@@ -118,6 +146,10 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const { toast } = useToast();
   const { theme } = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selected, setSelected] = useState("equal");
+  const [citation, setCitation] = useState("apa");
+
   onTriggerRef.current = () => {
     fileInputRef.current?.click();
   };
@@ -396,9 +428,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                     <Button
                       isLoading={loading}
                       className={`w-full md:w-[45%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-                      onPress={() =>
-                        handleAnalyze(paper_url, visibility[0], users)
-                      }
+                      onPress={() => onOpen()}
                     >
                       <span
                         className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
@@ -451,7 +481,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                   isLoading={loading}
                   isDisabled={!paper_url}
                   className={`w-full md:w-[12%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-                  onPress={() => handleAnalyze(paper_url, visibility[0], users)}
+                  onPress={() => onOpen()}
                 >
                   <span
                     className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
@@ -504,7 +534,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                 isLoading={loading}
                 isDisabled={!paper_value}
                 className={`w-full md:w-[12%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-                onPress={() => handleAnalyze(paper_url, visibility[0], users)}
+                onPress={() => onOpen()}
               >
                 <span
                   className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
@@ -517,6 +547,114 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
         </Tab>
       </Tabs>
 
+      <Modal backdrop="opaque" isOpen={isOpen} onClose={onClose}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Summary Generation Option
+              </ModalHeader>
+              <ModalBody>
+                <Tabs
+                  aria-label="Options"
+                  color="primary"
+                  variant="bordered"
+                  className="mt-8"
+                >
+                  <Tab
+                    key="basic"
+                    title={
+                      <div className="flex items-center space-x-2">
+                        <IoSettingsOutline />
+                        <span>Basic</span>
+                      </div>
+                    }
+                  >
+                    <div className="min-h-[250px]">
+                      <span>
+                        Generate the basic concept summary for this research
+                        paper.
+                      </span>
+                    </div>
+                  </Tab>
+                  <Tab
+                    key="advanced"
+                    title={
+                      <div className="flex items-center space-x-2">
+                        <SiRoamresearch />
+                        <span>Advanced</span>
+                      </div>
+                    }
+                  >
+                    <div className="min-h-[250px] flex flex-col gap-2">
+                      <RadioGroup
+                        label="Select your favorite city"
+                        value={selected}
+                        onValueChange={setSelected}
+                      >
+                        <Radio value="equal">Weight all sections equally</Radio>
+                        <Radio value="seperate">Based on these methods</Radio>
+                      </RadioGroup>
+                      <CheckboxGroup
+                        isDisabled={selected === "equal"}
+                        defaultValue={["method"]}
+                        label="Select methods"
+                      >
+                        <Checkbox value="method">Focus on methods</Checkbox>
+                        <Checkbox value="result">Focus on Result</Checkbox>
+                        <Checkbox value="limitation">
+                          Highlight limitations
+                        </Checkbox>
+                        <Checkbox value="finding">
+                          Highlight main findings/take home messages
+                        </Checkbox>
+                        <Checkbox value="data">Data availability</Checkbox>
+                      </CheckboxGroup>
+                      <div className="flex flex-row justify-between">
+                        <Select
+                          key={"outside"}
+                          className="max-w-[250px]"
+                          defaultSelectedKeys={["apa"]}
+                          label="Citation Format"
+                          labelPlacement={"outside"}
+                          selectedKeys={new Set([citation])}
+                          placeholder="Select Citation Format"
+                        >
+                          {citations.map((citation) => (
+                            <SelectItem
+                              key={citation.key}
+                              onPress={() => setCitation(citation.key)}
+                            >
+                              {citation.label}
+                            </SelectItem>
+                          ))}
+                        </Select>
+                        <Image
+                          alt="HeroUI hero Image with delay"
+                          height={100}
+                          src={
+                            citations.find((value) => value.key === citation)
+                              ?.image.src
+                          }
+                          width={100}
+                        />
+                      </div>
+                    </div>
+                  </Tab>
+                </Tabs>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={onClose}>
+                  Generate
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       {currentFile && (
         <div>
           <p className="my-2 mt-6 text-sm font-medium text-muted-foreground">
