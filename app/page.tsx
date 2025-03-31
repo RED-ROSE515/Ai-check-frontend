@@ -36,8 +36,7 @@ import LastSection from "@/components/LastSection";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSpeech } from "@/contexts/SpeechContext";
 import SpeechPlayer from "@/components/SpeechPlayer";
-import Tokenomics from "@/components/Tokenomics";
-
+import NerdbunnyAd from "@/components/NerdbunnyAd";
 const metadata: Metadata = {
   title: "AI-Powered Research Paper Error Detection",
   description:
@@ -143,6 +142,7 @@ export default function Home() {
   return (
     <section className="w-full">
       <LandingPage />
+      <NerdbunnyAd />
       <div className="w-full fixed bottom-0 z-10">
         <AnimatePresence>
           {showSpeech && speechUrl && (
@@ -341,7 +341,6 @@ export default function Home() {
               <NerdbunnyReason />
               <WorkFlow />
               <ResearchSection />
-              <Tokenomics />
               <LastSection />
             </div>
           </div>

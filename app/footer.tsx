@@ -322,16 +322,16 @@ const Footer = () => {
           )}
         </Tabs>
       </div>
-      <div className="hidden md:flex w-full md:flex-row flex-col-reverse justify-between items-center md:w-[80%] gap-6">
-        <div className="md:flex flex-row justify-center gap-3 hidden">
-          <TelegramSvg theme={theme} />
-          <TwitterSvg theme={theme} />
-          <TiktokSvg theme={theme} />
-        </div>
+      <div className="hidden w-full md:flex flex-col justify-center items-center gap-6 px-20">
         <div
-          className={`flex flex-col items-start gap-1 md:gap-[16px] text-[12px] md:text-sm ${theme === "dark" ? "text-[#697078]" : "text-slate-800"}`}
+          className={`w-full flex flex-row justify-between items-center gap-1 md:gap-[16px] text-[14px] md:text-sm ${theme === "dark" ? "text-[#697078]" : "text-slate-800"}`}
         >
-          <div className="flex flex-row justify-center items-start gap-10">
+          <div className="md:flex flex-row justify-center gap-3 hidden">
+            <TelegramSvg theme={theme} />
+            <TwitterSvg theme={theme} />
+            <TiktokSvg theme={theme} />
+          </div>
+          <div className="flex flex-row justify-center items-center gap-10">
             <a href="https://nerdbunny.gitbook.io/nerdbunny">Whitepaper</a>
             <a href="https://nerdbunny.gitbook.io/nerdbunny/about-nerdbunny">
               About Us
@@ -343,8 +343,6 @@ const Footer = () => {
               Tokenomics
             </a>
             <a href="https://nerdbunny.gitbook.io/nerdbunny/roadmap">Roadmap</a>
-          </div>
-          <div className="flex flex-row justify-center items-start gap-10">
             <a href="https://nerdbunny.gitbook.io/nerdbunny/faq">FAQ</a>
             <a href="https://nerdbunny.gitbook.io/nerdbunny/disclaimer">
               Disclaimer
@@ -360,7 +358,8 @@ const Footer = () => {
             </a>
           </div>
         </div>
-        <div className="flex flex-col justify-center items-start text-center text-[#697078]">
+
+        <div className="w-full flex flex-col items-end text-center text-[#697078]">
           <span>Contact us: info@nobleblocks.com</span>
           <span>Copyright © 2025 NerdBunny</span>
         </div>
