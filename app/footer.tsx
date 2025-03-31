@@ -1,6 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Link, Pagination, Tabs, Tab, Chip } from "@heroui/react";
+import {
+  Link,
+  Pagination,
+  Tabs,
+  Tab,
+  Chip,
+  CardHeader,
+  CardBody,
+  Card,
+} from "@heroui/react";
 import { usePagination } from "@/contexts/PaginationContext";
 import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
@@ -203,7 +212,46 @@ const Footer = () => {
   }
   return (
     <div className="w-full flex flex-col justify-center items-center md:py-5">
-      <div className="flex md:hidden w-full flex-col justify-center items-center">
+      <div className="flex md:hidden w-full flex-col justify-center items-center p-4">
+        <Card className="mb-4 w-full">
+          <CardBody>
+            <div
+              className={`flex flex-row w-full justify-between items-center gap-3 px-4 ${theme === "dark" ? "text-[#697078]" : "text-slate-800"}`}
+            >
+              <div className="flex flex-col justify-center items-start gap-1">
+                <a href="https://nerdbunny.gitbook.io/nerdbunny">Whitepaper</a>
+                <a href="https://nerdbunny.gitbook.io/nerdbunny/about-nerdbunny">
+                  About Us
+                </a>
+                <a href="https://nerdbunny.gitbook.io/nerdbunny/our-team">
+                  Our Team
+                </a>
+                <a href="https://nerdbunny.gitbook.io/nerdbunny/tokenomics">
+                  Tokenomics
+                </a>
+                <a href="https://nerdbunny.gitbook.io/nerdbunny/roadmap">
+                  Roadmap
+                </a>
+              </div>
+              <div className="flex flex-col justify-center items-start gap-1">
+                <a href="https://nerdbunny.gitbook.io/nerdbunny/faq">FAQ</a>
+                <a href="https://nerdbunny.gitbook.io/nerdbunny/disclaimer">
+                  Disclaimer
+                </a>
+                <a href="https://nerdbunny.gitbook.io/nerdbunny/cookie-policy">
+                  Cookie Policy
+                </a>
+                <a href="https://nerdbunny.gitbook.io/nerdbunny/terms">
+                  Terms of Service
+                </a>
+                <a href="https://nerdbunny.gitbook.io/nerdbunny/privacy-policy">
+                  Privacy Policy
+                </a>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+
         <Tabs
           aria-label="Options"
           classNames={{
@@ -280,30 +328,40 @@ const Footer = () => {
           <TwitterSvg theme={theme} />
           <TiktokSvg theme={theme} />
         </div>
-        <div className="flex items-center gap-1 md:gap-[36px] text-[12px] md:text-sm">
-          <a href="about" className="text-[#697078]">
-            About Us
-          </a>
-          <a
-            href="https://nerdbunny.gitbook.io/nerdbunny"
-            className="text-[#697078]"
-          >
-            Whitepaper
-          </a>
-          <a href="#" className="text-[#697078]">
-            Contact
-          </a>
-          <a href="#" className="text-[#697078]">
-            Privacy Policy
-          </a>
-          <a href="#" className="text-[#697078]">
-            Terms of Service
-          </a>
-          <a href="#" className="text-[#697078]">
-            FAQ
-          </a>
+        <div
+          className={`flex flex-col items-start gap-1 md:gap-[16px] text-[12px] md:text-sm ${theme === "dark" ? "text-[#697078]" : "text-slate-800"}`}
+        >
+          <div className="flex flex-row justify-center items-start gap-10">
+            <a href="https://nerdbunny.gitbook.io/nerdbunny">Whitepaper</a>
+            <a href="https://nerdbunny.gitbook.io/nerdbunny/about-nerdbunny">
+              About Us
+            </a>
+            <a href="https://nerdbunny.gitbook.io/nerdbunny/our-team">
+              Our Team
+            </a>
+            <a href="https://nerdbunny.gitbook.io/nerdbunny/tokenomics">
+              Tokenomics
+            </a>
+            <a href="https://nerdbunny.gitbook.io/nerdbunny/roadmap">Roadmap</a>
+          </div>
+          <div className="flex flex-row justify-center items-start gap-10">
+            <a href="https://nerdbunny.gitbook.io/nerdbunny/faq">FAQ</a>
+            <a href="https://nerdbunny.gitbook.io/nerdbunny/disclaimer">
+              Disclaimer
+            </a>
+            <a href="https://nerdbunny.gitbook.io/nerdbunny/cookie-policy">
+              Cookie Policy
+            </a>
+            <a href="https://nerdbunny.gitbook.io/nerdbunny/terms">
+              Terms of Service
+            </a>
+            <a href="https://nerdbunny.gitbook.io/nerdbunny/privacy-policy">
+              Privacy Policy
+            </a>
+          </div>
         </div>
-        <div className="flex flex-col justify-center items-center text-center text-[#697078]">
+        <div className="flex flex-col justify-center items-start text-center text-[#697078]">
+          <span>Contact us: info@nobleblocks.com</span>
           <span>Copyright © 2025 NerdBunny</span>
         </div>
       </div>

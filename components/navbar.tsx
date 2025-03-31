@@ -141,7 +141,7 @@ export const Navbar = () => {
   };
   const iconClasses = `text-xl pointer-events-none flex-shrink-0 ${theme === "dark" ? "text-[#92A8BF]" : "text-[#828489]"}`;
   return (
-    <div className="flex items-center justify-center flex-row w-full relative">
+    // <div className="flex items-center justify-center flex-row w-full relative">
       <HeroUINavbar
         maxWidth="full"
         position="sticky"
@@ -513,6 +513,6 @@ export const Navbar = () => {
           </NavbarItem>
         </NavbarContent>
       </HeroUINavbar>
-    </div>
+    // </div>
   );
 };
