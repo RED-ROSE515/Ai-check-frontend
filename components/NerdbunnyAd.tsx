@@ -9,9 +9,9 @@ const NerdbunnyAd = () => {
   const { theme } = useTheme();
   return (
     <div
-      className={`flex flex-col justify-cente mt-4 items-center ${theme === "dark" ? "bg-black" : ""}`}
+      className={`flex flex-col justify-center items-center ${theme === "dark" ? "bg-black" : ""}`}
     >
-      <div className="w-[75vw] relative flex-row justify-center items-center hidden md:flex">
+      <div className="w-[75vw] mt-4 relative flex-row justify-center items-center hidden md:flex">
         <div className="w-[10vw]">
           <Image
             className="rounded-full"

@@ -10,7 +10,7 @@ import api from "@/utils/api";
 import { useToast } from "@/hooks/use-toast";
 import { usePagination } from "./PaginationContext";
 
-interface SearchContextType {
+interface ArticleSearchContextType {
   keyword: string;
   setKeyword: (keyword: string) => void;
   sortBy: string;
@@ -24,9 +24,15 @@ interface SearchContextType {
   setTotalResults: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
-const SearchContext = createContext<SearchContextType | undefined>(undefined);
+const ArticleSearchContext = createContext<
+  ArticleSearchContextType | undefined
+>(undefined);
 
-export function SearchProvider({ children }: { children: React.ReactNode }) {
+export function ArticleSearchProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [keyword, setKeyword] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [order, setOrder] = useState("desc");
@@ -39,7 +45,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       const response = await api.get(
-        `/post/pagination?post_type=6&start=${(page - 1) * 3}&limit=3&process_type=ResearchCheck${keyword ? `&keyword=${keyword}` : ""}${sortBy ? `&error_type=${sortBy}` : ""}`
+        `/post/pagination?post_type=6&start=${(page - 1) * 3}&limit=3&process_type=GenerateArticle${keyword ? `&keyword=${keyword}` : ""}${sortBy ? `&error_type=${sortBy}` : ""}`
       );
 
       setTotalResults(response.data.data);
@@ -77,14 +83,18 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <SearchContext.Provider value={value}>{children}</SearchContext.Provider>
+    <ArticleSearchContext.Provider value={value}>
+      {children}
+    </ArticleSearchContext.Provider>
   );
 }
 
-export function useSearch() {
-  const context = useContext(SearchContext);
+export function useArticleSearch() {
+  const context = useContext(ArticleSearchContext);
   if (context === undefined) {
-    throw new Error("useSearch must be used within a SearchProvider");
+    throw new Error(
+      "useArticleSearch must be used within a ArticleSearchProvider"
+    );
   }
   return context;
 }

@@ -160,7 +160,7 @@ const ResultPage = ({ params }: any) => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
-        `${API_BASE_URL}/post/pagination?post_type=6&start=0&limit=4`
+        `${API_BASE_URL}/post/pagination?post_type=6&start=0&limit=4&process_type=GenerateArticle`
       );
       setRecentPapers(response.data.data);
     };

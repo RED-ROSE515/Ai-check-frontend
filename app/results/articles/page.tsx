@@ -24,12 +24,12 @@ import SignInDialog from "@/components/SignInDialog";
 import { usePostActions } from "@/hooks/usePostActions";
 import Loader from "@/components/Loader";
 import type { Metadata } from "next";
-import { useSearch } from "@/contexts/SearchContext"; // Add this import
 import { AnimatePresence, motion } from "framer-motion";
 import { useSpeech } from "@/contexts/SpeechContext";
 import SpeechPlayer from "@/components/SpeechPlayer";
 import { usePathname } from "next/navigation";
 import ArticleWrapper from "@/components/ArticleWrapper";
+import { useArticleSearch } from "@/contexts/ArticleSearchContext";
 const metadata: Metadata = {
   title: "AI-Powered Research Paper Error Detection",
   description:
@@ -65,8 +65,7 @@ export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
-  const { loading, totalResults, setTotalResults, setProcessType } =
-    useSearch(); // Add this
+  const { loading, totalResults, setTotalResults } = useArticleSearch(); // Add this
 
   const { page, totalPage, setPage } = usePagination();
   const pathname = usePathname();
@@ -129,15 +128,11 @@ export default function Home() {
     setIsMounted(true);
   }, []);
 
-  useEffect(() => {
-    setProcessType("GenerateArticle");
-  }, [pathname]);
-
   if (!isMounted) {
     return null;
   }
   return (
-    <section className="w-full">
+    <section className="w-full min-h-[80vh]">
       <div
         className={`w-full flex flex-col justify-center items-center ${theme === "dark" ? "bg-black" : "bg-white"}`}
       >

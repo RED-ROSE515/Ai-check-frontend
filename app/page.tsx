@@ -25,7 +25,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import SignInDialog from "@/components/SignInDialog";
 import { usePostActions } from "@/hooks/usePostActions";
 import Loader from "@/components/Loader";
-import { usePathname, useRouter } from "next/navigation";
 import type { Metadata } from "next";
 import { useSearch } from "@/contexts/SearchContext"; // Add this import
 import LandingPage from "@/components/LandingPage";
@@ -70,12 +69,9 @@ export default function Home() {
   const triggerUploadRef: TriggerRefType = useRef(null);
   const User = false;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const router = useRouter();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
-  const { loading, totalResults, setTotalResults, setProcessType } =
-    useSearch(); // Add this
-  const pathname = usePathname();
+  const { loading, totalResults, setTotalResults } = useSearch(); // Add this
   const { page, totalPage, setPage } = usePagination();
 
   const like = async (post_id: string, liked_me: boolean) => {
@@ -135,7 +131,6 @@ export default function Home() {
 
   useEffect(() => {
     setIsMounted(true);
-    setProcessType("ResearchCheck");
   }, []);
 
   if (!isMounted) {

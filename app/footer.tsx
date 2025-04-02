@@ -211,7 +211,7 @@ const Footer = () => {
     return null;
   }
   return (
-    <div className="w-full flex flex-col justify-center items-center md:py-5">
+    <div className="w-full flex flex-col justify-center items-center md:py-2">
       <div className="flex md:hidden w-full flex-col justify-center items-center p-4">
         <Card className="mb-4 w-full">
           <CardBody>
@@ -322,7 +322,7 @@ const Footer = () => {
           )}
         </Tabs>
       </div>
-      <div className="hidden w-full md:flex flex-col justify-center items-center gap-6 px-20">
+      <div className="hidden w-full md:flex flex-col justify-center items-center gap-3 px-20">
         <div
           className={`w-full flex flex-row justify-center items-center gap-1 md:gap-[16px] text-[14px] md:text-sm ${theme === "dark" ? "text-[#697078]" : "text-slate-800"}`}
         >
