@@ -65,9 +65,9 @@ export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
-  const { loading, totalResults, setTotalResults } = useSearch(); // Add this
+  const { loading, totalResults, setTotalResults, totalCount } = useSearch(); // Add this
 
-  const { page, totalPage, setPage } = usePagination();
+  const { page, totalPage, setPage, setTotalPage } = usePagination();
 
   const like = async (post_id: string, liked_me: boolean) => {
     try {
@@ -123,6 +123,10 @@ export default function Home() {
   const { handleReport } = usePostActions({
     showSignInModal,
   });
+
+  useEffect(() => {
+    setTotalPage(Math.ceil(totalCount / 3));
+  }, [totalCount]);
 
   useEffect(() => {
     setIsMounted(true);

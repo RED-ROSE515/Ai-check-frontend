@@ -20,6 +20,8 @@ interface ArticleSearchContextType {
   loading: boolean;
   setLoading: (loading: boolean) => void;
   totalResults: any[];
+  totalCount: number;
+  setTotalCount: (totalCount: number) => void;
   getTotalResults: () => Promise<void>;
   setTotalResults: React.Dispatch<React.SetStateAction<any[]>>;
 }
@@ -38,7 +40,8 @@ export function ArticleSearchProvider({
   const [order, setOrder] = useState("desc");
   const [loading, setLoading] = useState(false);
   const [totalResults, setTotalResults] = useState<any[]>([]);
-  const { page, setTotalPage } = usePagination();
+  const [totalCount, setTotalCount] = useState(0);
+  const { page } = usePagination();
   const { toast } = useToast();
 
   const getTotalResults = useCallback(async () => {
@@ -49,7 +52,7 @@ export function ArticleSearchProvider({
       );
 
       setTotalResults(response.data.data);
-      setTotalPage(Math.ceil(response.data.total_count / 3));
+      setTotalCount(response.data.total_count);
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -62,11 +65,11 @@ export function ArticleSearchProvider({
     } finally {
       setLoading(false);
     }
-  }, [page, keyword, sortBy, setTotalPage, toast]);
+  }, [page, keyword, sortBy, toast]);
 
   useEffect(() => {
     getTotalResults();
-  }, [page, keyword, sortBy, setTotalPage, toast]);
+  }, [page, keyword, sortBy, toast]);
 
   const value = {
     keyword,
@@ -78,6 +81,8 @@ export function ArticleSearchProvider({
     loading,
     setLoading,
     totalResults,
+    totalCount,
+    setTotalCount,
     getTotalResults,
     setTotalResults,
   };

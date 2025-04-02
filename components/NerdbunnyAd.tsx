@@ -1,7 +1,6 @@
 import React from "react";
 import CountdownTimer from "./CountdownTimer";
 import { Image } from "@heroui/react";
-import NerdbunnyAdBanner from "../public/nerdbunny-ad-banner.jpeg";
 import NerdbunnyLogo from "../public/nerdbunny.png";
 import { useTheme } from "next-themes";
 
