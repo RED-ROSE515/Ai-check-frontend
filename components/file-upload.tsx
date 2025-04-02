@@ -352,6 +352,14 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
 
   return (
     <div className="">
+      <p className="text-lg font-semibold">Analyze a Research Paper</p>
+      <p className="text-sm mb-2">
+        Submit research papers that matter to you—whether they’re trending in
+        your field, influencing public conversations, or raising important
+        questions.NerdBunny helps uncover inconsistencies, flawed reasoning, or
+        methodological issues and publishes the results for open community
+        review.
+      </p>
       <Tabs
         aria-label="Options"
         color="primary"
@@ -368,14 +376,6 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
           }
         >
           <div className="">
-            <p className="text-lg font-semibold">Analyze a Research Paper</p>
-            <p className="text-sm mb-2">
-              Submit research papers that matter to you—whether they’re trending
-              in your field, influencing public conversations, or raising
-              important questions.NerdBunny helps uncover inconsistencies,
-              flawed reasoning, or methodological issues and publishes the
-              results for open community review.
-            </p>
             <label
               {...getRootProps()}
               htmlFor="dropzone-file"
@@ -452,32 +452,6 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                     disabled={visibility[0] !== "specific_users"}
                   />
 
-                  <div className="flex flex-row justify-end gap-4">
-                    <Button
-                      isLoading={loading}
-                      className={`w-full md:w-[50%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-                      onPress={() =>
-                        handleAnalyze(s3_link, visibility[0], users)
-                      }
-                    >
-                      <span
-                        className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
-                      >
-                        Analyze for Discrepancies
-                      </span>
-                    </Button>
-                    <Button
-                      isLoading={loading}
-                      className={`w-full md:w-[45%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-                      onPress={() => onOpen()}
-                    >
-                      <span
-                        className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
-                      >
-                        Analyze
-                      </span>
-                    </Button>
-                  </div>
                   <AnalyzeForm
                     loading={loading}
                     theme={theme!}
@@ -485,7 +459,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                     onOpen={onOpen}
                     setResearchPaperLink={setResearchPaperUrl}
                     visibility={visibility[0]}
-                    disabled={visibility[0] !== "specific_users"}
+                    disabled={!s3_link}
                   />
                 </div>
               </div>
@@ -578,7 +552,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                   onSelectionChange={(key) => setAnalyzeOption(key as string)}
                 >
                   <Tab
-                    key="ResearhCheck"
+                    key="ResearchCheck"
                     title={
                       <div className="flex items-center space-x-2">
                         <MdError size={20} />

@@ -16,6 +16,7 @@ interface AnalyzeContextType {
   isChecking: boolean;
   processType: string;
   postId: string;
+  setPostId: (postId: string) => void;
   setProcessType: (processType: string) => void;
   handleAnalyze: (
     s3_url: string,
@@ -49,6 +50,7 @@ const AnalyzeContext = createContext<AnalyzeContextType>({
   isChecking: false,
   processType: "",
   postId: "",
+  setPostId: () => {},
   setProcessType: () => {},
   handleAnalyze: async () => {},
   resetState: () => {},
@@ -237,6 +239,7 @@ export const AnalyzeProvider = ({
         postId,
         isChecking,
         processType,
+        setPostId,
         setProcessType,
         handleAnalyze,
         resetState,

@@ -27,21 +27,23 @@ import SignInDialog from "@/components/SignInDialog";
 import { usePostActions } from "@/hooks/usePostActions";
 import Loader from "@/components/Loader";
 import { IoIosWarning } from "react-icons/io";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSpeech } from "@/contexts/SpeechContext";
 import SpeechPlayer from "@/components/SpeechPlayer";
 import ArticleWrapper from "@/components/ArticleWrapper";
+import { useAnalyze } from "@/contexts/AnalyzeContext";
 
 const ResultPage = ({ params }: any) => {
   const resolvedParams = use(params);
   const { id } = resolvedParams as any;
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
-
+  const pathName = usePathname();
   const [pageUrl, setPageUrl] = useState(
     `${API_BASE_URL}results/articles/${id}`
   );
+  const { postId, setPostId } = useAnalyze();
   const { theme } = useTheme();
   const { showSpeech, speechUrl } = useSpeech();
   const [summary, setSummary] = useState<any>();
@@ -156,6 +158,11 @@ const ResultPage = ({ params }: any) => {
     fetchData();
   }, [id, getResultById]);
 
+  useEffect(() => {
+    if (pathName?.includes(postId)) {
+      setPostId("");
+    }
+  }, [pathName]);
   useEffect(() => {
     setIsMounted(true);
   }, []);
