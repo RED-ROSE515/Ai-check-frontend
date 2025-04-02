@@ -25,7 +25,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import SignInDialog from "@/components/SignInDialog";
 import { usePostActions } from "@/hooks/usePostActions";
 import Loader from "@/components/Loader";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { Metadata } from "next";
 import { useSearch } from "@/contexts/SearchContext"; // Add this import
 import LandingPage from "@/components/LandingPage";
@@ -73,8 +73,9 @@ export default function Home() {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
-  const { loading, totalResults, setTotalResults } = useSearch(); // Add this
-
+  const { loading, totalResults, setTotalResults, setProcessType } =
+    useSearch(); // Add this
+  const pathname = usePathname();
   const { page, totalPage, setPage } = usePagination();
 
   const like = async (post_id: string, liked_me: boolean) => {
@@ -134,6 +135,7 @@ export default function Home() {
 
   useEffect(() => {
     setIsMounted(true);
+    setProcessType("");
   }, []);
 
   if (!isMounted) {
@@ -244,7 +246,13 @@ export default function Home() {
                                 showSignInModal={showSignInModal}
                                 postDate={result.updated_at}
                                 link={
-                                  DOMAIN + "/results/discrepancies/" + result.id
+                                  DOMAIN +
+                                  "/results/" +
+                                  (result.post_type === 6
+                                    ? "discrepancies"
+                                    : "articles") +
+                                  "/" +
+                                  result.id
                                 }
                               />
                             )}
@@ -294,9 +302,16 @@ export default function Home() {
                             <span>{result.count_view || 0}</span>
                           </Button>
                           <ShareButtons
-                            url={DOMAIN + "/results/discrepancies/" + result.id}
+                            url={
+                              DOMAIN +
+                              "/results/" +
+                              (result.post_type === 6
+                                ? "discrepancies"
+                                : "articles") +
+                              "/" +
+                              result.id
+                            }
                             title={result.title}
-                            // summary={result.summary.child}
                           />
                         </div>
                         <div className="flex flex-row justify-center w-full mb-3">
@@ -304,7 +319,12 @@ export default function Home() {
                             className={`mr-2 mb-2 ${theme === "dark" ? "bg-[#C8E600]" : "bg-[#EE43DE]"}`}
                             onClick={() =>
                               (window.location.href =
-                                "/results/discrepancies/" + result.id)
+                                "/results/" +
+                                (result.post_type === 6
+                                  ? "discrepancies"
+                                  : "articles") +
+                                "/" +
+                                result.id)
                             }
                           >
                             <strong

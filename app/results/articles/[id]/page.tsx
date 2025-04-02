@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSpeech } from "@/contexts/SpeechContext";
 import SpeechPlayer from "@/components/SpeechPlayer";
+import ArticleWrapper from "@/components/ArticleWrapper";
 
 const ResultPage = ({ params }: any) => {
   const resolvedParams = use(params);
@@ -39,16 +40,13 @@ const ResultPage = ({ params }: any) => {
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
 
   const [pageUrl, setPageUrl] = useState(
-    `${API_BASE_URL}results/discrepancies/${id}`
+    `${API_BASE_URL}results/articles/${id}`
   );
   const { theme } = useTheme();
   const { showSpeech, speechUrl } = useSpeech();
-  const [analysisResult, setAnalysisResult] = useState("");
   const [summary, setSummary] = useState<any>();
-  const [summaryLoading, setSummaryLoading] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [costdata, setCostData] = useState<any>({});
-  const [totalSummary, setTotalSummary] = useState("");
   const [author, setAuthor] = useState<any>();
   const [postDate, setPostDate] = useState("");
   const [result, setResult] = useState<any>();
@@ -76,8 +74,6 @@ const ResultPage = ({ params }: any) => {
   const getResultById = useCallback(
     async (paperId: number) => {
       try {
-        setAnalysisResult("");
-        setSummaryLoading(true);
         const response = await api.get(`/post/${paperId}`);
         setResult(response.data);
         setAuthor(response.data.user);
@@ -88,21 +84,18 @@ const ResultPage = ({ params }: any) => {
           attached_links: response.data.attached_links,
         });
         const total_result = JSON.parse(response.data.ai_error_json);
-        setAnalysisResult(total_result.paperAnalysis.analysis);
         setCostData({
           input_tokens: total_result.input_tokens,
           output_tokens: total_result.output_tokens,
           total_cost: total_result.total_cost,
         });
         setPostDate(response.data.updated_at);
-        setTotalSummary(total_result.paperAnalysis.summary);
         const resp = await api.get(
           `/post/comments?parent_is_post=true&parent_id=${response.data.id}&start=0&limit=1000`
         );
         setComments(resp.data);
-        setLink("/results/discrepancies/" + response.data.id);
-        setSummaryLoading(false);
-        setPageUrl(`${API_BASE_URL}results/discrepancies/${id}`);
+        setLink("/results/articles/" + response.data.id);
+        setPageUrl(`${API_BASE_URL}results/articles/${id}`);
         // const result = await res.json();
         const result = { data: "KKK", title: id, description: "Description" };
         return result;
@@ -110,7 +103,6 @@ const ResultPage = ({ params }: any) => {
         if (error.response?.status === 500) {
           setErrorMessage(error.response.data.message || "An error occurred");
           setErrorModal(true);
-          setSummaryLoading(false);
         }
         return null;
       }
@@ -174,7 +166,7 @@ const ResultPage = ({ params }: any) => {
 
   return (
     <div
-      className={`${theme === "dark" ? "bg-transparent" : "bg-white"} pt-2 md:pt-6 lg:pt-16`}
+      className={`${theme === "dark" ? "bg-transparent" : "bg-white"} min-h-[80vh] pt-2 md:pt-6 lg:pt-16`}
     >
       <div className="w-full fixed bottom-0 z-10">
         <AnimatePresence>
@@ -207,17 +199,15 @@ const ResultPage = ({ params }: any) => {
                 <div
                   className={`w-full rounded-xl border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
                 >
-                  <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
-                    {!summary ? (
-                      <Loader />
-                    ) : (
-                      <SummaryWrapper
+                  {!summary ? (
+                    <Loader />
+                  ) : (
+                    <div>
+                      <ArticleWrapper
                         summary={summary}
                         isResult={true}
                         totalData={result}
-                        link={
-                          DOMAIN + "/results/discrepancies/" + summary.post_id
-                        }
+                        link={DOMAIN + "/results/articles/" + summary.post_id}
                         showSignInModal={showSignInModal}
                         reportPost={reportPost}
                         userData={{ ...author }}
@@ -226,70 +216,51 @@ const ResultPage = ({ params }: any) => {
                         output_tokens={costdata.output_tokens}
                         total_cost={costdata.total_cost}
                       />
-                    )}
-                  </div>
-                </div>
-                <div
-                  className={`rounded-xl border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
-                >
-                  {analysisResult && <SpecialSummary summary={totalSummary} />}
-                </div>
-                <div
-                  className={`rounded-xl w-full border-none shadow-md ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
-                >
-                  {analysisResult && (
-                    <div className="mb-0 sm:mb-2 w-full">
                       <div
-                        className={
-                          "flex flex-col items-center justify-center rounded-md p-0 md:flex-row"
-                        }
+                        className={`rounded-xl w-full border-none ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
                       >
-                        <AnalysisResult
-                          results={analysisResult}
-                          total_summary={totalSummary}
-                        />
-                      </div>
-                      <div className="flex items-center justify-start gap-4 w-full px-4 py-2 mt-6">
-                        <Button
-                          variant="ghost"
-                          className="flex items-center gap-2"
-                          color={result?.liked_me ? "warning" : "default"}
-                          // isDisabled={!isAuthenticated}
-                          onPress={() =>
-                            isAuthenticated
-                              ? like(result.id, result.liked_me)
-                              : showSignInModal(
-                                  "You need to sign in to continue."
-                                )
-                          }
-                        >
-                          <TbThumbUp size={24} />
-                          <span>{result.count_like || 0}</span>
-                        </Button>
+                        <div className="flex items-center justify-start gap-4 w-full px-4 py-2 mt-6">
+                          <Button
+                            variant="ghost"
+                            className="flex items-center gap-2"
+                            color={result?.liked_me ? "warning" : "default"}
+                            // isDisabled={!isAuthenticated}
+                            onPress={() =>
+                              isAuthenticated
+                                ? like(result.id, result.liked_me)
+                                : showSignInModal(
+                                    "You need to sign in to continue."
+                                  )
+                            }
+                          >
+                            <TbThumbUp size={24} />
+                            <span>{result.count_like || 0}</span>
+                          </Button>
 
-                        <Button
-                          variant="ghost"
-                          className="flex items-center gap-2"
-                          // isDisabled={!isAuthenticated}
-                          onPress={() => console.log("Comments clicked")}
-                        >
-                          <TbMessage size={24} />
-                          <span>{result.count_comment || 0}</span>
-                        </Button>
+                          <Button
+                            variant="ghost"
+                            className="flex items-center gap-2"
+                            // isDisabled={!isAuthenticated}
+                            onPress={() => console.log("Comments clicked")}
+                          >
+                            <TbMessage size={24} />
+                            <span>{result.count_comment || 0}</span>
+                          </Button>
 
-                        <Button
-                          variant="ghost"
-                          className="flex items-center gap-2"
-                          isDisabled={!isAuthenticated}
-                          onPress={() => console.log("Views clicked")}
-                        >
-                          <TbEye size={24} />
-                          <span>{result.count_view || 0}</span>
-                        </Button>
-                        <ShareButtons
-                          url={DOMAIN + link}
-                          title={summary.post_title}
-                        />
+                          <Button
+                            variant="ghost"
+                            className="flex items-center gap-2"
+                            isDisabled={!isAuthenticated}
+                            onPress={() => console.log("Views clicked")}
+                          >
+                            <TbEye size={24} />
+                            <span>{result.count_view || 0}</span>
+                          </Button>
+                          <ShareButtons
+                            url={DOMAIN + link}
+                            title={summary.post_title}
+                          />
+                        </div>
                       </div>
                     </div>
                   )}
@@ -308,7 +279,7 @@ const ResultPage = ({ params }: any) => {
                 </div>
               </div>
               <div
-                className={`ml-4 hidden md:flex flex-col gap-2 w-full h-fit overflow-hidden card rounded-xl p-2 ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
+                className={`ml-4 hidden md:w-1/4 md:flex flex-col gap-2 w-full h-fit overflow-hidden card rounded-xl p-2 ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}
               >
                 <span className="text-md mb-2 truncate ml-2">
                   Recently Checked Papers
@@ -318,7 +289,7 @@ const ResultPage = ({ params }: any) => {
                     <Link
                       key={index}
                       className="w-full"
-                      href={"/results/discrepancies/" + paper.id}
+                      href={"/results/articles/" + paper.id}
                     >
                       <Card
                         isHoverable

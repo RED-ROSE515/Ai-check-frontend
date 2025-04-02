@@ -11,7 +11,7 @@ const NerdbunnyAd = () => {
     <div
       className={`flex flex-col justify-center p-4 items-center ${theme === "dark" ? "bg-black" : ""}`}
     >
-      <div className="w-[75vw] relative items-center">
+      <div className="w-[75vw] relative items-center hidden md:block">
         <Image src={NerdbunnyAdBanner.src} alt="NerdBunny Banner" />
         <div
           className="w-[10vw] absolute "

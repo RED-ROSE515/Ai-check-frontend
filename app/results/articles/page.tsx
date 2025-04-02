@@ -13,7 +13,6 @@ import api from "@/utils/api";
 // import Pusher from "pusher-js";
 import { useTheme } from "next-themes";
 import LeftSider from "@/components/LeftSider";
-import SummaryWrapper from "@/components/SummaryWrapper";
 import { usePagination } from "@/contexts/PaginationContext";
 import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
 import { PostCommentBox } from "@/components/Comments";
@@ -24,18 +23,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import SignInDialog from "@/components/SignInDialog";
 import { usePostActions } from "@/hooks/usePostActions";
 import Loader from "@/components/Loader";
-import { useRouter } from "next/navigation";
 import type { Metadata } from "next";
 import { useSearch } from "@/contexts/SearchContext"; // Add this import
-import LandingPage from "@/components/LandingPage";
-import WorkFlow from "@/components/WorkFlow";
-import NerdbunnyReason from "@/components/NerdbunnyReason";
-import ResearchSection from "@/components/ResearchSection";
-import LastSection from "@/components/LastSection";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSpeech } from "@/contexts/SpeechContext";
 import SpeechPlayer from "@/components/SpeechPlayer";
-
+import { usePathname } from "next/navigation";
+import ArticleWrapper from "@/components/ArticleWrapper";
 const metadata: Metadata = {
   title: "AI-Powered Research Paper Error Detection",
   description:
@@ -69,13 +63,13 @@ export default function Home() {
   const triggerUploadRef: TriggerRefType = useRef(null);
   const User = false;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const router = useRouter();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
-  const { loading, totalResults, setTotalResults } = useSearch(); // Add this
+  const { loading, totalResults, setTotalResults, setProcessType } =
+    useSearch(); // Add this
 
   const { page, totalPage, setPage } = usePagination();
-
+  const pathname = usePathname();
   const like = async (post_id: string, liked_me: boolean) => {
     try {
       await api.post(`/post/${liked_me ? "unlike" : "like"}/post`, { post_id });
@@ -135,13 +129,19 @@ export default function Home() {
     setIsMounted(true);
   }, []);
 
+  useEffect(() => {
+    setProcessType("GenerateArticle");
+  }, [pathname]);
+
   if (!isMounted) {
     return null;
   }
   return (
     <section className="w-full">
-      <div className="w-full flex flex-col justify-center items-center">
-        <div className="flex flex-row justify-center">
+      <div
+        className={`w-full flex flex-col justify-center items-center ${theme === "dark" ? "bg-black" : "bg-white"}`}
+      >
+        <div className={`flex flex-row justify-center mb-8`}>
           <span className="md:pt-[60px] text-2xl md:text-5xl md:font-semibold text-center max-w-[75%] md:max-w-[80%] text-balance">
             Generate summaries and articles for Research Papers Effortlessly
           </span>
@@ -163,7 +163,7 @@ export default function Home() {
         </AnimatePresence>
       </div>
       <div
-        className={`flex flex-col md:flex-row items-start justify-center mt-8 gap-4 ${theme === "dark" ? "bg-black" : "bg-white"}`}
+        className={`flex flex-col md:flex-row items-start justify-center  gap-4 ${theme === "dark" ? "bg-black" : "bg-white"}`}
       >
         {User && (
           <div className="w-full md:w-1/6">
@@ -232,7 +232,7 @@ export default function Home() {
                         <div className="flex flex-col items-center justify-center rounded-md p-0 md:flex-row md:p-2 w-full">
                           {result?.description &&
                             result?.description[0] === "{" && (
-                              <SummaryWrapper
+                              <ArticleWrapper
                                 summary={JSON.parse(result.description)}
                                 // input_tokens={result.input_tokens}
                                 // output_tokens={result.output_tokens}
@@ -244,9 +244,7 @@ export default function Home() {
                                 userData={result.user}
                                 showSignInModal={showSignInModal}
                                 postDate={result.updated_at}
-                                link={
-                                  DOMAIN + "/results/discrepancies/" + result.id
-                                }
+                                link={DOMAIN + "/results/articles/" + result.id}
                               />
                             )}
                         </div>
@@ -295,7 +293,7 @@ export default function Home() {
                             <span>{result.count_view || 0}</span>
                           </Button>
                           <ShareButtons
-                            url={DOMAIN + "/results/discrepancies/" + result.id}
+                            url={DOMAIN + "/results/articles/" + result.id}
                             title={result.title}
                             // summary={result.summary.child}
                           />
@@ -305,7 +303,7 @@ export default function Home() {
                             className={`mr-2 mb-2 ${theme === "dark" ? "bg-[#C8E600]" : "bg-[#EE43DE]"}`}
                             onClick={() =>
                               (window.location.href =
-                                "/results/discrepancies/" + result.id)
+                                "/results/articles/" + result.id)
                             }
                           >
                             <strong
@@ -326,7 +324,7 @@ export default function Home() {
                   </strong>
                 </div>
               )}
-              <div className="order-1 md:order-2 w-full flex justify-center">
+              <div className="order-1 md:order-2 w-full flex justify-center mb-2">
                 <Pagination
                   isCompact
                   showControls

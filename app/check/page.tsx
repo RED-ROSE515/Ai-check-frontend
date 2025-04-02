@@ -18,7 +18,7 @@ type TriggerRefType = {
 
 export default function App() {
   const { theme } = useTheme();
-  const { isChecking, handleAnalyze, postId } = useAnalyze();
+  const { isChecking, handleAnalyze, postId, processType } = useAnalyze();
   const router = useRouter();
   const { isAuthenticated } = useAuth();
   const [showSignIn, setShowSignIn] = useState(false);
@@ -42,7 +42,11 @@ export default function App() {
 
   useEffect(() => {
     if (postId) {
-      router.push(DOMAIN + "/results/discrepancies/" + postId);
+      if (processType.includes("ResearchCheck")) {
+        router.push(DOMAIN + "/results/discrepancies/" + postId);
+      } else {
+        router.push(DOMAIN + "/results/articles/" + postId);
+      }
     }
   }, [postId]);
   const handleAccept = () => {
@@ -73,8 +77,12 @@ export default function App() {
         <>
           {showDisclaimer && isAuthenticated && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-              <Card className="max-w-3xl p-6 rounded-lg  pt-8 bg-[#1C243E]">
-                <div className="bg-[#0B1022] p-3 rounded-lg max-h-[80vh] overflow-y-auto">
+              <Card
+                className={`max-w-3xl p-6 rounded-lg  pt-8 ${theme === "dark" ? "bg-[#1C243E]" : "bg-[#fff]"}`}
+              >
+                <div
+                  className={`${theme === "dark" ? "bg-[#0B1022]" : "bg-[#ddd]"} p-3 rounded-lg max-h-[80vh] overflow-y-auto`}
+                >
                   <h2 className="text-2xl font-bold mb-4">
                     Disclaimer & Upload Guidelines for AI Discrepancies
                     Detection
@@ -207,7 +215,7 @@ export default function App() {
             </div>
           )}
 
-          <div className="w-full px-2 md:px-0 md:w-5/6 h-full">
+          <div className="w-full px-2 md:px-0 md:w-5/6 h-full md:mt-10">
             <div className="w-full items-start h-full">
               {hasAccepted ? (
                 isChecking ? (

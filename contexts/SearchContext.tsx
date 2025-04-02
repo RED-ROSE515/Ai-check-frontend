@@ -22,6 +22,8 @@ interface SearchContextType {
   totalResults: any[];
   getTotalResults: () => Promise<void>;
   setTotalResults: React.Dispatch<React.SetStateAction<any[]>>;
+  processType: string;
+  setProcessType: (processType: string) => void;
 }
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
@@ -32,7 +34,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
   const [order, setOrder] = useState("desc");
   const [loading, setLoading] = useState(false);
   const [totalResults, setTotalResults] = useState<any[]>([]);
-
+  const [processType, setProcessType] = useState("");
   const { page, setTotalPage } = usePagination();
   const { toast } = useToast();
 
@@ -40,7 +42,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       const response = await api.get(
-        `/post/pagination?post_type=6&start=${(page - 1) * 3}&limit=3${keyword ? `&keyword=${keyword}` : ""}${sortBy ? `&error_type=${sortBy}` : ""}`
+        `/post/pagination?post_type=6&start=${(page - 1) * 3}&limit=3${processType ? `&process_type=${processType}` : ""}${keyword ? `&keyword=${keyword}` : ""}${sortBy ? `&error_type=${sortBy}` : ""}`
       );
 
       setTotalResults(response.data.data);
@@ -57,11 +59,11 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [page, keyword, sortBy, setTotalPage, toast]);
+  }, [page, keyword, sortBy, processType, setTotalPage, toast]);
 
   useEffect(() => {
     getTotalResults();
-  }, [page, keyword, sortBy, setTotalPage, toast]);
+  }, [page, keyword, sortBy, processType, setTotalPage, toast]);
 
   const value = {
     keyword,
@@ -75,6 +77,8 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     totalResults,
     getTotalResults,
     setTotalResults,
+    processType,
+    setProcessType,
   };
 
   return (

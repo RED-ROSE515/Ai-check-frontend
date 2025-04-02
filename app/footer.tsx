@@ -324,13 +324,8 @@ const Footer = () => {
       </div>
       <div className="hidden w-full md:flex flex-col justify-center items-center gap-6 px-20">
         <div
-          className={`w-full flex flex-row justify-between items-center gap-1 md:gap-[16px] text-[14px] md:text-sm ${theme === "dark" ? "text-[#697078]" : "text-slate-800"}`}
+          className={`w-full flex flex-row justify-center items-center gap-1 md:gap-[16px] text-[14px] md:text-sm ${theme === "dark" ? "text-[#697078]" : "text-slate-800"}`}
         >
-          <div className="md:flex flex-row justify-center gap-3 hidden">
-            <TelegramSvg theme={theme} />
-            <TwitterSvg theme={theme} />
-            <TiktokSvg theme={theme} />
-          </div>
           <div className="flex flex-row justify-center items-center gap-10">
             <a href="https://nerdbunny.gitbook.io/nerdbunny">Whitepaper</a>
             <a href="https://nerdbunny.gitbook.io/nerdbunny/about-nerdbunny">
@@ -359,7 +354,12 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="w-full flex flex-col items-end text-center text-[#697078]">
+        <div className="md:flex flex-row justify-center gap-3 hidden md:mt-2">
+          <TelegramSvg theme={theme} />
+          <TwitterSvg theme={theme} />
+          <TiktokSvg theme={theme} />
+        </div>
+        <div className="w-full flex flex-col items-center text-center text-[#697078]">
           <span>Contact us: info@nobleblocks.com</span>
           <span>Copyright © 2025 NerdBunny</span>
         </div>

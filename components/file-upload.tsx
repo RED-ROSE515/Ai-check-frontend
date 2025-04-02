@@ -52,6 +52,7 @@ import { FaFile, FaLink } from "react-icons/fa";
 import { LuScrollText } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
 import { SiRoamresearch } from "react-icons/si";
+import { MdError, MdArticle } from "react-icons/md";
 
 interface FileUploadProgress {
   progress: number;
@@ -123,13 +124,49 @@ export const ListboxWrapper = ({ children }: any) => (
 );
 
 export const citations = [
-  { key: "apa", label: "APA", image: APAImage },
-  { key: "chicago", label: "Chicago", image: ChicagoImage },
-  { key: "cse", label: "CSE", image: CSEImage },
-  { key: "aip", label: "AIP", image: AIPImage },
-  { key: "acs", label: "ACS", image: ACSImage },
-  { key: "ieee", label: "IEEE", image: IEEEImage },
+  { key: "APA", label: "APA", image: APAImage },
+  { key: "Chicago", label: "Chicago", image: ChicagoImage },
+  { key: "CSE", label: "CSE", image: CSEImage },
+  { key: "AIP", label: "AIP", image: AIPImage },
+  { key: "ACS", label: "ACS", image: ACSImage },
+  { key: "IEEE", label: "IEEE", image: IEEEImage },
 ];
+
+export const AnalyzeForm = ({
+  loading,
+  theme,
+  onOpen,
+  disabled,
+  setResearchPaperLink,
+  paper_link,
+  visibility,
+}: {
+  loading: boolean;
+  theme: string;
+  onOpen: () => void;
+  disabled?: boolean;
+  visibility: string;
+  paper_link: string;
+  setResearchPaperLink: (link: string) => void;
+}) => {
+  return (
+    <Button
+      isLoading={loading}
+      className={` ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+      onPress={() => {
+        setResearchPaperLink(paper_link);
+        onOpen();
+      }}
+      isDisabled={disabled}
+    >
+      <span
+        className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
+      >
+        Analyze
+      </span>
+    </Button>
+  );
+};
 
 const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const [currentFile, setCurrentFile] = useState<FileUploadProgress | null>(
@@ -147,8 +184,12 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const { theme } = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [researchPaperUrl, setResearchPaperUrl] = useState("");
   const [selected, setSelected] = useState("equal");
-  const [citation, setCitation] = useState("apa");
+  const [citation, setCitation] = useState("APA");
+  const [analyzeOption, setAnalyzeOption] = useState("ResearchCheck");
+  const [summaryOption, setSummaryOption] = useState("basic");
+  const [advancedMethods, setAdvancedMethods] = useState<string[]>(["Method"]);
 
   onTriggerRef.current = () => {
     fileInputRef.current?.click();
@@ -433,10 +474,19 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                       <span
                         className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
                       >
-                        Analyze for Article
+                        Analyze
                       </span>
                     </Button>
                   </div>
+                  <AnalyzeForm
+                    loading={loading}
+                    theme={theme!}
+                    paper_link={s3_link}
+                    onOpen={onOpen}
+                    setResearchPaperLink={setResearchPaperUrl}
+                    visibility={visibility[0]}
+                    disabled={visibility[0] !== "specific_users"}
+                  />
                 </div>
               </div>
             )}
@@ -453,7 +503,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
         >
           <div className="flex flex-col gap-1">
             <p className="font-semibold text-lg">Paste Paper URL</p>
-            <div className="mt-2 flex flex-col justify-center gap-3">
+            <div className="mt-2 flex flex-row justify-between gap-3">
               <HeroInput
                 className="w-full"
                 label="Paper URL : "
@@ -464,32 +514,15 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                 placeholder="https://arxiv.org/abs/..."
                 classNames={{ mainWrapper: "w-full" }}
               />
-              <div className="flex flex-row justify-end gap-4">
-                <Button
-                  isLoading={loading}
-                  isDisabled={!paper_url}
-                  className={`w-full md:w-[20%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-                  onPress={() => handleAnalyze(paper_url, visibility[0], users)}
-                >
-                  <span
-                    className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
-                  >
-                    Analyze for Discrepancies
-                  </span>
-                </Button>
-                <Button
-                  isLoading={loading}
-                  isDisabled={!paper_url}
-                  className={`w-full md:w-[12%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-                  onPress={() => onOpen()}
-                >
-                  <span
-                    className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
-                  >
-                    Analyze for Article
-                  </span>
-                </Button>
-              </div>
+              <AnalyzeForm
+                loading={loading}
+                theme={theme!}
+                paper_link={paper_url}
+                onOpen={onOpen}
+                setResearchPaperLink={setResearchPaperUrl}
+                visibility={visibility[0]}
+                disabled={!paper_url}
+              />
             </div>
             <span className="text-xs ml-2 text-gray-500">
               Note: Currently supporting papers from: arXiv, bioRxiv, medRxiv,
@@ -518,30 +551,15 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
               />
             </div>
             <div className="flex flex-row justify-end gap-4">
-              <Button
-                isLoading={loading}
-                isDisabled={!paper_value}
-                className={`w-full md:w-[18%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-                onPress={() => handleAnalyze(paper_url, visibility[0], users)}
-              >
-                <span
-                  className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
-                >
-                  Analyze for Discrepancies
-                </span>
-              </Button>
-              <Button
-                isLoading={loading}
-                isDisabled={!paper_value}
-                className={`w-full md:w-[12%] ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
-                onPress={() => onOpen()}
-              >
-                <span
-                  className={`w-max mx-2 ${theme === "dark" ? " text-black" : "text-white"}`}
-                >
-                  Analyze for Article
-                </span>
-              </Button>
+              <AnalyzeForm
+                loading={loading}
+                theme={theme!}
+                paper_link={paper_url}
+                setResearchPaperLink={setResearchPaperUrl}
+                onOpen={onOpen}
+                visibility={visibility[0]}
+                disabled={!paper_url}
+              />
             </div>
           </div>
         </Tab>
@@ -552,93 +570,146 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Summary Generation Option
+                Analyze Options
               </ModalHeader>
-              <ModalBody>
+              <ModalBody className="flex flex-col justify-center items-center">
                 <Tabs
-                  aria-label="Options"
-                  color="primary"
-                  variant="bordered"
-                  className="mt-8"
+                  selectedKey={analyzeOption}
+                  onSelectionChange={(key) => setAnalyzeOption(key as string)}
                 >
                   <Tab
-                    key="basic"
+                    key="ResearhCheck"
                     title={
                       <div className="flex items-center space-x-2">
-                        <IoSettingsOutline />
-                        <span>Basic</span>
+                        <MdError size={20} />
+                        <span>Discrepancies</span>
                       </div>
                     }
                   >
                     <div className="min-h-[250px]">
                       <span>
-                        Generate the basic concept summary for this research
-                        paper.
+                        Analyze the paper for inconsistencies, flawed reasoning,
+                        or methodological issues.
                       </span>
                     </div>
                   </Tab>
                   <Tab
-                    key="advanced"
+                    key="GenerateArticle"
                     title={
                       <div className="flex items-center space-x-2">
-                        <SiRoamresearch />
-                        <span>Advanced</span>
+                        <MdArticle />
+                        <span>Article</span>
                       </div>
                     }
                   >
-                    <div className="min-h-[250px] flex flex-col gap-2">
-                      <RadioGroup
-                        label="Select your favorite city"
-                        value={selected}
-                        onValueChange={setSelected}
+                    <div className="min-h-[250px] flex flex-col justify-center items-center">
+                      <Tabs
+                        aria-label="Options"
+                        color="primary"
+                        variant="bordered"
+                        className="mt-2"
+                        selectedKey={summaryOption}
+                        onSelectionChange={(key) =>
+                          setSummaryOption(key as string)
+                        }
                       >
-                        <Radio value="equal">Weight all sections equally</Radio>
-                        <Radio value="seperate">Based on these methods</Radio>
-                      </RadioGroup>
-                      <CheckboxGroup
-                        isDisabled={selected === "equal"}
-                        defaultValue={["method"]}
-                        label="Select methods"
-                      >
-                        <Checkbox value="method">Focus on methods</Checkbox>
-                        <Checkbox value="result">Focus on Result</Checkbox>
-                        <Checkbox value="limitation">
-                          Highlight limitations
-                        </Checkbox>
-                        <Checkbox value="finding">
-                          Highlight main findings/take home messages
-                        </Checkbox>
-                        <Checkbox value="data">Data availability</Checkbox>
-                      </CheckboxGroup>
-                      <div className="flex flex-row justify-between">
-                        <Select
-                          key={"outside"}
-                          className="max-w-[250px]"
-                          defaultSelectedKeys={["apa"]}
-                          label="Citation Format"
-                          labelPlacement={"outside"}
-                          selectedKeys={new Set([citation])}
-                          placeholder="Select Citation Format"
-                        >
-                          {citations.map((citation) => (
-                            <SelectItem
-                              key={citation.key}
-                              onPress={() => setCitation(citation.key)}
-                            >
-                              {citation.label}
-                            </SelectItem>
-                          ))}
-                        </Select>
-                        <Image
-                          alt="HeroUI hero Image with delay"
-                          height={100}
-                          src={
-                            citations.find((value) => value.key === citation)
-                              ?.image.src
+                        <Tab
+                          key="Basic"
+                          title={
+                            <div className="flex items-center space-x-2">
+                              <IoSettingsOutline />
+                              <span>Basic</span>
+                            </div>
                           }
-                          width={100}
-                        />
-                      </div>
+                        >
+                          <div className="min-h-[250px]">
+                            <span>
+                              Generate the basic concept summary for this
+                              research paper.
+                            </span>
+                          </div>
+                        </Tab>
+                        <Tab
+                          key="Advanced"
+                          title={
+                            <div className="flex items-center space-x-2">
+                              <SiRoamresearch />
+                              <span>Advanced</span>
+                            </div>
+                          }
+                        >
+                          <div className="min-h-[250px] flex flex-col gap-2">
+                            <RadioGroup
+                              label="Select your favorite city"
+                              value={selected}
+                              onValueChange={setSelected}
+                            >
+                              <Radio value="equal">
+                                Weight all sections equally
+                              </Radio>
+                              <Radio value="seperate">
+                                Based on these methods
+                              </Radio>
+                            </RadioGroup>
+                            <CheckboxGroup
+                              isDisabled={selected === "equal"}
+                              defaultValue={["Method"]}
+                              value={advancedMethods}
+                              onValueChange={(keys) => {
+                                setAdvancedMethods(keys as string[]);
+                                console.log(advancedMethods);
+                              }}
+                              label="Select methods"
+                            >
+                              <Checkbox value="Method">
+                                Focus on methods
+                              </Checkbox>
+                              <Checkbox value="Result">
+                                Focus on Result
+                              </Checkbox>
+                              <Checkbox value="Limitation">
+                                Highlight limitations
+                              </Checkbox>
+                              <Checkbox value="Finding">
+                                Highlight main findings/take home messages
+                              </Checkbox>
+                              <Checkbox value="Data">
+                                Data availability
+                              </Checkbox>
+                            </CheckboxGroup>
+                            <div className="flex flex-row justify-between">
+                              <Select
+                                key={"outside"}
+                                className="max-w-[250px]"
+                                defaultSelectedKeys={["APA"]}
+                                label="Citation Format"
+                                labelPlacement={"outside"}
+                                selectedKeys={new Set([citation])}
+                                placeholder="Select Citation Format"
+                              >
+                                {citations.map((citation) => (
+                                  <SelectItem
+                                    key={citation.key}
+                                    onPress={() => setCitation(citation.key)}
+                                  >
+                                    {citation.label}
+                                  </SelectItem>
+                                ))}
+                              </Select>
+                              <Image
+                                alt="HeroUI hero Image with delay"
+                                height={100}
+                                src={
+                                  citations.find(
+                                    (value) => value.key === citation
+                                  )?.image.src
+                                }
+                                width={100}
+                              />
+                            </div>
+                          </div>
+                        </Tab>
+                      </Tabs>
                     </div>
                   </Tab>
                 </Tabs>
@@ -647,7 +718,27 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                 <Button color="danger" variant="light" onPress={onClose}>
                   Close
                 </Button>
-                <Button color="primary" onPress={onClose}>
+                <Button
+                  color="primary"
+                  onPress={() => {
+                    if (analyzeOption === "ResearchCheck") {
+                      handleAnalyze(s3_link, visibility[0], users, [
+                        "ResearchCheck",
+                      ]);
+                    } else {
+                      handleAnalyze(
+                        researchPaperUrl,
+                        visibility[0],
+                        users,
+                        ["GenerateArticle"],
+                        summaryOption,
+                        advancedMethods,
+                        citation
+                      );
+                    }
+                    onClose();
+                  }}
+                >
                   Generate
                 </Button>
               </ModalFooter>

@@ -24,14 +24,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import SignInDialog from "@/components/SignInDialog";
 import { usePostActions } from "@/hooks/usePostActions";
 import Loader from "@/components/Loader";
-import { useRouter } from "next/navigation";
 import type { Metadata } from "next";
 import { useSearch } from "@/contexts/SearchContext"; // Add this import
 import LandingPage from "@/components/LandingPage";
-import WorkFlow from "@/components/WorkFlow";
-import NerdbunnyReason from "@/components/NerdbunnyReason";
-import ResearchSection from "@/components/ResearchSection";
-import LastSection from "@/components/LastSection";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSpeech } from "@/contexts/SpeechContext";
 import SpeechPlayer from "@/components/SpeechPlayer";
@@ -62,17 +58,17 @@ export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
   const [postId, setPostId] = useState("");
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const pathname = usePathname();
   const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
   const { speechUrl, showSpeech } = useSpeech();
   const { theme } = useTheme();
   const triggerUploadRef: TriggerRefType = useRef(null);
   const User = false;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const router = useRouter();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
-  const { loading, totalResults, setTotalResults } = useSearch(); // Add this
+  const { loading, totalResults, setTotalResults, setProcessType } =
+    useSearch(); // Add this
 
   const { page, totalPage, setPage } = usePagination();
 
@@ -130,6 +126,10 @@ export default function Home() {
   const { handleReport } = usePostActions({
     showSignInModal,
   });
+
+  useEffect(() => {
+    setProcessType("ResearchCheck");
+  }, [pathname]);
 
   useEffect(() => {
     setIsMounted(true);

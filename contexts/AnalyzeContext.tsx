@@ -14,11 +14,17 @@ interface AnalyzeContextType {
   summaryLoading: boolean;
   checkLoading: boolean;
   isChecking: boolean;
+  processType: string;
   postId: string;
+  setProcessType: (processType: string) => void;
   handleAnalyze: (
     s3_url: string,
     shower_type: string,
-    shower_ids: Option[]
+    shower_ids: Option[],
+    analyzeOption?: string[],
+    summaryOption?: string,
+    advancedMethods?: string[],
+    citation?: string
   ) => Promise<void>;
   resetState: () => void;
 }
@@ -41,7 +47,9 @@ const AnalyzeContext = createContext<AnalyzeContextType>({
   summaryLoading: false,
   checkLoading: false,
   isChecking: false,
+  processType: "",
   postId: "",
+  setProcessType: () => {},
   handleAnalyze: async () => {},
   resetState: () => {},
 });
@@ -58,12 +66,14 @@ export const AnalyzeProvider = ({
   const [isChecking, setIsChecking] = useState(false);
   const [totalSummary, setTotalSummary] = useState("");
   const [postId, setPostId] = useState("");
+  const [processType, setProcessType] = useState("");
   const { setLoading, setProgress } = useLoading();
   const { toast } = useToast();
 
   const resetState = () => {
     setAnalysisResult("");
     setSummary("");
+    setProcessType("");
     setTotalSummary("");
     setSummaryLoading(false);
     setCheckLoading(false);
@@ -73,7 +83,11 @@ export const AnalyzeProvider = ({
   const handleAnalyze = async (
     s3_url: string,
     shower_type: string,
-    shower_ids: Option[]
+    shower_ids: Option[],
+    analyzeOption?: string[],
+    summaryOption?: string,
+    advancedMethods?: string[],
+    citation?: string
   ) => {
     try {
       setLoading(true);
@@ -100,6 +114,10 @@ export const AnalyzeProvider = ({
       const response = await api.post(`post/create`, {
         post_type: 6,
         attached_links: [s3_url],
+        process_type: analyzeOption,
+        summary_type: summaryOption,
+        advanced_methods: advancedMethods,
+        citation_format: citation,
         shower_type:
           shower_type === "specific_users"
             ? 0
@@ -218,6 +236,8 @@ export const AnalyzeProvider = ({
         checkLoading,
         postId,
         isChecking,
+        processType,
+        setProcessType,
         handleAnalyze,
         resetState,
       }}

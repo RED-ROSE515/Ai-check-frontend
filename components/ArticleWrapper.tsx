@@ -115,7 +115,7 @@ export interface SummaryType {
   speech_url?: string;
   image: StaticImageData;
 }
-const SummaryWrapper = ({
+const ArticleWrapper = ({
   summary,
   isResult,
   totalData,
@@ -145,56 +145,6 @@ const SummaryWrapper = ({
   const { data: speechData, isLoading: speechLoading } = useGetData(
     totalData?.id ? `post/speech?post_id=${totalData?.id}` : ""
   );
-  const summaryLevels = [
-    {
-      title: "Child Summary",
-      content: summary.summary?.child,
-      value: "ChildSummary",
-      image: childImage,
-      speech_id: speechData?.find(
-        (speech: any) => speech.speech_type === "ChildSummary"
-      )?.id,
-      speech_url: speechData?.find(
-        (speech: any) => speech.speech_type === "ChildSummary"
-      )?.audio_url,
-    },
-    {
-      title: "College Summary",
-      content: summary.summary?.college,
-      value: "CollegeSummary",
-      image: collegeImage,
-      speech_id: speechData?.find(
-        (speech: any) => speech.speech_type === "CollegeSummary"
-      )?.id,
-      speech_url: speechData?.find(
-        (speech: any) => speech.speech_type === "CollegeSummary"
-      )?.audio_url,
-    },
-    {
-      title: "PhD Summary",
-      content: summary.summary?.phd,
-      value: "PhDSummary",
-      image: phDImage,
-      speech_id: speechData?.find(
-        (speech: any) => speech.speech_type === "PhDSummary"
-      )?.id,
-      speech_url: speechData?.find(
-        (speech: any) => speech.speech_type === "PhDSummary"
-      )?.audio_url,
-    },
-    {
-      title: "Error Summary",
-      content: summary.summary?.error,
-      value: "ErrorSummary",
-      image: errorImage,
-      speech_id: speechData?.find(
-        (speech: any) => speech.speech_type === "ErrorSummary"
-      )?.id,
-      speech_url: speechData?.find(
-        (speech: any) => speech.speech_type === "ErrorSummary"
-      )?.audio_url,
-    },
-  ];
   const generateSpeech = async () => {
     try {
       setLoading(true);
@@ -368,139 +318,14 @@ const SummaryWrapper = ({
         </div>
       </div>
       <div className="w-full">
-        <Accordion
-          className="w-full px-0"
-          motionProps={{
-            variants: {
-              enter: {
-                y: 0,
-                opacity: 1,
-                height: "auto",
-                overflowY: "unset",
-                transition: {
-                  height: {
-                    type: "spring",
-                    stiffness: 500,
-                    damping: 30,
-                    duration: 1,
-                  },
-                  opacity: {
-                    easings: "ease",
-                    duration: 1,
-                  },
-                },
-              },
-              exit: {
-                y: -10,
-                opacity: 0,
-                height: 0,
-                overflowY: "hidden",
-                transition: {
-                  height: {
-                    easings: "ease",
-                    duration: 0.25,
-                  },
-                  opacity: {
-                    easings: "ease",
-                    duration: 0.3,
-                  },
-                },
-              },
-            },
-          }}
-          // itemClasses={{ base: "px-0" }}
-          variant="splitted"
+        <span
+          className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-[#828489]"}`}
         >
-          {summaryLevels.map((level, index) => (
-            <AccordionItem
-              key={index}
-              textValue={level.title}
-              startContent={
-                <Image
-                  priority
-                  alt="NERDBUNNY LOGO"
-                  className="rounded-lg"
-                  height="30"
-                  src={level.image}
-                  width="30"
-                />
-              }
-              indicator={({ isOpen }) =>
-                isOpen ? <IoIosArrowForward /> : <IoIosArrowDown />
-              }
-              className={`w-full ${theme === "dark" ? "bg-[#2E3E4E]" : "bg-[#FFF]"} md:min-h-[68px] items-center`}
-              title={
-                <div className="flex flex-row justify-between w-full items-center">
-                  <span className="text-lg" style={{ fontWeight: "500" }}>
-                    {level.title}
-                  </span>
-                  {link && (
-                    <Tooltip
-                      content={
-                        <strong className="text-md font-bold text-center">
-                          Voice Generator
-                        </strong>
-                      }
-                      placement="top"
-                      closeDelay={1000}
-                    >
-                      {level.speech_url ? (
-                        <Button
-                          isIconOnly
-                          variant="bordered"
-                          onPress={async (e) => {
-                            // alert(level.speech_url);
-                            setShowSpeech(false);
-                            setSpeechUrl(level.speech_url);
-                            setSpeechId(level.speech_id);
-                            setSpeechTitle(summary.metadata.title);
-                            setShowSpeech(true);
-                          }}
-                          className={`hover:bg-transparent w-[38px] h-[30px] hover:text-pink-600 border-none`}
-                        >
-                          <FaPlayCircle
-                            className="w-full p-2"
-                            style={{ height: "fit-content" }}
-                          />
-                        </Button>
-                      ) : (
-                        <Button
-                          isIconOnly
-                          variant="bordered"
-                          onPress={async (e) => {
-                            setCurrentSummary(level);
-                            onOpen();
-                          }}
-                          className={`hover:bg-transparent border-none border-[#DEE5EB] w-[38px] h-[30px] hover:text-pink-600  `}
-                        >
-                          <RiVoiceAiLine
-                            className="w-full p-2"
-                            style={{ height: "fit-content" }}
-                          />
-                        </Button>
-                      )}
-                    </Tooltip>
-                  )}
-                </div>
-              }
-              value={index.toString()}
-            >
-              {level.value === "ErrorSummary" ? (
-                <div key={index}>
-                  <ErrorContent content={level.content} />
-                </div>
-              ) : (
-                <div>
-                  <p
-                    className={`text-md font-semibold ${theme === "dark" ? "text-gray-200" : "text-slate-800"}`}
-                  >
-                    {level.content}
-                  </p>
-                </div>
-              )}
-            </AccordionItem>
-          ))}
-        </Accordion>
+          Summary:
+        </span>
+        <div className="flex flex-wrap gap-2 mb:gap-10 mb-2">
+          {/* <span>{summary.summary.summary}</span> */}
+        </div>
       </div>
 
       <div>
@@ -590,36 +415,6 @@ const SummaryWrapper = ({
         </div>
       </div>
 
-      <div>
-        <span
-          className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-[#828489]"}`}
-        >
-          Technical Assessment:
-        </span>
-        {(summary?.technical_assessment ||
-          summary?.summary?.technical_assessment) && (
-          <div className="flex flex-wrap gap-2 mt-2">
-            {Object.entries(
-              summary?.technical_assessment
-                ? summary?.technical_assessment
-                : summary?.summary?.technical_assessment
-            ).map(([key, value]: any) => (
-              <Chip
-                key={key}
-                className="text-sm sm:text-md font-bold text-slate-400"
-                style={{
-                  backgroundColor: getColorForScore(value),
-                  color: "white",
-                }}
-                variant="shadow"
-              >
-                {`${capitalize(key).replace("_", " ")}: ${value}`}
-              </Chip>
-            ))}
-          </div>
-        )}
-      </div>
-
       <Drawer
         backdrop={isMobile ? "transparent" : "blur"}
         isOpen={isOpen}
@@ -689,4 +484,4 @@ const SummaryWrapper = ({
   );
 };
 
-export default SummaryWrapper;
+export default ArticleWrapper;
