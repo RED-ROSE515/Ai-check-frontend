@@ -49,6 +49,7 @@ const ResultPage = ({ params }: any) => {
   const [summary, setSummary] = useState<any>();
   const [isMounted, setIsMounted] = useState(false);
   const [costdata, setCostData] = useState<any>({});
+  const [articleData, setArticleData] = useState<any>();
   const [author, setAuthor] = useState<any>();
   const [postDate, setPostDate] = useState("");
   const [result, setResult] = useState<any>();
@@ -84,6 +85,15 @@ const ResultPage = ({ params }: any) => {
           post_id: response.data.id,
           post_title: response.data.title,
           attached_links: response.data.attached_links,
+        });
+        const article_result = JSON.parse(response.data.ai_error_json);
+        setArticleData({
+          metadata: article_result.paperSummary.metadata,
+          abstract: article_result.articleData.abstract,
+          introduction: article_result.articleData.introduction,
+          conclusion: article_result.articleData.conclusion,
+          article: article_result.articleData.article,
+          references: article_result.articleData.references,
         });
         const total_result = JSON.parse(response.data.ai_error_json);
         setCostData({
@@ -222,6 +232,7 @@ const ResultPage = ({ params }: any) => {
                         input_tokens={costdata.input_tokens}
                         output_tokens={costdata.output_tokens}
                         total_cost={costdata.total_cost}
+                        articleData={articleData}
                       />
                       <div
                         className={`rounded-xl w-full border-none ${theme === "dark" ? "bg-[#1f2a37]" : "bg-[#F7F7F7]"}`}

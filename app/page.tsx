@@ -135,7 +135,7 @@ export default function Home() {
 
   useEffect(() => {
     setIsMounted(true);
-    setProcessType("");
+    setProcessType("ResearchCheck");
   }, []);
 
   if (!isMounted) {

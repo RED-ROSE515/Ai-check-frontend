@@ -702,7 +702,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                     } else {
                       handleAnalyze(
                         researchPaperUrl,
-                        visibility[0],
+                        "nobody",
                         users,
                         ["GenerateArticle"],
                         summaryOption,

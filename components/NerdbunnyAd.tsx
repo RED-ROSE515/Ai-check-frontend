@@ -9,14 +9,10 @@ const NerdbunnyAd = () => {
   const { theme } = useTheme();
   return (
     <div
-      className={`flex flex-col justify-center p-4 items-center ${theme === "dark" ? "bg-black" : ""}`}
+      className={`flex flex-col justify-cente items-center ${theme === "dark" ? "bg-black" : ""}`}
     >
-      <div className="w-[75vw] relative items-center hidden md:block">
-        <Image src={NerdbunnyAdBanner.src} alt="NerdBunny Banner" />
-        <div
-          className="w-[10vw] absolute "
-          style={{ left: `32.5vw`, bottom: `-5vw` }}
-        >
+      <div className="w-[75vw] relative flex-row justify-center items-center hidden md:flex">
+        <div className="w-[10vw]">
           <Image
             className="rounded-full"
             src={NerdbunnyLogo.src}
@@ -24,7 +20,7 @@ const NerdbunnyAd = () => {
           />
         </div>
       </div>
-      <strong className="mt-[6vw] mb-4 text-2xl">NerdBunny AI Presale</strong>
+      <strong className="mt-6 mb-4 text-2xl">NerdBunny Presale</strong>
 
       <CountdownTimer />
     </div>

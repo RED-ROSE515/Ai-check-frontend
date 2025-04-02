@@ -127,6 +127,7 @@ const ArticleWrapper = ({
   output_tokens,
   total_cost,
   link,
+  articleData,
 }: any) => {
   const { theme } = useTheme();
   const router = useRouter();
@@ -318,14 +319,34 @@ const ArticleWrapper = ({
         </div>
       </div>
       <div className="w-full">
-        <span
-          className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-[#828489]"}`}
-        >
-          Summary:
-        </span>
-        <div className="flex flex-wrap gap-2 mb:gap-10 mb-2">
-          {/* <span>{summary.summary.summary}</span> */}
-        </div>
+        {articleData?.conclusion && (
+          <React.Fragment>
+            <span
+              className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-[#828489]"}`}
+            >
+              Summary:
+            </span>
+            <div
+              className={`flex flex-wrap gap-2 mb:gap-10 mb-2 p-4 rounded-xl shadow-md ${theme === "dark" ? "bg-[rgba(39,39,42,0.96)]" : "bg-[#ece9e9]"}`}
+            >
+              <span>{articleData?.conclusion}</span>
+            </div>
+          </React.Fragment>
+        )}
+        {articleData?.article && (
+          <React.Fragment>
+            <span
+              className={`text-md md:text-lg w-full md:w-auto ${theme === "dark" ? "text-[#AAB5C7]" : "text-[#828489]"}`}
+            >
+              Article:
+            </span>
+            <div
+              className={`flex flex-wrap gap-2 mb:gap-10 mb-2 p-4 rounded-xl shadow-md ${theme === "dark" ? "bg-[rgba(39,39,42,0.96)]" : "bg-[#ece9e9]"}`}
+            >
+              <ReactMarkdown>{articleData?.article}</ReactMarkdown>
+            </div>
+          </React.Fragment>
+        )}
       </div>
 
       <div>
