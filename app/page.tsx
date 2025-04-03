@@ -35,7 +35,6 @@ import LastSection from "@/components/LastSection";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSpeech } from "@/contexts/SpeechContext";
 import SpeechPlayer from "@/components/SpeechPlayer";
-import NerdbunnyAd from "@/components/NerdbunnyAd";
 const metadata: Metadata = {
   title: "AI-Powered Research Paper Error Detection",
   description:
@@ -71,7 +70,8 @@ export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
-  const { loading, totalResults, setTotalResults } = useSearch(); // Add this
+  const { loading, totalResults, setTotalResults, getTotalResults } =
+    useSearch(); // Add this
   const { page, totalPage, setPage } = usePagination();
 
   const like = async (post_id: string, liked_me: boolean) => {
@@ -131,15 +131,16 @@ export default function Home() {
 
   useEffect(() => {
     setIsMounted(true);
+    getTotalResults("ResearchCheck");
   }, []);
 
   if (!isMounted) {
     return null;
   }
+
   return (
     <section className="w-full">
       <LandingPage />
-      <NerdbunnyAd />
       <div className="w-full fixed bottom-0 z-10">
         <AnimatePresence>
           {showSpeech && speechUrl && (

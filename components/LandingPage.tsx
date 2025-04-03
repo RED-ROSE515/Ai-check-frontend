@@ -6,6 +6,7 @@ import { Button } from "@heroui/react";
 import StatisticCard from "./StatisticCard";
 import { useRouter } from "next/navigation";
 import { Sen } from "next/font/google";
+import NerdbunnyAd from "./NerdbunnyAd";
 export const sen = Sen({ subsets: ["latin"] });
 
 const LandingPage = () => {
@@ -20,6 +21,7 @@ const LandingPage = () => {
         background: `${theme === "dark" ? "linear-gradient(0deg, #06070C 0%, #1E2A36 100%)" : "linear-gradient(0deg, #FFFFFF 0%, #F7F7F7 100%)"}`,
       }}
     >
+      <NerdbunnyAd />
       <div className="absolute flex size-full w-full h-full items-center justify-center overflow-hidden">
         <DotPattern
           width={20}

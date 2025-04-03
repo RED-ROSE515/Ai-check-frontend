@@ -29,7 +29,7 @@ import { useSpeech } from "@/contexts/SpeechContext";
 import SpeechPlayer from "@/components/SpeechPlayer";
 import { usePathname } from "next/navigation";
 import ArticleWrapper from "@/components/ArticleWrapper";
-import { useArticleSearch } from "@/contexts/ArticleSearchContext";
+import { useSearch } from "@/contexts/SearchContext";
 const metadata: Metadata = {
   title: "AI-Powered Research Paper Error Detection",
   description:
@@ -55,8 +55,7 @@ export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isAuthenticated } = useAuth();
   const { toast } = useToast();
-  const { loading, totalResults, setTotalResults, totalCount } =
-    useArticleSearch(); // Add this
+  const { loading, totalResults, setTotalResults, totalCount } = useSearch(); // Add this
 
   const { page, totalPage, setPage, setTotalPage } = usePagination();
   const like = async (post_id: string, liked_me: boolean) => {
@@ -117,6 +116,7 @@ export default function Home() {
   useEffect(() => {
     setTotalPage(Math.ceil(totalCount / 3));
   }, [totalCount]);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -125,11 +125,11 @@ export default function Home() {
     return null;
   }
   return (
-    <section className="w-full min-h-[80vh]">
-      <div
-        className={`w-full flex flex-col justify-center items-center ${theme === "dark" ? "bg-black" : "bg-white"}`}
-      >
-        <div className={`flex flex-row justify-center mb-8`}>
+    <section
+      className={`w-full min-h-[80vh] ${theme === "dark" ? "bg-black" : "bg-white"}`}
+    >
+      <div className={`w-full flex flex-col justify-center items-center`}>
+        <div className={`flex flex-row justify-center mb-8 md:mt-0 mt-4`}>
           <span className="md:pt-[60px] text-2xl md:text-5xl md:font-semibold text-center max-w-[75%] md:max-w-[80%] text-balance">
             Generate summaries and articles for Research Papers Effortlessly
           </span>

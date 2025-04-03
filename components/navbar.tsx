@@ -142,61 +142,44 @@ export const Navbar = () => {
   const iconClasses = `text-xl pointer-events-none flex-shrink-0 ${theme === "dark" ? "text-[#92A8BF]" : "text-[#828489]"}`;
   return (
     // <div className="flex items-center justify-center flex-row w-full relative">
-      <HeroUINavbar
-        maxWidth="full"
-        position="sticky"
-        style={{
-          background: `${theme === "dark" ? "linear-gradient(0deg, #1E2A36 0%, #1E2A36 100%)" : "linear-gradient(0deg, #F7F7F7  0%, #F7F7F7 100%)"}`,
-        }}
-        // shouldHideOnScroll
-        className="flex flex-row justify-between w-full bg-transparent h-[78px]"
-      >
-        <NavbarContent className="flex w-full flex-grow-0 basis-full overflow-y-hidden">
-          <NavbarItem className="flex md:gap-2 w-full md:w-2/3">
-            <NavbarBrand>
-              <Link href="/" className="w-full">
-                <Image
-                  alt="Logo"
-                  onClick={() => {
-                    setSortBy("");
-                    setKeyword("");
-                    setPage(1);
-                  }}
-                  src={theme === "dark" ? LogoLight : LogoDark}
-                />
-              </Link>
-            </NavbarBrand>
-          </NavbarItem>
-        </NavbarContent>
-        <NavbarContent className="hidden md:flex w-full ">
-          <NavbarItem className="w-full items-center gap-2  md:flex justify-center">
-            <SearchBar />
-          </NavbarItem>
-        </NavbarContent>
-        <NavbarContent className="flex w-full basis-full" justify="end">
-          <NavbarItem className="flex items-center gap-[6px]">
-            {/* <CircularProgressBar className="ml-2 md:ml-4 h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" /> */}
-            {isMobile ? (
-              <Tooltip content="Research Audit">
-                <Button
-                  isIconOnly
-                  variant="light"
-                  isLoading={isCheckPending}
-                  onPress={() =>
-                    startCheckTransition(() => {
-                      router.push("/check");
-                    })
-                  }
-                  className={`w-[36px] h-[36px] min-w-[36px] min-h-[36px] rounded-[50%] flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
-                >
-                  <ResearchAuditSVG
-                    className={iconClasses}
-                    color={theme === "dark" ? "#92A8BF" : "#828489"}
-                  />
-                </Button>
-              </Tooltip>
-            ) : (
+    <HeroUINavbar
+      maxWidth="full"
+      position="sticky"
+      style={{
+        background: `${theme === "dark" ? "linear-gradient(0deg, #1E2A36 0%, #1E2A36 100%)" : "linear-gradient(0deg, #F7F7F7  0%, #F7F7F7 100%)"}`,
+      }}
+      // shouldHideOnScroll
+      className="flex flex-row justify-between w-full bg-transparent h-[78px]"
+    >
+      <NavbarContent className="flex w-full flex-grow-0 basis-full overflow-y-hidden">
+        <NavbarItem className="flex md:gap-2 w-full md:w-2/3">
+          <NavbarBrand>
+            <Link href="/" className="w-full">
+              <Image
+                alt="Logo"
+                onClick={() => {
+                  setSortBy("");
+                  setKeyword("");
+                  setPage(1);
+                }}
+                src={theme === "dark" ? LogoLight : LogoDark}
+              />
+            </Link>
+          </NavbarBrand>
+        </NavbarItem>
+      </NavbarContent>
+      <NavbarContent className="hidden md:flex w-full ">
+        <NavbarItem className="w-full items-center gap-2  md:flex justify-center">
+          <SearchBar />
+        </NavbarItem>
+      </NavbarContent>
+      <NavbarContent className="flex w-full basis-full" justify="end">
+        <NavbarItem className="flex items-center gap-[6px]">
+          {/* <CircularProgressBar className="ml-2 md:ml-4 h-[60px] w-[60px] md:h-[100px] md:w-[100px] text-sm md:text-md" /> */}
+          {isMobile ? (
+            <Tooltip content="Research Audit">
               <Button
+                isIconOnly
                 variant="light"
                 isLoading={isCheckPending}
                 onPress={() =>
@@ -204,34 +187,33 @@ export const Navbar = () => {
                     router.push("/check");
                   })
                 }
-                className={`flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+                className={`w-[36px] h-[36px] min-w-[36px] min-h-[36px] rounded-[50%] flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
               >
-                Research Audit
+                <ResearchAuditSVG
+                  className={iconClasses}
+                  color={theme === "dark" ? "#92A8BF" : "#828489"}
+                />
               </Button>
-            )}
+            </Tooltip>
+          ) : (
+            <Button
+              variant="light"
+              isLoading={isCheckPending}
+              onPress={() =>
+                startCheckTransition(() => {
+                  router.push("/check");
+                })
+              }
+              className={`flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+            >
+              Research Audit
+            </Button>
+          )}
 
-            {isMobile ? (
-              <Tooltip content="Past Recordings">
-                <Button
-                  isIconOnly
-                  variant="light"
-                  isLoading={isSpeechPending}
-                  onPress={() =>
-                    startSpeechTransition(() => {
-                      router.push("/speeches");
-                    })
-                  }
-                  className={`w-[36px] h-[36px] min-w-[36px] min-h-[36px] rounded-[50%] flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
-                >
-                  <SpeechBookSVG
-                    size={20}
-                    className={iconClasses}
-                    color={theme === "dark" ? "#798FA6" : "#828489"}
-                  />
-                </Button>
-              </Tooltip>
-            ) : (
+          {isMobile ? (
+            <Tooltip content="Past Recordings">
               <Button
+                isIconOnly
                 variant="light"
                 isLoading={isSpeechPending}
                 onPress={() =>
@@ -239,33 +221,34 @@ export const Navbar = () => {
                     router.push("/speeches");
                   })
                 }
-                className={`flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+                className={`w-[36px] h-[36px] min-w-[36px] min-h-[36px] rounded-[50%] flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
               >
-                Past Recordings
+                <SpeechBookSVG
+                  size={20}
+                  className={iconClasses}
+                  color={theme === "dark" ? "#798FA6" : "#828489"}
+                />
               </Button>
-            )}
+            </Tooltip>
+          ) : (
+            <Button
+              variant="light"
+              isLoading={isSpeechPending}
+              onPress={() =>
+                startSpeechTransition(() => {
+                  router.push("/speeches");
+                })
+              }
+              className={`flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+            >
+              Past Recordings
+            </Button>
+          )}
 
-            {isMobile ? (
-              <Tooltip content="Statistics">
-                <Button
-                  isIconOnly
-                  variant="light"
-                  isLoading={isPending}
-                  onPress={() =>
-                    startTransition(() => {
-                      router.push("/statistics");
-                    })
-                  }
-                  className={`w-[36px] h-[36px] min-w-[36px] min-h-[36px] rounded-[50%] flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
-                >
-                  <StatisticsIcon
-                    size={20}
-                    color={`${theme === "dark" ? "#798FA6" : "#828489"}`}
-                  />
-                </Button>
-              </Tooltip>
-            ) : (
+          {isMobile ? (
+            <Tooltip content="Statistics">
               <Button
+                isIconOnly
                 variant="light"
                 isLoading={isPending}
                 onPress={() =>
@@ -273,246 +256,261 @@ export const Navbar = () => {
                     router.push("/statistics");
                   })
                 }
-                className={`flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+                className={`w-[36px] h-[36px] min-w-[36px] min-h-[36px] rounded-[50%] flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
               >
-                Statistics
-              </Button>
-            )}
-            <Tooltip content="Theme">
-              <ThemeSwitch
-                className={`${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
-              />
-            </Tooltip>
-
-            <Dropdown
-              placement="bottom-end"
-              classNames={{
-                base: "before:bg-default-200", // change arrow background
-                content: `py-1 px-1 border border-default-200 ${theme === "dark" ? "bg-[#2E3D4C]" : ""}`,
-              }}
-            >
-              <DropdownTrigger>
-                <User
-                  avatarProps={{
-                    src: isAuthenticated
-                      ? user?.detail.avatar
-                      : "https://avatars.githubusercontent.com/u/146516559?s=400&u=8a2fcef9b9079ab60f01db2868d1b1893856a2c3&v=4",
-                    className: "w-[36px] h-[36px]",
-                  }}
-                  onClick={() => setOpen(true)}
-                  className="cursor-pointer"
-                  // description={
-                  //   <Link
-                  //     isExternal
-                  //     href={`${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`}
-                  //     size="sm"
-                  //     isDisabled={!isAuthenticated}
-                  //     className="text-[13px] opacity-[.6]"
-                  //   >
-                  //     @
-                  //     {isAuthenticated
-                  //       ? _.truncate(user?.detail.user_name, {
-                  //           length: 10,
-                  //           omission: "...",
-                  //         })
-                  //       : `guest`}
-                  //   </Link>
-                  // }
-                  // name={isAuthenticated ? user?.detail.first_name : "Guest"}
-                  name=""
+                <StatisticsIcon
+                  size={20}
+                  color={`${theme === "dark" ? "#798FA6" : "#828489"}`}
                 />
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Dropdown menu with description"
-                variant="light"
-                className="w-[340px]"
-              >
-                <DropdownSection title="">
-                  <DropdownItem key="avatar">
-                    <div className="flex justify-between gap-3">
-                      <div className="flex flex-row justify-start gap-4 items-center">
-                        <HeroImage
-                          isBlurred
-                          isZoomed
-                          alt="User Avatar"
-                          radius="full"
-                          className="object-cover"
-                          shadow="lg"
-                          style={
-                            isMobile
-                              ? { height: "30px", width: "30px" }
-                              : { height: "50px", width: "50px" }
-                          }
-                          src={
-                            isAuthenticated
-                              ? user?.detail.avatar
-                              : "https://avatars.githubusercontent.com/u/146516559?s=400&u=8a2fcef9b9079ab60f01db2868d1b1893856a2c3&v=4"
-                          }
-                        />
-                        <div className="flex flex-col items-start justify-center">
-                          <h4 className="text-large font-bold leading-none text-default-600">
-                            {_.truncate(user?.detail.first_name, {
-                              length: 15,
-                              omission: "...",
-                            })}
-                          </h4>
-                          <Link
-                            isExternal
-                            href={`${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`}
-                            size="sm"
-                            isDisabled={!isAuthenticated}
-                          >
-                            <h5
-                              className={`text-medium tracking-tight ${theme === "dark" ? "text-[#798FA6]" : "text-[#828489]"}`}
-                            >
-                              @
-                              {isAuthenticated
-                                ? user?.detail.user_name
-                                : "guest"}
-                            </h5>
-                          </Link>
-                        </div>
-                      </div>
-                      {isAuthenticated && (
-                        <Button
-                          className={`${theme === "dark" ? "bg-[#526477] text-[#C9D8E7" : "bg-[#FFF] text-[#252629]"} rounded-full`}
-                          variant="bordered"
-                          onPress={() =>
-                            window.open(`${NOBLEBLOCKS_DOMAIN}/settings`)
-                          }
+              </Button>
+            </Tooltip>
+          ) : (
+            <Button
+              variant="light"
+              isLoading={isPending}
+              onPress={() =>
+                startTransition(() => {
+                  router.push("/statistics");
+                })
+              }
+              className={`flex items-center justify-center ${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+            >
+              Statistics
+            </Button>
+          )}
+          <Tooltip content="Theme">
+            <ThemeSwitch
+              className={`${theme === "dark" ? "bg-[#2E3D4C]" : "bg-[#EBEBEB]"}`}
+            />
+          </Tooltip>
+
+          <Dropdown
+            placement="bottom-end"
+            classNames={{
+              base: "before:bg-default-200", // change arrow background
+              content: `py-1 px-1 border border-default-200 ${theme === "dark" ? "bg-[#2E3D4C]" : ""}`,
+            }}
+          >
+            <DropdownTrigger>
+              <User
+                avatarProps={{
+                  src: isAuthenticated
+                    ? user?.detail.avatar
+                    : "https://avatars.githubusercontent.com/u/146516559?s=400&u=8a2fcef9b9079ab60f01db2868d1b1893856a2c3&v=4",
+                  className: "w-[36px] h-[36px]",
+                }}
+                onClick={() => setOpen(true)}
+                className="cursor-pointer"
+                // description={
+                //   <Link
+                //     isExternal
+                //     href={`${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`}
+                //     size="sm"
+                //     isDisabled={!isAuthenticated}
+                //     className="text-[13px] opacity-[.6]"
+                //   >
+                //     @
+                //     {isAuthenticated
+                //       ? _.truncate(user?.detail.user_name, {
+                //           length: 10,
+                //           omission: "...",
+                //         })
+                //       : `guest`}
+                //   </Link>
+                // }
+                // name={isAuthenticated ? user?.detail.first_name : "Guest"}
+                name=""
+              />
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Dropdown menu with description"
+              variant="light"
+              className="w-[340px]"
+            >
+              <DropdownSection title="">
+                <DropdownItem key="avatar">
+                  <div className="flex justify-between gap-3">
+                    <div className="flex flex-row justify-start gap-4 items-center">
+                      <HeroImage
+                        isBlurred
+                        isZoomed
+                        alt="User Avatar"
+                        radius="full"
+                        className="object-cover"
+                        shadow="lg"
+                        style={
+                          isMobile
+                            ? { height: "30px", width: "30px" }
+                            : { height: "50px", width: "50px" }
+                        }
+                        src={
+                          isAuthenticated
+                            ? user?.detail.avatar
+                            : "https://avatars.githubusercontent.com/u/146516559?s=400&u=8a2fcef9b9079ab60f01db2868d1b1893856a2c3&v=4"
+                        }
+                      />
+                      <div className="flex flex-col items-start justify-center">
+                        <h4 className="text-large font-bold leading-none text-default-600">
+                          {_.truncate(user?.detail.first_name, {
+                            length: 15,
+                            omission: "...",
+                          })}
+                        </h4>
+                        <Link
+                          isExternal
+                          href={`${NOBLEBLOCKS_DOMAIN}/@${user?.detail.user_name}`}
+                          size="sm"
+                          isDisabled={!isAuthenticated}
                         >
-                          Manage Profile
-                        </Button>
-                      )}
+                          <h5
+                            className={`text-medium tracking-tight ${theme === "dark" ? "text-[#798FA6]" : "text-[#828489]"}`}
+                          >
+                            @
+                            {isAuthenticated ? user?.detail.user_name : "guest"}
+                          </h5>
+                        </Link>
+                      </div>
                     </div>
+                    {isAuthenticated && (
+                      <Button
+                        className={`${theme === "dark" ? "bg-[#526477] text-[#C9D8E7" : "bg-[#FFF] text-[#252629]"} rounded-full`}
+                        variant="bordered"
+                        onPress={() =>
+                          window.open(`${NOBLEBLOCKS_DOMAIN}/settings`)
+                        }
+                      >
+                        Manage Profile
+                      </Button>
+                    )}
+                  </div>
+                </DropdownItem>
+              </DropdownSection>
+              {isAuthenticated ? (
+                <DropdownSection
+                  title=""
+                  classNames={{
+                    base: "border-none",
+                    heading: "max-h-[320px]",
+                  }}
+                  className="border-2 rounded-md border-default-200 p-2 w-full"
+                >
+                  <DropdownItem
+                    key="Research Audit"
+                    //shortcut="⌘C"
+                    startContent={
+                      <ResearchAuditSVG
+                        className={iconClasses}
+                        color={theme === "dark" ? "#92A8BF" : "#828489"}
+                      />
+                    }
+                    onPress={() => {
+                      setOpen(false);
+                      navigateTo("/check");
+                    }}
+                  >
+                    Research Audit
+                  </DropdownItem>
+                  <DropdownItem
+                    key="speeches"
+                    //shortcut="⌘S"
+                    startContent={
+                      <SpeechBookSVG
+                        className={iconClasses}
+                        color={theme === "dark" ? "#92A8BF" : "#828489"}
+                      />
+                    }
+                    onPress={() => {
+                      setOpen(false);
+                      navigateTo("/speeches");
+                    }}
+                  >
+                    Past Recordings
+                  </DropdownItem>
+                  <DropdownItem
+                    key="about"
+                    //shortcut="⌘A"
+                    startContent={<MdInfo className={iconClasses} />}
+                    onPress={() => {
+                      setOpen(false);
+                      navigateTo("/about");
+                    }}
+                  >
+                    About
+                  </DropdownItem>
+                  <DropdownItem
+                    key="whitepaper"
+                    startContent={<IoNewspaper className={iconClasses} />}
+                    onPress={() => {
+                      navigateTo(`https://nerdbunny.gitbook.io/nerdbunny`);
+                    }}
+                  >
+                    WhitePaper
+                  </DropdownItem>
+                  <DropdownItem
+                    key="logout"
+                    //shortcut="⌘Q"
+                    color="danger"
+                    startContent={<MdLogout className={iconClasses} />}
+                    onPress={() => {
+                      logout();
+                      navigateTo("");
+                    }}
+                  >
+                    Log out
                   </DropdownItem>
                 </DropdownSection>
-                {isAuthenticated ? (
-                  <DropdownSection
-                    title=""
-                    classNames={{
-                      base: "border-none",
-                      heading: "max-h-[320px]",
+              ) : (
+                <DropdownSection>
+                  <DropdownItem
+                    key="Research Audit"
+                    //shortcut="⌘C"
+                    startContent={<MdCheck className={iconClasses} />}
+                    onPress={() => {
+                      setOpen(false);
+                      navigateTo("/check");
                     }}
-                    className="border-2 rounded-md border-default-200 p-2 w-full"
                   >
-                    <DropdownItem
-                      key="Research Audit"
-                      //shortcut="⌘C"
-                      startContent={
-                        <ResearchAuditSVG
-                          className={iconClasses}
-                          color={theme === "dark" ? "#92A8BF" : "#828489"}
-                        />
-                      }
-                      onPress={() => {
-                        setOpen(false);
-                        navigateTo("/check");
-                      }}
-                    >
-                      Research Audit
-                    </DropdownItem>
-                    <DropdownItem
-                      key="speeches"
-                      //shortcut="⌘S"
-                      startContent={
-                        <SpeechBookSVG
-                          className={iconClasses}
-                          color={theme === "dark" ? "#92A8BF" : "#828489"}
-                        />
-                      }
-                      onPress={() => {
-                        setOpen(false);
-                        navigateTo("/speeches");
-                      }}
-                    >
-                      Past Recordings
-                    </DropdownItem>
-                    <DropdownItem
-                      key="about"
-                      //shortcut="⌘A"
-                      startContent={<MdInfo className={iconClasses} />}
-                      onPress={() => {
-                        setOpen(false);
-                        navigateTo("/about");
-                      }}
-                    >
-                      About
-                    </DropdownItem>
-                    <DropdownItem
-                      key="whitepaper"
-                      startContent={<IoNewspaper className={iconClasses} />}
-                      onPress={() => {
-                        navigateTo(`https://nerdbunny.gitbook.io/nerdbunny`);
-                      }}
-                    >
-                      WhitePaper
-                    </DropdownItem>
-                    <DropdownItem
-                      key="logout"
-                      //shortcut="⌘Q"
-                      color="danger"
-                      startContent={<MdLogout className={iconClasses} />}
-                      onPress={() => {
-                        logout();
-                        navigateTo("");
-                      }}
-                    >
-                      Log out
-                    </DropdownItem>
-                  </DropdownSection>
-                ) : (
-                  <DropdownSection>
-                    <DropdownItem
-                      key="Research Audit"
-                      //shortcut="⌘C"
-                      startContent={<MdCheck className={iconClasses} />}
-                      onPress={() => {
-                        setOpen(false);
-                        navigateTo("/check");
-                      }}
-                    >
-                      Research Audit
-                    </DropdownItem>
-                    <DropdownItem
-                      key="about"
-                      //shortcut="⌘A"
-                      startContent={<MdInfo className={iconClasses} />}
-                      onPress={() => {
-                        setOpen(false);
-                        navigateTo("/about");
-                      }}
-                    >
-                      About
-                    </DropdownItem>
-                    <DropdownItem
-                      key="whitepaper"
-                      startContent={<IoNewspaper className={iconClasses} />}
-                      onPress={() => {
-                        navigateTo(`https://nerdbunny.gitbook.io/nerdbunny`);
-                      }}
-                    >
-                      WhitePaper
-                    </DropdownItem>
-                    <DropdownItem
-                      key="login"
-                      //shortcut="⌘L"
-                      startContent={<MdLogin className={iconClasses} />}
-                      onPress={() => {
-                        navigateTo(
-                          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login_with_nobleblocks?app_name=NerdBunny&redirect_url=${DOMAIN + "/login_with_nobleblocks"}`
-                        );
-                      }}
-                    >
-                      Log in with Nobleblocks
-                    </DropdownItem>
-                  </DropdownSection>
-                )}
-              </DropdownMenu>
-            </Dropdown>
-          </NavbarItem>
-        </NavbarContent>
-      </HeroUINavbar>
+                    Research Audit
+                  </DropdownItem>
+                  <DropdownItem
+                    key="about"
+                    //shortcut="⌘A"
+                    startContent={<MdInfo className={iconClasses} />}
+                    onPress={() => {
+                      setOpen(false);
+                      navigateTo("/about");
+                    }}
+                  >
+                    About
+                  </DropdownItem>
+                  <DropdownItem
+                    key="whitepaper"
+                    startContent={<IoNewspaper className={iconClasses} />}
+                    onPress={() => {
+                      navigateTo(`https://nerdbunny.gitbook.io/nerdbunny`);
+                    }}
+                  >
+                    WhitePaper
+                  </DropdownItem>
+                  <DropdownItem
+                    key="login"
+                    //shortcut="⌘L"
+                    startContent={<MdLogin className={iconClasses} />}
+                    onPress={() => {
+                      navigateTo(
+                        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login_with_nobleblocks?app_name=NerdBunny&redirect_url=${DOMAIN + "/login_with_nobleblocks"}`
+                      );
+                    }}
+                  >
+                    Log in with Nobleblocks
+                  </DropdownItem>
+                </DropdownSection>
+              )}
+            </DropdownMenu>
+          </Dropdown>
+        </NavbarItem>
+      </NavbarContent>
+    </HeroUINavbar>
     // </div>
   );
 };
