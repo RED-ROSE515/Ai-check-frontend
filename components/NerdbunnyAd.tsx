@@ -29,7 +29,7 @@ const NerdbunnyAd = () => {
           );
         }}
       >
-        <strong className="font-bold text-lg">{"JOIN PRE-SALE"}</strong>
+        <strong className="font-bold text-lg">{"JOIN THE PRE-SALE"}</strong>
       </ShinyButton>
     </div>
   );
