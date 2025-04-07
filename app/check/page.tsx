@@ -1,10 +1,7 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
 import { Spinner, Card } from "@heroui/react";
-import SummaryWrapper from "../../components/SummaryWrapper";
-import AnalysisResult from "../../components/AnalysisResult";
 import FileUpload from "../../components/file-upload";
-import SpecialSummary from "@/components/SpecialSummary";
 import { useTheme } from "next-themes";
 import { useAnalyze } from "@/contexts/AnalyzeContext";
 import { useAuth } from "@/contexts/AuthContext";

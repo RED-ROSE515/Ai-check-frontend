@@ -179,7 +179,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const [paper_url, setPaperUrl] = useState("");
   const [paper_value, setPaperValue] = useState("");
   const [loading, setLoading] = useState(false);
-  const { handleAnalyze } = useAnalyze();
+  const { handleAnalyze, setProcessType } = useAnalyze();
   const { toast } = useToast();
   const { theme } = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -520,6 +520,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
               <Textarea
                 placeholder="Input the paper."
                 id="paper"
+                className="h-[300px] z-10"
                 value={paper_value}
                 onChange={(e: any) => setPaperValue(e.target.value)}
               />
@@ -695,6 +696,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                 <Button
                   color="primary"
                   onPress={() => {
+                    setProcessType(analyzeOption);
                     if (analyzeOption === "ResearchCheck") {
                       handleAnalyze(s3_link, visibility[0], users, [
                         "ResearchCheck",

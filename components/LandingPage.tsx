@@ -1,4 +1,4 @@
-import React, { useTransition } from "react";
+import React, { useTransition, useRef } from "react";
 import { useTheme } from "next-themes";
 import { DotPattern } from "./magicui/dot-pattern";
 import { cn } from "@/lib/utils";
@@ -7,12 +7,17 @@ import StatisticCard from "./StatisticCard";
 import { useRouter } from "next/navigation";
 import { Sen } from "next/font/google";
 import NerdbunnyAd from "./NerdbunnyAd";
+import FileUpload from "./file-upload";
 export const sen = Sen({ subsets: ["latin"] });
+
+type TriggerRefType = {
+  current: (() => void) | null;
+};
 
 const LandingPage = () => {
   const { theme } = useTheme();
   const [isPending, startTransition] = useTransition();
-
+  const triggerUploadRef: TriggerRefType = useRef(null);
   const router = useRouter();
   return (
     <div
@@ -21,7 +26,6 @@ const LandingPage = () => {
         background: `${theme === "dark" ? "linear-gradient(0deg, #06070C 0%, #1E2A36 100%)" : "linear-gradient(0deg, #FFFFFF 0%, #F7F7F7 100%)"}`,
       }}
     >
-      <NerdbunnyAd />
       <div className="absolute flex size-full w-full h-full items-center justify-center overflow-hidden">
         <DotPattern
           width={20}
@@ -44,6 +48,8 @@ const LandingPage = () => {
           )}
         />
       </div>
+      <NerdbunnyAd />
+
       <div className="w-full flex flex-col justify-center items-center">
         <div className="flex flex-row justify-center">
           <span className="md:pt-[60px] text-2xl md:text-6xl md:font-semibold text-center max-w-[75%] md:max-w-[60%] text-balance">
@@ -74,6 +80,9 @@ const LandingPage = () => {
               {"Try for FREE!"}
             </span>
           </Button>
+        </div>
+        <div className="mt-10 p-4 px-10">
+          {/* <FileUpload getPdfList={() => {}} onTriggerRef={triggerUploadRef} /> */}
         </div>
       </div>
       <div className="mx-auto mt-10 grid w-full flex-row flex-wrap gap-6 justify-center">
