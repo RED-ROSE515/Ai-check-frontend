@@ -4,6 +4,24 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   // ...existing code...
-};
 
-module.exports = nextConfig;
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+          {
+            key: "Content-Security-Policy",
+            value: "frame-ancestors 'none'",
+          },
+        ],
+      },
+    ]
+  },
+}
+
+module.exports = nextConfig
