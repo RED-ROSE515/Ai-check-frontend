@@ -458,7 +458,7 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
         </div>
 
         <div className="flex flex-col justify-center gap-3 w-full">
-          <div className="grid w-full gap-1.5">
+          {/* <div className="grid w-full gap-1.5">
             <Label htmlFor="paper">Paste manuscript text here</Label>
             <Textarea
               placeholder="Paste Text here."
@@ -471,7 +471,7 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                 setUploadedFile(null)
               }}
             />
-          </div>
+          </div> */}
           <div className="flex flex-row justify-end gap-4">
             <AnalyzeForm
               loading={loading || isChecking}

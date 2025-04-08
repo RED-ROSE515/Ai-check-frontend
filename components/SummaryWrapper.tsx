@@ -240,7 +240,7 @@ const SummaryWrapper = ({
       }
     >
       <div
-        className={`summary-ribbon summary-ribbon-top-right`}
+        className={`summary-ribbon summary-ribbon-top-right ${isResult && "hidden"}`}
         style={
           {
             "--ribbon-border-color": "#F31260",
@@ -248,7 +248,7 @@ const SummaryWrapper = ({
           } as React.CSSProperties
         }
       >
-        <span>{"Error Detection"}</span>
+        <span>{"Research Analysis"}</span>
       </div>
       <div className="w-full flex flex-col justify-center text-center font-bold text-2xl gap-5 md:pr-14">
         {isResult ? (
