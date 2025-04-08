@@ -1,24 +1,18 @@
-import React, { useTransition, useRef } from "react";
-import { useTheme } from "next-themes";
-import { DotPattern } from "./magicui/dot-pattern";
-import { cn } from "@/lib/utils";
-import { Button } from "@heroui/react";
-import StatisticCard from "./StatisticCard";
-import { useRouter } from "next/navigation";
-import { Sen } from "next/font/google";
-import NerdbunnyAd from "./NerdbunnyAd";
-import FileUpload from "./file-upload";
-export const sen = Sen({ subsets: ["latin"] });
+import React, { useTransition } from "react"
+import { useTheme } from "next-themes"
+import { DotPattern } from "./magicui/dot-pattern"
+import { cn } from "@/lib/utils"
+import { Button } from "@heroui/react"
+import { useRouter } from "next/navigation"
+import { Sen } from "next/font/google"
+import NerdbunnyAd from "./NerdbunnyAd"
+import StatisticCard from "./StatisticCard"
+export const sen = Sen({ subsets: ["latin"] })
 
-type TriggerRefType = {
-  current: (() => void) | null;
-};
-
-const LandingPage = () => {
-  const { theme } = useTheme();
-  const [isPending, startTransition] = useTransition();
-  const triggerUploadRef: TriggerRefType = useRef(null);
-  const router = useRouter();
+const LandingPage = ({ isHome = true }: { isHome?: boolean }) => {
+  const { theme } = useTheme()
+  const [isPending, startTransition] = useTransition()
+  const router = useRouter()
   return (
     <div
       className="w-full relative pt-4 pb-4 md:pb-20"
@@ -70,7 +64,7 @@ const LandingPage = () => {
             radius="full"
             onPress={() =>
               startTransition(() => {
-                router.push("/check");
+                router.push("/check")
               })
             }
           >
@@ -81,15 +75,14 @@ const LandingPage = () => {
             </span>
           </Button>
         </div>
-        <div className="mt-10 p-4 px-10">
-          {/* <FileUpload getPdfList={() => {}} onTriggerRef={triggerUploadRef} /> */}
+      </div>
+      {!isHome && (
+        <div className="w-full flex flex-col justify-center items-center mt-4">
+          <StatisticCard />
         </div>
-      </div>
-      <div className="mx-auto mt-10 grid w-full flex-row flex-wrap gap-6 justify-center">
-        <StatisticCard />
-      </div>
+      )}
     </div>
-  );
-};
+  )
+}
 
-export default LandingPage;
+export default LandingPage

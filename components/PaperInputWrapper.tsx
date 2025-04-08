@@ -1,15 +1,7 @@
 "use client"
 import axios, { AxiosProgressEvent, CancelTokenSource } from "axios"
 import api from "@/utils/api"
-import {
-  AudioWaveform,
-  File,
-  FileImage,
-  FolderArchive,
-  UploadCloud,
-  Video,
-  X,
-} from "lucide-react"
+import { File, UploadCloud, X } from "lucide-react"
 import {
   Button,
   Select,
@@ -31,7 +23,7 @@ import {
 } from "@heroui/react"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-
+import SignInDialog from "./SignInDialog"
 import { useRef, useCallback, useState, useEffect } from "react"
 import { useDropzone } from "react-dropzone"
 import _ from "lodash"
@@ -48,12 +40,11 @@ import ChicagoImage from "@/public/citations/Chicago.png"
 import CSEImage from "@/public/citations/CSE.png"
 import IEEEImage from "@/public/citations/IEEE.png"
 import { useAnalyze } from "@/contexts/AnalyzeContext"
-import { FaFile, FaLink } from "react-icons/fa"
-import { LuScrollText } from "react-icons/lu"
 import { IoSettingsOutline } from "react-icons/io5"
 import { SiRoamresearch } from "react-icons/si"
 import { MdError, MdArticle } from "react-icons/md"
-
+import { useAuth } from "@/contexts/AuthContext"
+import router from "next/router"
 interface FileUploadProgress {
   progress: number
   file: File
@@ -61,11 +52,7 @@ interface FileUploadProgress {
 }
 
 enum FileTypes {
-  Image = "image",
   Pdf = "pdf",
-  Audio = "audio",
-  Video = "video",
-  Other = "other",
 }
 export interface Option {
   value: string
@@ -78,29 +65,9 @@ export interface Option {
   [key: string]: string | boolean | undefined
 }
 
-const ImageColor = {
-  bgColor: "bg-purple-600",
-  fillColor: "fill-purple-600",
-}
-
 const PdfColor = {
   bgColor: "bg-blue-400",
   fillColor: "fill-blue-400",
-}
-
-const AudioColor = {
-  bgColor: "bg-yellow-400",
-  fillColor: "fill-yellow-400",
-}
-
-const VideoColor = {
-  bgColor: "bg-green-400",
-  fillColor: "fill-green-400",
-}
-
-const OtherColor = {
-  bgColor: "bg-gray-400",
-  fillColor: "fill-gray-400",
 }
 
 export const options = [
@@ -168,10 +135,11 @@ export const AnalyzeForm = ({
   )
 }
 
-const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
+const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const [currentFile, setCurrentFile] = useState<FileUploadProgress | null>(
     null
   )
+  const [showSignIn, setShowSignIn] = useState(false)
   const [users, setUsers] = useState<Option[]>([])
   const [visibility, setVisibility] = useState(["everyone"])
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
@@ -182,6 +150,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const { handleAnalyze, setProcessType } = useAnalyze()
   const { toast } = useToast()
   const { theme } = useTheme()
+  const { isAuthenticated } = useAuth()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [researchPaperUrl, setResearchPaperUrl] = useState("")
@@ -190,6 +159,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const [analyzeOption, setAnalyzeOption] = useState("ResearchCheck")
   const [summaryOption, setSummaryOption] = useState("basic")
   const [advancedMethods, setAdvancedMethods] = useState<string[]>(["Method"])
+  const [showWarningModal, setShowWarningModal] = useState(false)
 
   if (onTriggerRef) {
     onTriggerRef.current = () => {
@@ -198,37 +168,9 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   }
 
   const getFileIconAndColor = (file: File) => {
-    if (file.type.includes(FileTypes.Image)) {
-      return {
-        icon: <FileImage className={ImageColor.fillColor} size={40} />,
-        color: ImageColor.bgColor,
-      }
-    }
-
-    if (file.type.includes(FileTypes.Pdf)) {
-      return {
-        icon: <File className={PdfColor.fillColor} size={40} />,
-        color: PdfColor.bgColor,
-      }
-    }
-
-    if (file.type.includes(FileTypes.Audio)) {
-      return {
-        icon: <AudioWaveform className={AudioColor.fillColor} size={40} />,
-        color: AudioColor.bgColor,
-      }
-    }
-
-    if (file.type.includes(FileTypes.Video)) {
-      return {
-        icon: <Video className={VideoColor.fillColor} size={40} />,
-        color: VideoColor.bgColor,
-      }
-    }
-
     return {
-      icon: <FolderArchive className={OtherColor.fillColor} size={40} />,
-      color: OtherColor.bgColor,
+      icon: <File className={PdfColor.fillColor} size={40} />,
+      color: PdfColor.bgColor,
     }
   }
 
@@ -260,79 +202,102 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
     setUploadedFile(null)
   }
 
+  const isPdfFile = (file: File) => {
+    return file.type === "application/pdf"
+  }
+
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return
 
     const file = acceptedFiles[0]
-    const cancelSource = axios.CancelToken.source()
 
-    setCurrentFile({
-      progress: 0,
-      file,
-      source: cancelSource,
-    })
-
-    const formData = new FormData()
-
-    formData.append("file", file)
-    setLoading(true)
-    try {
+    // Check if the file is a PDF
+    if (!isPdfFile(file)) {
+      setShowWarningModal(true)
+      return
+    }
+    if (!isAuthenticated) {
       toast({
-        description: `Uploading file: ${_.truncate(file.name, {
-          length: 15,
-          omission: "...",
-        })} Please wait.`,
-      })
-      const response = await api.post("/util/upload/add/pdf", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        cancelToken: cancelSource.token,
-        onUploadProgress: (progressEvent) => {
-          onUploadProgress(progressEvent, file, cancelSource)
-        },
-      })
-
-      toast({
-        description: `Your file ${_.truncate(file.name, {
-          length: 15,
-          omission: "...",
-        })} has been uploaded and is now in the queue for AI analysis.`,
-        duration: 2500,
-      })
-      await sleep(2500)
-      toast({
-        description: "File uploaded successfully!",
+        description: "Please login to upload a paper.",
         action: (
-          <ToastAction
-            altText="View Paper"
-            onClick={() => window.open(response.data.attached_link, "_blank")}
-          >
-            View
+          <ToastAction altText="Login" onClick={() => router.push("/login")}>
+            Login
           </ToastAction>
         ),
-        duration: 5000,
       })
-      await sleep(3000)
-      setS3Link(response.data.attached_link)
-      setLoading(false)
-      // AnalyzePaper(response.data.attached_link);
-      // getPdfList();
-    } catch (error) {
-      if (axios.isCancel(error)) {
+      setShowSignIn(true)
+      return
+    }
+    if (isAuthenticated) {
+      const cancelSource = axios.CancelToken.source()
+      setCurrentFile({
+        progress: 0,
+        file,
+        source: cancelSource,
+      })
+
+      const formData = new FormData()
+
+      formData.append("file", file)
+      setLoading(true)
+      try {
         toast({
-          variant: "destructive",
-          title: "Paper Upload",
-          description: "Upload cancelled",
+          description: `Uploading file: ${_.truncate(file.name, {
+            length: 15,
+            omission: "...",
+          })} Please wait.`,
         })
-      } else {
+        const response = await api.post("/util/upload/add/pdf", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          cancelToken: cancelSource.token,
+          onUploadProgress: (progressEvent) => {
+            onUploadProgress(progressEvent, file, cancelSource)
+          },
+        })
+
         toast({
-          variant: "destructive",
-          title: "Paper Upload",
-          description: "Upload failed: " + error,
+          description: `Your file ${_.truncate(file.name, {
+            length: 15,
+            omission: "...",
+          })} has been uploaded and is now in the queue for AI analysis.`,
+          duration: 2500,
         })
+        await sleep(2500)
+        toast({
+          description: "File uploaded successfully!",
+          action: (
+            <ToastAction
+              altText="View Paper"
+              onClick={() => window.open(response.data.attached_link, "_blank")}
+            >
+              View
+            </ToastAction>
+          ),
+          duration: 5000,
+        })
+        await sleep(3000)
+        setS3Link(response.data.attached_link)
+        setLoading(false)
+        // AnalyzePaper(response.data.attached_link);
+        // getPdfList();
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          toast({
+            variant: "destructive",
+            title: "Paper Upload",
+            description: "Upload cancelled",
+          })
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Paper Upload",
+            description: "Upload failed: " + error,
+          })
+        }
+        removeFile()
       }
-      removeFile()
     }
   }, [])
 
@@ -340,6 +305,9 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
     onDrop,
     maxFiles: 1,
     multiple: false,
+    accept: {
+      "application/pdf": [".pdf"],
+    },
   })
 
   const [isMounted, setIsMounted] = useState(false)
@@ -353,35 +321,43 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   }
 
   return (
-    <div className="">
-      <p className="text-lg font-semibold">Analyze a Research Paper</p>
-      <p className="text-sm mb-2">
-        Submit research papers that matter to you—whether they’re trending in
-        your field, influencing public conversations, or raising important
-        questions.NerdBunny helps uncover inconsistencies, flawed reasoning, or
-        methodological issues and publishes the results for open community
-        review.
-      </p>
-      <Tabs
-        aria-label="Options"
-        color="primary"
-        variant="bordered"
-        className="mt-8"
-      >
-        <Tab
-          key="file"
-          title={
-            <div className="flex items-center space-x-2">
-              <FaFile />
-              <span>File</span>
+    <div>
+      <div className="flex flex-col justify-center items-center gap-4">
+        <div className="flex flex-col-reverse md:flex-row gap-4">
+          <div className="flex flex-col gap-1 w-full md:w-1/2">
+            <p className="font-semibold text-lg">Paste Paper URL</p>
+            <HeroInput
+              className="w-full"
+              label="Paper URL : "
+              variant="bordered"
+              value={paper_url}
+              onValueChange={(val) => setPaperUrl(val)}
+              labelPlacement="outside-left"
+              placeholder="https://arxiv.org/abs/..."
+              classNames={{ mainWrapper: "w-full" }}
+            />
+            <div className="mt-2 flex flex-row justify-between gap-3">
+              <span className="text-xs ml-2 text-gray-500">
+                Note: Currently supporting papers from: arXiv, bioRxiv, medRxiv,
+                and OpenAlex. More sources are coming soon.
+              </span>
+              <AnalyzeForm
+                loading={loading}
+                theme={theme!}
+                paper_link={paper_url}
+                onOpen={onOpen}
+                setResearchPaperLink={setResearchPaperUrl}
+                visibility={visibility[0]}
+                disabled={!paper_url}
+              />
             </div>
-          }
-        >
-          <div className="">
+          </div>
+          <div className="w-full md:w-1/2">
+            <p className="font-semibold text-lg">Upload a Research Paper</p>
             <label
               {...getRootProps()}
               htmlFor="dropzone-file"
-              className={`relative h-[350px] flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed   ${theme === "dark" ? " bg-[#090C0F] border-[#293847] py-6 hover:bg-[#081524] hover:border-[#3C6B99]" : " bg-gray-50 py-6 hover:bg-gray-100"}`}
+              className={`relative flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed   ${theme === "dark" ? " bg-[#090C0F] border-[#293847] py-6 hover:bg-[#081524] hover:border-[#3C6B99]" : " bg-gray-50 py-6 hover:bg-gray-100"}`}
             >
               <div className="text-center">
                 <div className="mx-auto max-w-min rounded-md border p-2">
@@ -391,7 +367,11 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                   <span className="font-semibold">Drop a file or Browse</span>
                 </p>
                 <p className="text-xs text-gray-500">
-                  Click to upload a file &#40;file should be under 25 MB&#41;
+                  Click to upload a PDF file &#40;file should be under 25
+                  MB&#41;
+                </p>
+                <p className="text-xs text-red-500 font-semibold">
+                  Note: Only PDF files are supported
                 </p>
                 <br />
               </div>
@@ -403,145 +383,34 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
               id="dropzone-file"
               type="file"
             />
-            {uploadedFile && (
-              <div>
-                <div>
-                  <p className="my-2 mt-6 text-sm font-medium text-muted-foreground">
-                    Uploaded File
-                  </p>
-                  <div className="group flex justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0">
-                    <div className="flex flex-1 items-center p-2">
-                      <div className="text-white">
-                        {getFileIconAndColor(uploadedFile).icon}
-                      </div>
-                      <div className="ml-2 w-full space-y-1">
-                        <div className="flex justify-between text-sm">
-                          <p className="text-muted-foreground">
-                            {uploadedFile.name.slice(0, 25)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <button
-                      className="hidden items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
-                      onClick={removeFile}
-                    >
-                      <X size={20} />
-                    </button>
-                  </div>
-                </div>
-                <div className="flex md:flex-row flex-col justify-center w-full gap-5 mt-4">
-                  <div className="w-full md:w-[20%]">
-                    <Select
-                      isRequired
-                      variant="faded"
-                      className="max-w-xs"
-                      defaultSelectedKeys={["everyone"]}
-                      placeholder="Select visibility."
-                      selectedKeys={new Set(visibility)}
-                      onSelectionChange={(keys) =>
-                        setVisibility([...keys] as string[])
-                      }
-                    >
-                      {options.map((option) => (
-                        <SelectItem key={option.key}>{option.label}</SelectItem>
-                      ))}
-                    </Select>
-                  </div>
-                  <UserSearchBar
-                    setUsers={setUsers}
-                    users={users}
-                    disabled={visibility[0] !== "specific_users"}
-                  />
+          </div>
+        </div>
 
-                  <AnalyzeForm
-                    loading={loading}
-                    theme={theme!}
-                    paper_link={s3_link}
-                    onOpen={onOpen}
-                    setResearchPaperLink={setResearchPaperUrl}
-                    visibility={visibility[0]}
-                    disabled={!s3_link}
-                  />
-                </div>
-              </div>
-            )}
+        <div className="flex flex-col justify-center gap-3 w-full">
+          <div className="grid w-full gap-1.5">
+            <Label htmlFor="paper">Paper Content</Label>
+            <Textarea
+              placeholder="Input the paper."
+              id="paper"
+              className="h-[100px] w-full z-10"
+              value={paper_value}
+              onChange={(e: any) => setPaperValue(e.target.value)}
+            />
           </div>
-        </Tab>
-        <Tab
-          key="url"
-          title={
-            <div className="flex items-center space-x-2">
-              <FaLink />
-              <span>URL</span>
-            </div>
-          }
-        >
-          <div className="flex flex-col gap-1">
-            <p className="font-semibold text-lg">Paste Paper URL</p>
-            <div className="mt-2 flex flex-row justify-between gap-3">
-              <HeroInput
-                className="w-full"
-                label="Paper URL : "
-                variant="bordered"
-                value={paper_url}
-                onValueChange={(val) => setPaperUrl(val)}
-                labelPlacement="outside-left"
-                placeholder="https://arxiv.org/abs/..."
-                classNames={{ mainWrapper: "w-full" }}
-              />
-              <AnalyzeForm
-                loading={loading}
-                theme={theme!}
-                paper_link={paper_url}
-                onOpen={onOpen}
-                setResearchPaperLink={setResearchPaperUrl}
-                visibility={visibility[0]}
-                disabled={!paper_url}
-              />
-            </div>
-            <span className="text-xs ml-2 text-gray-500">
-              Note: Currently supporting papers from: arXiv, bioRxiv, medRxiv,
-              and OpenAlex. More sources are coming soon.
-            </span>
+          <div className="flex flex-row justify-end gap-4">
+            <AnalyzeForm
+              loading={loading}
+              theme={theme!}
+              paper_link={paper_url}
+              setResearchPaperLink={setResearchPaperUrl}
+              onOpen={onOpen}
+              visibility={visibility[0]}
+              disabled={!paper_value}
+            />
           </div>
-        </Tab>
-        <Tab
-          key="text"
-          className=""
-          title={
-            <div className="flex items-center space-x-2">
-              <LuScrollText />
-              <span>Text</span>
-            </div>
-          }
-        >
-          <div className="flex flex-col justify-center gap-3">
-            <div className="grid w-full gap-1.5">
-              <Label htmlFor="paper">Paper Content</Label>
-              <Textarea
-                placeholder="Input the paper."
-                id="paper"
-                className="h-[300px] z-10"
-                value={paper_value}
-                onChange={(e: any) => setPaperValue(e.target.value)}
-              />
-            </div>
-            <div className="flex flex-row justify-end gap-4">
-              <AnalyzeForm
-                loading={loading}
-                theme={theme!}
-                paper_link={paper_url}
-                setResearchPaperLink={setResearchPaperUrl}
-                onOpen={onOpen}
-                visibility={visibility[0]}
-                disabled={!paper_url}
-              />
-            </div>
-          </div>
-        </Tab>
-      </Tabs>
-
+        </div>
+      </div>
+      <SignInDialog isOpen={showSignIn} onClose={() => setShowSignIn(false)} />
       <Modal backdrop="opaque" isOpen={isOpen} onClose={onClose}>
         <ModalContent>
           {(onClose) => (
@@ -724,6 +593,98 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
           )}
         </ModalContent>
       </Modal>
+      <Modal
+        backdrop="opaque"
+        isOpen={showWarningModal}
+        onClose={() => setShowWarningModal(false)}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1 text-red-500">
+                File Type Warning
+              </ModalHeader>
+              <ModalBody>
+                <p>
+                  Only PDF files are supported for upload. Please select a PDF
+                  file.
+                </p>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="primary"
+                  onPress={() => setShowWarningModal(false)}
+                >
+                  OK
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      {uploadedFile && (
+        <div className="w-full">
+          <div>
+            <p className="my-2 mt-6 text-sm font-medium text-muted-foreground">
+              Uploaded File
+            </p>
+            <div className="group flex justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0">
+              <div className="flex flex-1 items-center p-2">
+                <div className="text-white">
+                  {getFileIconAndColor(uploadedFile).icon}
+                </div>
+                <div className="ml-2 w-full space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <p className="text-muted-foreground">
+                      {uploadedFile.name.slice(0, 25)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <button
+                className="hidden items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
+                onClick={removeFile}
+              >
+                <X size={20} />
+              </button>
+            </div>
+          </div>
+          <div className="flex md:flex-row flex-col justify-center w-full gap-5 mt-4">
+            <div className="w-full md:w-[20%]">
+              <Select
+                isRequired
+                variant="faded"
+                className="max-w-xs"
+                defaultSelectedKeys={["everyone"]}
+                placeholder="Select visibility."
+                selectedKeys={new Set(visibility)}
+                onSelectionChange={(keys) =>
+                  setVisibility([...keys] as string[])
+                }
+              >
+                {options.map((option) => (
+                  <SelectItem key={option.key}>{option.label}</SelectItem>
+                ))}
+              </Select>
+            </div>
+            <UserSearchBar
+              setUsers={setUsers}
+              users={users}
+              disabled={visibility[0] !== "specific_users"}
+            />
+
+            <AnalyzeForm
+              loading={loading}
+              theme={theme!}
+              paper_link={s3_link}
+              onOpen={onOpen}
+              setResearchPaperLink={setResearchPaperUrl}
+              visibility={visibility[0]}
+              disabled={!s3_link}
+            />
+          </div>
+        </div>
+      )}
       {currentFile && (
         <div>
           <p className="my-2 mt-6 text-sm font-medium text-muted-foreground">
@@ -764,4 +725,4 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   )
 }
 
-export default FileUpload
+export default PaperInputWrapper

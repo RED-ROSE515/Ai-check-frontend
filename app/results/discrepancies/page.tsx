@@ -1,5 +1,5 @@
-"use client";
-import React, { useEffect, useState, useRef } from "react";
+"use client"
+import React, { useEffect, useState, useRef } from "react"
 import {
   Button,
   useDisclosure,
@@ -7,29 +7,29 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-} from "@heroui/react";
-import { Pagination } from "@heroui/react";
-import api from "@/utils/api";
+} from "@heroui/react"
+import { Pagination } from "@heroui/react"
+import api from "@/utils/api"
 // import Pusher from "pusher-js";
-import { useTheme } from "next-themes";
-import LeftSider from "@/components/LeftSider";
-import SummaryWrapper from "@/components/SummaryWrapper";
-import { usePagination } from "@/contexts/PaginationContext";
-import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
-import { PostCommentBox } from "@/components/Comments";
-import { useToast } from "@/hooks/use-toast";
-import { ShinyButton } from "@/components/ui/shiny-button";
-import ShareButtons from "@/components/ShareButtons";
-import { useAuth } from "@/contexts/AuthContext";
-import SignInDialog from "@/components/SignInDialog";
-import { usePostActions } from "@/hooks/usePostActions";
-import Loader from "@/components/Loader";
-import type { Metadata } from "next";
-import { useSearch } from "@/contexts/SearchContext"; // Add this import
-import LandingPage from "@/components/LandingPage";
-import { AnimatePresence, motion } from "framer-motion";
-import { useSpeech } from "@/contexts/SpeechContext";
-import SpeechPlayer from "@/components/SpeechPlayer";
+import { useTheme } from "next-themes"
+import LeftSider from "@/components/LeftSider"
+import SummaryWrapper from "@/components/SummaryWrapper"
+import { usePagination } from "@/contexts/PaginationContext"
+import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb"
+import { PostCommentBox } from "@/components/Comments"
+import { useToast } from "@/hooks/use-toast"
+import { ShinyButton } from "@/components/ui/shiny-button"
+import ShareButtons from "@/components/ShareButtons"
+import { useAuth } from "@/contexts/AuthContext"
+import SignInDialog from "@/components/SignInDialog"
+import { usePostActions } from "@/hooks/usePostActions"
+import Loader from "@/components/Loader"
+import type { Metadata } from "next"
+import { useSearch } from "@/contexts/SearchContext" // Add this import
+import LandingPage from "@/components/LandingPage"
+import { AnimatePresence, motion } from "framer-motion"
+import { useSpeech } from "@/contexts/SpeechContext"
+import SpeechPlayer from "@/components/SpeechPlayer"
 
 const metadata: Metadata = {
   title: "AI-Powered Research Paper Error Detection",
@@ -38,11 +38,11 @@ const metadata: Metadata = {
   alternates: {
     canonical: "https://nerdbunny.com",
   },
-};
+}
 
 type TriggerRefType = {
-  current: (() => void) | null;
-};
+  current: (() => void) | null
+}
 // const summary = {
 //   phd: "This paper introduces VMLoc, an end-to-end deep neural network framework that enhances 6-DoF camera localization by leveraging multimodal data fusion, specifically integrating RGB images and depth/lidar data. Recognizing the limitations of naive fusion methods (e.g., simple concatenation), the authors propose a variational Product-of-Experts (PoE) model to learn a joint latent representation from multiple sensor modalities. This approach allows each modality to contribute its strengths while accounting for their different characteristics. To provide a tighter estimation of the evidence lower bound (ELBO) and improve modeling capacity, the framework incorporates an unbiased objective function based on importance weighting, mitigating training variance. The architecture also includes an attention mechanism to focus on task-relevant features. Extensive evaluations on the 7-Scenes and Oxford RobotCar datasets show that VMLoc outperforms existing methods, achieving higher accuracy in both position and orientation estimation. Ablation studies confirm the effectiveness of each component, including the PoE fusion module and the importance weighting strategy. The work contributes a robust methodology for multimodal variational inference in camera localization, with implications for improving the performance of autonomous systems in complex, dynamic environments. Future research could explore scaling the framework to additional modalities and further reducing computational overhead during training.",
 //   child:
@@ -54,24 +54,24 @@ type TriggerRefType = {
 // };
 
 export default function Home() {
-  const [isMounted, setIsMounted] = useState(false);
-  const [showSignIn, setShowSignIn] = useState(false);
-  const [postId, setPostId] = useState("");
-  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
-  const { speechUrl, showSpeech } = useSpeech();
-  const { theme } = useTheme();
-  const triggerUploadRef: TriggerRefType = useRef(null);
-  const User = false;
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isAuthenticated } = useAuth();
-  const { toast } = useToast();
-  const { loading, totalResults, setTotalResults, totalCount } = useSearch(); // Add this
+  const [isMounted, setIsMounted] = useState(false)
+  const [showSignIn, setShowSignIn] = useState(false)
+  const [postId, setPostId] = useState("")
+  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN
+  const { speechUrl, showSpeech } = useSpeech()
+  const { theme } = useTheme()
+  const triggerUploadRef: TriggerRefType = useRef(null)
+  const User = false
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isAuthenticated } = useAuth()
+  const { toast } = useToast()
+  const { loading, totalResults, setTotalResults, totalCount } = useSearch() // Add this
 
-  const { page, totalPage, setPage, setTotalPage } = usePagination();
+  const { page, totalPage, setPage, setTotalPage } = usePagination()
 
   const like = async (post_id: string, liked_me: boolean) => {
     try {
-      await api.post(`/post/${liked_me ? "unlike" : "like"}/post`, { post_id });
+      await api.post(`/post/${liked_me ? "unlike" : "like"}/post`, { post_id })
 
       setTotalResults((totalResults: any) =>
         totalResults.map((paper: any) =>
@@ -85,18 +85,18 @@ export default function Home() {
               }
             : paper
         )
-      );
+      )
     } catch (error) {
       toast({
         variant: "destructive",
         description: "Uh, oh! Something went wrong!" + { error },
-      });
+      })
     }
-  };
+  }
 
   const reportPost = async (id: string, reported_me: boolean) => {
     try {
-      const res = await handleReport(id, reported_me);
+      const res = await handleReport(id, reported_me)
       res &&
         setTotalResults((totalResults: any) =>
           totalResults.map((paper: any) =>
@@ -107,37 +107,37 @@ export default function Home() {
                 }
               : paper
           )
-        );
+        )
     } catch (err) {
-      console.log(err);
+      console.log(err)
     }
-  };
+  }
 
   const showSignInModal = async (action: string) => {
     toast({
       title: "Info",
       description: action,
-    });
-    setShowSignIn(true);
-  };
+    })
+    setShowSignIn(true)
+  }
   const { handleReport } = usePostActions({
     showSignInModal,
-  });
+  })
 
   useEffect(() => {
-    setTotalPage(Math.ceil(totalCount / 3));
-  }, [totalCount]);
+    setTotalPage(Math.ceil(totalCount / 3))
+  }, [totalCount])
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    setIsMounted(true)
+  }, [])
 
   if (!isMounted) {
-    return null;
+    return null
   }
   return (
     <section className="w-full">
-      <LandingPage />
+      <LandingPage isHome={false} />
       <div className="w-full fixed bottom-0 z-10">
         <AnimatePresence>
           {showSpeech && speechUrl && (
@@ -200,8 +200,8 @@ export default function Home() {
                                   }
                                 : paper
                             )
-                          );
-                          onClose();
+                          )
+                          onClose()
                         }}
                       />
                     </ModalBody>
@@ -264,12 +264,12 @@ export default function Home() {
                             className="flex items-center gap-2"
                             onPress={() => {
                               if (isAuthenticated) {
-                                setPostId(result.id);
-                                onOpen();
+                                setPostId(result.id)
+                                onOpen()
                               } else {
                                 showSignInModal(
                                   "You need to sign in to continue."
-                                );
+                                )
                               }
                             }}
                           >
@@ -307,7 +307,7 @@ export default function Home() {
                           </ShinyButton>
                         </div>
                       </div>
-                    );
+                    )
                   })}
                 </React.Fragment>
               ) : (
@@ -333,5 +333,5 @@ export default function Home() {
         </div>
       </div>
     </section>
-  );
+  )
 }

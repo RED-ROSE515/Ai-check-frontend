@@ -1,5 +1,5 @@
-"use client";
-import React, { useEffect, useState, useRef } from "react";
+"use client"
+import React, { useEffect, useState, useRef } from "react"
 import {
   Button,
   useDisclosure,
@@ -8,33 +8,34 @@ import {
   ModalHeader,
   ModalBody,
   Input,
-} from "@heroui/react";
-import { Link, Pagination } from "@heroui/react";
-import api from "@/utils/api";
+} from "@heroui/react"
+import { Link, Pagination } from "@heroui/react"
+import api from "@/utils/api"
 // import Pusher from "pusher-js";
-import { useTheme } from "next-themes";
-import LeftSider from "../components/LeftSider";
-import SummaryWrapper from "../components/SummaryWrapper";
-import { usePagination } from "@/contexts/PaginationContext";
-import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb";
-import { PostCommentBox } from "@/components/Comments";
-import { useToast } from "@/hooks/use-toast";
-import { ShinyButton } from "@/components/ui/shiny-button";
-import ShareButtons from "@/components/ShareButtons";
-import { useAuth } from "@/contexts/AuthContext";
-import SignInDialog from "@/components/SignInDialog";
-import { usePostActions } from "@/hooks/usePostActions";
-import Loader from "@/components/Loader";
-import type { Metadata } from "next";
-import { useSearch } from "@/contexts/SearchContext"; // Add this import
-import LandingPage from "@/components/LandingPage";
-import WorkFlow from "@/components/WorkFlow";
-import NerdbunnyReason from "@/components/NerdbunnyReason";
-import ResearchSection from "@/components/ResearchSection";
-import LastSection from "@/components/LastSection";
-import { AnimatePresence, motion } from "framer-motion";
-import { useSpeech } from "@/contexts/SpeechContext";
-import SpeechPlayer from "@/components/SpeechPlayer";
+import { useTheme } from "next-themes"
+import LeftSider from "../components/LeftSider"
+import SummaryWrapper from "../components/SummaryWrapper"
+import { usePagination } from "@/contexts/PaginationContext"
+import { TbThumbUp, TbMessage, TbEye } from "react-icons/tb"
+import { PostCommentBox } from "@/components/Comments"
+import { useToast } from "@/hooks/use-toast"
+import { ShinyButton } from "@/components/ui/shiny-button"
+import ShareButtons from "@/components/ShareButtons"
+import { useAuth } from "@/contexts/AuthContext"
+import SignInDialog from "@/components/SignInDialog"
+import { usePostActions } from "@/hooks/usePostActions"
+import Loader from "@/components/Loader"
+import type { Metadata } from "next"
+import { useSearch } from "@/contexts/SearchContext" // Add this import
+import LandingPage from "@/components/LandingPage"
+import WorkFlow from "@/components/WorkFlow"
+import NerdbunnyReason from "@/components/NerdbunnyReason"
+import ResearchSection from "@/components/ResearchSection"
+import LastSection from "@/components/LastSection"
+import { AnimatePresence, motion } from "framer-motion"
+import { useSpeech } from "@/contexts/SpeechContext"
+import SpeechPlayer from "@/components/SpeechPlayer"
+import CheckSection from "@/components/CheckSection"
 const metadata: Metadata = {
   title: "AI-Powered Research Paper Error Detection",
   description:
@@ -42,32 +43,32 @@ const metadata: Metadata = {
   alternates: {
     canonical: "https://nerdbunny.com",
   },
-};
+}
 
 type TriggerRefType = {
-  current: (() => void) | null;
-};
+  current: (() => void) | null
+}
 
 export default function Home() {
-  const [isMounted, setIsMounted] = useState(false);
-  const [showSignIn, setShowSignIn] = useState(false);
-  const [postId, setPostId] = useState("");
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
-  const { speechUrl, showSpeech } = useSpeech();
-  const { theme } = useTheme();
-  const triggerUploadRef: TriggerRefType = useRef(null);
-  const User = false;
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isAuthenticated } = useAuth();
-  const { toast } = useToast();
+  const [isMounted, setIsMounted] = useState(false)
+  const [showSignIn, setShowSignIn] = useState(false)
+  const [postId, setPostId] = useState("")
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN
+  const { speechUrl, showSpeech } = useSpeech()
+  const { theme } = useTheme()
+  const triggerUploadRef: TriggerRefType = useRef(null)
+  const User = false
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isAuthenticated } = useAuth()
+  const { toast } = useToast()
   const { loading, totalResults, setTotalResults, getTotalResults } =
-    useSearch(); // Add this
-  const { page, totalPage, setPage } = usePagination();
+    useSearch() // Add this
+  const { page, totalPage, setPage } = usePagination()
 
   const like = async (post_id: string, liked_me: boolean) => {
     try {
-      await api.post(`/post/${liked_me ? "unlike" : "like"}/post`, { post_id });
+      await api.post(`/post/${liked_me ? "unlike" : "like"}/post`, { post_id })
 
       setTotalResults((totalResults: any) =>
         totalResults.map((paper: any) =>
@@ -81,18 +82,18 @@ export default function Home() {
               }
             : paper
         )
-      );
+      )
     } catch (error) {
       toast({
         variant: "destructive",
         description: "Uh, oh! Something went wrong!" + { error },
-      });
+      })
     }
-  };
+  }
 
   const reportPost = async (id: string, reported_me: boolean) => {
     try {
-      const res = await handleReport(id, reported_me);
+      const res = await handleReport(id, reported_me)
       res &&
         setTotalResults((totalResults: any) =>
           totalResults.map((paper: any) =>
@@ -103,35 +104,42 @@ export default function Home() {
                 }
               : paper
           )
-        );
+        )
     } catch (err) {
-      console.log(err);
+      console.log(err)
     }
-  };
+  }
 
   const showSignInModal = async (action: string) => {
     toast({
       title: "Info",
       description: action,
-    });
-    setShowSignIn(true);
-  };
+    })
+    setShowSignIn(true)
+  }
   const { handleReport } = usePostActions({
     showSignInModal,
-  });
+  })
 
   useEffect(() => {
-    setIsMounted(true);
-    getTotalResults("ResearchCheck");
-  }, []);
+    setIsMounted(true)
+    getTotalResults("ResearchCheck")
+  }, [])
 
   if (!isMounted) {
-    return null;
+    return null
   }
 
   return (
-    <section className="w-full">
+    <section className="w-full items-center">
       <LandingPage />
+      <div
+        className={`p-0 md:p-4 w-full flex flex-row justify-center md:px-10 ${theme === "dark" ? "bg-black" : "bg-white"}`}
+      >
+        <div className="md:w-[1100px]">
+          <CheckSection />
+        </div>
+      </div>
       <div className="w-full fixed bottom-0 z-10">
         <AnimatePresence>
           {showSpeech && speechUrl && (
@@ -194,8 +202,8 @@ export default function Home() {
                                   }
                                 : paper
                             )
-                          );
-                          onClose();
+                          )
+                          onClose()
                         }}
                       />
                     </ModalBody>
@@ -267,12 +275,12 @@ export default function Home() {
                             className="flex items-center gap-2"
                             onPress={() => {
                               if (isAuthenticated) {
-                                setPostId(result.id);
-                                onOpen();
+                                setPostId(result.id)
+                                onOpen()
                               } else {
                                 showSignInModal(
                                   "You need to sign in to continue."
-                                );
+                                )
                               }
                             }}
                           >
@@ -322,7 +330,7 @@ export default function Home() {
                           </ShinyButton>
                         </div>
                       </div>
-                    );
+                    )
                   })}
                 </React.Fragment>
               ) : (
@@ -354,5 +362,5 @@ export default function Home() {
         </div>
       </div>
     </section>
-  );
+  )
 }

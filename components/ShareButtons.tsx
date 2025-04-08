@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import _ from "lodash";
+import React from "react"
+import _ from "lodash"
 import {
   Modal,
   ModalContent,
@@ -9,40 +9,40 @@ import {
   Button,
   Snippet,
   useDisclosure,
-} from "@heroui/react";
-import dynamic from "next/dynamic";
+} from "@heroui/react"
+import dynamic from "next/dynamic"
 
 const FiShare = dynamic(
   () => import("react-icons/fi").then((mod) => mod.FiShare),
   { ssr: false }
-);
+)
 const FaFacebook = dynamic(
   () => import("react-icons/fa").then((mod) => mod.FaFacebook),
   { ssr: false }
-);
+)
 const FaTwitter = dynamic(
   () => import("react-icons/fa").then((mod) => mod.FaTwitter),
   { ssr: false }
-);
+)
 const FaLinkedin = dynamic(
   () => import("react-icons/fa").then((mod) => mod.FaLinkedin),
   { ssr: false }
-);
+)
 const FaTelegram = dynamic(
   () => import("react-icons/fa").then((mod) => mod.FaTelegram),
   { ssr: false }
-);
+)
 const FaWhatsapp = dynamic(
   () => import("react-icons/fa").then((mod) => mod.FaWhatsapp),
   { ssr: false }
-);
+)
 import {
   FacebookShareButton,
   TwitterShareButton,
   LinkedinShareButton,
   TelegramShareButton,
   WhatsappShareButton,
-} from "react-share";
+} from "react-share"
 const ShareButtons = ({
   url,
   title,
@@ -52,7 +52,7 @@ const ShareButtons = ({
   useIcon = true,
   isSpeech = false,
 }: any) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
     <div>
@@ -133,7 +133,7 @@ const ShareButtons = ({
         </ModalContent>
       </Modal>
     </div>
-  );
-};
+  )
+}
 
-export default ShareButtons;
+export default ShareButtons
