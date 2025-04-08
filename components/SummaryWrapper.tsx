@@ -239,7 +239,7 @@ const SummaryWrapper = ({
           : { backgroundColor: "#F7F7F7" }
       }
     >
-      <div
+      {/* <div
         className={`summary-ribbon summary-ribbon-top-right ${isResult && "hidden"}`}
         style={
           {
@@ -249,7 +249,7 @@ const SummaryWrapper = ({
         }
       >
         <span>{"Research Analysis"}</span>
-      </div>
+      </div> */}
       <div className="w-full flex flex-col justify-center text-center font-bold text-2xl gap-5 md:pr-14">
         {isResult ? (
           <span className="text-md md:text-2xl flex-1 items-center px-2">
