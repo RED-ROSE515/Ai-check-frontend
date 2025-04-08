@@ -201,7 +201,7 @@ const ArticleWrapper = ({
       >
         <span>{"Article Generation"}</span>
       </div>
-      <div className="w-full flex flex-col justify-center text-center font-bold text-2xl gap-5 pr-16">
+      <div className="w-full flex flex-col justify-center text-center font-bold text-2xl gap-5 md:pr-16">
         {isResult ? (
           <span className="text-md md:text-2xl flex-1 items-center px-2">
             {summary.metadata.title}
