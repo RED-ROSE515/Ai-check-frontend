@@ -1,69 +1,69 @@
-"use client";
-import React, { useRef, useEffect, useState } from "react";
-import { Spinner, Card } from "@heroui/react";
-import FileUpload from "../../components/file-upload";
-import { useTheme } from "next-themes";
-import { useAnalyze } from "@/contexts/AnalyzeContext";
-import { useAuth } from "@/contexts/AuthContext";
-import SignInDialog from "@/components/SignInDialog";
-import Loader from "@/components/Loader";
-import { useRouter } from "next/navigation";
+"use client"
+import React, { useRef, useEffect, useState } from "react"
+import { Spinner, Card } from "@heroui/react"
+import FileUpload from "../../components/file-upload"
+import { useTheme } from "next-themes"
+import { useAnalyze } from "@/contexts/AnalyzeContext"
+import { useAuth } from "@/contexts/AuthContext"
+import SignInDialog from "@/components/SignInDialog"
+import Loader from "@/components/Loader"
+import { useRouter } from "next/navigation"
 
 type TriggerRefType = {
-  current: (() => void) | null;
-};
+  current: (() => void) | null
+}
 
 export default function App() {
-  const { theme } = useTheme();
-  const { isChecking, handleAnalyze, postId, processType } = useAnalyze();
-  const router = useRouter();
-  const { isAuthenticated } = useAuth();
-  const [showSignIn, setShowSignIn] = useState(false);
-  const [showDisclaimer, setShowDisclaimer] = useState(true);
-  const [hasAccepted, setHasAccepted] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN;
-  const triggerUploadRef: TriggerRefType = useRef(null);
+  const { theme } = useTheme()
+  const { isChecking, handleAnalyze, postId, processType } = useAnalyze()
+  const router = useRouter()
+  const { isAuthenticated } = useAuth()
+  const [showSignIn, setShowSignIn] = useState(false)
+  const [showDisclaimer, setShowDisclaimer] = useState(true)
+  const [hasAccepted, setHasAccepted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN
+  const triggerUploadRef: TriggerRefType = useRef(null)
 
   useEffect(() => {
     if (handleProtectedAction()) {
-      setIsLoading(true);
-      const accepted = localStorage.getItem("disclaimerAccepted");
+      setIsLoading(true)
+      const accepted = localStorage.getItem("disclaimerAccepted")
       if (accepted === "true") {
-        setHasAccepted(true);
-        setShowDisclaimer(false);
+        setHasAccepted(true)
+        setShowDisclaimer(false)
       }
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (postId) {
       if (processType.includes("ResearchCheck")) {
-        router.push(DOMAIN + "/results/discrepancies/" + postId);
+        router.push(DOMAIN + "/results/discrepancies/" + postId)
       } else {
-        router.push(DOMAIN + "/results/articles/" + postId);
+        router.push(DOMAIN + "/results/articles/" + postId)
       }
     }
-  }, [postId]);
+  }, [postId])
   const handleAccept = () => {
-    setHasAccepted(true);
-    setShowDisclaimer(false);
-    localStorage.setItem("disclaimerAccepted", "true");
-  };
+    setHasAccepted(true)
+    setShowDisclaimer(false)
+    localStorage.setItem("disclaimerAccepted", "true")
+  }
 
   const handleDeny = () => {
-    setHasAccepted(false);
-    setShowDisclaimer(false);
-  };
+    setHasAccepted(false)
+    setShowDisclaimer(false)
+  }
 
   const handleProtectedAction = () => {
     if (!isAuthenticated) {
-      setShowSignIn(true);
-      return false;
+      setShowSignIn(true)
+      return false
     }
-    return true;
-  };
+    return true
+  }
 
   return (
     <div className="flex w-full flex-col items-center justify-start min-h-[80vh]">
@@ -243,5 +243,5 @@ export default function App() {
         </>
       )}
     </div>
-  );
+  )
 }

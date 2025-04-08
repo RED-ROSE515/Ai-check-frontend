@@ -6,14 +6,15 @@ import { GrArticle } from "react-icons/gr"
 import { MdPlagiarism } from "react-icons/md"
 import PaperInputWrapper from "./PaperInputWrapper"
 import { useTheme } from "next-themes"
+import { useAnalyze } from "@/contexts/AnalyzeContext"
 
 const CheckSection = () => {
-  const [activeTab, setActiveTab] = useState("ResearchCheck")
+  const { setProcessType, processType } = useAnalyze()
   const { theme } = useTheme()
   const tabs = [
     {
       id: "ResearchCheck",
-      label: "Research Check",
+      label: "Analyse Manuscript",
       icon: (
         <GiArchiveResearch
           className={`h-8 w-8 ${theme === "dark" ? "text-white" : "text-pink-500"}`}
@@ -26,7 +27,7 @@ const CheckSection = () => {
     },
     {
       id: "GenerateArticle",
-      label: "Summary Creation",
+      label: "Summarise Manuscript",
       icon: (
         <GrArticle
           className={`h-8 w-8 ${theme === "dark" ? "text-white" : "text-slate-400"}`}
@@ -70,7 +71,6 @@ const CheckSection = () => {
           review.
         </p>
       </div>
-
       {/* Tabs */}
       <div
         className={`grid grid-cols-3 border-b ${theme === "dark" ? "border-[#090E16] bg-slate-800" : "border-gray-100"}`}
@@ -78,38 +78,44 @@ const CheckSection = () => {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => tab.id !== "PlagiarismCheck" && setActiveTab(tab.id)}
+            onClick={() => setProcessType(tab.id)}
             className={`flex flex-col items-center justify-center z-10 p-4 transition-colors ${
-              activeTab === tab.id
+              processType === tab.id
                 ? ` border-b-3 ${theme === "dark" ? "bg-transparent border-[#C8E600]" : "bg-white border-pink-500"}`
                 : ` ${theme === "dark" ? "hover:bg-gray-700 bg-[#090E16]" : "bg-gray-50 hover:bg-gray-100"}`
             }`}
           >
             <div className="mb-2">
               {React.cloneElement(tab.icon, {
-                className: `h-8 w-8 ${activeTab === tab.id ? (theme === "dark" ? "text-[#C8E600]" : "text-pink-500") : "text-slate-400"}`,
+                className: `h-8 w-8 ${processType === tab.id ? (theme === "dark" ? "text-[#C8E600]" : "text-pink-500") : "text-slate-400"}`,
               })}
             </div>
             <span
-              className={`text-sm ${activeTab === tab.id ? (theme === "dark" ? "text-[#C8E600]" : "text-pink-500") : "text-slate-400"}`}
+              className={`text-sm ${processType === tab.id ? (theme === "dark" ? "text-[#C8E600]" : "text-pink-500") : "text-slate-400"}`}
             >
               {tab.label}
             </span>
           </button>
         ))}
       </div>
-
       {/* Content */}
-      {tabs.map((tab) => (
-        <div
-          key={tab.id}
-          className={`p-8 ${activeTab === tab.id ? "block" : "hidden"}`}
-        >
-          <div className="flex flex-col md:flex-row items-center gap-8">
+      {(processType === "ResearchCheck" ||
+        processType === "GenerateArticle") && (
+        <div className={`p-8`}>
+          <div className="flex flex-col md:flex-row items-center w-full gap-8">
             <PaperInputWrapper getPdfList={() => {}} />
           </div>
         </div>
-      ))}
+      )}
+      {processType === "PlagiarismCheck" && (
+        <div className={`p-8`}>
+          <div className="flex flex-col md:flex-row justify-center items-center w-full gap-8">
+            <p className="text-2xl font-bold text-center p-16">
+              Comming Soon...
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -44,7 +44,8 @@ import { IoSettingsOutline } from "react-icons/io5"
 import { SiRoamresearch } from "react-icons/si"
 import { MdError, MdArticle } from "react-icons/md"
 import { useAuth } from "@/contexts/AuthContext"
-import router from "next/router"
+import { useRouter } from "next/navigation"
+import { postApis } from "@/utils/apis"
 interface FileUploadProgress {
   progress: number
   file: File
@@ -141,13 +142,13 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   )
   const [showSignIn, setShowSignIn] = useState(false)
   const [users, setUsers] = useState<Option[]>([])
-  const [visibility, setVisibility] = useState(["everyone"])
+  const [visibility, setVisibility] = useState(["nobody"])
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [s3_link, setS3Link] = useState("")
   const [paper_url, setPaperUrl] = useState("")
   const [paper_value, setPaperValue] = useState("")
   const [loading, setLoading] = useState(false)
-  const { handleAnalyze, setProcessType } = useAnalyze()
+  const { handleAnalyze, processType, postId } = useAnalyze()
   const { toast } = useToast()
   const { theme } = useTheme()
   const { isAuthenticated } = useAuth()
@@ -156,11 +157,13 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const [researchPaperUrl, setResearchPaperUrl] = useState("")
   const [selected, setSelected] = useState("equal")
   const [citation, setCitation] = useState("APA")
-  const [analyzeOption, setAnalyzeOption] = useState("ResearchCheck")
   const [summaryOption, setSummaryOption] = useState("basic")
   const [advancedMethods, setAdvancedMethods] = useState<string[]>(["Method"])
   const [showWarningModal, setShowWarningModal] = useState(false)
+  const [showVisibilityModal, setShowVisibilityModal] = useState(false)
+  const router = useRouter()
 
+  const DOMAIN = process.env.NEXT_PUBLIC_DOMAIN
   if (onTriggerRef) {
     onTriggerRef.current = () => {
       fileInputRef.current?.click()
@@ -230,6 +233,8 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
     }
     if (isAuthenticated) {
       const cancelSource = axios.CancelToken.source()
+      setPaperUrl("")
+      setPaperValue("")
       setCurrentFile({
         progress: 0,
         file,
@@ -280,8 +285,6 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
         await sleep(3000)
         setS3Link(response.data.attached_link)
         setLoading(false)
-        // AnalyzePaper(response.data.attached_link);
-        // getPdfList();
       } catch (error) {
         if (axios.isCancel(error)) {
           toast({
@@ -313,6 +316,10 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
+    if (postId) setShowVisibilityModal(true)
+  }, [postId])
+
+  useEffect(() => {
     setIsMounted(true)
   }, [])
 
@@ -321,9 +328,9 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   }
 
   return (
-    <div>
+    <div className="w-full">
       <div className="flex flex-col justify-center items-center gap-4">
-        <div className="flex flex-col-reverse md:flex-row gap-4">
+        <div className="flex flex-col-reverse md:flex-row gap-4 w-full">
           <div className="flex flex-col gap-1 w-full md:w-1/2">
             <p className="font-semibold text-lg">Paste Paper URL</p>
             <HeroInput
@@ -331,7 +338,11 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
               label="Paper URL : "
               variant="bordered"
               value={paper_url}
-              onValueChange={(val) => setPaperUrl(val)}
+              onValueChange={(val) => {
+                setPaperValue("")
+                setUploadedFile(null)
+                setPaperUrl(val)
+              }}
               labelPlacement="outside-left"
               placeholder="https://arxiv.org/abs/..."
               classNames={{ mainWrapper: "w-full" }}
@@ -341,15 +352,6 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                 Note: Currently supporting papers from: arXiv, bioRxiv, medRxiv,
                 and OpenAlex. More sources are coming soon.
               </span>
-              <AnalyzeForm
-                loading={loading}
-                theme={theme!}
-                paper_link={paper_url}
-                onOpen={onOpen}
-                setResearchPaperLink={setResearchPaperUrl}
-                visibility={visibility[0]}
-                disabled={!paper_url}
-              />
             </div>
           </div>
           <div className="w-full md:w-1/2">
@@ -359,22 +361,91 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
               htmlFor="dropzone-file"
               className={`relative flex w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed   ${theme === "dark" ? " bg-[#090C0F] border-[#293847] py-6 hover:bg-[#081524] hover:border-[#3C6B99]" : " bg-gray-50 py-6 hover:bg-gray-100"}`}
             >
-              <div className="text-center">
-                <div className="mx-auto max-w-min rounded-md border p-2">
-                  <UploadCloud size={20} />
+              {uploadedFile && (
+                <div className="w-full mx-2 px-2">
+                  <p className="my-2 text-sm font-medium text-muted-foreground">
+                    Uploaded File
+                  </p>
+                  <div className="group flex justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0">
+                    <div className="flex flex-1 items-center p-2">
+                      <div className="text-white">
+                        {getFileIconAndColor(uploadedFile).icon}
+                      </div>
+                      <div className="ml-2 w-full space-y-1">
+                        <div className="flex justify-between text-sm">
+                          <p className="text-muted-foreground">
+                            {uploadedFile.name.slice(0, 25)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      className="hidden items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
+                      onClick={removeFile}
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
                 </div>
-                <p className="mt-2 text-sm text-gray-600">
-                  <span className="font-semibold">Drop a file or Browse</span>
-                </p>
-                <p className="text-xs text-gray-500">
-                  Click to upload a PDF file &#40;file should be under 25
-                  MB&#41;
-                </p>
-                <p className="text-xs text-red-500 font-semibold">
-                  Note: Only PDF files are supported
-                </p>
-                <br />
-              </div>
+              )}
+              {currentFile && (
+                <div className="w-full px-2">
+                  <p className="my-2 text-sm font-medium text-muted-foreground">
+                    File to upload
+                  </p>
+                  <div className="group flex justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 hover:pr-0">
+                    <div className="flex flex-1 items-center p-2">
+                      <div className="text-white">
+                        {getFileIconAndColor(currentFile.file).icon}
+                      </div>
+                      <div className="ml-2 w-full space-y-1">
+                        <div className="flex justify-between text-sm">
+                          <p className="text-muted-foreground">
+                            {currentFile.file.name.slice(0, 25)}
+                          </p>
+                          <span className="text-xs">
+                            {currentFile.progress}%
+                          </span>
+                        </div>
+                        <Progress
+                          className={
+                            getFileIconAndColor(currentFile.file).color
+                          }
+                          value={currentFile.progress}
+                        />
+                      </div>
+                    </div>
+                    <button
+                      className="hidden cursor-pointer items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
+                      onClick={() => {
+                        if (currentFile.source)
+                          currentFile.source.cancel("Upload cancelled")
+                        removeFile()
+                      }}
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+                </div>
+              )}
+              {!currentFile && !uploadedFile && (
+                <div className="text-center">
+                  <div className="mx-auto max-w-min rounded-md border p-2">
+                    <UploadCloud size={20} />
+                  </div>
+                  <p className="mt-2 text-sm text-gray-600">
+                    <span className="font-semibold">Drop a file or Browse</span>
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Click to upload a PDF file &#40;file should be under 25
+                    MB&#41;
+                  </p>
+                  <p className="text-xs text-red-500 font-semibold">
+                    Note: Only PDF files are supported
+                  </p>
+                  <br />
+                </div>
+              )}
             </label>
             <Input
               {...getInputProps()}
@@ -390,22 +461,26 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
           <div className="grid w-full gap-1.5">
             <Label htmlFor="paper">Paper Content</Label>
             <Textarea
-              placeholder="Input the paper."
+              placeholder="Paste Text here."
               id="paper"
               className="h-[100px] w-full z-10"
               value={paper_value}
-              onChange={(e: any) => setPaperValue(e.target.value)}
+              onChange={(e: any) => {
+                setPaperValue(e.target.value)
+                setPaperUrl("")
+                setUploadedFile(null)
+              }}
             />
           </div>
           <div className="flex flex-row justify-end gap-4">
             <AnalyzeForm
               loading={loading}
               theme={theme!}
-              paper_link={paper_url}
+              paper_link={paper_url || paper_value || s3_link}
               setResearchPaperLink={setResearchPaperUrl}
               onOpen={onOpen}
               visibility={visibility[0]}
-              disabled={!paper_value}
+              disabled={!paper_value && !paper_url && !s3_link}
             />
           </div>
         </div>
@@ -416,149 +491,123 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Analyze Options
+                {processType === "ResearchCheck"
+                  ? "Analyse Manuscript"
+                  : "Summarise Manuscript"}
               </ModalHeader>
               <ModalBody className="flex flex-col justify-center items-center">
-                <Tabs
-                  selectedKey={analyzeOption}
-                  onSelectionChange={(key) => setAnalyzeOption(key as string)}
-                >
-                  <Tab
-                    key="ResearchCheck"
-                    title={
-                      <div className="flex items-center space-x-2">
-                        <MdError size={20} />
-                        <span>Discrepancies</span>
-                      </div>
-                    }
-                  >
-                    <div className="min-h-[250px]">
-                      <span>
-                        Analyze the paper for inconsistencies, flawed reasoning,
-                        or methodological issues.
-                      </span>
-                    </div>
-                  </Tab>
-                  <Tab
-                    key="GenerateArticle"
-                    title={
-                      <div className="flex items-center space-x-2">
-                        <MdArticle />
-                        <span>Article</span>
-                      </div>
-                    }
-                  >
-                    <div className="min-h-[250px] flex flex-col justify-center items-center">
-                      <Tabs
-                        aria-label="Options"
-                        color="primary"
-                        variant="bordered"
-                        className="mt-2"
-                        selectedKey={summaryOption}
-                        onSelectionChange={(key) =>
-                          setSummaryOption(key as string)
+                {processType === "ResearchCheck" ? (
+                  <div className="min-h-[150px]">
+                    <span>
+                      Analyze the paper for inconsistencies, flawed reasoning,
+                      or methodological issues.
+                    </span>
+                  </div>
+                ) : (
+                  <div className="min-h-[250px] flex flex-col justify-center items-center">
+                    <Tabs
+                      aria-label="Options"
+                      color="primary"
+                      variant="bordered"
+                      className="mt-2"
+                      selectedKey={summaryOption}
+                      onSelectionChange={(key) =>
+                        setSummaryOption(key as string)
+                      }
+                    >
+                      <Tab
+                        key="Basic"
+                        title={
+                          <div className="flex items-center space-x-2">
+                            <IoSettingsOutline />
+                            <span>Basic</span>
+                          </div>
                         }
                       >
-                        <Tab
-                          key="Basic"
-                          title={
-                            <div className="flex items-center space-x-2">
-                              <IoSettingsOutline />
-                              <span>Basic</span>
-                            </div>
-                          }
-                        >
-                          <div className="min-h-[250px]">
-                            <span>
-                              Generate the basic concept summary for this
-                              research paper.
-                            </span>
+                        <div className="min-h-[250px]">
+                          <span>
+                            Generate the basic concept summary for this research
+                            paper.
+                          </span>
+                        </div>
+                      </Tab>
+                      <Tab
+                        key="Advanced"
+                        title={
+                          <div className="flex items-center space-x-2">
+                            <SiRoamresearch />
+                            <span>Advanced</span>
                           </div>
-                        </Tab>
-                        <Tab
-                          key="Advanced"
-                          title={
-                            <div className="flex items-center space-x-2">
-                              <SiRoamresearch />
-                              <span>Advanced</span>
-                            </div>
-                          }
-                        >
-                          <div className="min-h-[250px] flex flex-col gap-2">
-                            <RadioGroup
-                              label="Select your favorite city"
-                              value={selected}
-                              onValueChange={setSelected}
+                        }
+                      >
+                        <div className="min-h-[250px] flex flex-col gap-2">
+                          <RadioGroup
+                            label="Select your favorite city"
+                            value={selected}
+                            onValueChange={setSelected}
+                          >
+                            <Radio value="equal">
+                              Weight all sections equally
+                            </Radio>
+                            <Radio value="seperate">
+                              Based on these methods
+                            </Radio>
+                          </RadioGroup>
+                          <CheckboxGroup
+                            isDisabled={selected === "equal"}
+                            defaultValue={["Method"]}
+                            value={advancedMethods}
+                            onValueChange={(keys) => {
+                              setAdvancedMethods(keys as string[])
+                              console.log(advancedMethods)
+                            }}
+                            label="Select methods"
+                          >
+                            <Checkbox value="Method">Focus on methods</Checkbox>
+                            <Checkbox value="Result">Focus on Result</Checkbox>
+                            <Checkbox value="Limitation">
+                              Highlight limitations
+                            </Checkbox>
+                            <Checkbox value="Finding">
+                              Highlight main findings/take home messages
+                            </Checkbox>
+                            <Checkbox value="Data">Data availability</Checkbox>
+                          </CheckboxGroup>
+                          <div className="flex flex-row justify-between">
+                            <Select
+                              key={"outside"}
+                              className="max-w-[250px]"
+                              defaultSelectedKeys={["APA"]}
+                              label="Citation Format"
+                              labelPlacement={"outside"}
+                              selectedKeys={new Set([citation])}
+                              placeholder="Select Citation Format"
                             >
-                              <Radio value="equal">
-                                Weight all sections equally
-                              </Radio>
-                              <Radio value="seperate">
-                                Based on these methods
-                              </Radio>
-                            </RadioGroup>
-                            <CheckboxGroup
-                              isDisabled={selected === "equal"}
-                              defaultValue={["Method"]}
-                              value={advancedMethods}
-                              onValueChange={(keys) => {
-                                setAdvancedMethods(keys as string[])
-                                console.log(advancedMethods)
-                              }}
-                              label="Select methods"
-                            >
-                              <Checkbox value="Method">
-                                Focus on methods
-                              </Checkbox>
-                              <Checkbox value="Result">
-                                Focus on Result
-                              </Checkbox>
-                              <Checkbox value="Limitation">
-                                Highlight limitations
-                              </Checkbox>
-                              <Checkbox value="Finding">
-                                Highlight main findings/take home messages
-                              </Checkbox>
-                              <Checkbox value="Data">
-                                Data availability
-                              </Checkbox>
-                            </CheckboxGroup>
-                            <div className="flex flex-row justify-between">
-                              <Select
-                                key={"outside"}
-                                className="max-w-[250px]"
-                                defaultSelectedKeys={["APA"]}
-                                label="Citation Format"
-                                labelPlacement={"outside"}
-                                selectedKeys={new Set([citation])}
-                                placeholder="Select Citation Format"
-                              >
-                                {citations.map((citation) => (
-                                  <SelectItem
-                                    key={citation.key}
-                                    onPress={() => setCitation(citation.key)}
-                                  >
-                                    {citation.label}
-                                  </SelectItem>
-                                ))}
-                              </Select>
-                              <Image
-                                alt="HeroUI hero Image with delay"
-                                height={100}
-                                src={
-                                  citations.find(
-                                    (value) => value.key === citation
-                                  )?.image.src
-                                }
-                                width={100}
-                              />
-                            </div>
+                              {citations.map((citation) => (
+                                <SelectItem
+                                  key={citation.key}
+                                  onPress={() => setCitation(citation.key)}
+                                >
+                                  {citation.label}
+                                </SelectItem>
+                              ))}
+                            </Select>
+                            <Image
+                              alt="HeroUI hero Image with delay"
+                              height={100}
+                              src={
+                                citations.find(
+                                  (value) => value.key === citation
+                                )?.image.src
+                              }
+                              width={100}
+                            />
                           </div>
-                        </Tab>
-                      </Tabs>
-                    </div>
-                  </Tab>
-                </Tabs>
+                        </div>
+                      </Tab>
+                    </Tabs>
+                  </div>
+                )}
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
@@ -567,15 +616,14 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                 <Button
                   color="primary"
                   onPress={() => {
-                    setProcessType(analyzeOption)
-                    if (analyzeOption === "ResearchCheck") {
+                    if (processType === "ResearchCheck") {
                       handleAnalyze(s3_link, visibility[0], users, [
                         "ResearchCheck",
                       ])
                     } else {
                       handleAnalyze(
                         researchPaperUrl,
-                        "nobody",
+                        visibility[0],
                         users,
                         ["GenerateArticle"],
                         summaryOption,
@@ -587,6 +635,81 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                   }}
                 >
                   Generate
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <Modal
+        backdrop="opaque"
+        isOpen={showVisibilityModal}
+        onClose={() => setShowVisibilityModal(false)}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1 text-red-500">
+                Change Visibility of your post.
+              </ModalHeader>
+              <ModalBody>
+                <div className="flex flex-col justify-center w-full gap-5 mt-4 pb-16">
+                  <span>
+                    Currently, your post is private. You can change the
+                    visibility to public or specific users.
+                  </span>
+                  <div className="w-full md:w-full">
+                    <Select
+                      isRequired
+                      variant="faded"
+                      className="max-w-xs"
+                      defaultSelectedKeys={["everyone"]}
+                      placeholder="Select visibility."
+                      selectedKeys={new Set(visibility)}
+                      onSelectionChange={(keys) =>
+                        setVisibility([...keys] as string[])
+                      }
+                    >
+                      {options.map((option) => (
+                        <SelectItem key={option.key}>{option.label}</SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+                  {visibility[0] === "specific_users" && (
+                    <UserSearchBar
+                      setUsers={setUsers}
+                      users={users}
+                      disabled={visibility[0] !== "specific_users"}
+                    />
+                  )}
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  color="primary"
+                  onPress={async () => {
+                    setShowVisibilityModal(false)
+                    if (visibility[0] !== "nobody") {
+                      await postApis.changePostVisibility(
+                        postId,
+                        visibility[0] === "specific_users"
+                          ? 0
+                          : visibility[0] === "followers"
+                            ? 1
+                            : visibility[0] === "everyone"
+                              ? 2
+                              : 3,
+                        users.map((user) => user.value)
+                      )
+                    }
+                    if (processType.includes("ResearchCheck")) {
+                      router.push(DOMAIN + "/results/discrepancies/" + postId)
+                    } else {
+                      router.push(DOMAIN + "/results/articles/" + postId)
+                    }
+                  }}
+                >
+                  OK
                 </Button>
               </ModalFooter>
             </>
@@ -613,7 +736,7 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
               <ModalFooter>
                 <Button
                   color="primary"
-                  onPress={() => setShowWarningModal(false)}
+                  onPress={() => setShowVisibilityModal(false)}
                 >
                   OK
                 </Button>
@@ -622,105 +745,6 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
           )}
         </ModalContent>
       </Modal>
-      {uploadedFile && (
-        <div className="w-full">
-          <div>
-            <p className="my-2 mt-6 text-sm font-medium text-muted-foreground">
-              Uploaded File
-            </p>
-            <div className="group flex justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0">
-              <div className="flex flex-1 items-center p-2">
-                <div className="text-white">
-                  {getFileIconAndColor(uploadedFile).icon}
-                </div>
-                <div className="ml-2 w-full space-y-1">
-                  <div className="flex justify-between text-sm">
-                    <p className="text-muted-foreground">
-                      {uploadedFile.name.slice(0, 25)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <button
-                className="hidden items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
-                onClick={removeFile}
-              >
-                <X size={20} />
-              </button>
-            </div>
-          </div>
-          <div className="flex md:flex-row flex-col justify-center w-full gap-5 mt-4">
-            <div className="w-full md:w-[20%]">
-              <Select
-                isRequired
-                variant="faded"
-                className="max-w-xs"
-                defaultSelectedKeys={["everyone"]}
-                placeholder="Select visibility."
-                selectedKeys={new Set(visibility)}
-                onSelectionChange={(keys) =>
-                  setVisibility([...keys] as string[])
-                }
-              >
-                {options.map((option) => (
-                  <SelectItem key={option.key}>{option.label}</SelectItem>
-                ))}
-              </Select>
-            </div>
-            <UserSearchBar
-              setUsers={setUsers}
-              users={users}
-              disabled={visibility[0] !== "specific_users"}
-            />
-
-            <AnalyzeForm
-              loading={loading}
-              theme={theme!}
-              paper_link={s3_link}
-              onOpen={onOpen}
-              setResearchPaperLink={setResearchPaperUrl}
-              visibility={visibility[0]}
-              disabled={!s3_link}
-            />
-          </div>
-        </div>
-      )}
-      {currentFile && (
-        <div>
-          <p className="my-2 mt-6 text-sm font-medium text-muted-foreground">
-            File to upload
-          </p>
-          <div className="group flex justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 hover:pr-0">
-            <div className="flex flex-1 items-center p-2">
-              <div className="text-white">
-                {getFileIconAndColor(currentFile.file).icon}
-              </div>
-              <div className="ml-2 w-full space-y-1">
-                <div className="flex justify-between text-sm">
-                  <p className="text-muted-foreground">
-                    {currentFile.file.name.slice(0, 25)}
-                  </p>
-                  <span className="text-xs">{currentFile.progress}%</span>
-                </div>
-                <Progress
-                  className={getFileIconAndColor(currentFile.file).color}
-                  value={currentFile.progress}
-                />
-              </div>
-            </div>
-            <button
-              className="hidden cursor-pointer items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex"
-              onClick={() => {
-                if (currentFile.source)
-                  currentFile.source.cancel("Upload cancelled")
-                removeFile()
-              }}
-            >
-              <X size={20} />
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
