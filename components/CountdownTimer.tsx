@@ -7,7 +7,7 @@ const CountdownTimer = () => {
   const { theme } = useTheme()
   const calculateTimeLeft = () => {
     const difference =
-      new Date("2025-04-08T15:00:00Z").getTime() - new Date().getTime()
+      new Date("2025-04-30T15:00:00Z").getTime() - new Date().getTime()
     if (difference > 0) {
       const days = Math.floor(difference / (1000 * 60 * 60 * 24))
       const hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
@@ -29,7 +29,7 @@ const CountdownTimer = () => {
   return (
     <Card className="md:px-6">
       <CardBody className="flex flex-col justify-center items-center gap-3">
-        <span className="text-xl font-bold">Presale Starts In</span>
+        <span className="text-xl font-bold">Presale Ends In</span>
         <div className="flex flex-row justify-center gap-4">
           <div
             className={`flex flex-col items-center shadow-lg ${theme === "dark" ? "bg-slate-700" : "bg-slate-300"} rounded-md text-neutral-content p-3 min-w-[75px]`}
