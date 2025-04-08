@@ -8,7 +8,6 @@ import { Sen } from "next/font/google"
 import NerdbunnyAd from "./NerdbunnyAd"
 import StatisticCard from "./StatisticCard"
 import { useAnalyze } from "@/contexts/AnalyzeContext"
-import ListSection from "./ListSection"
 export const sen = Sen({ subsets: ["latin"] })
 
 const LandingPage = ({ isHome = true }: { isHome?: boolean }) => {
@@ -84,13 +83,13 @@ const LandingPage = ({ isHome = true }: { isHome?: boolean }) => {
           <StatisticCard />
         </div>
       )}
-      {isHome && (
+      {/* {isHome && (
         <div className="w-full flex flex-col justify-center items-center mt-4">
           <div className="w-full md:w-[1100px] hidden md:flex flex-col justify-center items-center mt-4">
             <ListSection />
           </div>
         </div>
-      )}
+      )} */}
     </div>
   )
 }

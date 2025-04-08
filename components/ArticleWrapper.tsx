@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Typography, capitalize } from "@mui/material";
-import ReactMarkdown from "react-markdown";
-import Image, { StaticImageData } from "next/image";
-import { useTheme } from "next-themes";
-import { useSpeech } from "@/contexts/SpeechContext";
-import { useToast } from "@/hooks/use-toast";
-import api from "@/utils/api";
+import React, { useEffect, useState } from "react"
+import { Typography, capitalize } from "@mui/material"
+import ReactMarkdown from "react-markdown"
+import Image, { StaticImageData } from "next/image"
+import { useTheme } from "next-themes"
+import { useSpeech } from "@/contexts/SpeechContext"
+import { useToast } from "@/hooks/use-toast"
+import api from "@/utils/api"
 import {
   Chip,
   Drawer,
@@ -23,17 +23,17 @@ import {
   Select,
   SelectItem,
   Tooltip,
-} from "@heroui/react";
-import childImage from "../public/NerdBunnyUI/child.png";
-import collegeImage from "../public/NerdBunnyUI/college.png";
-import phDImage from "../public/NerdBunnyUI/PhD.png";
-import errorImage from "../public/NerdBunnyUI/Error.png";
-import { RiVoiceAiLine } from "react-icons/ri";
-import useDeviceCheck from "@/hooks/useDeviceCheck";
-import SpeechPlayer from "./SpeechPlayer";
-import UserCard from "./UserCard";
-import { useSearch } from "@/contexts/SearchContext";
-import { useAuth } from "@/contexts/AuthContext";
+} from "@heroui/react"
+import childImage from "../public/NerdBunnyUI/child.png"
+import collegeImage from "../public/NerdBunnyUI/college.png"
+import phDImage from "../public/NerdBunnyUI/PhD.png"
+import errorImage from "../public/NerdBunnyUI/Error.png"
+import { RiVoiceAiLine } from "react-icons/ri"
+import useDeviceCheck from "@/hooks/useDeviceCheck"
+import SpeechPlayer from "./SpeechPlayer"
+import UserCard from "./UserCard"
+import { useSearch } from "@/contexts/SearchContext"
+import { useAuth } from "@/contexts/AuthContext"
 import {
   FaClock,
   FaGlobe,
@@ -43,35 +43,35 @@ import {
   FaPlayCircle,
   FaPlus,
   FaUser,
-} from "react-icons/fa";
-import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
+} from "react-icons/fa"
+import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io"
 
-import { SiSharp } from "react-icons/si";
-import { useRouter } from "next/navigation";
-import useGetData from "@/app/service/get-data";
-import ErrorContent from "./ErrorContent";
+import { SiSharp } from "react-icons/si"
+import { useRouter } from "next/navigation"
+import useGetData from "@/app/service/get-data"
+import ErrorContent from "./ErrorContent"
 const getColorForScore = (score: number) => {
   switch (true) {
     case score >= 9:
-      return "#2E7D32"; // Dark green
+      return "#2E7D32" // Dark green
     case score >= 8:
-      return "#4CAF50"; // Green
+      return "#4CAF50" // Green
     case score >= 7:
-      return "#8BC34A"; // Light green
+      return "#8BC34A" // Light green
     case score >= 6:
-      return "#673AB7"; // Deep purple
+      return "#673AB7" // Deep purple
     case score >= 5:
-      return "#9C27B0"; // Purple
+      return "#9C27B0" // Purple
     case score >= 4:
-      return "#FF9800"; // Orange
+      return "#FF9800" // Orange
     case score >= 3:
-      return "#FF5722"; // Deep orange
+      return "#FF5722" // Deep orange
     case score >= 2:
-      return "#F44336"; // Red
+      return "#F44336" // Red
     default:
-      return "#D32F2F"; // Dark red
+      return "#D32F2F" // Dark red
   }
-};
+}
 
 export const voices = [
   { key: "alloy", label: "Alloy" },
@@ -83,7 +83,7 @@ export const voices = [
   { key: "nova", label: "Nova" },
   { key: "sage", label: "Sage" },
   { key: "shimmer", label: "Shimmer" },
-];
+]
 
 export const UserSVG = () => {
   return (
@@ -103,17 +103,17 @@ export const UserSVG = () => {
         fill="#737E88"
       />
     </svg>
-  );
-};
+  )
+}
 
 export interface SummaryType {
-  title: string;
-  content: string;
-  value: string;
-  type?: string;
-  audio_url?: string;
-  speech_url?: string;
-  image: StaticImageData;
+  title: string
+  content: string
+  value: string
+  type?: string
+  audio_url?: string
+  speech_url?: string
+  image: StaticImageData
 }
 const ArticleWrapper = ({
   summary,
@@ -129,34 +129,34 @@ const ArticleWrapper = ({
   link,
   articleData,
 }: any) => {
-  const { theme } = useTheme();
-  const router = useRouter();
-  const { keyword, setKeyword, setSortBy } = useSearch();
-  const [expand, setExpand] = useState(false);
-  const [keywordExpand, setKeywordExpand] = useState(false);
-  const [currentSummary, setCurrentSummary] = useState<SummaryType>();
+  const { theme } = useTheme()
+  const router = useRouter()
+  const { keyword, setKeyword, setSortBy } = useSearch()
+  const [expand, setExpand] = useState(false)
+  const [keywordExpand, setKeywordExpand] = useState(false)
+  const [currentSummary, setCurrentSummary] = useState<SummaryType>()
   const { setSpeechUrl, setShowSpeech, setSpeechId, setSpeechTitle } =
-    useSpeech();
-  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
-  const [voice, setVoice] = useState("alloy");
-  const [loading, setLoading] = useState(false);
-  const { isMobile } = useDeviceCheck();
-  const { toast } = useToast();
-  const { isAuthenticated } = useAuth();
+    useSpeech()
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure()
+  const [voice, setVoice] = useState("alloy")
+  const [loading, setLoading] = useState(false)
+  const { isMobile } = useDeviceCheck()
+  const { toast } = useToast()
+  const { isAuthenticated } = useAuth()
   const { data: speechData, isLoading: speechLoading } = useGetData(
     totalData?.id ? `post/speech?post_id=${totalData?.id}` : ""
-  );
+  )
   const generateSpeech = async () => {
     try {
-      setLoading(true);
-      const paperId = link.split("results/discrepancies/")[1];
+      setLoading(true)
+      const paperId = link.split("results/discrepancies/")[1]
       const response = await api.post(`post/generate_voice`, {
         post_id: paperId,
         speech_type: currentSummary?.value,
         voice_type: voice,
-      });
-      setLoading(false);
-      onClose();
+      })
+      setLoading(false)
+      onClose()
       toast({
         title: "Speech Generation",
         description: (
@@ -167,30 +167,41 @@ const ArticleWrapper = ({
             </span>
           </div>
         ),
-      });
-      setSpeechUrl(response.data.audio_url);
-      setSpeechId(response.data.id);
-      setSpeechTitle(summary.metadata.title);
-      setShowSpeech(true);
+      })
+      setSpeechUrl(response.data.audio_url)
+      setSpeechId(response.data.id)
+      setSpeechTitle(summary.metadata.title)
+      setShowSpeech(true)
     } catch (error) {
       toast({
         title: "Speech Generation",
         description: "Uh! Something went wrong!",
-      });
+      })
     }
-  };
+  }
 
-  useEffect(() => {}, [speechData]);
+  useEffect(() => {}, [speechData])
   return (
     <div
-      className="flex w-full flex-col rounded-lg p-4 md:px-4 gap-5"
+      className="flex w-full flex-col rounded-lg p-4 md:px-4 gap-5 overflow-hidden relative"
       style={
         theme === "dark"
           ? { backgroundColor: "#1E2A36" }
           : { backgroundColor: "#F7F7F7" }
       }
     >
-      <div className="w-full flex flex-col justify-center text-center font-bold text-2xl gap-5">
+      <div
+        className={`summary-ribbon summary-ribbon-top-right`}
+        style={
+          {
+            "--ribbon-border-color": "#17C964",
+            "--ribbon-background": "#17C964",
+          } as React.CSSProperties
+        }
+      >
+        <span>{"Article Generation"}</span>
+      </div>
+      <div className="w-full flex flex-col justify-center text-center font-bold text-2xl gap-5 pr-16">
         {isResult ? (
           <span className="text-md md:text-2xl flex-1 items-center px-2">
             {summary.metadata.title}
@@ -405,8 +416,8 @@ const ArticleWrapper = ({
                         variant="dot"
                         key={index}
                         onClick={() => {
-                          setKeyword(label === keyword ? "" : label);
-                          setSortBy("");
+                          setKeyword(label === keyword ? "" : label)
+                          setSortBy("")
                         }}
                         startContent={<SiSharp className="ml-1" />}
                         className={`cursor-pointer hover:scale-105 ${theme === "dark" ? "hover:bg-gray-600" : "hover:bg-gray-300"} ${label === keyword ? `${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}` : ""}`}
@@ -502,7 +513,7 @@ const ArticleWrapper = ({
         </DrawerContent>
       </Drawer>
     </div>
-  );
-};
+  )
+}
 
-export default ArticleWrapper;
+export default ArticleWrapper

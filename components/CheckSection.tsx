@@ -26,19 +26,19 @@ const CheckSection = () => {
         "Our AI agent analyzes the research paper and provides a report with the percentage of errors and discrepancies.",
       image: "/placeholder.svg?height=200&width=200",
     },
-    {
-      id: "GenerateArticle",
-      label: "Summarise Manuscript",
-      icon: (
-        <GrArticle
-          className={`h-8 w-8 ${theme === "dark" ? "text-white" : "text-slate-400"}`}
-        />
-      ),
-      title: "Summary and Articles",
-      content:
-        "Our AI agent creates summaries and articles from academic papers, making complex research accessible to everyone.",
-      image: "/placeholder.svg?height=200&width=200",
-    },
+    // {
+    //   id: "GenerateArticle",
+    //   label: "Summarise Manuscript",
+    //   icon: (
+    //     <GrArticle
+    //       className={`h-8 w-8 ${theme === "dark" ? "text-white" : "text-slate-400"}`}
+    //     />
+    //   ),
+    //   title: "Summary and Articles",
+    //   content:
+    //     "Our AI agent creates summaries and articles from academic papers, making complex research accessible to everyone.",
+    //   image: "/placeholder.svg?height=200&width=200",
+    // },
     {
       id: "PlagiarismCheck",
       label: "Plagiarism Check",
@@ -74,7 +74,7 @@ const CheckSection = () => {
       </div>
       {/* Tabs */}
       <div
-        className={`grid grid-cols-3 border-b ${theme === "dark" ? "border-[#090E16] bg-slate-800" : "border-gray-100"}`}
+        className={`grid grid-cols-2 border-b ${theme === "dark" ? "border-[#090E16] bg-slate-800" : "border-gray-100"}`}
       >
         {tabs.map((tab) => (
           <button
