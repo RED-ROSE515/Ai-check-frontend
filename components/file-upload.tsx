@@ -478,7 +478,7 @@ const FileUpload = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
           }
         >
           <div className="flex flex-col gap-1">
-            <p className="font-semibold text-lg">Paste Paper URL</p>
+            <p className="font-semibold text-lg">Enter URL</p>
             <div className="mt-2 flex flex-row justify-between gap-3">
               <HeroInput
                 className="w-full"

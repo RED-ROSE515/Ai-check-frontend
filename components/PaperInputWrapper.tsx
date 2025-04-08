@@ -121,6 +121,7 @@ export const AnalyzeForm = ({
     <Button
       isLoading={loading}
       className={` ${theme === "dark" ? "bg-[#C8E600] text-black" : "bg-[#EE43DE] text-white"}`}
+      size="lg"
       onPress={() => {
         setResearchPaperLink(paper_link)
         onOpen()
@@ -332,11 +333,12 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
       <div className="flex flex-col justify-center items-center gap-4">
         <div className="flex flex-col-reverse md:flex-row gap-4 w-full">
           <div className="flex flex-col gap-1 w-full md:w-1/2">
-            <p className="font-semibold text-lg">Paste Paper URL</p>
+            <p className="font-semibold text-lg">Enter URL</p>
             <HeroInput
               className="w-full"
               label="Paper URL : "
               variant="bordered"
+              size="lg"
               value={paper_url}
               onValueChange={(val) => {
                 setPaperValue("")
@@ -353,6 +355,9 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                 and OpenAlex. More sources are coming soon.
               </span>
             </div>
+          </div>
+          <div className="flex flex-col justify-center items-center">
+            <span className="text-lg font-semibold">OR</span>
           </div>
           <div className="w-full md:w-1/2">
             <p className="font-semibold text-lg">Upload a Research Paper</p>
@@ -433,9 +438,22 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
                   <div className="mx-auto max-w-min rounded-md border p-2">
                     <UploadCloud size={20} />
                   </div>
-                  <p className="mt-2 text-sm text-gray-600">
-                    <span className="font-semibold">Drop a file or Browse</span>
+                  <p className="mt-2 text-sm text-gray-400">
+                    <span className="font-semibold">Drag and Drop a file</span>
                   </p>
+                  <span className="text-xs text-gray-500 w-full text-center">
+                    or
+                  </span>
+                  <br />
+                  <Button
+                    variant="faded"
+                    size="sm"
+                    color="primary"
+                    className="my-2"
+                    onPress={() => fileInputRef.current?.click()}
+                  >
+                    Browse files
+                  </Button>
                   <p className="text-xs text-gray-500">
                     Click to upload a PDF file &#40;file should be under 25
                     MB&#41;
@@ -472,7 +490,7 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
               }}
             />
           </div> */}
-          <div className="flex flex-row justify-end gap-4">
+          <div className="flex flex-row justify-center gap-4">
             <AnalyzeForm
               loading={loading || isChecking}
               theme={theme!}
