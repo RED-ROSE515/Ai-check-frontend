@@ -197,10 +197,10 @@ export const AnalyzeProvider = ({
             duration: 5000,
           })
         }
-      }, 300) // Update progress every 3 seconds
+      }, 500) // Update progress every 3 seconds
 
       // Status check interval
-      const statusInterval = setInterval(checkStatus, 10000) // Check status every 5 seconds
+      const statusInterval = setInterval(checkStatus, 10000) // Check status every 10 seconds
 
       // Cleanup intervals after 10 minutes (600000ms) if not completed
       setTimeout(() => {
