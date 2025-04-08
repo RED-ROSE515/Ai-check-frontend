@@ -148,7 +148,7 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
   const [paper_url, setPaperUrl] = useState("")
   const [paper_value, setPaperValue] = useState("")
   const [loading, setLoading] = useState(false)
-  const { handleAnalyze, processType, postId } = useAnalyze()
+  const { handleAnalyze, processType, postId, isChecking } = useAnalyze()
   const { toast } = useToast()
   const { theme } = useTheme()
   const { isAuthenticated } = useAuth()
@@ -459,7 +459,7 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
 
         <div className="flex flex-col justify-center gap-3 w-full">
           <div className="grid w-full gap-1.5">
-            <Label htmlFor="paper">Paper Content</Label>
+            <Label htmlFor="paper">Paste manuscript text here</Label>
             <Textarea
               placeholder="Paste Text here."
               id="paper"
@@ -474,7 +474,7 @@ const PaperInputWrapper = ({ getPdfList, onTriggerRef }: ImageUploadProps) => {
           </div>
           <div className="flex flex-row justify-end gap-4">
             <AnalyzeForm
-              loading={loading}
+              loading={loading || isChecking}
               theme={theme!}
               paper_link={paper_url || paper_value || s3_link}
               setResearchPaperLink={setResearchPaperUrl}

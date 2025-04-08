@@ -7,10 +7,11 @@ import { MdPlagiarism } from "react-icons/md"
 import PaperInputWrapper from "./PaperInputWrapper"
 import { useTheme } from "next-themes"
 import { useAnalyze } from "@/contexts/AnalyzeContext"
-
+import { useSearch } from "@/contexts/SearchContext"
 const CheckSection = () => {
   const { setProcessType, processType } = useAnalyze()
   const { theme } = useTheme()
+  const { getTotalResults } = useSearch()
   const tabs = [
     {
       id: "ResearchCheck",
@@ -78,7 +79,10 @@ const CheckSection = () => {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setProcessType(tab.id)}
+            onClick={() => {
+              setProcessType(tab.id)
+              if (tab.id !== "PlagiarismCheck") getTotalResults(tab.id)
+            }}
             className={`flex flex-col items-center justify-center z-10 p-4 transition-colors ${
               processType === tab.id
                 ? ` border-b-3 ${theme === "dark" ? "bg-transparent border-[#C8E600]" : "bg-white border-pink-500"}`
